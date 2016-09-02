@@ -142,3 +142,8 @@ data Modifier
     | \onDemand()
     | \default()
     ;
+    
+Declaration parseCpp(loc file, bool optie1=true) = parseCpp(file, #Declaration, optie1=optie1);
+    
+@javaClass{lang.cpp.internal.Parser}   
+java Declaration parseCpp(loc file, type[Declaration] definitions, bool optie1 = true); 
