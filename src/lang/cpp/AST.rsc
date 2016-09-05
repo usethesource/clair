@@ -39,8 +39,6 @@ data Expression
     | \cast(Type \type, Expression expression)
     | \characterLiteral(str charValue)
     | \newObject(Expression expr, Type \type, list[Expression] args, Declaration class)
-    | \newObject(Expression expr, Type \type, list[Expression] args)
-    | \newObject(Type \type, list[Expression] args, Declaration class)
     | \newObject(Type \type, list[Expression] args)
     | \qualifiedName(Expression qualifier, Expression expression)
     | \conditional(Expression expression, Expression thenBranch, Expression elseBranch)
@@ -143,7 +141,7 @@ data Modifier
     | \default()
     ;
     
-Declaration parseCpp(loc file, bool optie1=true) = parseCpp(file, #Declaration, optie1=optie1);
+@javaClass{lang.cpp.internal.Parser}     
+@reflect{for printing to stderr}
+java Declaration parseCpp(loc file, bool optie1=true);
     
-@javaClass{lang.cpp.internal.Parser}   
-java Declaration parseCpp(loc file, type[Declaration] definitions, bool optie1 = true); 
