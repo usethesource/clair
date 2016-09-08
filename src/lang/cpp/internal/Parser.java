@@ -27,7 +27,7 @@ public class Parser {
     // put example code here
     try (InputStream in = URIResolverRegistry.getInstance().getInputStream(file)) {
       // TODO: lots of work here
-      ctx.getStdErr().println(builder.Modifier_abstract());
+//      ctx.getStdErr().println(builder.Modifier_abstract());
       
     } catch (IOException e) {
       throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
