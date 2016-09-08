@@ -1,7 +1,7 @@
 module lang::cpp::AST
 
 extend analysis::m3::AST;
-
+ 
 data Declaration
     = \compilationUnit(list[Declaration] imports, list[Declaration] types)
     | \compilationUnit(Declaration package, list[Declaration] imports, list[Declaration] types)
@@ -142,6 +142,5 @@ data Modifier
     ;
     
 @javaClass{lang.cpp.internal.Parser}     
-@reflect{for printing to stderr}
 java Declaration parseCpp(loc file, bool optie1=true);
     
