@@ -20,7 +20,7 @@ public class Parser {
     this.builder = new AST(vf);
   }
   
-  public IValue parseCpp(ISourceLocation file, IBool optie1, IEvaluatorContext ctx) {
+  public IValue parseCpp(ISourceLocation file, IBool optie1) {
     
     // the store moet naar de AST builder class voor de definities.
     
