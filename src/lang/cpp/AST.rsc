@@ -1,7 +1,7 @@
 module lang::cpp::AST
 
 extend analysis::m3::AST;
- 
+  
 data Declaration
     = \compilationUnit(list[Declaration] imports, list[Declaration] types)
     | \compilationUnit(Declaration package, list[Declaration] imports, list[Declaration] types)

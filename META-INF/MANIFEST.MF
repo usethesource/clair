@@ -3,5 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: clair
 Bundle-SymbolicName: clair
 Bundle-Version: 1.0.0
-Require-Bundle: rascal
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ClassPath:  
+  ./lib/rascal-shell.jar
