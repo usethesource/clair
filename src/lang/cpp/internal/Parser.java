@@ -44,7 +44,6 @@ import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.core.runtime.CoreException;
-import org.junit.Test;
 import org.rascalmpl.interpreter.utils.RuntimeExceptionFactory;
 import org.rascalmpl.uri.URIResolverRegistry;
 import org.rascalmpl.value.IBool;
@@ -56,13 +55,10 @@ public class Parser {
 	private IValueFactory vf;
 	private AST builder;
 
-	// public Parser(IValueFactory vf) {
-	// this.vf = vf;
-	// this.builder = new AST(vf);
-	// }
-
-	public Parser() {
-	}
+	 public Parser(IValueFactory vf) {
+		 this.vf = vf;
+		 this.builder = new AST(vf);
+	 }
 
 	public IValue parseCpp(ISourceLocation file, IBool optie1) {
 
@@ -94,7 +90,6 @@ public class Parser {
 		return GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, idx, options, log);
 	}
 
-	@Test
 	public void convertCdtToRascal() throws CoreException {
 		System.out.println("Start doing stuff");
 		// String code = "class C { private : A f(); }; int i();";
@@ -271,7 +266,7 @@ public class Parser {
 				System.out.println("ClassVirtSpecifier: " + classVirtSpecifier.getRawSignature());
 				return ASTVisitor.PROCESS_CONTINUE;
 			}
-
+ 
 			@Override
 			public int visit(ICPPASTDecltypeSpecifier decltypeSpecifier) {
 				System.out.println("DecltypeSpecifier: " + decltypeSpecifier.getRawSignature());
