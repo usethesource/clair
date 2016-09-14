@@ -1,7 +1,5 @@
 package lang.cpp.internal;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -45,9 +43,9 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.core.runtime.CoreException;
 import org.rascalmpl.interpreter.utils.RuntimeExceptionFactory;
-import org.rascalmpl.uri.URIResolverRegistry;
-import org.rascalmpl.value.IBool;
+import org.rascalmpl.library.Prelude;
 import org.rascalmpl.value.ISourceLocation;
+import org.rascalmpl.value.IString;
 import org.rascalmpl.value.IValue;
 import org.rascalmpl.value.IValueFactory;
 
@@ -60,26 +58,23 @@ public class Parser {
 		 this.builder = new AST(vf);
 	 }
 
-	public IValue parseCpp(ISourceLocation file, IBool optie1) {
-
-		// the store moet naar de AST builder class voor de definities.
-
-		// put example code here
-		try (InputStream in = URIResolverRegistry.getInstance().getInputStream(file)) {
-
-			// TODO: lots of work here
-			// ctx.getStdErr().println(builder.Modifier_abstract());
-
-		} catch (IOException e) {
+	public IValue parseCpp(ISourceLocation file) {
+		try {
+			String input = ((IString) new Prelude(vf).readFile(file)).getValue();
+			IValue result = parse(file.getPath(), input.toCharArray());
+			
+			if (result == null) {
+				throw RuntimeExceptionFactory.parseError(file, null, null);
+			}
+			
+			return result;
+		} catch (CoreException e) {
 			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
 		}
-
-		// just an example declaration
-		return builder.Declaration_class(vf.list());
 	}
 
-	private static IASTTranslationUnit parse(char[] code) throws CoreException {
-		FileContent fc = FileContent.create("C:\\Users\\Rodin", code);
+	private IValue parse(String path, char[] code) throws CoreException {
+		FileContent fc = FileContent.create(path, code);
 		Map<String, String> macroDefinitions = new HashMap<String, String>();
 		String[] includeSearchPaths = new String[0];
 		IScannerInfo si = new ScannerInfo(macroDefinitions, includeSearchPaths);
@@ -87,28 +82,12 @@ public class Parser {
 		IIndex idx = null;
 		int options = ILanguage.OPTION_IS_SOURCE_UNIT;
 		IParserLogService log = new DefaultLogService();
-		return GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, idx, options, log);
+		IASTTranslationUnit tu = GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, idx, options, log);
+
+		return convertCdtToRascal(tu);
 	}
 
-	public void convertCdtToRascal() throws CoreException {
-		System.out.println("Start doing stuff");
-		// String code = "class C { private : A f(); }; int i();";
-		StringBuilder c = new StringBuilder();
-		c.append("void foo(int a) {\n");
-		c.append("  int x,y;\n");
-		c.append("  if (a>0)\n");
-		c.append("    x=0;\n");
-		c.append("  else\n");
-		c.append("    x=1;\n");
-		c.append("  y=x;\n");
-		c.append("}\n");
-		c.append("int foo(int bar) {\n");
-		c.append("  int z = bar;\n");
-		c.append("  return z;\n");
-		c.append("}\n");
-
-		IASTTranslationUnit translationUnit = parse(c.toString().toCharArray());
-
+	public IValue convertCdtToRascal(IASTTranslationUnit translationUnit) throws CoreException {
 		IValue root = null;
 
 		ASTVisitor visitor = new ASTVisitor(true) {
@@ -283,5 +262,6 @@ public class Parser {
 		System.out.println("Accept");
 		translationUnit.accept(visitor);
 		System.out.println("Done");
+		return root;
 	}
 }
