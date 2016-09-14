@@ -1,11 +1,11 @@
 module lang::cpp::ASTgen
 
-import Type;
+import lang::cpp::AST;  
+import Type; 
 import List;
 import String;
 import IO;
 
-import lang::cpp::AST;
 
 public str apiGen(str apiName,list[type[value]] ts) {
   map[str,str] emp = ();

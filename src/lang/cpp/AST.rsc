@@ -1,9 +1,10 @@
 module lang::cpp::AST
 
 extend analysis::m3::AST;
-  
+   
 data Declaration
-    = \compilationUnit(list[Declaration] imports, list[Declaration] types)
+    = \translationUnit(list[Declaration] imports, list[Declaration] types)
+    | \amb(set[Declaration] alternatives)
     | \compilationUnit(Declaration package, list[Declaration] imports, list[Declaration] types)
     | \enum(str name, list[Type] implements, list[Declaration] constants, list[Declaration] body)
     | \enumConstant(str name, list[Expression] arguments, Declaration class)
@@ -144,5 +145,3 @@ data Modifier
 @javaClass{lang.cpp.internal.Parser}     
 java Declaration parseCpp(loc file, bool optie1=true);
 
-@javaClass{lang.cpp.internal.Parser}
-java void doStuff();    
