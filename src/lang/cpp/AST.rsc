@@ -143,4 +143,6 @@ data Modifier
     
 @javaClass{lang.cpp.internal.Parser}     
 java Declaration parseCpp(loc file, bool optie1=true);
-    
+
+@javaClass{lang.cpp.internal.Parser}
+java void doStuff();    
