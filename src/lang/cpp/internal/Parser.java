@@ -41,7 +41,9 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
+import org.rascalmpl.interpreter.IEvaluatorContext;
 import org.rascalmpl.interpreter.utils.RuntimeExceptionFactory;
 import org.rascalmpl.library.Prelude;
 import org.rascalmpl.value.ISourceLocation;
@@ -58,7 +60,8 @@ public class Parser {
 		 this.builder = new AST(vf);
 	 }
 
-	public IValue parseCpp(ISourceLocation file) {
+	public IValue parseCpp(ISourceLocation file, IEvaluatorContext ctx) {
+		ctx.getStdErr().println("error! no, just kidding..");
 		try {
 			String input = ((IString) new Prelude(vf).readFile(file)).getValue();
 			IValue result = parse(file.getPath(), input.toCharArray());
