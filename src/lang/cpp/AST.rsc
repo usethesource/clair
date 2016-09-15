@@ -142,6 +142,7 @@ data Modifier
     | \default()
     ;
     
-@javaClass{lang.cpp.internal.Parser}     
+@javaClass{lang.cpp.internal.Parser}  
+@reflect{need access to streams}   
 java Declaration parseCpp(loc file);
 
