@@ -1,8 +1,12 @@
 package lang.cpp.internal;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
+import java.util.Stack;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -15,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
@@ -41,7 +46,6 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
-import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.rascalmpl.interpreter.IEvaluatorContext;
 import org.rascalmpl.interpreter.utils.RuntimeExceptionFactory;
@@ -54,22 +58,24 @@ import org.rascalmpl.value.IValueFactory;
 public class Parser {
 	private IValueFactory vf;
 	private AST builder;
+	private IEvaluatorContext ctx;
 
-	 public Parser(IValueFactory vf) {
-		 this.vf = vf;
-		 this.builder = new AST(vf);
-	 }
+	public Parser(IValueFactory vf) {
+		this.vf = vf;
+		this.builder = new AST(vf);
+	}
 
 	public IValue parseCpp(ISourceLocation file, IEvaluatorContext ctx) {
-		ctx.getStdErr().println("error! no, just kidding..");
+		if (ctx != null)
+			this.ctx = ctx;
 		try {
 			String input = ((IString) new Prelude(vf).readFile(file)).getValue();
 			IValue result = parse(file.getPath(), input.toCharArray());
-			
+
 			if (result == null) {
 				throw RuntimeExceptionFactory.parseError(file, null, null);
 			}
-			
+
 			return result;
 		} catch (CoreException e) {
 			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
@@ -90,181 +96,209 @@ public class Parser {
 		return convertCdtToRascal(tu);
 	}
 
-	public IValue convertCdtToRascal(IASTTranslationUnit translationUnit) throws CoreException {
-		IValue root = null;
+	public synchronized IValue convertCdtToRascal(IASTTranslationUnit translationUnit) throws CoreException {
+		Stack<IValue> stack = new Stack<IValue>();
 
 		ASTVisitor visitor = new ASTVisitor(true) {
 
 			@Override
 			public int visit(IASTTranslationUnit tu) {
-				System.out.println("TranslationUnit: " + tu.getRawSignature());
-				System.out.println(tu.getParent());
-				System.out.println(tu.getChildren().length + " children");
-				Stream.of(tu.getChildren()).forEach(it -> System.out.println(it.getRawSignature()));
-				System.out.println("Done");
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("TranslationUnit: " + tu.getRawSignature());
+				ctx.getStdErr().println(tu.getChildren().length + " children");
+				int stackSizeBefore = stack.size();
+				for (IASTNode node : tu.getChildren())
+					node.accept(this);
+
+				List<IValue> children = new ArrayList<IValue>();
+				for (int i = 0; i < tu.getChildren().length; i++)
+					children.add(stack.pop());
+				Collections.reverse(children);
+
+				if (stackSizeBefore != stack.size())
+					throw new RuntimeException("Illegal stack modification detected: had " + stackSizeBefore
+							+ ", now have " + stack.size());
+				stack.push(builder.Declaration_translationUnit(vf.list(children.toArray(new IValue[children.size()]))));
+
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(IASTName name) {
-				System.out.println("Name: " + name.getLastName().getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("Name: " + name.getLastName().getRawSignature());
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(IASTDeclaration declaration) {
-				System.out.println("Declaration: " + declaration.getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("Declaration: " + declaration.getRawSignature());
+
+				List<IASTNode> nodes = Arrays.asList(declaration.getChildren());
+				ctx.getStdErr().println("Declaration has " + nodes.size() + " children");
+
+				IASTNode _declSpecifier = nodes.get(0);
+				_declSpecifier.accept(this);
+				IValue declSpecifier = (IString) stack.pop();
+				IASTNode _declarator = nodes.get(1);
+				_declarator.accept(this);
+				IValue declarator = stack.pop();
+				IASTNode _statement = nodes.get(2);
+				_statement.accept(this);
+				IValue statement = stack.pop();
+
+				stack.push(builder.Declaration_declaration(declSpecifier.toString(), declarator.toString(),
+						vf.list(statement)));
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(IASTInitializer initializer) {
-				System.out.println("Initializer: " + initializer.getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("Initializer: " + initializer.getRawSignature());
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(IASTParameterDeclaration parameterDeclaration) {
-				System.out.println("ParameterDeclaration: " + parameterDeclaration.getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("ParameterDeclaration: " + parameterDeclaration.getRawSignature());
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(IASTDeclarator declarator) {
-				System.out.println("Declarator: " + declarator.getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("Declarator: " + declarator.getRawSignature());
+				stack.push(vf.string(declarator.getRawSignature()));
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(IASTDeclSpecifier declSpec) {
-				System.out.println("DeclSpecifier: " + declSpec.getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("DeclSpecifier: " + declSpec.getRawSignature());
+				stack.push(vf.string(declSpec.getRawSignature()));
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(IASTArrayModifier arrayModifier) {
-				System.out.println("ArrayModifier: " + arrayModifier.getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("ArrayModifier: " + arrayModifier.getRawSignature());
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(IASTPointerOperator ptrOperator) {
-				System.out.println("PtrOperator: " + ptrOperator.getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("PtrOperator: " + ptrOperator.getRawSignature());
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(IASTAttribute attribute) {
-				System.out.println("Attribute: " + attribute.getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("Attribute: " + attribute.getRawSignature());
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(IASTAttributeSpecifier specifier) {
-				System.out.println("Specifier: " + specifier.getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("Specifier: " + specifier.getRawSignature());
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(IASTToken token) {
-				System.out.println("Token: " + new String(token.getTokenCharImage()));
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("Token: " + new String(token.getTokenCharImage()));
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(IASTExpression expression) {
-				System.out.println("Expression: " + expression.getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("Expression: " + expression.getRawSignature());
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(IASTStatement statement) {
-				System.out.println("Statement: " + statement.getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("Statement: " + statement.getRawSignature());
+				stack.push(vf.string("FOO"));
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(IASTTypeId typeId) {
-				System.out.println("TypeId: " + typeId.getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("TypeId: " + typeId.getRawSignature());
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(IASTEnumerator enumerator) {
-				System.out.println("Enumerator: " + enumerator.getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("Enumerator: " + enumerator.getRawSignature());
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(IASTProblem problem) {
-				System.out.println("Problem: " + problem.getMessage());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("Problem: " + problem.getMessage());
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(ICPPASTBaseSpecifier baseSpecifier) {
-				System.out.println("BaseSpecifier: " + baseSpecifier.getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("BaseSpecifier: " + baseSpecifier.getRawSignature());
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(ICPPASTNamespaceDefinition namespaceDefinition) {
-				System.out.println("NamespaceDefinition: " + namespaceDefinition.getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("NamespaceDefinition: " + namespaceDefinition.getRawSignature());
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(ICPPASTTemplateParameter templateParameter) {
-				System.out.println("TemplateParameter: " + templateParameter.getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("TemplateParameter: " + templateParameter.getRawSignature());
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(ICPPASTCapture capture) {
-				System.out.println("Capture: " + capture.getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("Capture: " + capture.getRawSignature());
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(ICASTDesignator designator) {
-				System.out.println("Designator: " + designator.getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("Designator: " + designator.getRawSignature());
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(ICPPASTDesignator designator) {
-				System.out.println("DesignatorCPP: " + designator.getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("DesignatorCPP: " + designator.getRawSignature());
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(ICPPASTVirtSpecifier virtSpecifier) {
-				System.out.println("VirtSpecifier: " + virtSpecifier.getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("VirtSpecifier: " + virtSpecifier.getRawSignature());
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(ICPPASTClassVirtSpecifier classVirtSpecifier) {
-				System.out.println("ClassVirtSpecifier: " + classVirtSpecifier.getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("ClassVirtSpecifier: " + classVirtSpecifier.getRawSignature());
+				return ASTVisitor.PROCESS_ABORT;
 			}
- 
+
 			@Override
 			public int visit(ICPPASTDecltypeSpecifier decltypeSpecifier) {
-				System.out.println("DecltypeSpecifier: " + decltypeSpecifier.getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("DecltypeSpecifier: " + decltypeSpecifier.getRawSignature());
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 			@Override
 			public int visit(ASTAmbiguousNode astAmbiguousNode) {
-				System.out.println("AstAmbiguousNode: " + astAmbiguousNode.getRawSignature());
-				return ASTVisitor.PROCESS_CONTINUE;
+				ctx.getStdErr().println("AstAmbiguousNode: " + astAmbiguousNode.getRawSignature());
+				return ASTVisitor.PROCESS_ABORT;
 			}
 
 		};
-		System.out.println("Accept");
 		translationUnit.accept(visitor);
-		System.out.println("Done");
-		return root;
+		return stack.pop();
 	}
 }
