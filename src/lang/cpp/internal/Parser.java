@@ -12,11 +12,13 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -215,7 +217,27 @@ public class Parser {
 			@Override
 			public int visit(IASTStatement statement) {
 				ctx.getStdErr().println("Statement: " + statement.getRawSignature());
-				stack.push(vf.string("FOO"));
+				ctx.getStdErr().println(statement.getClass().getName());
+				ctx.getStdErr().println(statement.getClass().getSimpleName());
+				if (statement instanceof IASTCompoundStatement) {
+					visit((IASTCompoundStatement)statement);
+				} else if (statement instanceof IASTIfStatement){
+					visit((IASTIfStatement) statement);
+				} else
+					stack.push(vf.bool(false));
+				return ASTVisitor.PROCESS_ABORT;
+			}
+			
+			public int visit(IASTCompoundStatement compoundStatement) {
+				IASTNode[] statements = compoundStatement.getChildren();
+				for (IASTNode statement: statements) {
+					statement.accept(this);
+				}
+				return ASTVisitor.PROCESS_ABORT;
+			}
+			
+			public int visit(IASTIfStatement ifStatement) {
+				stack.push(builder.Statement_if(builder.Expression_null(), builder.Statement_break(), builder.Statement_break()));
 				return ASTVisitor.PROCESS_ABORT;
 			}
 
