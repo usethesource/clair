@@ -71,10 +71,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTTranslationUnit tu) {
-		ctx.getStdErr().println("TranslationUnit: " + tu.getRawSignature());
-		ctx.getStdErr().println(tu.getLinkage().getLinkageName());
-
-		ctx.getStdErr().println(tu.getDeclarations().length + " declarations");
 		List<IValue> declarations = new ArrayList<IValue>();
 		for (IASTDeclaration node : tu.getDeclarations()) {
 			node.accept(this);
@@ -94,23 +90,20 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTDeclaration declaration) {
-		ctx.getStdOut()
-				.println("Declaration: " + declaration.getRawSignature() + ", " + declaration.getClass().getName());
-
 		if (declaration instanceof IASTFunctionDefinition) {
 			visit((IASTFunctionDefinition) declaration);
 		} else if (declaration instanceof IASTSimpleDeclaration) {
 			visit((IASTSimpleDeclaration) declaration);
-		} else
+		} else {
+			ctx.getStdErr()
+					.println("Declaration: encountered non-implemented subtype " + declaration.getClass().getName());
 			stack.push(builder.Declaration_class(null));
+		}
 
 		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTSimpleDeclaration declaration) {
-		ctx.getStdOut
-
-		().println("*SimpleDeclaration*");
 		IASTDeclSpecifier _declSpecifier = declaration.getDeclSpecifier();
 		_declSpecifier.accept(this);
 		IString declSpecifier = (IString) stack.pop();
@@ -126,11 +119,9 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTFunctionDefinition definition) {
-		ctx.getStdErr().println("Functiondefinition" + definition.getRawSignature());
 		IASTDeclSpecifier _declSpecifier = definition.getDeclSpecifier();
 		IASTFunctionDeclarator _declarator = definition.getDeclarator();
 		IASTStatement _body = definition.getBody();
-		ctx.getStdOut().println("DeclSpecifier: [" + _body.getRawSignature() + "], " + _body.getClass().getName());
 
 		_declSpecifier.accept(this);
 		IString declSpecifier = (IString) stack.pop();
@@ -140,7 +131,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IConstructor body = (IConstructor) stack.pop();
 
 		stack.push(builder.Declaration_functionDefinition(declSpecifier.getValue(), declarator.getValue(), body));
-		ctx.getStdOut().println("Finished functiondefinition");
 
 		return PROCESS_ABORT;
 	}
@@ -159,14 +149,16 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTDeclarator declarator) {
-		ctx.getStdErr().println("Declarator: " + declarator.getRawSignature());
+		// ctx.getStdErr().println("Declarator: " +
+		// declarator.getRawSignature());
 		stack.push(vf.string("TODO:" + declarator.getRawSignature()));
 		return PROCESS_ABORT;
 	}
 
 	@Override
 	public int visit(IASTDeclSpecifier declSpec) {
-		ctx.getStdErr().println("DeclSpecifier: " + declSpec.getRawSignature());
+		// ctx.getStdErr().println("DeclSpecifier: " +
+		// declSpec.getRawSignature());
 		stack.push(vf.string("TODO:" + declSpec.getRawSignature()));
 		return PROCESS_ABORT;
 	}
@@ -202,16 +194,18 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	@Override
-	public int visit(IASTExpression expression) {// TODO
-		ctx.getStdErr().println("Expression: " + expression.getRawSignature() + ", " + expression.getClass().getName());
+	public int visit(IASTExpression expression) {
 		if (expression instanceof IASTBinaryExpression)
 			visit((IASTBinaryExpression) expression);
 		else if (expression instanceof IASTIdExpression)
 			visit((IASTIdExpression) expression);
 		else if (expression instanceof IASTLiteralExpression)
 			visit((IASTLiteralExpression) expression);
-		else
+		else {
+			ctx.getStdErr()
+					.println("Expression: encountered non-implemented subtype " + expression.getClass().getName());
 			stack.push(vf.string("TODO:" + expression.getRawSignature()));
+		}
 		return PROCESS_ABORT;
 	}
 
@@ -229,14 +223,11 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTBinaryExpression expression) {
-		ctx.getStdErr().println("BinaryExpression: " + expression.getRawSignature());
 		IASTExpression _lhs = expression.getOperand1();
-		ctx.getStdOut().println("Operand1: " + _lhs.getClass().getName());
 		_lhs.accept(this);
 		IConstructor lhs = (IConstructor) stack.pop();
 		int op = expression.getOperator();
 		IASTExpression _rhs = expression.getOperand2();
-		ctx.getStdOut().println("Operand2: " + _lhs.getClass().getName());
 		_rhs.accept(this);
 		IConstructor rhs = (IConstructor) stack.pop();
 
@@ -351,9 +342,8 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTStatement statement) {
-		ctx.getStdErr().println("Statement: " + statement.getRawSignature());
-		ctx.getStdErr().println(statement.getClass().getName());
-		ctx.getStdErr().println(statement.getClass().getSimpleName());
+		// ctx.getStdErr().println("Statement: " + statement.getRawSignature() +
+		// ", " + statement.getClass().getName());
 		if (statement instanceof IASTCompoundStatement) {
 			visit((IASTCompoundStatement) statement);
 		} else if (statement instanceof IASTDeclarationStatement) {
@@ -362,42 +352,35 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			visit((IASTExpressionStatement) statement);
 		} else if (statement instanceof IASTIfStatement) {
 			visit((IASTIfStatement) statement);
-		} else
+		} else {
+			ctx.getStdErr().println("Statement: encountered non-implemented subtype " + statement.getClass().getName());
 			stack.push(vf.bool(false));
+		}
 		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTCompoundStatement compoundStatement) {
-		ctx.getStdOut().println("Compound statement with " + compoundStatement.getChildren().length + " children");
 		IASTStatement[] _statements = compoundStatement.getStatements();
 		List<IValue> statements = new ArrayList<IValue>();
 		for (IASTStatement statement : _statements) {
-			ctx.getStdOut().println("Child: " + statement.getRawSignature());
 			statement.accept(this);
-			IConstructor value = (IConstructor) stack.pop();
-			ctx.getStdOut().println("Value: " + value.getName() + " " + value.getConstructorType());
-			statements.add(value);
+			statements.add((IConstructor) stack.pop());
 		}
 		stack.push(builder.Statement_compoundStatement(vf.list(statements.toArray(new IValue[statements.size()]))));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTDeclarationStatement statement) {
-		ctx.getStdOut().println("DeclarationStatement: " + statement.getRawSignature());
 		IASTDeclaration _declaration = statement.getDeclaration();
 		_declaration.accept(this);
-		IConstructor declaration = (IConstructor) stack.pop();
-		stack.push(builder.Statement_declarationStatement(declaration));
+		stack.push(builder.Statement_declarationStatement((IConstructor) stack.pop()));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTExpressionStatement statement) {
-		ctx.getStdOut()
-				.println("ExpressionStatement: " + statement.getRawSignature() + ", " + statement.getClass().getName());
 		IASTExpression _expression = statement.getExpression();
 		_expression.accept(this);
-		IConstructor expression = (IConstructor) stack.pop();
-		stack.push(builder.Statement_expressionStatement(expression));
+		stack.push(builder.Statement_expressionStatement((IConstructor) stack.pop()));
 		return PROCESS_ABORT;
 	}
 
