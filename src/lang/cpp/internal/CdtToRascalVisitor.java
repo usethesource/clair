@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTToken;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
@@ -202,11 +203,82 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			visit((IASTIdExpression) expression);
 		else if (expression instanceof IASTLiteralExpression)
 			visit((IASTLiteralExpression) expression);
+		else if (expression instanceof IASTUnaryExpression)
+			visit((IASTUnaryExpression) expression);
 		else {
 			ctx.getStdErr()
 					.println("Expression: encountered non-implemented subtype " + expression.getClass().getName());
 			stack.push(vf.string("TODO:" + expression.getRawSignature()));
 		}
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTUnaryExpression expression) {
+		int operator = expression.getOperator();
+		IASTExpression _operand = expression.getOperand();
+		_operand.accept(this);
+		IConstructor $expression = (IConstructor) stack.pop();
+
+		switch (operator) {
+		case 0:
+			stack.push(builder.Expression_prefixIncr($expression));
+			break;
+		case 1:
+			stack.push(builder.Expression_prefixDecr($expression));
+			break;
+		case 2:
+			stack.push(builder.Expression_plus($expression));
+			break;
+		case 3:
+			stack.push(builder.Expression_minus($expression));
+			break;
+		case 4:
+			stack.push(builder.Expression_star($expression));
+			break;
+		case 5:
+			stack.push(builder.Expression_amper($expression));
+			break;
+		case 6:
+			stack.push(builder.Expression_tilde($expression));
+			break;
+		case 7:
+			stack.push(builder.Expression_not($expression));
+			break;
+		case 8:
+			stack.push(builder.Expression_sizeof($expression));
+			break;
+		case 9:
+			stack.push(builder.Expression_postfixIncr($expression));
+			break;
+		case 10:
+			stack.push(builder.Expression_postfixDecr($expression));
+			break;
+		case 11:
+			stack.push(builder.Expression_bracketed($expression));
+			break;
+		case 12:
+			stack.push(builder.Expression_throw($expression));
+			break;
+		case 13:
+			stack.push(builder.Expression_typeid($expression));
+			break;
+		// case 14: typeId is deprecated
+		case 15:
+			stack.push(builder.Expression_alignOf($expression));
+			break;
+		case 16:
+			stack.push(builder.Expression_sizeofParameterPack($expression));
+			break;
+		case 17:
+			stack.push(builder.Expression_noexcept($expression));
+			break;
+		case 18:
+			stack.push(builder.Expression_labelReference($expression));
+			break;
+		default:
+			throw new RuntimeException("Unknown unary operator " + operator + ". Exiting");
+		}
+
 		return PROCESS_ABORT;
 	}
 
