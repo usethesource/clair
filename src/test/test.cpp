@@ -1,4 +1,7 @@
 void main() {
 	int x;
-	x = 3 + 4;
+	if (true)
+		x = 3 + 4;
+	else
+		x = 107%3;
 }

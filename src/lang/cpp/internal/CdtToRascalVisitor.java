@@ -384,10 +384,23 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(IASTIfStatement ifStatement) {
-		// TODO
-		stack.push(
-				builder.Statement_if(builder.Expression_null(), builder.Statement_break(), builder.Statement_break()));
+	public int visit(IASTIfStatement statement) {
+		IASTExpression _condition = statement.getConditionExpression();
+		IASTStatement _thenClause = statement.getThenClause();
+		IASTStatement _elseClause = statement.getElseClause();
+
+		_condition.accept(this);
+		IConstructor condition = (IConstructor) stack.pop();
+		_thenClause.accept(this);
+		IConstructor thenClause = (IConstructor) stack.pop();
+
+		if (_elseClause == null) {
+			stack.push(builder.Statement_if(condition, thenClause));
+		} else {
+			_elseClause.accept(this);
+			IConstructor elseClause = (IConstructor) stack.pop();
+			stack.push(builder.Statement_if(condition, thenClause, elseClause));
+		}
 		return PROCESS_ABORT;
 	}
 
