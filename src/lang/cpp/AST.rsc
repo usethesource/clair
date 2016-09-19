@@ -116,6 +116,8 @@ data Statement
     = \compoundStatement(list[Statement] statements)
     | \declarationStatement(Declaration declaration)
     | \expressionStatement(Expression expression)
+    | \if(Expression condition, Statement thenClause)
+    | \if(Expression condition, Statement thenClause, Statement elseClause)
     
     | \assert(Expression expression)
     | \assert(Expression expression, Expression message)
@@ -129,8 +131,6 @@ data Statement
     | \foreach(Declaration parameter, Expression collection, Statement body)
     | \for(list[Expression] initializers, Expression condition, list[Expression] updaters, Statement body)
     | \for(list[Expression] initializers, list[Expression] updaters, Statement body)
-    | \if(Expression condition, Statement thenBranch)
-    | \if(Expression condition, Statement thenBranch, Statement elseBranch)
     | \label(str name, Statement body)
     | \return(Expression expression)
     | \return()
