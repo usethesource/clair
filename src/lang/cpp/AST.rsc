@@ -71,6 +71,9 @@ data Expression
     | \min(Expression lhs, Expression rhs) //g++ only
     | \ellipses(Expression lhs, Expression rhs) //g++ only
     
+    | \name(str name)
+    | \integerLiteral(int number)
+    
     | \arrayAccess(Expression array, Expression index)
     | \newArray(Type \type, list[Expression] dimensions, Expression init)
     | \newArray(Type \type, list[Expression] dimensions)
@@ -112,6 +115,7 @@ data Expression
 data Statement              
     = \compoundStatement(list[Statement] statements)
     | \declarationStatement(Declaration declaration)
+    | \expressionStatement(Expression expression)
     
     | \assert(Expression expression)
     | \assert(Expression expression, Expression message)
@@ -140,7 +144,7 @@ data Statement
     | \catch(Declaration exception, Statement body)
     //| \declarationStatement(Declaration declaration)
     | \while(Expression condition, Statement body)
-    | \expressionStatement(Expression stmt)
+    //| \expressionStatement(Expression stmt)
     | \constructorCall(bool isSuper, Expression expr, list[Expression] arguments)
     | \constructorCall(bool isSuper, list[Expression] arguments)
     ;           

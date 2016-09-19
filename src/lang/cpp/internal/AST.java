@@ -78,8 +78,6 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"enumConstant",tf.stringType(),"name",tf.listType(_Expression),"arguments",_Declaration,"class");
   
   
-  private static final Type _Expression_minus_2 
-    = tf.constructor(typestore,_Expression,"minus",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_assignment_3 
     = tf.constructor(typestore,_Expression,"assignment",_Expression,"lhs",tf.stringType(),"operator",_Expression,"rhs");
   private static final Type _Expression_characterLiteral_1 
@@ -92,6 +90,10 @@ public class AST {
     = tf.constructor(typestore,_Expression,"bracket",_Expression,"expression");
   private static final Type _Expression_newArray_2 
     = tf.constructor(typestore,_Expression,"newArray",_Type,"type",tf.listType(_Expression),"dimensions");
+  private static final Type _Expression_minus_2 
+    = tf.constructor(typestore,_Expression,"minus",_Expression,"lhs",_Expression,"rhs");
+  private static final Type _Expression_name_1 
+    = tf.constructor(typestore,_Expression,"name",tf.stringType(),"name");
   private static final Type _Expression_min_2 
     = tf.constructor(typestore,_Expression,"min",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_notEquals_2 
@@ -190,6 +192,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"fieldAccess",tf.boolType(),"isSuper",tf.stringType(),"name");
   private static final Type _Expression_conditional_3 
     = tf.constructor(typestore,_Expression,"conditional",_Expression,"expression",_Expression,"thenBranch",_Expression,"elseBranch");
+  private static final Type _Expression_integerLiteral_1 
+    = tf.constructor(typestore,_Expression,"integerLiteral",tf.integerType(),"number");
   private static final Type _Expression_super_0 
     = tf.constructor(typestore,_Expression,"super");
   private static final Type _Expression_logicalOr_2 
@@ -270,12 +274,8 @@ public class AST {
     = tf.constructor(typestore,_Statement,"return");
   private static final Type _Statement_constructorCall_3 
     = tf.constructor(typestore,_Statement,"constructorCall",tf.boolType(),"isSuper",_Expression,"expr",tf.listType(_Expression),"arguments");
-  private static final Type _Statement_switch_2 
-    = tf.constructor(typestore,_Statement,"switch",_Expression,"expression",tf.listType(_Statement),"statements");
   private static final Type _Statement_continue_0 
     = tf.constructor(typestore,_Statement,"continue");
-  private static final Type _Statement_expressionStatement_1 
-    = tf.constructor(typestore,_Statement,"expressionStatement",_Expression,"stmt");
   private static final Type _Statement_if_2 
     = tf.constructor(typestore,_Statement,"if",_Expression,"condition",_Statement,"thenBranch");
   private static final Type _Statement_block_1 
@@ -308,6 +308,10 @@ public class AST {
     = tf.constructor(typestore,_Statement,"empty");
   private static final Type _Statement_declarationStatement_1 
     = tf.constructor(typestore,_Statement,"declarationStatement",_Declaration,"declaration");
+  private static final Type _Statement_switch_2 
+    = tf.constructor(typestore,_Statement,"switch",_Expression,"expression",tf.listType(_Statement),"statements");
+  private static final Type _Statement_expressionStatement_1 
+    = tf.constructor(typestore,_Statement,"expressionStatement",_Expression,"expression");
   private static final Type _Statement_case_1 
     = tf.constructor(typestore,_Statement,"case",_Expression,"expression");
   private static final Type _Statement_return_1 
@@ -472,10 +476,6 @@ public class AST {
   }
     
   
-  public IConstructor Expression_minus( IConstructor $lhs, IConstructor $rhs) {
-    return vf.constructor(_Expression_minus_2 , $lhs, $rhs);
-  }
-  
   public IConstructor Expression_assignment( IConstructor $lhs, String $operator, IConstructor $rhs) {
     return vf.constructor(_Expression_assignment_3 , $lhs, vf.string($operator), $rhs);
   }
@@ -498,6 +498,14 @@ public class AST {
   
   public IConstructor Expression_newArray( IConstructor $type, IList $dimensions) {
     return vf.constructor(_Expression_newArray_2 , $type, $dimensions);
+  }
+  
+  public IConstructor Expression_minus( IConstructor $lhs, IConstructor $rhs) {
+    return vf.constructor(_Expression_minus_2 , $lhs, $rhs);
+  }
+  
+  public IConstructor Expression_name( String $name) {
+    return vf.constructor(_Expression_name_1 , vf.string($name));
   }
   
   public IConstructor Expression_min( IConstructor $lhs, IConstructor $rhs) {
@@ -696,6 +704,10 @@ public class AST {
     return vf.constructor(_Expression_conditional_3 , $expression, $thenBranch, $elseBranch);
   }
   
+  public IConstructor Expression_integerLiteral( IValue $number) {
+    return vf.constructor(_Expression_integerLiteral_1 , $number);
+  }
+  
   public IConstructor Expression_super() {
     return vf.constructor(_Expression_super_0 );
   }
@@ -850,16 +862,8 @@ public class AST {
     return vf.constructor(_Statement_constructorCall_3 , vf.bool($isSuper), $expr, $arguments);
   }
   
-  public IConstructor Statement_switch( IConstructor $expression, IList $statements) {
-    return vf.constructor(_Statement_switch_2 , $expression, $statements);
-  }
-  
   public IConstructor Statement_continue() {
     return vf.constructor(_Statement_continue_0 );
-  }
-  
-  public IConstructor Statement_expressionStatement( IConstructor $stmt) {
-    return vf.constructor(_Statement_expressionStatement_1 , $stmt);
   }
   
   public IConstructor Statement_if( IConstructor $condition, IConstructor $thenBranch) {
@@ -924,6 +928,14 @@ public class AST {
   
   public IConstructor Statement_declarationStatement( IConstructor $declaration) {
     return vf.constructor(_Statement_declarationStatement_1 , $declaration);
+  }
+  
+  public IConstructor Statement_switch( IConstructor $expression, IList $statements) {
+    return vf.constructor(_Statement_switch_2 , $expression, $statements);
+  }
+  
+  public IConstructor Statement_expressionStatement( IConstructor $expression) {
+    return vf.constructor(_Statement_expressionStatement_1 , $expression);
   }
   
   public IConstructor Statement_case( IConstructor $expression) {

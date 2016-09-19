@@ -1,8 +1,6 @@
 package lang.cpp.internal;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
@@ -18,12 +16,14 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
@@ -80,7 +80,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			node.accept(this);
 			declarations.add(stack.pop());
 		}
-		Collections.reverse(declarations);
 
 		stack.push(builder.Declaration_translationUnit(vf.list(declarations.toArray(new IValue[declarations.size()]))));
 
@@ -95,11 +94,8 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTDeclaration declaration) {
-		ctx.getStdErr().println("Declaration: " + declaration.getRawSignature());
-		ctx.getStdErr().println(declaration.getClass().getName());
-
-		List<IASTNode> nodes = Arrays.asList(declaration.getChildren());
-		ctx.getStdErr().println("Declaration has " + nodes.size() + " children");
+		ctx.getStdOut()
+				.println("Declaration: " + declaration.getRawSignature() + ", " + declaration.getClass().getName());
 
 		if (declaration instanceof IASTFunctionDefinition) {
 			visit((IASTFunctionDefinition) declaration);
@@ -108,23 +104,13 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		} else
 			stack.push(builder.Declaration_class(null));
 
-		// IASTNode _declSpecifier = nodes.get(0);
-		// _declSpecifier.accept(this);
-		// IValue declSpecifier = (IString) stack.pop();
-		// IASTNode _declarator = nodes.get(1);
-		// _declarator.accept(this);
-		// IValue declarator = stack.pop();
-		// IASTNode _statement = nodes.get(2);
-		// _statement.accept(this);
-		// IValue statement = stack.pop();
-
-		// stack.push(builder.Declaration_declaration(declSpecifier.toString(),
-		// declarator.toString(), null));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTSimpleDeclaration declaration) {
-		ctx.getStdOut().println("*SimpleDeclaration*");
+		ctx.getStdOut
+
+		().println("*SimpleDeclaration*");
 		IASTDeclSpecifier _declSpecifier = declaration.getDeclSpecifier();
 		_declSpecifier.accept(this);
 		IString declSpecifier = (IString) stack.pop();
@@ -134,7 +120,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			declarator.accept(this);
 			declarators.add(stack.pop());
 		}
-		Collections.reverse(declarators);
 		stack.push(builder.Declaration_simpleDeclaration(declSpecifier.getValue(),
 				vf.list(declarators.toArray(new IValue[declarators.size()]))));
 		return PROCESS_ABORT;
@@ -217,8 +202,29 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	@Override
-	public int visit(IASTExpression expression) {
-		ctx.getStdErr().println("Expression: " + expression.getRawSignature());
+	public int visit(IASTExpression expression) {// TODO
+		ctx.getStdErr().println("Expression: " + expression.getRawSignature() + ", " + expression.getClass().getName());
+		if (expression instanceof IASTBinaryExpression)
+			visit((IASTBinaryExpression) expression);
+		else if (expression instanceof IASTIdExpression)
+			visit((IASTIdExpression) expression);
+		else if (expression instanceof IASTLiteralExpression)
+			visit((IASTLiteralExpression) expression);
+		else
+			stack.push(vf.string("TODO:" + expression.getRawSignature()));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTLiteralExpression expression) {
+		ctx.getStdOut()
+				.println("LiteralExpression: " + expression.getRawSignature() + ", " + expression.getExpressionType());
+		stack.push(builder.Expression_integerLiteral(vf.integer(42)));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTIdExpression expression) {
+		ctx.getStdOut().println("IdExpression: " + expression.getName().toString());
+		stack.push(builder.Expression_name(expression.getName().toString()));
 		return PROCESS_ABORT;
 	}
 
@@ -352,6 +358,8 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			visit((IASTCompoundStatement) statement);
 		} else if (statement instanceof IASTDeclarationStatement) {
 			visit((IASTDeclarationStatement) statement);
+		} else if (statement instanceof IASTExpressionStatement) {
+			visit((IASTExpressionStatement) statement);
 		} else if (statement instanceof IASTIfStatement) {
 			visit((IASTIfStatement) statement);
 		} else
@@ -366,11 +374,10 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		for (IASTStatement statement : _statements) {
 			ctx.getStdOut().println("Child: " + statement.getRawSignature());
 			statement.accept(this);
-			statements.add(stack.pop());
+			IConstructor value = (IConstructor) stack.pop();
+			ctx.getStdOut().println("Value: " + value.getName() + " " + value.getConstructorType());
+			statements.add(value);
 		}
-		Collections.reverse(statements);
-		ctx.getStdOut()
-				.println("FOOOOO " + vf.list(statements.toArray(new IValue[statements.size()])).getClass().getName());
 		stack.push(builder.Statement_compoundStatement(vf.list(statements.toArray(new IValue[statements.size()]))));
 		return PROCESS_ABORT;
 	}
@@ -381,6 +388,16 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		_declaration.accept(this);
 		IConstructor declaration = (IConstructor) stack.pop();
 		stack.push(builder.Statement_declarationStatement(declaration));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTExpressionStatement statement) {
+		ctx.getStdOut()
+				.println("ExpressionStatement: " + statement.getRawSignature() + ", " + statement.getClass().getName());
+		IASTExpression _expression = statement.getExpression();
+		_expression.accept(this);
+		IConstructor expression = (IConstructor) stack.pop();
+		stack.push(builder.Statement_expressionStatement(expression));
 		return PROCESS_ABORT;
 	}
 
