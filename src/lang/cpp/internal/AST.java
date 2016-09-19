@@ -264,8 +264,6 @@ public class AST {
   
   private static final Type _Statement_constructorCall_2 
     = tf.constructor(typestore,_Statement,"constructorCall",tf.boolType(),"isSuper",tf.listType(_Expression),"arguments");
-  private static final Type _Statement_do_2 
-    = tf.constructor(typestore,_Statement,"do",_Statement,"body",_Expression,"condition");
   private static final Type _Statement_catch_2 
     = tf.constructor(typestore,_Statement,"catch",_Declaration,"exception",_Statement,"body");
   private static final Type _Statement_defaultCase_0 
@@ -274,14 +272,10 @@ public class AST {
     = tf.constructor(typestore,_Statement,"return");
   private static final Type _Statement_constructorCall_3 
     = tf.constructor(typestore,_Statement,"constructorCall",tf.boolType(),"isSuper",_Expression,"expr",tf.listType(_Expression),"arguments");
-  private static final Type _Statement_continue_0 
-    = tf.constructor(typestore,_Statement,"continue");
-  private static final Type _Statement_if_2 
-    = tf.constructor(typestore,_Statement,"if",_Expression,"condition",_Statement,"thenBranch");
+  private static final Type _Statement_compoundStatement_1 
+    = tf.constructor(typestore,_Statement,"compoundStatement",tf.listType(_Statement),"statements");
   private static final Type _Statement_block_1 
     = tf.constructor(typestore,_Statement,"block",tf.listType(_Statement),"statements");
-  private static final Type _Statement_for_4 
-    = tf.constructor(typestore,_Statement,"for",tf.listType(_Expression),"initializers",_Expression,"condition",tf.listType(_Expression),"updaters",_Statement,"body");
   private static final Type _Statement_break_0 
     = tf.constructor(typestore,_Statement,"break");
   private static final Type _Statement_assert_2 
@@ -292,6 +286,10 @@ public class AST {
     = tf.constructor(typestore,_Statement,"assert",_Expression,"expression");
   private static final Type _Statement_synchronizedStatement_2 
     = tf.constructor(typestore,_Statement,"synchronizedStatement",_Expression,"lock",_Statement,"body");
+  private static final Type _Statement_if_2 
+    = tf.constructor(typestore,_Statement,"if",_Expression,"condition",_Statement,"thenClause");
+  private static final Type _Statement_do_2 
+    = tf.constructor(typestore,_Statement,"do",_Statement,"body",_Expression,"condition");
   private static final Type _Statement_break_1 
     = tf.constructor(typestore,_Statement,"break",tf.stringType(),"label");
   private static final Type _Statement_for_3 
@@ -300,6 +298,8 @@ public class AST {
     = tf.constructor(typestore,_Statement,"while",_Expression,"condition",_Statement,"body");
   private static final Type _Statement_try_3 
     = tf.constructor(typestore,_Statement,"try",_Statement,"body",tf.listType(_Statement),"catchClauses",_Statement,"finally");
+  private static final Type _Statement_if_3 
+    = tf.constructor(typestore,_Statement,"if",_Expression,"condition",_Statement,"thenClause",_Statement,"elseClause");
   private static final Type _Statement_foreach_3 
     = tf.constructor(typestore,_Statement,"foreach",_Declaration,"parameter",_Expression,"collection",_Statement,"body");
   private static final Type _Statement_continue_1 
@@ -316,14 +316,14 @@ public class AST {
     = tf.constructor(typestore,_Statement,"case",_Expression,"expression");
   private static final Type _Statement_return_1 
     = tf.constructor(typestore,_Statement,"return",_Expression,"expression");
-  private static final Type _Statement_if_3 
-    = tf.constructor(typestore,_Statement,"if",_Expression,"condition",_Statement,"thenBranch",_Statement,"elseBranch");
-  private static final Type _Statement_compoundStatement_1 
-    = tf.constructor(typestore,_Statement,"compoundStatement",tf.listType(_Statement),"statements");
   private static final Type _Statement_try_2 
     = tf.constructor(typestore,_Statement,"try",_Statement,"body",tf.listType(_Statement),"catchClauses");
   private static final Type _Statement_label_2 
     = tf.constructor(typestore,_Statement,"label",tf.stringType(),"name",_Statement,"body");
+  private static final Type _Statement_continue_0 
+    = tf.constructor(typestore,_Statement,"continue");
+  private static final Type _Statement_for_4 
+    = tf.constructor(typestore,_Statement,"for",_Statement,"initializer",_Expression,"condition",_Expression,"updater",_Statement,"body");
   
   
   private static final Type _Modifier_abstract_0 
@@ -842,10 +842,6 @@ public class AST {
     return vf.constructor(_Statement_constructorCall_2 , vf.bool($isSuper), $arguments);
   }
   
-  public IConstructor Statement_do( IConstructor $body, IConstructor $condition) {
-    return vf.constructor(_Statement_do_2 , $body, $condition);
-  }
-  
   public IConstructor Statement_catch( IConstructor $exception, IConstructor $body) {
     return vf.constructor(_Statement_catch_2 , $exception, $body);
   }
@@ -862,20 +858,12 @@ public class AST {
     return vf.constructor(_Statement_constructorCall_3 , vf.bool($isSuper), $expr, $arguments);
   }
   
-  public IConstructor Statement_continue() {
-    return vf.constructor(_Statement_continue_0 );
-  }
-  
-  public IConstructor Statement_if( IConstructor $condition, IConstructor $thenBranch) {
-    return vf.constructor(_Statement_if_2 , $condition, $thenBranch);
+  public IConstructor Statement_compoundStatement( IList $statements) {
+    return vf.constructor(_Statement_compoundStatement_1 , $statements);
   }
   
   public IConstructor Statement_block( IList $statements) {
     return vf.constructor(_Statement_block_1 , $statements);
-  }
-  
-  public IConstructor Statement_for( IList $initializers, IConstructor $condition, IList $updaters, IConstructor $body) {
-    return vf.constructor(_Statement_for_4 , $initializers, $condition, $updaters, $body);
   }
   
   public IConstructor Statement_break() {
@@ -898,6 +886,14 @@ public class AST {
     return vf.constructor(_Statement_synchronizedStatement_2 , $lock, $body);
   }
   
+  public IConstructor Statement_if( IConstructor $condition, IConstructor $thenClause) {
+    return vf.constructor(_Statement_if_2 , $condition, $thenClause);
+  }
+  
+  public IConstructor Statement_do( IConstructor $body, IConstructor $condition) {
+    return vf.constructor(_Statement_do_2 , $body, $condition);
+  }
+  
   public IConstructor Statement_break( String $label) {
     return vf.constructor(_Statement_break_1 , vf.string($label));
   }
@@ -912,6 +908,10 @@ public class AST {
   
   public IConstructor Statement_try( IConstructor $body, IList $catchClauses, IConstructor $finally) {
     return vf.constructor(_Statement_try_3 , $body, $catchClauses, $finally);
+  }
+  
+  public IConstructor Statement_if( IConstructor $condition, IConstructor $thenClause, IConstructor $elseClause) {
+    return vf.constructor(_Statement_if_3 , $condition, $thenClause, $elseClause);
   }
   
   public IConstructor Statement_foreach( IConstructor $parameter, IConstructor $collection, IConstructor $body) {
@@ -946,20 +946,20 @@ public class AST {
     return vf.constructor(_Statement_return_1 , $expression);
   }
   
-  public IConstructor Statement_if( IConstructor $condition, IConstructor $thenBranch, IConstructor $elseBranch) {
-    return vf.constructor(_Statement_if_3 , $condition, $thenBranch, $elseBranch);
-  }
-  
-  public IConstructor Statement_compoundStatement( IList $statements) {
-    return vf.constructor(_Statement_compoundStatement_1 , $statements);
-  }
-  
   public IConstructor Statement_try( IConstructor $body, IList $catchClauses) {
     return vf.constructor(_Statement_try_2 , $body, $catchClauses);
   }
   
   public IConstructor Statement_label( String $name, IConstructor $body) {
     return vf.constructor(_Statement_label_2 , vf.string($name), $body);
+  }
+  
+  public IConstructor Statement_continue() {
+    return vf.constructor(_Statement_continue_0 );
+  }
+  
+  public IConstructor Statement_for( IConstructor $initializer, IConstructor $condition, IConstructor $updater, IConstructor $body) {
+    return vf.constructor(_Statement_for_4 , $initializer, $condition, $updater, $body);
   }
     
   

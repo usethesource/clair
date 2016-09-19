@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
+import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -352,10 +353,32 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			visit((IASTExpressionStatement) statement);
 		} else if (statement instanceof IASTIfStatement) {
 			visit((IASTIfStatement) statement);
+		} else if (statement instanceof IASTForStatement) {
+			visit((IASTForStatement) statement);
 		} else {
 			ctx.getStdErr().println("Statement: encountered non-implemented subtype " + statement.getClass().getName());
 			stack.push(vf.bool(false));
 		}
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTForStatement forStatement) {
+		IASTStatement _initializer = forStatement.getInitializerStatement();
+		IASTExpression _condition = forStatement.getConditionExpression();
+		IASTExpression _iteration = forStatement.getIterationExpression();
+		IASTStatement _body = forStatement.getBody();
+
+		_initializer.accept(this);
+		IConstructor initializer = (IConstructor) stack.pop();
+		_condition.accept(this);
+		IConstructor condition = (IConstructor) stack.pop();
+		_iteration.accept(this);
+		IConstructor iteration = (IConstructor) stack.pop();
+		_body.accept(this);
+		IConstructor body = (IConstructor) stack.pop();
+
+		stack.push(builder.Statement_for(initializer, condition, iteration, body));
+
 		return PROCESS_ABORT;
 	}
 

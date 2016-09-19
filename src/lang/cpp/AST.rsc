@@ -118,6 +118,7 @@ data Statement
     | \expressionStatement(Expression expression)
     | \if(Expression condition, Statement thenClause)
     | \if(Expression condition, Statement thenClause, Statement elseClause)
+    | \for(Statement initializer, Expression condition, Expression iteration, Statement body)
     
     | \assert(Expression expression)
     | \assert(Expression expression, Expression message)
@@ -129,8 +130,7 @@ data Statement
     | \do(Statement body, Expression condition)
     | \empty()
     | \foreach(Declaration parameter, Expression collection, Statement body)
-    | \for(list[Expression] initializers, Expression condition, list[Expression] updaters, Statement body)
-    | \for(list[Expression] initializers, list[Expression] updaters, Statement body)
+    //| \for(list[Expression] initializers, list[Expression] updaters, Statement body)
     | \label(str name, Statement body)
     | \return(Expression expression)
     | \return()
