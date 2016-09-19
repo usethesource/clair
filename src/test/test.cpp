@@ -1,5 +1,4 @@
 void main() {
-	if (1)
-		return 0;
-	return 1;
+	int x;
+	x = 3 + 4;
 }

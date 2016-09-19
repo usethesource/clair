@@ -33,8 +33,43 @@ data Declaration
     ;
 
 
-data Expression 
-    = \arrayAccess(Expression array, Expression index)
+data Expression
+    = \multiply(Expression lhs, Expression rhs)
+    | \divide(Expression lhs, Expression rhs)
+    | \modulo(Expression lhs, Expression rhs)
+    | \plus(Expression lhs, Expression rhs)
+    | \minus(Expression lhs, Expression rhs)
+    | \shiftLeft(Expression lhs, Expression rhs)
+    | \shiftRight(Expression lhs, Expression rhs)
+    | \lessThan(Expression lhs, Expression rhs)
+    | \greaterThan(Expression lhs, Expression rhs)
+    | \lessEqual(Expression lhs, Expression rhs)
+    | \greaterEqual(Expression lhs, Expression rhs)
+    | \binaryAnd(Expression lhs, Expression rhs)
+    | \binaryXor(Expression lhs, Expression rhs)
+    | \binaryOr(Expression lhs, Expression rhs)
+    | \logicalAnd(Expression lhs, Expression rhs)
+    | \logicalOr(Expression lhs, Expression rhs)
+    | \assign(Expression lhs, Expression rhs)
+    | \multiplyAssign(Expression lhs, Expression rhs)
+    | \divideAssign(Expression lhs, Expression rhs)
+    | \moduloAssign(Expression lhs, Expression rhs)
+    | \plusAssign(Expression lhs, Expression rhs)
+    | \minusAssign(Expression lhs, Expression rhs)
+    | \shiftLeftAssign(Expression lhs, Expression rhs)
+    | \shiftRightAssign(Expression lhs, Expression rhs)
+    | \binaryAndAssign(Expression lhs, Expression rhs)
+    | \binaryXorAssign(Expression lhs, Expression rhs)
+    | \binaryOrAssign(Expression lhs, Expression rhs)
+    | \equals(Expression lhs, Expression rhs)
+    | \notEquals(Expression lhs, Expression rhs)
+    | \pmDot(Expression lhs, Expression rhs) //c++ only
+    | \pmArrow(Expression lhs, Expression rhs) //c++ only
+    | \max(Expression lhs, Expression rhs) //g++ only
+    | \min(Expression lhs, Expression rhs) //g++ only
+    | \ellipses(Expression lhs, Expression rhs) //g++ only
+    
+    | \arrayAccess(Expression array, Expression index)
     | \newArray(Type \type, list[Expression] dimensions, Expression init)
     | \newArray(Type \type, list[Expression] dimensions)
     | \arrayInitializer(list[Expression] elements)
@@ -73,7 +108,10 @@ data Expression
     ;                       
   
 data Statement              
-    = \assert(Expression expression)
+    = \compoundStatement(list[Statement] statements)
+    | \declarationStatement(Declaration declaration)
+    
+    | \assert(Expression expression)
     | \assert(Expression expression, Expression message)
     | \block(list[Statement] statements)
     | \break()
@@ -98,7 +136,7 @@ data Statement
     | \try(Statement body, list[Statement] catchClauses)
     | \try(Statement body, list[Statement] catchClauses, Statement \finally)                                        
     | \catch(Declaration exception, Statement body)
-    | \declarationStatement(Declaration declaration)
+    //| \declarationStatement(Declaration declaration)
     | \while(Expression condition, Statement body)
     | \expressionStatement(Expression stmt)
     | \constructorCall(bool isSuper, Expression expr, list[Expression] arguments)
@@ -127,7 +165,15 @@ data Type
     ;
  
 data Modifier
-    = \private()
+    = \unspecified()
+    | typedef()
+    | \extern()
+    | \static()
+    | \auto()
+    | \register()
+    | \mutable()
+    
+    | \private()
     | \public()
     | \protected()
     | \friendly()
