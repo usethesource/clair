@@ -71,6 +71,26 @@ data Expression
     | \min(Expression lhs, Expression rhs) //g++ only
     | \ellipses(Expression lhs, Expression rhs) //g++ only
     
+    | \prefixIncr(Expression expression)    //++exp
+    | \prefixDecr(Expression expression)    //--exp
+    | \plus(Expression expression)          //+exp
+    | \minus(Expression expression)         //-exp
+    | \star(Expression expression)          //*exp
+    | \amper(Expression expression)         //&exp
+    | \tilde(Expression expression)         //~exp
+    | \not(Expression expression)           //!exp
+    | \sizeof(Expression expression)        //sizeof exp
+    | \postfixIncr(Expression expression)   //exp++
+    | \postfixDecr(Expression expression)   //exp--
+    | \bracketed(Expression expression)     //(exp)
+    | \throw(Expression expression)         //throw exp, c++ only
+    | \typeid(Expression expression)        //typeid exp, c++ only
+    //| \typeof(Expression expression)        //typeof exp, deprecated
+    | \alignOf(Expression expression)       //__alignOf(exp), gcc only
+    | \sizeofParameterPack(Expression expression) //sizeof...(parameterpack), c++ only?
+    | \noexcept(Expression expression)      //noexcept (exp), c++ only
+    | \labelReference(Expression expression)//&&label, gcc only?
+    
     | \name(str name)
     | \integerLiteral(int number)
     
