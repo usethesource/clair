@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.rascalmpl.interpreter.IEvaluatorContext;
 import org.rascalmpl.value.IConstructor;
+import org.rascalmpl.value.IString;
 import org.rascalmpl.value.IValue;
 import org.rascalmpl.value.IValueFactory;
 
@@ -72,21 +73,16 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	public int visit(IASTTranslationUnit tu) {
 		ctx.getStdErr().println("TranslationUnit: " + tu.getRawSignature());
 		ctx.getStdErr().println(tu.getLinkage().getLinkageName());
-		System.exit(1);
-		ctx.getStdErr().println(tu.getChildren().length + " children");
-		int stackSizeBefore = stack.size();
-		for (IASTNode node : tu.getChildren())
+
+		ctx.getStdErr().println(tu.getDeclarations().length + " declarations");
+		List<IValue> declarations = new ArrayList<IValue>();
+		for (IASTDeclaration node : tu.getDeclarations()) {
 			node.accept(this);
+			declarations.add(stack.pop());
+		}
+		Collections.reverse(declarations);
 
-		List<IValue> children = new ArrayList<IValue>();
-		for (int i = 0; i < tu.getChildren().length; i++)
-			children.add(stack.pop());
-		Collections.reverse(children);
-
-		if (stackSizeBefore != stack.size())
-			throw new RuntimeException(
-					"Illegal stack modification detected: had " + stackSizeBefore + ", now have " + stack.size());
-		stack.push(builder.Declaration_translationUnit(vf.list(children.toArray(new IValue[children.size()]))));
+		stack.push(builder.Declaration_translationUnit(vf.list(declarations.toArray(new IValue[declarations.size()]))));
 
 		return PROCESS_ABORT;
 	}
@@ -130,32 +126,36 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	public int visit(IASTSimpleDeclaration declaration) {
 		ctx.getStdOut().println("*SimpleDeclaration*");
 		IASTDeclSpecifier _declSpecifier = declaration.getDeclSpecifier();
-		ctx.getStdOut().println(
-				"declSpecifier [" + _declSpecifier.getRawSignature() + "], " + _declSpecifier.getClass().getName());
-		IASTDeclarator[] declarators = declaration.getDeclarators();
-		for (IASTDeclarator declarator : declarators)
-			ctx.getStdOut()
-					.println("declarator [" + declarator.getRawSignature() + "], " + declarator.getClass().getName());
-
+		_declSpecifier.accept(this);
+		IString declSpecifier = (IString) stack.pop();
+		IASTDeclarator[] _declarators = declaration.getDeclarators();
+		List<IValue> declarators = new ArrayList<IValue>();
+		for (IASTDeclarator declarator : _declarators) {
+			declarator.accept(this);
+			declarators.add(stack.pop());
+		}
+		Collections.reverse(declarators);
+		stack.push(builder.Declaration_simpleDeclaration(declSpecifier.getValue(),
+				vf.list(declarators.toArray(new IValue[declarators.size()]))));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTFunctionDefinition definition) {
+		ctx.getStdErr().println("Functiondefinition" + definition.getRawSignature());
 		IASTDeclSpecifier _declSpecifier = definition.getDeclSpecifier();
-		ctx.getStdOut().println(
-				"DeclSpecifier: [" + _declSpecifier.getRawSignature() + "], " + _declSpecifier.getClass().getName());
 		IASTFunctionDeclarator _declarator = definition.getDeclarator();
-		ctx.getStdOut()
-				.println("DeclSpecifier: [" + _declarator.getRawSignature() + "], " + _declarator.getClass().getName());
 		IASTStatement _body = definition.getBody();
 		ctx.getStdOut().println("DeclSpecifier: [" + _body.getRawSignature() + "], " + _body.getClass().getName());
 
 		_declSpecifier.accept(this);
-		IValue declSpecifier = stack.pop();
+		IString declSpecifier = (IString) stack.pop();
 		_declarator.accept(this);
-		IValue declarator = stack.pop();
+		IString declarator = (IString) stack.pop();
 		_body.accept(this);
-		// IList body = stack.pop();
+		IConstructor body = (IConstructor) stack.pop();
+
+		stack.push(builder.Declaration_functionDefinition(declSpecifier.getValue(), declarator.getValue(), body));
+		ctx.getStdOut().println("Finished functiondefinition");
 
 		return PROCESS_ABORT;
 	}
@@ -175,14 +175,14 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	@Override
 	public int visit(IASTDeclarator declarator) {
 		ctx.getStdErr().println("Declarator: " + declarator.getRawSignature());
-		stack.push(vf.string(declarator.getRawSignature()));
+		stack.push(vf.string("TODO:" + declarator.getRawSignature()));
 		return PROCESS_ABORT;
 	}
 
 	@Override
 	public int visit(IASTDeclSpecifier declSpec) {
 		ctx.getStdErr().println("DeclSpecifier: " + declSpec.getRawSignature());
-		stack.push(vf.string(declSpec.getRawSignature()));
+		stack.push(vf.string("TODO:" + declSpec.getRawSignature()));
 		return PROCESS_ABORT;
 	}
 
@@ -361,15 +361,17 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(IASTCompoundStatement compoundStatement) {
 		ctx.getStdOut().println("Compound statement with " + compoundStatement.getChildren().length + " children");
-		IASTNode[] _statements = compoundStatement.getChildren();
+		IASTStatement[] _statements = compoundStatement.getStatements();
 		List<IValue> statements = new ArrayList<IValue>();
-		for (IASTNode statement : _statements) {
+		for (IASTStatement statement : _statements) {
 			ctx.getStdOut().println("Child: " + statement.getRawSignature());
 			statement.accept(this);
 			statements.add(stack.pop());
 		}
 		Collections.reverse(statements);
-		stack.push(vf.list(statements.toArray(new IValue[statements.size()])));
+		ctx.getStdOut()
+				.println("FOOOOO " + vf.list(statements.toArray(new IValue[statements.size()])).getClass().getName());
+		stack.push(builder.Statement_compoundStatement(vf.list(statements.toArray(new IValue[statements.size()]))));
 		return PROCESS_ABORT;
 	}
 

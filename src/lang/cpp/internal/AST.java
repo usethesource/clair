@@ -38,12 +38,12 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"package",tf.stringType(),"name");
   private static final Type _Declaration_variables_2 
     = tf.constructor(typestore,_Declaration,"variables",_Type,"type",tf.listType(_Expression),"fragments");
+  private static final Type _Declaration_simpleDeclaration_2 
+    = tf.constructor(typestore,_Declaration,"simpleDeclaration",tf.stringType(),"declSpecifier",tf.listType(_Declaration),"declarators");
   private static final Type _Declaration_class_1 
     = tf.constructor(typestore,_Declaration,"class",tf.listType(_Declaration),"body");
   private static final Type _Declaration_package_2 
     = tf.constructor(typestore,_Declaration,"package",_Declaration,"parentPackage",tf.stringType(),"name");
-  private static final Type _Declaration_declaration_3 
-    = tf.constructor(typestore,_Declaration,"declaration",tf.stringType(),"name",tf.stringType(),"declarator",tf.listType(_Statement),"arg2");
   private static final Type _Declaration_interface_4 
     = tf.constructor(typestore,_Declaration,"interface",tf.stringType(),"name",tf.listType(_Type),"extends",tf.listType(_Type),"implements",tf.listType(_Declaration),"body");
   private static final Type _Declaration_class_4 
@@ -66,6 +66,8 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"annotationType",tf.stringType(),"name",tf.listType(_Declaration),"body");
   private static final Type _Declaration_import_1 
     = tf.constructor(typestore,_Declaration,"import",tf.stringType(),"name");
+  private static final Type _Declaration_functionDefinition_3 
+    = tf.constructor(typestore,_Declaration,"functionDefinition",tf.stringType(),"declSpecifier",tf.stringType(),"declarator",_Statement,"sbody");
   private static final Type _Declaration_amb_1 
     = tf.constructor(typestore,_Declaration,"amb",tf.setType(_Declaration),"alternatives");
   private static final Type _Declaration_parameter_3 
@@ -322,34 +324,46 @@ public class AST {
   
   private static final Type _Modifier_abstract_0 
     = tf.constructor(typestore,_Modifier,"abstract");
-  private static final Type _Modifier_private_0 
-    = tf.constructor(typestore,_Modifier,"private");
+  private static final Type _Modifier_extern_0 
+    = tf.constructor(typestore,_Modifier,"extern");
   private static final Type _Modifier_default_0 
     = tf.constructor(typestore,_Modifier,"default");
-  private static final Type _Modifier_friendly_0 
-    = tf.constructor(typestore,_Modifier,"friendly");
+  private static final Type _Modifier_mutable_0 
+    = tf.constructor(typestore,_Modifier,"mutable");
   private static final Type _Modifier_public_0 
     = tf.constructor(typestore,_Modifier,"public");
+  private static final Type _Modifier_auto_0 
+    = tf.constructor(typestore,_Modifier,"auto");
   private static final Type _Modifier_strictfp_0 
     = tf.constructor(typestore,_Modifier,"strictfp");
   private static final Type _Modifier_final_0 
     = tf.constructor(typestore,_Modifier,"final");
-  private static final Type _Modifier_native_0 
-    = tf.constructor(typestore,_Modifier,"native");
   private static final Type _Modifier_synchronized_0 
     = tf.constructor(typestore,_Modifier,"synchronized");
   private static final Type _Modifier_annotation_1 
     = tf.constructor(typestore,_Modifier,"annotation",_Expression,"anno");
   private static final Type _Modifier_volatile_0 
     = tf.constructor(typestore,_Modifier,"volatile");
+  private static final Type _Modifier_private_0 
+    = tf.constructor(typestore,_Modifier,"private");
+  private static final Type _Modifier_register_0 
+    = tf.constructor(typestore,_Modifier,"register");
   private static final Type _Modifier_onDemand_0 
     = tf.constructor(typestore,_Modifier,"onDemand");
   private static final Type _Modifier_transient_0 
     = tf.constructor(typestore,_Modifier,"transient");
+  private static final Type _Modifier_friendly_0 
+    = tf.constructor(typestore,_Modifier,"friendly");
+  private static final Type _Modifier_typedef_0 
+    = tf.constructor(typestore,_Modifier,"typedef");
   private static final Type _Modifier_static_0 
     = tf.constructor(typestore,_Modifier,"static");
   private static final Type _Modifier_protected_0 
     = tf.constructor(typestore,_Modifier,"protected");
+  private static final Type _Modifier_native_0 
+    = tf.constructor(typestore,_Modifier,"native");
+  private static final Type _Modifier_unspecified_0 
+    = tf.constructor(typestore,_Modifier,"unspecified");
   
    
   
@@ -381,16 +395,16 @@ public class AST {
     return vf.constructor(_Declaration_variables_2 , $type, $fragments);
   }
   
+  public IConstructor Declaration_simpleDeclaration( String $declSpecifier, IList $declarators) {
+    return vf.constructor(_Declaration_simpleDeclaration_2 , vf.string($declSpecifier), $declarators);
+  }
+  
   public IConstructor Declaration_class( IList $body) {
     return vf.constructor(_Declaration_class_1 , $body);
   }
   
   public IConstructor Declaration_package( IConstructor $parentPackage, String $name) {
     return vf.constructor(_Declaration_package_2 , $parentPackage, vf.string($name));
-  }
-  
-  public IConstructor Declaration_declaration( String $name, String $declarator, IList $arg2) {
-    return vf.constructor(_Declaration_declaration_3 , vf.string($name), vf.string($declarator), $arg2);
   }
   
   public IConstructor Declaration_interface( String $name, IList $extends, IList $implements, IList $body) {
@@ -435,6 +449,10 @@ public class AST {
   
   public IConstructor Declaration_import( String $name) {
     return vf.constructor(_Declaration_import_1 , vf.string($name));
+  }
+  
+  public IConstructor Declaration_functionDefinition( String $declSpecifier, String $declarator, IConstructor $sbody) {
+    return vf.constructor(_Declaration_functionDefinition_3 , vf.string($declSpecifier), vf.string($declarator), $sbody);
   }
   
   public IConstructor Declaration_amb( ISet $alternatives) {
@@ -937,20 +955,24 @@ public class AST {
     return vf.constructor(_Modifier_abstract_0 );
   }
   
-  public IConstructor Modifier_private() {
-    return vf.constructor(_Modifier_private_0 );
+  public IConstructor Modifier_extern() {
+    return vf.constructor(_Modifier_extern_0 );
   }
   
   public IConstructor Modifier_default() {
     return vf.constructor(_Modifier_default_0 );
   }
   
-  public IConstructor Modifier_friendly() {
-    return vf.constructor(_Modifier_friendly_0 );
+  public IConstructor Modifier_mutable() {
+    return vf.constructor(_Modifier_mutable_0 );
   }
   
   public IConstructor Modifier_public() {
     return vf.constructor(_Modifier_public_0 );
+  }
+  
+  public IConstructor Modifier_auto() {
+    return vf.constructor(_Modifier_auto_0 );
   }
   
   public IConstructor Modifier_strictfp() {
@@ -959,10 +981,6 @@ public class AST {
   
   public IConstructor Modifier_final() {
     return vf.constructor(_Modifier_final_0 );
-  }
-  
-  public IConstructor Modifier_native() {
-    return vf.constructor(_Modifier_native_0 );
   }
   
   public IConstructor Modifier_synchronized() {
@@ -977,6 +995,14 @@ public class AST {
     return vf.constructor(_Modifier_volatile_0 );
   }
   
+  public IConstructor Modifier_private() {
+    return vf.constructor(_Modifier_private_0 );
+  }
+  
+  public IConstructor Modifier_register() {
+    return vf.constructor(_Modifier_register_0 );
+  }
+  
   public IConstructor Modifier_onDemand() {
     return vf.constructor(_Modifier_onDemand_0 );
   }
@@ -985,12 +1011,28 @@ public class AST {
     return vf.constructor(_Modifier_transient_0 );
   }
   
+  public IConstructor Modifier_friendly() {
+    return vf.constructor(_Modifier_friendly_0 );
+  }
+  
+  public IConstructor Modifier_typedef() {
+    return vf.constructor(_Modifier_typedef_0 );
+  }
+  
   public IConstructor Modifier_static() {
     return vf.constructor(_Modifier_static_0 );
   }
   
   public IConstructor Modifier_protected() {
     return vf.constructor(_Modifier_protected_0 );
+  }
+  
+  public IConstructor Modifier_native() {
+    return vf.constructor(_Modifier_native_0 );
+  }
+  
+  public IConstructor Modifier_unspecified() {
+    return vf.constructor(_Modifier_unspecified_0 );
   }
    
   

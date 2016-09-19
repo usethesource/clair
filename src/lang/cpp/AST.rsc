@@ -4,7 +4,9 @@ extend analysis::m3::AST;
    
 data Declaration
     = \translationUnit(list[Declaration] declarations)
-    | \declaration(str name, str declarator, list[Statement])
+    | \simpleDeclaration(str declSpecifier, list[Declaration] declarators)
+    | \functionDefinition(str declSpecifier, str declarator, Statement sbody)
+    //| \declaration(str name, str declarator, list[Statement])
     | \amb(set[Declaration] alternatives)
     
     | \compilationUnit(Declaration package, list[Declaration] imports, list[Declaration] types)
