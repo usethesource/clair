@@ -9,11 +9,15 @@ import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
+import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
+import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
@@ -28,8 +32,10 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTToken;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
@@ -205,11 +211,26 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			visit((IASTLiteralExpression) expression);
 		else if (expression instanceof IASTUnaryExpression)
 			visit((IASTUnaryExpression) expression);
+		else if (expression instanceof IASTCastExpression)
+			visit((IASTCastExpression) expression);
 		else {
 			ctx.getStdErr()
 					.println("Expression: encountered non-implemented subtype " + expression.getClass().getName());
 			stack.push(vf.string("TODO:" + expression.getRawSignature()));
 		}
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTCastExpression expression) {
+		// int _operator = expression.getOperator();
+		IASTExpression _operand = expression.getOperand();
+		IASTTypeId typeId = expression.getTypeId();
+		_operand.accept(this);
+		IConstructor operand = (IConstructor) stack.pop();
+		typeId.accept(this);
+		IConstructor type = (IConstructor) stack.pop();
+
+		stack.push(builder.Expression_cast(type, operand));
 		return PROCESS_ABORT;
 	}
 
@@ -427,6 +448,16 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			visit((IASTIfStatement) statement);
 		} else if (statement instanceof IASTForStatement) {
 			visit((IASTForStatement) statement);
+		} else if (statement instanceof IASTProblemStatement) {
+			visit((IASTProblemStatement) statement);
+		} else if (statement instanceof IASTSwitchStatement) {
+			visit((IASTSwitchStatement) statement);
+		} else if (statement instanceof IASTCaseStatement) {
+			visit((IASTCaseStatement) statement);
+		} else if (statement instanceof IASTBreakStatement) {
+			visit((IASTBreakStatement) statement);
+		} else if (statement instanceof IASTDefaultStatement) {
+			visit((IASTDefaultStatement) statement);
 		} else {
 			ctx.getStdErr().println("Statement: encountered non-implemented subtype " + statement.getClass().getName());
 			stack.push(vf.bool(false));
@@ -434,11 +465,49 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(IASTForStatement forStatement) {
-		IASTStatement _initializer = forStatement.getInitializerStatement();
-		IASTExpression _condition = forStatement.getConditionExpression();
-		IASTExpression _iteration = forStatement.getIterationExpression();
-		IASTStatement _body = forStatement.getBody();
+	public int visit(IASTDefaultStatement statement) {
+		stack.push(builder.Statement_defaultCase());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTBreakStatement statement) {
+		stack.push(builder.Statement_break());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTCaseStatement statement) {
+		IASTExpression _expression = statement.getExpression();
+		_expression.accept(this);
+		IConstructor expression = (IConstructor) stack.pop();
+		stack.push(builder.Statement_case(expression));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTSwitchStatement statement) {
+		ctx.getStdOut().println("SwitchStatement: " + statement.getRawSignature());
+		IASTExpression _controller = statement.getControllerExpression();
+		IASTStatement _body = statement.getBody();
+
+		_controller.accept(this);
+		IConstructor controller = (IConstructor) stack.pop();
+		_body.accept(this);
+		IConstructor body = (IConstructor) stack.pop();
+
+		stack.push(builder.Statement_switch(controller, body));
+
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTProblemStatement statement) {
+		ctx.getStdErr().println(statement.getProblem().getMessage());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTForStatement statement) {
+		IASTStatement _initializer = statement.getInitializerStatement();
+		IASTExpression _condition = statement.getConditionExpression();
+		IASTExpression _iteration = statement.getIterationExpression();
+		IASTStatement _body = statement.getBody();
 
 		_initializer.accept(this);
 		IConstructor initializer = (IConstructor) stack.pop();
@@ -502,6 +571,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	@Override
 	public int visit(IASTTypeId typeId) {
 		ctx.getStdErr().println("TypeId: " + typeId.getRawSignature());
+		stack.push(builder.Expression_typeid(builder.Type_char()));// TODO
 		return PROCESS_ABORT;
 	}
 

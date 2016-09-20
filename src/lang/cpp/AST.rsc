@@ -91,6 +91,8 @@ data Expression
     | \noexcept(Expression expression)      //noexcept (exp), c++ only
     | \labelReference(Expression expression)//&&label, gcc only?
     
+    | \cast(Type \type, Expression expression)
+    
     | \name(str name)
     | \integerLiteral(int number)
     
@@ -99,7 +101,7 @@ data Expression
     | \newArray(Type \type, list[Expression] dimensions)
     | \arrayInitializer(list[Expression] elements)
     | \assignment(Expression lhs, str operator, Expression rhs)
-    | \cast(Type \type, Expression expression)
+    //| \cast(Type \type, Expression expression)
     | \characterLiteral(str charValue)
     | \newObject(Expression expr, Type \type, list[Expression] args, Declaration class)
     | \newObject(Type \type, list[Expression] args)
@@ -139,11 +141,14 @@ data Statement
     | \if(Expression condition, Statement thenClause)
     | \if(Expression condition, Statement thenClause, Statement elseClause)
     | \for(Statement initializer, Expression condition, Expression iteration, Statement body)
+    | \switch(Expression controller, Statement body)
+    | \case(Expression expression)
+    | \defaultCase()
+    | \break()
     
     | \assert(Expression expression)
     | \assert(Expression expression, Expression message)
     | \block(list[Statement] statements)
-    | \break()
     | \break(str label)
     | \continue()
     | \continue(str label)
@@ -154,9 +159,9 @@ data Statement
     | \label(str name, Statement body)
     | \return(Expression expression)
     | \return()
-    | \switch(Expression expression, list[Statement] statements)
-    | \case(Expression expression)
-    | \defaultCase()
+    //| \switch(Expression expression, list[Statement] statements)
+    //| \case(Expression expression)
+    //| \defaultCase()
     | \synchronizedStatement(Expression lock, Statement body)
     | \throw(Expression expression)
     | \try(Statement body, list[Statement] catchClauses)
