@@ -13,11 +13,14 @@ import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
+import org.eclipse.cdt.core.dom.ast.IASTContinueStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
@@ -29,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
@@ -40,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.IASTToken;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
@@ -112,6 +117,13 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTSimpleDeclaration declaration) {
+		ctx.getStdOut().println("========");
+		for (IASTNode node : declaration.getChildren()) {
+			ctx.getStdOut().println(node.getClass().getName());
+			ctx.getStdOut().println(node.getRawSignature());
+			ctx.getStdOut().println("========");
+		}
+
 		IASTDeclSpecifier _declSpecifier = declaration.getDeclSpecifier();
 		_declSpecifier.accept(this);
 		IString declSpecifier = (IString) stack.pop();
@@ -213,11 +225,30 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			visit((IASTUnaryExpression) expression);
 		else if (expression instanceof IASTCastExpression)
 			visit((IASTCastExpression) expression);
+		else if (expression instanceof IASTConditionalExpression)
+			visit((IASTConditionalExpression) expression);
 		else {
 			ctx.getStdErr()
 					.println("Expression: encountered non-implemented subtype " + expression.getClass().getName());
 			stack.push(vf.string("TODO:" + expression.getRawSignature()));
 		}
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTConditionalExpression expression) {
+		IASTExpression _condition = expression.getLogicalConditionExpression();
+		IASTExpression _positive = expression.getPositiveResultExpression();
+		IASTExpression _negative = expression.getNegativeResultExpression();
+
+		_condition.accept(this);
+		IConstructor condition = (IConstructor) stack.pop();
+		_positive.accept(this);
+		IConstructor positive = (IConstructor) stack.pop();
+		_negative.accept(this);
+		IConstructor negative = (IConstructor) stack.pop();
+
+		stack.push(builder.Expression_conditional(condition, positive, negative));
+
 		return PROCESS_ABORT;
 	}
 
@@ -438,30 +469,66 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	public int visit(IASTStatement statement) {
 		// ctx.getStdErr().println("Statement: " + statement.getRawSignature() +
 		// ", " + statement.getClass().getName());
-		if (statement instanceof IASTCompoundStatement) {
+		if (statement instanceof IASTCompoundStatement)
 			visit((IASTCompoundStatement) statement);
-		} else if (statement instanceof IASTDeclarationStatement) {
+		else if (statement instanceof IASTDeclarationStatement)
 			visit((IASTDeclarationStatement) statement);
-		} else if (statement instanceof IASTExpressionStatement) {
+		else if (statement instanceof IASTExpressionStatement)
 			visit((IASTExpressionStatement) statement);
-		} else if (statement instanceof IASTIfStatement) {
+		else if (statement instanceof IASTIfStatement)
 			visit((IASTIfStatement) statement);
-		} else if (statement instanceof IASTForStatement) {
+		else if (statement instanceof IASTForStatement)
 			visit((IASTForStatement) statement);
-		} else if (statement instanceof IASTProblemStatement) {
+		else if (statement instanceof IASTProblemStatement)
 			visit((IASTProblemStatement) statement);
-		} else if (statement instanceof IASTSwitchStatement) {
+		else if (statement instanceof IASTSwitchStatement)
 			visit((IASTSwitchStatement) statement);
-		} else if (statement instanceof IASTCaseStatement) {
+		else if (statement instanceof IASTCaseStatement)
 			visit((IASTCaseStatement) statement);
-		} else if (statement instanceof IASTBreakStatement) {
+		else if (statement instanceof IASTBreakStatement)
 			visit((IASTBreakStatement) statement);
-		} else if (statement instanceof IASTDefaultStatement) {
+		else if (statement instanceof IASTDefaultStatement)
 			visit((IASTDefaultStatement) statement);
-		} else {
+		else if (statement instanceof IASTWhileStatement)
+			visit((IASTWhileStatement) statement);
+		else if (statement instanceof IASTContinueStatement)
+			visit((IASTContinueStatement) statement);
+		else if (statement instanceof IASTDoStatement)
+			visit((IASTDoStatement) statement);
+		else {
 			ctx.getStdErr().println("Statement: encountered non-implemented subtype " + statement.getClass().getName());
 			stack.push(vf.bool(false));
 		}
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTDoStatement statement) {
+		IASTStatement _body = statement.getBody();
+		IASTExpression _condition = statement.getCondition();
+
+		_body.accept(this);
+		IConstructor body = (IConstructor) stack.pop();
+		_condition.accept(this);
+		IConstructor condition = (IConstructor) stack.pop();
+		stack.push(builder.Statement_do(condition, body));
+
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTContinueStatement statement) {
+		stack.push(builder.Statement_continue());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTWhileStatement statement) {
+		IASTExpression _condition = statement.getCondition();
+		IASTStatement _body = statement.getBody();
+
+		_condition.accept(this);
+		IConstructor condition = (IConstructor) stack.pop();
+		_body.accept(this);
+		IConstructor body = (IConstructor) stack.pop();
+		stack.push(builder.Statement_while(condition, body));
 		return PROCESS_ABORT;
 	}
 
