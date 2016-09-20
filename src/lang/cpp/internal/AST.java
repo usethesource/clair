@@ -188,6 +188,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"binaryOr",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_moduloAssign_2 
     = tf.constructor(typestore,_Expression,"moduloAssign",_Expression,"lhs",_Expression,"rhs");
+  private static final Type _Expression_conditional_3 
+    = tf.constructor(typestore,_Expression,"conditional",_Expression,"condition",_Expression,"positive",_Expression,"negative");
   private static final Type _Expression_binaryAndAssign_2 
     = tf.constructor(typestore,_Expression,"binaryAndAssign",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_simpleName_1 
@@ -216,8 +218,6 @@ public class AST {
     = tf.constructor(typestore,_Expression,"shiftRightAssign",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_fieldAccess_2 
     = tf.constructor(typestore,_Expression,"fieldAccess",tf.boolType(),"isSuper",tf.stringType(),"name");
-  private static final Type _Expression_conditional_3 
-    = tf.constructor(typestore,_Expression,"conditional",_Expression,"expression",_Expression,"thenBranch",_Expression,"elseBranch");
   private static final Type _Expression_integerLiteral_1 
     = tf.constructor(typestore,_Expression,"integerLiteral",tf.integerType(),"number");
   private static final Type _Expression_super_0 
@@ -730,6 +730,10 @@ public class AST {
     return vf.constructor(_Expression_moduloAssign_2 , $lhs, $rhs);
   }
   
+  public IConstructor Expression_conditional( IConstructor $condition, IConstructor $positive, IConstructor $negative) {
+    return vf.constructor(_Expression_conditional_3 , $condition, $positive, $negative);
+  }
+  
   public IConstructor Expression_binaryAndAssign( IConstructor $lhs, IConstructor $rhs) {
     return vf.constructor(_Expression_binaryAndAssign_2 , $lhs, $rhs);
   }
@@ -784,10 +788,6 @@ public class AST {
   
   public IConstructor Expression_fieldAccess( boolean $isSuper, String $name) {
     return vf.constructor(_Expression_fieldAccess_2 , vf.bool($isSuper), vf.string($name));
-  }
-  
-  public IConstructor Expression_conditional( IConstructor $expression, IConstructor $thenBranch, IConstructor $elseBranch) {
-    return vf.constructor(_Expression_conditional_3 , $expression, $thenBranch, $elseBranch);
   }
   
   public IConstructor Expression_integerLiteral( IValue $number) {
