@@ -300,6 +300,8 @@ public class AST {
   
   private static final Type _Statement_constructorCall_2 
     = tf.constructor(typestore,_Statement,"constructorCall",tf.boolType(),"isSuper",tf.listType(_Expression),"arguments");
+  private static final Type _Statement_switch_2 
+    = tf.constructor(typestore,_Statement,"switch",_Expression,"controller",_Statement,"body");
   private static final Type _Statement_break_1 
     = tf.constructor(typestore,_Statement,"break",tf.stringType(),"label");
   private static final Type _Statement_catch_2 
@@ -310,6 +312,8 @@ public class AST {
     = tf.constructor(typestore,_Statement,"return");
   private static final Type _Statement_constructorCall_3 
     = tf.constructor(typestore,_Statement,"constructorCall",tf.boolType(),"isSuper",_Expression,"expr",tf.listType(_Expression),"arguments");
+  private static final Type _Statement_expressionStatement_1 
+    = tf.constructor(typestore,_Statement,"expressionStatement",_Expression,"expression");
   private static final Type _Statement_compoundStatement_1 
     = tf.constructor(typestore,_Statement,"compoundStatement",tf.listType(_Statement),"statements");
   private static final Type _Statement_continue_0 
@@ -346,10 +350,6 @@ public class AST {
     = tf.constructor(typestore,_Statement,"empty");
   private static final Type _Statement_declarationStatement_1 
     = tf.constructor(typestore,_Statement,"declarationStatement",_Declaration,"declaration");
-  private static final Type _Statement_switch_2 
-    = tf.constructor(typestore,_Statement,"switch",_Expression,"expression",tf.listType(_Statement),"statements");
-  private static final Type _Statement_expressionStatement_1 
-    = tf.constructor(typestore,_Statement,"expressionStatement",_Expression,"expression");
   private static final Type _Statement_case_1 
     = tf.constructor(typestore,_Statement,"case",_Expression,"expression");
   private static final Type _Statement_return_1 
@@ -948,6 +948,10 @@ public class AST {
     return vf.constructor(_Statement_constructorCall_2 , vf.bool($isSuper), $arguments);
   }
   
+  public IConstructor Statement_switch( IConstructor $controller, IConstructor $body) {
+    return vf.constructor(_Statement_switch_2 , $controller, $body);
+  }
+  
   public IConstructor Statement_break( String $label) {
     return vf.constructor(_Statement_break_1 , vf.string($label));
   }
@@ -966,6 +970,10 @@ public class AST {
   
   public IConstructor Statement_constructorCall( boolean $isSuper, IConstructor $expr, IList $arguments) {
     return vf.constructor(_Statement_constructorCall_3 , vf.bool($isSuper), $expr, $arguments);
+  }
+  
+  public IConstructor Statement_expressionStatement( IConstructor $expression) {
+    return vf.constructor(_Statement_expressionStatement_1 , $expression);
   }
   
   public IConstructor Statement_compoundStatement( IList $statements) {
@@ -1038,14 +1046,6 @@ public class AST {
   
   public IConstructor Statement_declarationStatement( IConstructor $declaration) {
     return vf.constructor(_Statement_declarationStatement_1 , $declaration);
-  }
-  
-  public IConstructor Statement_switch( IConstructor $expression, IList $statements) {
-    return vf.constructor(_Statement_switch_2 , $expression, $statements);
-  }
-  
-  public IConstructor Statement_expressionStatement( IConstructor $expression) {
-    return vf.constructor(_Statement_expressionStatement_1 , $expression);
   }
   
   public IConstructor Statement_case( IConstructor $expression) {
