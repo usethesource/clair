@@ -154,6 +154,10 @@ data Statement
     | \continue()
     | \do(Statement body, Expression condition)
     
+    | \return(Expression expression)
+    | \return()
+    
+    
     | \assert(Expression expression)
     | \assert(Expression expression, Expression message)
     | \block(list[Statement] statements)
@@ -165,8 +169,8 @@ data Statement
     | \foreach(Declaration parameter, Expression collection, Statement body)
     //| \for(list[Expression] initializers, list[Expression] updaters, Statement body)
     | \label(str name, Statement body)
-    | \return(Expression expression)
-    | \return()
+    //| \return(Expression expression)
+    //| \return()
     //| \switch(Expression expression, list[Statement] statements)
     //| \case(Expression expression)
     //| \defaultCase()
