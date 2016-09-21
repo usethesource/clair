@@ -702,7 +702,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		case 1:
 			stack.push(builder.Expression_floatConstant(value));
 			break;
-		case 2:
+		case IASTLiteralExpression.lk_char_constant:
 			stack.push(builder.Expression_charConstant(value));
 			break;
 		case 3:
@@ -1046,7 +1046,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			statement.accept(this);
 			statements.append((IConstructor) stack.pop());
 		}
-		stack.push(builder.Statement_compoundStatement(vf.list(statements.done())));
+		stack.push(builder.Statement_compoundStatement(statements.done()));
 		return PROCESS_ABORT;
 	}
 
