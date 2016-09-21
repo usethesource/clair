@@ -98,6 +98,7 @@ data Expression
     | \name(str name)
     | \integerLiteral(int number)
     | \conditional(Expression condition, Expression positive, Expression negative)
+    | \functionCall(Expression functionName, list[Expression] arguments)
     
     | \nyi(str raw)
     
@@ -115,8 +116,8 @@ data Expression
     | \fieldAccess(bool isSuper, Expression expression, str name)
     | \fieldAccess(bool isSuper, str name)
     | \instanceof(Expression leftSide, Type rightSide)
-    | \methodCall(bool isSuper, str name, list[Expression] arguments)
-    | \methodCall(bool isSuper, Expression receiver, str name, list[Expression] arguments)
+    //| \methodCall(bool isSuper, str name, list[Expression] arguments)
+    //| \methodCall(bool isSuper, Expression receiver, str name, list[Expression] arguments)
     | \null()
     | \number(str numberValue)
     | \booleanLiteral(bool boolValue)
