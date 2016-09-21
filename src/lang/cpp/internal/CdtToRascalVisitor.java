@@ -693,9 +693,36 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTLiteralExpression expression) {
-		ctx.getStdOut()
-				.println("LiteralExpression: " + expression.getRawSignature() + ", " + expression.getExpressionType());
-		stack.push(builder.Expression_integerLiteral(vf.integer(42)));
+		int kind = expression.getKind();
+		String value = expression.toString();
+		switch (kind) {
+		case 0:
+			stack.push(builder.Expression_integerConstant(value));
+			break;
+		case 1:
+			stack.push(builder.Expression_floatConstant(value));
+			break;
+		case 2:
+			stack.push(builder.Expression_charConstant(value));
+			break;
+		case 3:
+			stack.push(builder.Expression_stringLiteral(value));
+			break;
+		case 4:
+			stack.push(builder.Expression_this());
+			break;
+		case 5:
+			stack.push(builder.Expression_true());
+			break;
+		case 6:
+			stack.push(builder.Expression_false());
+			break;
+		case 7:
+			stack.push(builder.Expression_nullptr());
+			break;
+		default:
+			throw new RuntimeException("Encountered unknown literal kind " + kind + ". Exiting");
+		}
 		return PROCESS_ABORT;
 	}
 
