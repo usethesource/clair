@@ -758,6 +758,8 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		ctx.getStdErr().println("IASTReturnStatement: " + statement.getRawSignature());
 		IASTExpression returnValue = statement.getReturnValue();
 		IASTInitializerClause returnArgument = statement.getReturnArgument();
+		// TODO
+		stack.push(builder.Statement_return());
 		return PROCESS_ABORT;
 	}
 
