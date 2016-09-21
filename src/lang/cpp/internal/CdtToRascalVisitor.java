@@ -4,14 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTBinaryTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTContinueStatement;
@@ -22,41 +25,71 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
+import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
+import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTToken;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArraySubscriptExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpressionList;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNaryTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpansionExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.rascalmpl.interpreter.IEvaluatorContext;
 import org.rascalmpl.value.IConstructor;
+import org.rascalmpl.value.IListWriter;
 import org.rascalmpl.value.IString;
 import org.rascalmpl.value.IValue;
 import org.rascalmpl.value.IValueFactory;
@@ -84,20 +117,37 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTTranslationUnit tu) {
-		List<IValue> declarations = new ArrayList<IValue>();
+		IListWriter declarations = vf.listWriter();
 		for (IASTDeclaration node : tu.getDeclarations()) {
 			node.accept(this);
-			declarations.add(stack.pop());
+			declarations.append(stack.pop());
 		}
 
-		stack.push(builder.Declaration_translationUnit(vf.list(declarations.toArray(new IValue[declarations.size()]))));
+		stack.push(builder.Declaration_translationUnit(declarations.done()));
 
 		return PROCESS_ABORT;
 	}
 
 	@Override
 	public int visit(IASTName name) {
+		// ctx.getStdOut().println("========");
+		// for (IASTNode node : name.getChildren()) {
+		// ctx.getStdOut().println(node.getClass().getName());
+		// ctx.getStdOut().println(node.getRawSignature());
+		// ctx.getStdOut().println("========");
+		// }
+
+		IBinding binding = name.getBinding();
+		int role = name.getRoleOfName(true);
+		IASTCompletionContext completionContext = name.getCompletionContext();
+		ILinkage linkage = name.getLinkage();
+		IASTImageLocation imageLocation = name.getImageLocation();
+		IASTName lastName = name.getLastName();
+		char[] lookupKey = name.getLookupKey();
+		IBinding preBinding = name.getPreBinding();
+		boolean isQualified = name.isQualified();
 		ctx.getStdErr().println("Name: " + name.getLastName().getRawSignature());
+		stack.push(builder.Expression_name(name.getRawSignature()));
 		return PROCESS_ABORT;
 	}
 
@@ -117,24 +167,16 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTSimpleDeclaration declaration) {
-		ctx.getStdOut().println("========");
-		for (IASTNode node : declaration.getChildren()) {
-			ctx.getStdOut().println(node.getClass().getName());
-			ctx.getStdOut().println(node.getRawSignature());
-			ctx.getStdOut().println("========");
-		}
-
 		IASTDeclSpecifier _declSpecifier = declaration.getDeclSpecifier();
 		_declSpecifier.accept(this);
 		IString declSpecifier = (IString) stack.pop();
 		IASTDeclarator[] _declarators = declaration.getDeclarators();
-		List<IValue> declarators = new ArrayList<IValue>();
+		IListWriter declarators = vf.listWriter();
 		for (IASTDeclarator declarator : _declarators) {
 			declarator.accept(this);
-			declarators.add(stack.pop());
+			declarators.append(stack.pop());
 		}
-		stack.push(builder.Declaration_simpleDeclaration(declSpecifier.getValue(),
-				vf.list(declarators.toArray(new IValue[declarators.size()]))));
+		stack.push(builder.Declaration_simpleDeclaration(declSpecifier.getValue(), vf.list(declarators.done())));
 		return PROCESS_ABORT;
 	}
 
@@ -157,7 +199,25 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTInitializer initializer) {
+		ctx.getStdOut().println(initializer.getClass().getName());
 		ctx.getStdErr().println("Initializer: " + initializer.getRawSignature());
+		if (initializer instanceof IASTEqualsInitializer)
+			visit((IASTEqualsInitializer) initializer);
+		else {
+			ctx.getStdErr()
+					.println("Initializer: encountered unknown subtype " + initializer.getClass().getSimpleName());
+		}
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTEqualsInitializer initializer) {
+		IASTInitializerClause initializerClause = initializer.getInitializerClause();
+		if (!(initializerClause instanceof IASTExpression)) {
+			ctx.getStdErr().println("EqualsInitializer: encountered unknown initializerClause "
+					+ initializerClause.getClass().getName());
+		}
+		IASTExpression clause = (IASTExpression) initializerClause;
+		clause.accept(this);
 		return PROCESS_ABORT;
 	}
 
@@ -169,6 +229,38 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTDeclarator declarator) {
+		ctx.getStdOut().println("========");
+		for (IASTNode node : declarator.getChildren()) {
+			ctx.getStdOut().println(node.getClass().getName());
+			ctx.getStdOut().println(node.getRawSignature());
+			ctx.getStdOut().println("========");
+		}
+
+		IASTPointerOperator[] _pointerOperators = declarator.getPointerOperators();
+		IASTDeclarator _nestedDeclarator = declarator.getNestedDeclarator();
+		IASTName _name = declarator.getName();
+		IASTInitializer _initializer = declarator.getInitializer();
+
+		List<IConstructor> pointerOperators = new ArrayList<IConstructor>();
+		for (IASTPointerOperator op : _pointerOperators) {
+			op.accept(this);
+			pointerOperators.add((IConstructor) stack.pop());
+		}
+		IConstructor nestedDeclarator = null;
+		if (_nestedDeclarator != null) {
+			_nestedDeclarator.accept(this);
+			nestedDeclarator = (IConstructor) stack.pop();
+		}
+		_name.accept(this);
+		IConstructor name = (IConstructor) stack.pop();
+		IConstructor initializer = null;
+		if (_initializer == null) {
+
+		} else {
+			_initializer.accept(this);
+			initializer = (IConstructor) stack.pop();
+		}
+
 		// ctx.getStdErr().println("Declarator: " +
 		// declarator.getRawSignature());
 		stack.push(vf.string("TODO:" + declarator.getRawSignature()));
@@ -217,21 +309,172 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	public int visit(IASTExpression expression) {
 		if (expression instanceof IASTBinaryExpression)
 			visit((IASTBinaryExpression) expression);
-		else if (expression instanceof IASTIdExpression)
-			visit((IASTIdExpression) expression);
-		else if (expression instanceof IASTLiteralExpression)
-			visit((IASTLiteralExpression) expression);
-		else if (expression instanceof IASTUnaryExpression)
-			visit((IASTUnaryExpression) expression);
+		else if (expression instanceof IASTBinaryTypeIdExpression)// TODO
+			visit((IASTBinaryTypeIdExpression) expression);
 		else if (expression instanceof IASTCastExpression)
 			visit((IASTCastExpression) expression);
 		else if (expression instanceof IASTConditionalExpression)
 			visit((IASTConditionalExpression) expression);
+		else if (expression instanceof IASTExpressionList)// TODO
+			visit((IASTExpressionList) expression);
+		else if (expression instanceof IASTFieldReference)// TODO
+			visit((IASTFieldReference) expression);
+		else if (expression instanceof IASTFunctionCallExpression)
+			visit((IASTFunctionCallExpression) expression);
+		else if (expression instanceof IASTIdExpression)
+			visit((IASTIdExpression) expression);
+		else if (expression instanceof IASTLiteralExpression)
+			visit((IASTLiteralExpression) expression);
+		else if (expression instanceof IASTTypeIdExpression)
+			visit((IASTTypeIdExpression) expression);
+		else if (expression instanceof IASTTypeIdInitializerExpression)
+			visit((IASTTypeIdInitializerExpression) expression);
+		else if (expression instanceof IASTUnaryExpression)
+			visit((IASTUnaryExpression) expression);
+		else if (expression instanceof ICPPASTArraySubscriptExpression)
+			visit((ICPPASTArraySubscriptExpression) expression);
+		else if (expression instanceof ICPPASTBinaryExpression)
+			// Move up
+			visit((ICPPASTBinaryExpression) expression);
+		else if (expression instanceof ICPPASTCastExpression)
+			visit((ICPPASTCastExpression) expression);
+		else if (expression instanceof ICPPASTDeleteExpression)
+			visit((ICPPASTDeleteExpression) expression);
+		else if (expression instanceof ICPPASTExpressionList)
+			visit((ICPPASTExpressionList) expression);
+		else if (expression instanceof ICPPASTFieldReference)
+			visit((ICPPASTFieldReference) expression);
+		else if (expression instanceof ICPPASTFunctionCallExpression)
+			visit((ICPPASTFunctionCallExpression) expression);
+		else if (expression instanceof ICPPASTLambdaExpression)
+			visit((ICPPASTLambdaExpression) expression);
+		else if (expression instanceof ICPPASTLiteralExpression)
+			visit((ICPPASTLiteralExpression) expression);
+		else if (expression instanceof ICPPASTNaryTypeIdExpression)
+			visit((ICPPASTNaryTypeIdExpression) expression);
+		else if (expression instanceof ICPPASTNewExpression)
+			visit((ICPPASTNewExpression) expression);
+		else if (expression instanceof ICPPASTPackExpansionExpression)
+			visit((ICPPASTPackExpansionExpression) expression);
+		else if (expression instanceof ICPPASTSimpleTypeConstructorExpression)
+			visit((ICPPASTSimpleTypeConstructorExpression) expression);
+		else if (expression instanceof ICPPASTTypeIdExpression)
+			visit((ICPPASTTypeIdExpression) expression);
+		else if (expression instanceof ICPPASTUnaryExpression)
+			visit((ICPPASTUnaryExpression) expression);
+		else if (expression instanceof IASTProblemExpression)
+			// Should not happen
+			visit((IASTProblemExpression) expression);
 		else {
 			ctx.getStdErr()
 					.println("Expression: encountered non-implemented subtype " + expression.getClass().getName());
 			stack.push(vf.string("TODO:" + expression.getRawSignature()));
 		}
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTUnaryExpression expression) {
+		ctx.getStdOut().println("CPPUnaryExpression: " + expression.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTTypeIdExpression expression) {
+		ctx.getStdOut().println("CPPTypeIdExpression: " + expression.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTSimpleTypeConstructorExpression expression) {
+		ctx.getStdOut().println("CPPSimpleTypeConstructorExpression: " + expression.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTPackExpansionExpression expression) {
+		ctx.getStdOut().println("CPPPackExpansionExpression: " + expression.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTNewExpression expression) {
+		ctx.getStdOut().println("NewExpression: " + expression.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTNaryTypeIdExpression expression) {
+		ctx.getStdOut().println("CPPNaryTypeIdExpression: " + expression.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTLiteralExpression expression) {
+		ctx.getStdOut().println("CPPLiteralExpression: " + expression.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTLambdaExpression expression) {
+		ctx.getStdOut().println("CPPLambdaExpression: " + expression.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTFunctionCallExpression expression) {
+		ctx.getStdOut().println("CPPFunctionCallExpression: " + expression.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTFieldReference expression) {
+		ctx.getStdOut().println("CPPFieldReference: " + expression.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTExpressionList expression) {
+		ctx.getStdOut().println("CPPExpressionList: " + expression.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTDeleteExpression expression) {
+		ctx.getStdOut().println("CPPDeleteExpression: " + expression.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTCastExpression expression) {
+		ctx.getStdOut().println("CPPCastExpression: " + expression.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTArraySubscriptExpression expression) {
+		ctx.getStdOut().println("CPPArraySubscriptExpression: " + expression.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTTypeIdInitializerExpression expression) {
+		ctx.getStdOut().println("TypeIdInitializerExpression: " + expression.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTTypeIdExpression expression) {
+		ctx.getStdOut().println("TypeIdExpression: " + expression.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTProblemExpression expression) {
+		ctx.getStdOut().println("ProblemExpression: " + expression.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTFunctionCallExpression expression) {
+		ctx.getStdOut().println("FunctionCallExpression: " + expression.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTFieldReference expression) {
+		ctx.getStdOut().println("FieldReference: " + expression.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTExpressionList expression) {
+		ctx.getStdOut().println("ExpressionList: " + expression.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTBinaryTypeIdExpression expression) {
+		ctx.getStdOut().println("BinaryTypeIdExpression: " + expression.getRawSignature());
 		return PROCESS_ABORT;
 	}
 
@@ -469,36 +712,70 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	public int visit(IASTStatement statement) {
 		// ctx.getStdErr().println("Statement: " + statement.getRawSignature() +
 		// ", " + statement.getClass().getName());
-		if (statement instanceof IASTCompoundStatement)
-			visit((IASTCompoundStatement) statement);
-		else if (statement instanceof IASTDeclarationStatement)
-			visit((IASTDeclarationStatement) statement);
-		else if (statement instanceof IASTExpressionStatement)
-			visit((IASTExpressionStatement) statement);
-		else if (statement instanceof IASTIfStatement)
-			visit((IASTIfStatement) statement);
-		else if (statement instanceof IASTForStatement)
-			visit((IASTForStatement) statement);
-		else if (statement instanceof IASTProblemStatement)
-			visit((IASTProblemStatement) statement);
-		else if (statement instanceof IASTSwitchStatement)
-			visit((IASTSwitchStatement) statement);
+		if (statement instanceof IASTBreakStatement)
+			visit((IASTBreakStatement) statement);
 		else if (statement instanceof IASTCaseStatement)
 			visit((IASTCaseStatement) statement);
-		else if (statement instanceof IASTBreakStatement)
-			visit((IASTBreakStatement) statement);
-		else if (statement instanceof IASTDefaultStatement)
-			visit((IASTDefaultStatement) statement);
-		else if (statement instanceof IASTWhileStatement)
-			visit((IASTWhileStatement) statement);
+		else if (statement instanceof IASTCompoundStatement)
+			visit((IASTCompoundStatement) statement);
 		else if (statement instanceof IASTContinueStatement)
 			visit((IASTContinueStatement) statement);
+		else if (statement instanceof IASTDeclarationStatement)
+			visit((IASTDeclarationStatement) statement);
+		else if (statement instanceof IASTDefaultStatement)
+			visit((IASTDefaultStatement) statement);
 		else if (statement instanceof IASTDoStatement)
 			visit((IASTDoStatement) statement);
-		else {
+		else if (statement instanceof IASTExpressionStatement)
+			visit((IASTExpressionStatement) statement);
+		else if (statement instanceof IASTForStatement)
+			visit((IASTForStatement) statement);
+		else if (statement instanceof IASTGotoStatement)// TODO
+			visit((IASTGotoStatement) statement);
+		else if (statement instanceof IASTIfStatement)
+			visit((IASTIfStatement) statement);
+		else if (statement instanceof IASTLabelStatement)// TODO
+			visit((IASTLabelStatement) statement);
+		else if (statement instanceof IASTNullStatement)// TODO
+			visit((IASTNullStatement) statement);
+		else if (statement instanceof IASTReturnStatement)// TODO
+			visit((IASTReturnStatement) statement);
+		else if (statement instanceof IASTSwitchStatement)
+			visit((IASTSwitchStatement) statement);
+		else if (statement instanceof IASTWhileStatement)
+			visit((IASTWhileStatement) statement);
+		else if (statement instanceof IASTProblemStatement)
+			// Should not happen, will hopefully extract some useful hints
+			visit((IASTProblemStatement) statement);
+		else {// TODO: some ICPPAST*-instances
 			ctx.getStdErr().println("Statement: encountered non-implemented subtype " + statement.getClass().getName());
 			stack.push(vf.bool(false));
 		}
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTReturnStatement statement) {
+		ctx.getStdErr().println("IASTReturnStatement: " + statement.getRawSignature());
+		IASTExpression returnValue = statement.getReturnValue();
+		IASTInitializerClause returnArgument = statement.getReturnArgument();
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTNullStatement statement) {
+		ctx.getStdErr().println("IASTNullStatement: " + statement.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTLabelStatement statement) {
+		ctx.getStdErr().println("IASTLabelStatement: " + statement.getRawSignature());
+		IASTName name = statement.getName();
+		IASTStatement nestedStatement = statement.getNestedStatement();
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTGotoStatement statement) {
+		ctx.getStdErr().println("IASTGotoStatement: " + statement.getRawSignature());
+		IASTName name = statement.getName();
 		return PROCESS_ABORT;
 	}
 
@@ -592,12 +869,12 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(IASTCompoundStatement compoundStatement) {
 		IASTStatement[] _statements = compoundStatement.getStatements();
-		List<IValue> statements = new ArrayList<IValue>();
+		IListWriter statements = vf.listWriter();
 		for (IASTStatement statement : _statements) {
 			statement.accept(this);
-			statements.add((IConstructor) stack.pop());
+			statements.append((IConstructor) stack.pop());
 		}
-		stack.push(builder.Statement_compoundStatement(vf.list(statements.toArray(new IValue[statements.size()]))));
+		stack.push(builder.Statement_compoundStatement(vf.list(statements.done())));
 		return PROCESS_ABORT;
 	}
 
