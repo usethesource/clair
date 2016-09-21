@@ -70,6 +70,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
@@ -87,17 +88,20 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNaryTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpansionExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStaticAssertDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTGotoStatement;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.rascalmpl.interpreter.IEvaluatorContext;
 import org.rascalmpl.value.IConstructor;
@@ -844,13 +848,41 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			visit((IASTSwitchStatement) statement);
 		else if (statement instanceof IASTWhileStatement)
 			visit((IASTWhileStatement) statement);
+		else if (statement instanceof ICPPASTCatchHandler)
+			visit((ICPPASTCatchHandler) statement);
+		else if (statement instanceof ICPPASTRangeBasedForStatement)
+			visit((ICPPASTRangeBasedForStatement) statement);
+		else if (statement instanceof ICPPASTTryBlockStatement)
+			visit((ICPPASTTryBlockStatement) statement);
+		else if (statement instanceof IGNUASTGotoStatement) // needed?
+			visit((IGNUASTGotoStatement) statement);
 		else if (statement instanceof IASTProblemStatement)
 			// Should not happen, will hopefully extract some useful hints
 			visit((IASTProblemStatement) statement);
-		else {// TODO: some ICPPAST*-instances
+		else {
 			ctx.getStdErr().println("Statement: encountered non-implemented subtype " + statement.getClass().getName());
 			stack.push(vf.bool(false));
 		}
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IGNUASTGotoStatement statement) {
+		ctx.getStdErr().println("IGNUAstGotoStatement: " + statement.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTTryBlockStatement statement) {
+		ctx.getStdErr().println("CPPTryBlockStatement: " + statement.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTRangeBasedForStatement statement) {
+		ctx.getStdErr().println("CPPRangeBasedForStatement: " + statement.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTCatchHandler statement) {
+		ctx.getStdErr().println("CPPCatchHandler: " + statement.getRawSignature());
 		return PROCESS_ABORT;
 	}
 
