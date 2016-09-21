@@ -6,6 +6,7 @@ import java.util.Stack;
 
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
@@ -48,6 +49,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
@@ -63,6 +65,7 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
@@ -72,20 +75,29 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBas
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNaryTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpansionExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStaticAssertDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.rascalmpl.interpreter.IEvaluatorContext;
 import org.rascalmpl.value.IConstructor;
@@ -153,16 +165,104 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTDeclaration declaration) {
-		if (declaration instanceof IASTFunctionDefinition) {
+		if (declaration instanceof IASTASMDeclaration)
+			visit((IASTASMDeclaration) declaration);
+		else if (declaration instanceof IASTFunctionDefinition)
 			visit((IASTFunctionDefinition) declaration);
-		} else if (declaration instanceof IASTSimpleDeclaration) {
+		else if (declaration instanceof IASTSimpleDeclaration)
 			visit((IASTSimpleDeclaration) declaration);
-		} else {
+		else if (declaration instanceof ICPPASTAliasDeclaration)
+			visit((ICPPASTAliasDeclaration) declaration);
+		else if (declaration instanceof ICPPASTExplicitTemplateInstantiation)
+			visit((ICPPASTExplicitTemplateInstantiation) declaration);
+		else if (declaration instanceof ICPPASTLinkageSpecification)
+			visit((ICPPASTLinkageSpecification) declaration);
+		else if (declaration instanceof ICPPASTNamespaceAlias)
+			visit((ICPPASTNamespaceAlias) declaration);
+		// In ASTVisitor interface, not needed?
+		// else if (declaration instanceof ICPPASTNamespaceDefinition)
+		// visit((ICPPASTNamespaceDefinition) declaration);
+		else if (declaration instanceof ICPPASTStaticAssertDeclaration)
+			visit((ICPPASTStaticAssertDeclaration) declaration);
+		else if (declaration instanceof ICPPASTTemplateDeclaration)
+			visit((ICPPASTTemplateDeclaration) declaration);
+		else if (declaration instanceof ICPPASTTemplateSpecialization)
+			visit((ICPPASTTemplateSpecialization) declaration);
+		else if (declaration instanceof ICPPASTUsingDeclaration)
+			visit((ICPPASTUsingDeclaration) declaration);
+		else if (declaration instanceof ICPPASTUsingDirective)
+			visit((ICPPASTUsingDirective) declaration);
+		else if (declaration instanceof ICPPASTVisibilityLabel)
+			visit((ICPPASTVisibilityLabel) declaration);
+		else if (declaration instanceof IASTProblemDeclaration)
+			// should not happen
+			visit((IASTProblemDeclaration) declaration);
+		else {
 			ctx.getStdErr()
 					.println("Declaration: encountered non-implemented subtype " + declaration.getClass().getName());
 			stack.push(builder.Declaration_class(null));
 		}
 
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTVisibilityLabel declaration) {
+		ctx.getStdOut().println("CPPVisibilityLabel: " + declaration.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTUsingDirective declaration) {
+		ctx.getStdOut().println("CPPUsingDirective: " + declaration.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTUsingDeclaration declaration) {
+		ctx.getStdOut().println("CPPUsingDeclaration: " + declaration.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTTemplateSpecialization declaration) {
+		ctx.getStdOut().println("CPPTemplateSpecialization: " + declaration.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTTemplateDeclaration declaration) {
+		ctx.getStdOut().println("CPPTemplateDeclaration: " + declaration.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTStaticAssertDeclaration declaration) {
+		ctx.getStdOut().println("CPPStaticAssertDeclaration: " + declaration.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTNamespaceAlias declaration) {
+		ctx.getStdOut().println("NamespaceAlias: " + declaration.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTLinkageSpecification declaration) {
+		ctx.getStdOut().println("LinkageSpecification: " + declaration.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTExplicitTemplateInstantiation declaration) {
+		ctx.getStdOut().println("CPPExplicitTemplateInstantiation: " + declaration.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTAliasDeclaration declaration) {
+		ctx.getStdOut().println("CPPAliasDeclaration: " + declaration.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTProblemDeclaration declaration) {
+		ctx.getStdErr().println("ProblemDeclaration: " + declaration.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTASMDeclaration declaration) {
+		ctx.getStdOut().println("ASMDeclaration: " + declaration.getRawSignature());
 		return PROCESS_ABORT;
 	}
 
