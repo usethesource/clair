@@ -44,6 +44,8 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"class",tf.listType(_Declaration),"body");
   private static final Type _Declaration_package_2 
     = tf.constructor(typestore,_Declaration,"package",_Declaration,"parentPackage",tf.stringType(),"name");
+  private static final Type _Declaration_declarationEqualsInitializer_2 
+    = tf.constructor(typestore,_Declaration,"declarationEqualsInitializer",tf.stringType(),"name",_Expression,"initializer");
   private static final Type _Declaration_interface_4 
     = tf.constructor(typestore,_Declaration,"interface",tf.stringType(),"name",tf.listType(_Type),"extends",tf.listType(_Type),"implements",tf.listType(_Declaration),"body");
   private static final Type _Declaration_class_4 
@@ -68,8 +70,6 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"import",tf.stringType(),"name");
   private static final Type _Declaration_functionDefinition_3 
     = tf.constructor(typestore,_Declaration,"functionDefinition",tf.stringType(),"declSpecifier",tf.stringType(),"declarator",_Statement,"sbody");
-  private static final Type _Declaration_amb_1 
-    = tf.constructor(typestore,_Declaration,"amb",tf.setType(_Declaration),"alternatives");
   private static final Type _Declaration_parameter_3 
     = tf.constructor(typestore,_Declaration,"parameter",_Type,"type",tf.stringType(),"name",tf.integerType(),"extraDimensions");
   private static final Type _Declaration_typeParameter_2 
@@ -86,6 +86,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"postfixIncr",_Expression,"expression");
   private static final Type _Expression_bracket_1 
     = tf.constructor(typestore,_Expression,"bracket",_Expression,"expression");
+  private static final Type _Expression_nyi_1 
+    = tf.constructor(typestore,_Expression,"nyi",tf.stringType(),"raw");
   private static final Type _Expression_minus_2 
     = tf.constructor(typestore,_Expression,"minus",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_name_1 
@@ -445,6 +447,10 @@ public class AST {
     return vf.constructor(_Declaration_package_2 , $parentPackage, vf.string($name));
   }
   
+  public IConstructor Declaration_declarationEqualsInitializer( String $name, IConstructor $initializer) {
+    return vf.constructor(_Declaration_declarationEqualsInitializer_2 , vf.string($name), $initializer);
+  }
+  
   public IConstructor Declaration_interface( String $name, IList $extends, IList $implements, IList $body) {
     return vf.constructor(_Declaration_interface_4 , vf.string($name), $extends, $implements, $body);
   }
@@ -493,10 +499,6 @@ public class AST {
     return vf.constructor(_Declaration_functionDefinition_3 , vf.string($declSpecifier), vf.string($declarator), $sbody);
   }
   
-  public IConstructor Declaration_amb( ISet $alternatives) {
-    return vf.constructor(_Declaration_amb_1 , $alternatives);
-  }
-  
   public IConstructor Declaration_parameter( IConstructor $type, String $name, IValue $extraDimensions) {
     return vf.constructor(_Declaration_parameter_3 , $type, vf.string($name), $extraDimensions);
   }
@@ -524,6 +526,10 @@ public class AST {
   
   public IConstructor Expression_bracket( IConstructor $expression) {
     return vf.constructor(_Expression_bracket_1 , $expression);
+  }
+  
+  public IConstructor Expression_nyi( String $raw) {
+    return vf.constructor(_Expression_nyi_1 , vf.string($raw));
   }
   
   public IConstructor Expression_minus( IConstructor $lhs, IConstructor $rhs) {

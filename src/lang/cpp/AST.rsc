@@ -4,10 +4,12 @@ extend analysis::m3::AST;
    
 data Declaration
     = \translationUnit(list[Declaration] declarations)
-    | \simpleDeclaration(str declSpecifier, list[Declaration] declarators)
-    | \functionDefinition(str declSpecifier, str declarator, Statement sbody)
+    | \simpleDeclaration(str declSpecifier, list[Declaration] declarators)//?
+    | \functionDefinition(str declSpecifier, str declarator, Statement sbody)//?
     //| \declaration(str name, str declarator, list[Statement])
-    | \amb(set[Declaration] alternatives)
+    //| \amb(set[Declaration] alternatives)
+    
+    | \declarationEqualsInitializer(str name, Expression initializer)
     
     | \compilationUnit(Declaration package, list[Declaration] imports, list[Declaration] types)
     | \enum(str name, list[Type] implements, list[Declaration] constants, list[Declaration] body)
@@ -97,6 +99,7 @@ data Expression
     | \integerLiteral(int number)
     | \conditional(Expression condition, Expression positive, Expression negative)
     
+    | \nyi(str raw)
     
     | \arrayAccess(Expression array, Expression index)
     | \newArray(Type \type, list[Expression] dimensions, Expression init)
