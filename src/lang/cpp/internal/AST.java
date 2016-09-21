@@ -86,6 +86,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"postfixIncr",_Expression,"expression");
   private static final Type _Expression_bracket_1 
     = tf.constructor(typestore,_Expression,"bracket",_Expression,"expression");
+  private static final Type _Expression_divideAssign_2 
+    = tf.constructor(typestore,_Expression,"divideAssign",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_nyi_1 
     = tf.constructor(typestore,_Expression,"nyi",tf.stringType(),"raw");
   private static final Type _Expression_minus_2 
@@ -154,6 +156,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"amper",_Expression,"expression");
   private static final Type _Expression_binaryXor_2 
     = tf.constructor(typestore,_Expression,"binaryXor",_Expression,"lhs",_Expression,"rhs");
+  private static final Type _Expression_functionCall_2 
+    = tf.constructor(typestore,_Expression,"functionCall",_Expression,"functionName",tf.listType(_Expression),"arguments");
   private static final Type _Expression_lessEqual_2 
     = tf.constructor(typestore,_Expression,"lessEqual",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_number_1 
@@ -204,10 +208,6 @@ public class AST {
     = tf.constructor(typestore,_Expression,"newArray",_Type,"type",tf.listType(_Expression),"dimensions",_Expression,"init");
   private static final Type _Expression_variable_3 
     = tf.constructor(typestore,_Expression,"variable",tf.stringType(),"name",tf.integerType(),"extraDimensions",_Expression,"initializer");
-  private static final Type _Expression_divideAssign_2 
-    = tf.constructor(typestore,_Expression,"divideAssign",_Expression,"lhs",_Expression,"rhs");
-  private static final Type _Expression_methodCall_4 
-    = tf.constructor(typestore,_Expression,"methodCall",tf.boolType(),"isSuper",_Expression,"receiver",tf.stringType(),"name",tf.listType(_Expression),"arguments");
   private static final Type _Expression_plusAssign_2 
     = tf.constructor(typestore,_Expression,"plusAssign",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_shiftLeft_2 
@@ -254,8 +254,6 @@ public class AST {
     = tf.constructor(typestore,_Expression,"this");
   private static final Type _Expression_postfixDecr_1 
     = tf.constructor(typestore,_Expression,"postfixDecr",_Expression,"expression");
-  private static final Type _Expression_methodCall_3 
-    = tf.constructor(typestore,_Expression,"methodCall",tf.boolType(),"isSuper",tf.stringType(),"name",tf.listType(_Expression),"arguments");
   private static final Type _Expression_fieldAccess_3 
     = tf.constructor(typestore,_Expression,"fieldAccess",tf.boolType(),"isSuper",_Expression,"expression",tf.stringType(),"name");
   private static final Type _Expression_assign_2 
@@ -528,6 +526,10 @@ public class AST {
     return vf.constructor(_Expression_bracket_1 , $expression);
   }
   
+  public IConstructor Expression_divideAssign( IConstructor $lhs, IConstructor $rhs) {
+    return vf.constructor(_Expression_divideAssign_2 , $lhs, $rhs);
+  }
+  
   public IConstructor Expression_nyi( String $raw) {
     return vf.constructor(_Expression_nyi_1 , vf.string($raw));
   }
@@ -664,6 +666,10 @@ public class AST {
     return vf.constructor(_Expression_binaryXor_2 , $lhs, $rhs);
   }
   
+  public IConstructor Expression_functionCall( IConstructor $functionName, IList $arguments) {
+    return vf.constructor(_Expression_functionCall_2 , $functionName, $arguments);
+  }
+  
   public IConstructor Expression_lessEqual( IConstructor $lhs, IConstructor $rhs) {
     return vf.constructor(_Expression_lessEqual_2 , $lhs, $rhs);
   }
@@ -764,14 +770,6 @@ public class AST {
     return vf.constructor(_Expression_variable_3 , vf.string($name), $extraDimensions, $initializer);
   }
   
-  public IConstructor Expression_divideAssign( IConstructor $lhs, IConstructor $rhs) {
-    return vf.constructor(_Expression_divideAssign_2 , $lhs, $rhs);
-  }
-  
-  public IConstructor Expression_methodCall( boolean $isSuper, IConstructor $receiver, String $name, IList $arguments) {
-    return vf.constructor(_Expression_methodCall_4 , vf.bool($isSuper), $receiver, vf.string($name), $arguments);
-  }
-  
   public IConstructor Expression_plusAssign( IConstructor $lhs, IConstructor $rhs) {
     return vf.constructor(_Expression_plusAssign_2 , $lhs, $rhs);
   }
@@ -862,10 +860,6 @@ public class AST {
   
   public IConstructor Expression_postfixDecr( IConstructor $expression) {
     return vf.constructor(_Expression_postfixDecr_1 , $expression);
-  }
-  
-  public IConstructor Expression_methodCall( boolean $isSuper, String $name, IList $arguments) {
-    return vf.constructor(_Expression_methodCall_3 , vf.bool($isSuper), vf.string($name), $arguments);
   }
   
   public IConstructor Expression_fieldAccess( boolean $isSuper, IConstructor $expression, String $name) {

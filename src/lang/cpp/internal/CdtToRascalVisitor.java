@@ -564,6 +564,17 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(IASTFunctionCallExpression expression) {
 		ctx.getStdOut().println("FunctionCallExpression: " + expression.getRawSignature());
+		IASTExpression _functionName = expression.getFunctionNameExpression();
+		IASTInitializerClause[] _arguments = expression.getArguments();
+
+		_functionName.accept(this);
+		IConstructor functionName = (IConstructor) stack.pop();
+		IListWriter arguments = vf.listWriter();
+		for (IASTInitializerClause argument : _arguments) {
+			argument.accept(this);
+			arguments.append(stack.pop());
+		}
+		stack.push(builder.Expression_functionCall(functionName, arguments.done()));
 		return PROCESS_ABORT;
 	}
 
