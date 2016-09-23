@@ -11,15 +11,25 @@ data Declaration
     
     | \asmDeclaration(str assembly)
     
+    | \enumerator(str name, Expression evalue)
+    | \enumerator(str name)//?
+    | \enum(str name, list[Expression] enumerators)
+    
+    | \usingDirective(str qualifiedName)
+    | \visibilityLabel(Modifier visibility)
+    | \struct(str name, list[Declaration] members)
+    | \union(str name, list[Declaration] members)
+    | \class(str name, list[Declaration] members)
+    
     | \pointerNYI()//TODO: fix
     
     
     | \declarationEqualsInitializer(str name, Expression initializer)
     
     | \compilationUnit(Declaration package, list[Declaration] imports, list[Declaration] types)
-    | \enum(str name, list[Type] implements, list[Declaration] constants, list[Declaration] body)
-    | \enumConstant(str name, list[Expression] arguments, Declaration class)
-    | \enumConstant(str name, list[Expression] arguments)
+    //| \enum(str name, list[Type] implements, list[Declaration] constants, list[Declaration] body)
+    //| \enumConstant(str name, list[Expression] arguments, Declaration class)
+    //| \enumConstant(str name, list[Expression] arguments)
     | \class(str name, list[Type] extends, list[Type] implements, list[Declaration] body)
     | \class(list[Declaration] body)
     | \interface(str name, list[Type] extends, list[Type] implements, list[Declaration] body)
@@ -174,6 +184,8 @@ data Statement
     | \return(Expression expression)
     | \return()
     | \nullStatement()
+    | \label(str name, Statement nestedStatement)
+    | \goto(str name)
     
     
     | \assert(Expression expression)
@@ -186,7 +198,7 @@ data Statement
     | \empty()
     | \foreach(Declaration parameter, Expression collection, Statement body)
     //| \for(list[Expression] initializers, list[Expression] updaters, Statement body)
-    | \label(str name, Statement body)
+    //| \label(str name, Statement body)
     //| \return(Expression expression)
     //| \return()
     //| \switch(Expression expression, list[Statement] statements)
@@ -252,9 +264,13 @@ data Modifier
     | \register()
     | \mutable()
     
-    | \private()
     | \public()
     | \protected()
+    | \private()
+    
+    //| \private()
+    //| \public()
+    //| \protected()
     | \friendly()
     | \static()
     | \final()
