@@ -24,6 +24,8 @@ public class AST {
    
   
   
+  private static final Type _Declaration_simpleDeclaration_2 
+    = tf.constructor(typestore,_Declaration,"simpleDeclaration",_Type,"declSpecifier",tf.listType(_Declaration),"declarators");
   private static final Type _Declaration_constructor_4 
     = tf.constructor(typestore,_Declaration,"constructor",tf.stringType(),"name",tf.listType(_Declaration),"parameters",tf.listType(_Expression),"exceptions",_Statement,"impl");
   private static final Type _Declaration_method_5 
@@ -34,12 +36,10 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"annotationTypeMember",_Type,"type",tf.stringType(),"name");
   private static final Type _Declaration_method_4 
     = tf.constructor(typestore,_Declaration,"method",_Type,"return",tf.stringType(),"name",tf.listType(_Declaration),"parameters",tf.listType(_Expression),"exceptions");
-  private static final Type _Declaration_package_1 
-    = tf.constructor(typestore,_Declaration,"package",tf.stringType(),"name");
+  private static final Type _Declaration_asmDeclaration_1 
+    = tf.constructor(typestore,_Declaration,"asmDeclaration",tf.stringType(),"assembly");
   private static final Type _Declaration_variables_2 
     = tf.constructor(typestore,_Declaration,"variables",_Type,"type",tf.listType(_Expression),"fragments");
-  private static final Type _Declaration_simpleDeclaration_2 
-    = tf.constructor(typestore,_Declaration,"simpleDeclaration",tf.stringType(),"declSpecifier",tf.listType(_Declaration),"declarators");
   private static final Type _Declaration_class_1 
     = tf.constructor(typestore,_Declaration,"class",tf.listType(_Declaration),"body");
   private static final Type _Declaration_package_2 
@@ -50,8 +50,6 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"interface",tf.stringType(),"name",tf.listType(_Type),"extends",tf.listType(_Type),"implements",tf.listType(_Declaration),"body");
   private static final Type _Declaration_class_4 
     = tf.constructor(typestore,_Declaration,"class",tf.stringType(),"name",tf.listType(_Type),"extends",tf.listType(_Type),"implements",tf.listType(_Declaration),"body");
-  private static final Type _Declaration_field_2 
-    = tf.constructor(typestore,_Declaration,"field",_Type,"type",tf.listType(_Expression),"fragments");
   private static final Type _Declaration_enum_4 
     = tf.constructor(typestore,_Declaration,"enum",tf.stringType(),"name",tf.listType(_Type),"implements",tf.listType(_Declaration),"constants",tf.listType(_Declaration),"body");
   private static final Type _Declaration_vararg_2 
@@ -69,13 +67,19 @@ public class AST {
   private static final Type _Declaration_import_1 
     = tf.constructor(typestore,_Declaration,"import",tf.stringType(),"name");
   private static final Type _Declaration_functionDefinition_3 
-    = tf.constructor(typestore,_Declaration,"functionDefinition",tf.stringType(),"declSpecifier",tf.stringType(),"declarator",_Statement,"sbody");
+    = tf.constructor(typestore,_Declaration,"functionDefinition",_Type,"declSpecifier",_Declaration,"ddeclarators",_Statement,"sbody");
+  private static final Type _Declaration_package_1 
+    = tf.constructor(typestore,_Declaration,"package",tf.stringType(),"name");
   private static final Type _Declaration_parameter_3 
     = tf.constructor(typestore,_Declaration,"parameter",_Type,"type",tf.stringType(),"name",tf.integerType(),"extraDimensions");
   private static final Type _Declaration_typeParameter_2 
     = tf.constructor(typestore,_Declaration,"typeParameter",tf.stringType(),"name",tf.listType(_Type),"extendsList");
   private static final Type _Declaration_enumConstant_3 
     = tf.constructor(typestore,_Declaration,"enumConstant",tf.stringType(),"name",tf.listType(_Expression),"arguments",_Declaration,"class");
+  private static final Type _Declaration_field_2 
+    = tf.constructor(typestore,_Declaration,"field",_Type,"type",tf.listType(_Expression),"fragments");
+  private static final Type _Declaration_pointerNYI_0 
+    = tf.constructor(typestore,_Declaration,"pointerNYI");
   
   
   private static final Type _Expression_labelReference_1 
@@ -110,14 +114,16 @@ public class AST {
     = tf.constructor(typestore,_Expression,"tilde",_Expression,"expression");
   private static final Type _Expression_false_0 
     = tf.constructor(typestore,_Expression,"false");
-  private static final Type _Expression_newObject_2 
-    = tf.constructor(typestore,_Expression,"newObject",_Type,"type",tf.listType(_Expression),"args");
   private static final Type _Expression_sizeof_1 
     = tf.constructor(typestore,_Expression,"sizeof",_Expression,"expression");
   private static final Type _Expression_memberValuePair_2 
     = tf.constructor(typestore,_Expression,"memberValuePair",tf.stringType(),"name",_Expression,"value");
   private static final Type _Expression_multiplyAssign_2 
     = tf.constructor(typestore,_Expression,"multiplyAssign",_Expression,"lhs",_Expression,"rhs");
+  private static final Type _Expression_newObject_2 
+    = tf.constructor(typestore,_Expression,"newObject",_Type,"type",tf.listType(_Expression),"args");
+  private static final Type _Expression_functionDeclarator_1 
+    = tf.constructor(typestore,_Expression,"functionDeclarator",tf.listType(_Expression),"arguments");
   private static final Type _Expression_variable_2 
     = tf.constructor(typestore,_Expression,"variable",tf.stringType(),"name",tf.integerType(),"extraDimensions");
   private static final Type _Expression_ellipses_2 
@@ -260,42 +266,56 @@ public class AST {
     = tf.constructor(typestore,_Expression,"assign",_Expression,"lhs",_Expression,"rhs");
   
   
-  private static final Type _Type_int_0 
-    = tf.constructor(typestore,_Type,"int");
-  private static final Type _Type_simpleType_1 
-    = tf.constructor(typestore,_Type,"simpleType",_Expression,"typeName");
+  private static final Type _Type_int128_0 
+    = tf.constructor(typestore,_Type,"int128");
+  private static final Type _Type_decimal128_0 
+    = tf.constructor(typestore,_Type,"decimal128");
+  private static final Type _Type_wchar_t_0 
+    = tf.constructor(typestore,_Type,"wchar_t");
   private static final Type _Type_qualifiedType_2 
     = tf.constructor(typestore,_Type,"qualifiedType",_Type,"qualifier",_Expression,"simpleName");
+  private static final Type _Type_float_0 
+    = tf.constructor(typestore,_Type,"float");
+  private static final Type _Type_float128_0 
+    = tf.constructor(typestore,_Type,"float128");
   private static final Type _Type_wildcard_0 
     = tf.constructor(typestore,_Type,"wildcard");
   private static final Type _Type_char_0 
     = tf.constructor(typestore,_Type,"char");
   private static final Type _Type_void_0 
     = tf.constructor(typestore,_Type,"void");
-  private static final Type _Type_lowerbound_1 
-    = tf.constructor(typestore,_Type,"lowerbound",_Type,"type");
-  private static final Type _Type_byte_0 
-    = tf.constructor(typestore,_Type,"byte");
-  private static final Type _Type_boolean_0 
-    = tf.constructor(typestore,_Type,"boolean");
+  private static final Type _Type_int_0 
+    = tf.constructor(typestore,_Type,"int");
+  private static final Type _Type_auto_0 
+    = tf.constructor(typestore,_Type,"auto");
+  private static final Type _Type_decimal64_0 
+    = tf.constructor(typestore,_Type,"decimal64");
+  private static final Type _Type_char32_t_0 
+    = tf.constructor(typestore,_Type,"char32_t");
+  private static final Type _Type_bool_0 
+    = tf.constructor(typestore,_Type,"bool");
+  private static final Type _Type_decltype_0 
+    = tf.constructor(typestore,_Type,"decltype");
+  private static final Type _Type_simpleType_1 
+    = tf.constructor(typestore,_Type,"simpleType",_Expression,"typeName");
   private static final Type _Type_arrayType_1 
     = tf.constructor(typestore,_Type,"arrayType",_Type,"type");
   private static final Type _Type_parameterizedType_1 
     = tf.constructor(typestore,_Type,"parameterizedType",_Type,"type");
-  private static final Type _Type_long_0 
-    = tf.constructor(typestore,_Type,"long");
-  private static final Type _Type_float_0 
-    = tf.constructor(typestore,_Type,"float");
-  private static final Type _Type_short_0 
-    = tf.constructor(typestore,_Type,"short");
   private static final Type _Type_double_0 
     = tf.constructor(typestore,_Type,"double");
+  private static final Type _Type_typeof_0 
+    = tf.constructor(typestore,_Type,"typeof");
   private static final Type _Type_upperbound_1 
     = tf.constructor(typestore,_Type,"upperbound",_Type,"type");
   private static final Type _Type_unionType_1 
     = tf.constructor(typestore,_Type,"unionType",tf.listType(_Type),"types");
-  private static final Type _Type_string_0 
-    = tf.constructor(typestore,_Type,"string");
+  private static final Type _Type_lowerbound_1 
+    = tf.constructor(typestore,_Type,"lowerbound",_Type,"type");
+  private static final Type _Type_char16_t_0 
+    = tf.constructor(typestore,_Type,"char16_t");
+  private static final Type _Type_decimal32_0 
+    = tf.constructor(typestore,_Type,"decimal32");
   
   
   private static final Type _Statement_constructorCall_2 
@@ -316,6 +336,8 @@ public class AST {
     = tf.constructor(typestore,_Statement,"expressionStatement",_Expression,"expression");
   private static final Type _Statement_compoundStatement_1 
     = tf.constructor(typestore,_Statement,"compoundStatement",tf.listType(_Statement),"statements");
+  private static final Type _Statement_nullStatement_0 
+    = tf.constructor(typestore,_Statement,"nullStatement");
   private static final Type _Statement_continue_0 
     = tf.constructor(typestore,_Statement,"continue");
   private static final Type _Statement_for_4 
@@ -370,8 +392,6 @@ public class AST {
     = tf.constructor(typestore,_Modifier,"mutable");
   private static final Type _Modifier_public_0 
     = tf.constructor(typestore,_Modifier,"public");
-  private static final Type _Modifier_auto_0 
-    = tf.constructor(typestore,_Modifier,"auto");
   private static final Type _Modifier_strictfp_0 
     = tf.constructor(typestore,_Modifier,"strictfp");
   private static final Type _Modifier_final_0 
@@ -405,6 +425,10 @@ public class AST {
   
    
   
+  public IConstructor Declaration_simpleDeclaration( IConstructor $declSpecifier, IList $declarators) {
+    return vf.constructor(_Declaration_simpleDeclaration_2 , $declSpecifier, $declarators);
+  }
+  
   public IConstructor Declaration_constructor( String $name, IList $parameters, IList $exceptions, IConstructor $impl) {
     return vf.constructor(_Declaration_constructor_4 , vf.string($name), $parameters, $exceptions, $impl);
   }
@@ -425,16 +449,12 @@ public class AST {
     return vf.constructor(_Declaration_method_4 , $return, vf.string($name), $parameters, $exceptions);
   }
   
-  public IConstructor Declaration_package( String $name) {
-    return vf.constructor(_Declaration_package_1 , vf.string($name));
+  public IConstructor Declaration_asmDeclaration( String $assembly) {
+    return vf.constructor(_Declaration_asmDeclaration_1 , vf.string($assembly));
   }
   
   public IConstructor Declaration_variables( IConstructor $type, IList $fragments) {
     return vf.constructor(_Declaration_variables_2 , $type, $fragments);
-  }
-  
-  public IConstructor Declaration_simpleDeclaration( String $declSpecifier, IList $declarators) {
-    return vf.constructor(_Declaration_simpleDeclaration_2 , vf.string($declSpecifier), $declarators);
   }
   
   public IConstructor Declaration_class( IList $body) {
@@ -455,10 +475,6 @@ public class AST {
   
   public IConstructor Declaration_class( String $name, IList $extends, IList $implements, IList $body) {
     return vf.constructor(_Declaration_class_4 , vf.string($name), $extends, $implements, $body);
-  }
-  
-  public IConstructor Declaration_field( IConstructor $type, IList $fragments) {
-    return vf.constructor(_Declaration_field_2 , $type, $fragments);
   }
   
   public IConstructor Declaration_enum( String $name, IList $implements, IList $constants, IList $body) {
@@ -493,8 +509,12 @@ public class AST {
     return vf.constructor(_Declaration_import_1 , vf.string($name));
   }
   
-  public IConstructor Declaration_functionDefinition( String $declSpecifier, String $declarator, IConstructor $sbody) {
-    return vf.constructor(_Declaration_functionDefinition_3 , vf.string($declSpecifier), vf.string($declarator), $sbody);
+  public IConstructor Declaration_functionDefinition( IConstructor $declSpecifier, IConstructor $ddeclarators, IConstructor $sbody) {
+    return vf.constructor(_Declaration_functionDefinition_3 , $declSpecifier, $ddeclarators, $sbody);
+  }
+  
+  public IConstructor Declaration_package( String $name) {
+    return vf.constructor(_Declaration_package_1 , vf.string($name));
   }
   
   public IConstructor Declaration_parameter( IConstructor $type, String $name, IValue $extraDimensions) {
@@ -507,6 +527,14 @@ public class AST {
   
   public IConstructor Declaration_enumConstant( String $name, IList $arguments, IConstructor $class) {
     return vf.constructor(_Declaration_enumConstant_3 , vf.string($name), $arguments, $class);
+  }
+  
+  public IConstructor Declaration_field( IConstructor $type, IList $fragments) {
+    return vf.constructor(_Declaration_field_2 , $type, $fragments);
+  }
+  
+  public IConstructor Declaration_pointerNYI() {
+    return vf.constructor(_Declaration_pointerNYI_0 );
   }
     
   
@@ -574,10 +602,6 @@ public class AST {
     return vf.constructor(_Expression_false_0 );
   }
   
-  public IConstructor Expression_newObject( IConstructor $type, IList $args) {
-    return vf.constructor(_Expression_newObject_2 , $type, $args);
-  }
-  
   public IConstructor Expression_sizeof( IConstructor $expression) {
     return vf.constructor(_Expression_sizeof_1 , $expression);
   }
@@ -588,6 +612,14 @@ public class AST {
   
   public IConstructor Expression_multiplyAssign( IConstructor $lhs, IConstructor $rhs) {
     return vf.constructor(_Expression_multiplyAssign_2 , $lhs, $rhs);
+  }
+  
+  public IConstructor Expression_newObject( IConstructor $type, IList $args) {
+    return vf.constructor(_Expression_newObject_2 , $type, $args);
+  }
+  
+  public IConstructor Expression_functionDeclarator( IList $arguments) {
+    return vf.constructor(_Expression_functionDeclarator_1 , $arguments);
   }
   
   public IConstructor Expression_variable( String $name, IValue $extraDimensions) {
@@ -794,8 +826,8 @@ public class AST {
     return vf.constructor(_Expression_shiftRightAssign_2 , $lhs, $rhs);
   }
   
-  public IConstructor Expression_fieldAccess( boolean $isSuper, String $name) {
-    return vf.constructor(_Expression_fieldAccess_2 , vf.bool($isSuper), vf.string($name));
+  public IConstructor Expression_fieldAccess( IValue $isSuper, String $name) {
+    return vf.constructor(_Expression_fieldAccess_2 , $isSuper, vf.string($name));
   }
   
   public IConstructor Expression_integerLiteral( IValue $number) {
@@ -862,8 +894,8 @@ public class AST {
     return vf.constructor(_Expression_postfixDecr_1 , $expression);
   }
   
-  public IConstructor Expression_fieldAccess( boolean $isSuper, IConstructor $expression, String $name) {
-    return vf.constructor(_Expression_fieldAccess_3 , vf.bool($isSuper), $expression, vf.string($name));
+  public IConstructor Expression_fieldAccess( IValue $isSuper, IConstructor $expression, String $name) {
+    return vf.constructor(_Expression_fieldAccess_3 , $isSuper, $expression, vf.string($name));
   }
   
   public IConstructor Expression_assign( IConstructor $lhs, IConstructor $rhs) {
@@ -871,16 +903,28 @@ public class AST {
   }
     
   
-  public IConstructor Type_int() {
-    return vf.constructor(_Type_int_0 );
+  public IConstructor Type_int128() {
+    return vf.constructor(_Type_int128_0 );
   }
   
-  public IConstructor Type_simpleType( IConstructor $typeName) {
-    return vf.constructor(_Type_simpleType_1 , $typeName);
+  public IConstructor Type_decimal128() {
+    return vf.constructor(_Type_decimal128_0 );
+  }
+  
+  public IConstructor Type_wchar_t() {
+    return vf.constructor(_Type_wchar_t_0 );
   }
   
   public IConstructor Type_qualifiedType( IConstructor $qualifier, IConstructor $simpleName) {
     return vf.constructor(_Type_qualifiedType_2 , $qualifier, $simpleName);
+  }
+  
+  public IConstructor Type_float() {
+    return vf.constructor(_Type_float_0 );
+  }
+  
+  public IConstructor Type_float128() {
+    return vf.constructor(_Type_float128_0 );
   }
   
   public IConstructor Type_wildcard() {
@@ -895,16 +939,32 @@ public class AST {
     return vf.constructor(_Type_void_0 );
   }
   
-  public IConstructor Type_lowerbound( IConstructor $type) {
-    return vf.constructor(_Type_lowerbound_1 , $type);
+  public IConstructor Type_int() {
+    return vf.constructor(_Type_int_0 );
   }
   
-  public IConstructor Type_byte() {
-    return vf.constructor(_Type_byte_0 );
+  public IConstructor Type_auto() {
+    return vf.constructor(_Type_auto_0 );
   }
   
-  public IConstructor Type_boolean() {
-    return vf.constructor(_Type_boolean_0 );
+  public IConstructor Type_decimal64() {
+    return vf.constructor(_Type_decimal64_0 );
+  }
+  
+  public IConstructor Type_char32_t() {
+    return vf.constructor(_Type_char32_t_0 );
+  }
+  
+  public IConstructor Type_bool() {
+    return vf.constructor(_Type_bool_0 );
+  }
+  
+  public IConstructor Type_decltype() {
+    return vf.constructor(_Type_decltype_0 );
+  }
+  
+  public IConstructor Type_simpleType( IConstructor $typeName) {
+    return vf.constructor(_Type_simpleType_1 , $typeName);
   }
   
   public IConstructor Type_arrayType( IConstructor $type) {
@@ -915,20 +975,12 @@ public class AST {
     return vf.constructor(_Type_parameterizedType_1 , $type);
   }
   
-  public IConstructor Type_long() {
-    return vf.constructor(_Type_long_0 );
-  }
-  
-  public IConstructor Type_float() {
-    return vf.constructor(_Type_float_0 );
-  }
-  
-  public IConstructor Type_short() {
-    return vf.constructor(_Type_short_0 );
-  }
-  
   public IConstructor Type_double() {
     return vf.constructor(_Type_double_0 );
+  }
+  
+  public IConstructor Type_typeof() {
+    return vf.constructor(_Type_typeof_0 );
   }
   
   public IConstructor Type_upperbound( IConstructor $type) {
@@ -939,13 +991,21 @@ public class AST {
     return vf.constructor(_Type_unionType_1 , $types);
   }
   
-  public IConstructor Type_string() {
-    return vf.constructor(_Type_string_0 );
+  public IConstructor Type_lowerbound( IConstructor $type) {
+    return vf.constructor(_Type_lowerbound_1 , $type);
+  }
+  
+  public IConstructor Type_char16_t() {
+    return vf.constructor(_Type_char16_t_0 );
+  }
+  
+  public IConstructor Type_decimal32() {
+    return vf.constructor(_Type_decimal32_0 );
   }
     
   
-  public IConstructor Statement_constructorCall( boolean $isSuper, IList $arguments) {
-    return vf.constructor(_Statement_constructorCall_2 , vf.bool($isSuper), $arguments);
+  public IConstructor Statement_constructorCall( IValue $isSuper, IList $arguments) {
+    return vf.constructor(_Statement_constructorCall_2 , $isSuper, $arguments);
   }
   
   public IConstructor Statement_switch( IConstructor $controller, IConstructor $body) {
@@ -968,8 +1028,8 @@ public class AST {
     return vf.constructor(_Statement_return_0 );
   }
   
-  public IConstructor Statement_constructorCall( boolean $isSuper, IConstructor $expr, IList $arguments) {
-    return vf.constructor(_Statement_constructorCall_3 , vf.bool($isSuper), $expr, $arguments);
+  public IConstructor Statement_constructorCall( IValue $isSuper, IConstructor $expr, IList $arguments) {
+    return vf.constructor(_Statement_constructorCall_3 , $isSuper, $expr, $arguments);
   }
   
   public IConstructor Statement_expressionStatement( IConstructor $expression) {
@@ -978,6 +1038,10 @@ public class AST {
   
   public IConstructor Statement_compoundStatement( IList $statements) {
     return vf.constructor(_Statement_compoundStatement_1 , $statements);
+  }
+  
+  public IConstructor Statement_nullStatement() {
+    return vf.constructor(_Statement_nullStatement_0 );
   }
   
   public IConstructor Statement_continue() {
@@ -1083,10 +1147,6 @@ public class AST {
   
   public IConstructor Modifier_public() {
     return vf.constructor(_Modifier_public_0 );
-  }
-  
-  public IConstructor Modifier_auto() {
-    return vf.constructor(_Modifier_auto_0 );
   }
   
   public IConstructor Modifier_strictfp() {

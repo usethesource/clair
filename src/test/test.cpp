@@ -1,7 +1,23 @@
-typedef char foobar;
+//typedef char foobar;
+
+int var;
 
 void main() {
 
+	int i;
+	extern int j=2;
+
+//	char* c;
+
+	foo();
+
+	i = (aux(4));
+
+	/*i = (i>0?2:-2);
+
+	do{
+		i--;
+	} while (i>0);
 	int x = 42;
 
 	switch (x) {
@@ -14,11 +30,6 @@ void main() {
 		x = 0;
 	}
 
-	int i = 2;
-	/*while (i>0){
-		i--;
-		continue;
-	}*/
 
 	/*int x = 42;
 	int y;
@@ -42,4 +53,13 @@ void main() {
 	var = (char) foo;
 
 	foobar ch = 57;*/
+}
+
+int aux(char c) {
+	;
+	return c;
+}
+
+void foo() {
+	var = 'c';
 }
