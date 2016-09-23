@@ -4,10 +4,15 @@ extend analysis::m3::AST;
    
 data Declaration
     = \translationUnit(list[Declaration] declarations)
-    | \simpleDeclaration(str declSpecifier, list[Declaration] declarators)//?
-    | \functionDefinition(str declSpecifier, str declarator, Statement sbody)//?
+    | \simpleDeclaration(Type declSpecifier, list[Declaration] declarators)//?
+    | \functionDefinition(Type declSpecifier, Declaration ddeclarators, Statement sbody)//?
     //| \declaration(str name, str declarator, list[Statement])
     //| \amb(set[Declaration] alternatives)
+    
+    | \asmDeclaration(str assembly)
+    
+    | \pointerNYI()//TODO: fix
+    
     
     | \declarationEqualsInitializer(str name, Expression initializer)
     
@@ -98,7 +103,6 @@ data Expression
     | \name(str name)
     | \integerLiteral(int number)
     | \conditional(Expression condition, Expression positive, Expression negative)
-    | \functionCall(Expression functionName, list[Expression] arguments)
     
     | \integerConstant(str vvalue)
     | \floatConstant(str vvalue)
@@ -109,8 +113,11 @@ data Expression
     | \false()
     | \nullptr()
     
+    | \functionDeclarator(list[Expression] arguments)
+    
     | \nyi(str raw)
     
+    | \functionCall(Expression functionName, list[Expression] arguments)
     | \arrayAccess(Expression array, Expression index)
     | \newArray(Type \type, list[Expression] dimensions, Expression init)
     | \newArray(Type \type, list[Expression] dimensions)
@@ -166,6 +173,7 @@ data Statement
     
     | \return(Expression expression)
     | \return()
+    | \nullStatement()
     
     
     | \assert(Expression expression)
@@ -197,7 +205,25 @@ data Statement
     ;           
   
 data Type 
-    = arrayType(Type \type)
+    = \void()
+    | \char()
+    | \int()
+    | \float()
+    | \double()
+    | \bool()
+    | \wchar_t()
+    | \typeof()     //needs an argument?
+    | \decltype()   //needs an argument?
+    | \auto()       //is this a type?
+    | \char16_t()
+    | \char32_t()
+    | \int128()
+    | \float128()
+    | \decimal32()
+    | \decimal64()
+    | \decimal128()
+    
+    | arrayType(Type \type)
     | parameterizedType(Type \type)
     | qualifiedType(Type qualifier, Expression simpleName)
     | simpleType(Expression typeName)
@@ -205,16 +231,16 @@ data Type
     | wildcard()
     | upperbound(Type \type)
     | lowerbound(Type \type)
-    | \int()
-    | short()
-    | long()
-    | float()
-    | double()
-    | char()
-    | string()
-    | byte()
-    | \void()
-    | \boolean()
+    //| \int()
+    //| short()
+    //| long()
+    //| float()
+    //| double()
+    //| char()
+    //| string()
+    //| byte()
+    //| \void()
+    //| \boolean()
     ;
  
 data Modifier
@@ -222,7 +248,7 @@ data Modifier
     | typedef()
     | \extern()
     | \static()
-    | \auto()
+    //| \auto()
     | \register()
     | \mutable()
     
