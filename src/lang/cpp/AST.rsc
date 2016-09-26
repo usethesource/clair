@@ -23,12 +23,15 @@ data Declaration
     
     | \pointerNYI()//TODO: fix
     
-    | \declarator(str name)
-    | \declarator(str name, Declaration init)
+    | \declarator(Expression nname)
+    | \declarator(Expression nname, Declaration init)
     | \equalsInitializer(Expression initializer)
     | \parameter(Expression nname)
     | \parameter(Expression nname, Declaration init)
     
+    | \declSpecifier(list[Modifier] modifiers, Type \type)
+    | \declSpecifier(list[Modifier] modifiers, Type \type, Expression expression) //decltype and type_of
+    | \initializerClause(Expression expression)
     
     | \declarationEqualsInitializer(str name, Expression initializer) //weg
     
@@ -223,7 +226,8 @@ data Statement
     ;           
   
 data Type 
-    = \void()
+    = \unspecified()
+    | \void()
     | \char()
     | \int()
     | \float()
@@ -262,8 +266,7 @@ data Type
     ;
  
 data Modifier
-    = \unspecified()
-    | typedef()
+    = typedef()
     | \extern()
     | \static()
     //| \auto()
@@ -273,6 +276,15 @@ data Modifier
     | \public()
     | \protected()
     | \private()
+    
+    | \signed()
+    | \unsigned()
+    | \short()
+    | \long()
+    | \longlong()
+    | \complex()
+    | \imaginary()
+    
     
     //| \private()
     //| \public()

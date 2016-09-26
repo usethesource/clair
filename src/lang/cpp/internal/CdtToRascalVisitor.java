@@ -363,17 +363,21 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(IASTEqualsInitializer initializer) {
 		IASTInitializerClause initializerClause = initializer.getInitializerClause();
-		if (!(initializerClause instanceof IASTExpression)) {
-			ctx.getStdErr().println("EqualsInitializer: encountered unknown initializerClause "
-					+ initializerClause.getClass().getName());
-		}
 		IASTExpression clause = (IASTExpression) initializerClause;
 		clause.accept(this);
 		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTInitializerList initializer) {
-		ctx.getStdErr().println("IASTInitializerList: " + initializer.getRawSignature());
+		// ctx.getStdErr().println("IASTInitializerList: " +
+		// initializer.getRawSignature());
+		int size = initializer.getSize();
+		IASTInitializerClause[] _clauses = initializer.getClauses();
+		IListWriter clauses = vf.listWriter();
+		Stream.of(_clauses).forEach(it -> {
+			it.accept(this);
+			clauses.append((IConstructor) stack.pop());
+		});
 		return PROCESS_ABORT;
 	}
 
@@ -489,7 +493,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTStandardFunctionDeclarator declarator) {
-		ctx.getStdErr().println("Scope NYI. Implement CPPStandardFunctionDeclarator?");
+		// Scope NYI
 		if (declarator instanceof ICPPASTFunctionDeclarator)
 			visit((ICPPASTFunctionDeclarator) declarator);
 		else {
@@ -548,11 +552,11 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			IConstructor name = (IConstructor) stack.pop();
 			IConstructor initializer = null;
 			if (_initializer == null) {
-				stack.push(builder.Declaration_parameter(name));
+				stack.push(builder.Declaration_declarator(name));
 			} else {
 				_initializer.accept(this);
 				initializer = (IConstructor) stack.pop();
-				stack.push(builder.Declaration_parameter(name, initializer));
+				stack.push(builder.Declaration_declarator(name, initializer));
 			}
 
 			// ctx.getStdOut().println("#_pointerOperators=" +
@@ -747,71 +751,90 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(IASTSimpleDeclSpecifier declSpec) {
 		// TODO: implement modifiers
-		ctx.getStdOut().println("SimpleDeclSpecifier not fully implemented yet");
 		int type = declSpec.getType();
 		boolean isSigned = declSpec.isSigned();
 		boolean isUnsigned = declSpec.isUnsigned();
 		boolean isShort = declSpec.isShort();
 		boolean isLong = declSpec.isLong();
-		boolean isLongLOng = declSpec.isLongLong();
+		boolean isLongLong = declSpec.isLongLong();
 		boolean isComplex = declSpec.isComplex();
 		boolean isImaginary = declSpec.isImaginary();
 		IASTExpression declTypeExpression = declSpec.getDeclTypeExpression();
 
+		IListWriter modifiers = vf.listWriter();
+		if (isSigned)
+			modifiers.append(builder.Modifier_signed());
+		if (isUnsigned)
+			modifiers.append(builder.Modifier_unsigned());
+		if (isShort)
+			modifiers.append(builder.Modifier_short());
+		if (isLong)
+			modifiers.append(builder.Modifier_long());
+		if (isLongLong)
+			modifiers.append(builder.Modifier_longlong());
+		if (isComplex)
+			modifiers.append(builder.Modifier_complex());
+		if (isImaginary)
+			modifiers.append(builder.Modifier_imaginary());
+
 		switch (type) {
 		case IASTSimpleDeclSpecifier.t_unspecified:
-			stack.push(builder.Modifier_unspecified());
+			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_unspecified()));
 			break;
 		case IASTSimpleDeclSpecifier.t_void:
-			stack.push(builder.Type_void());
+			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_void()));
 			break;
 		case IASTSimpleDeclSpecifier.t_char:
-			stack.push(builder.Type_char());
+			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_char()));
 			break;
 		case IASTSimpleDeclSpecifier.t_int:
-			stack.push(builder.Type_int());
+			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_int()));
 			break;
 		case IASTSimpleDeclSpecifier.t_float:
-			stack.push(builder.Type_float());
+			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_float()));
 			break;
 		case IASTSimpleDeclSpecifier.t_double:
-			stack.push(builder.Type_double());
+			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_double()));
 			break;
 		case IASTSimpleDeclSpecifier.t_bool:
-			stack.push(builder.Type_bool());
+			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_bool()));
 			break;
 		case IASTSimpleDeclSpecifier.t_wchar_t:
-			stack.push(builder.Type_wchar_t());
+			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_wchar_t()));
 			break;
 		case IASTSimpleDeclSpecifier.t_typeof:
-			stack.push(builder.Type_typeof());
+			declTypeExpression.accept(this);
+			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_typeof(),
+					(IConstructor) stack.pop()));
 			break;
 		case IASTSimpleDeclSpecifier.t_decltype:
-			stack.push(builder.Type_decltype());
+			declTypeExpression.accept(this);
+			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_decltype(),
+					(IConstructor) stack.pop()));
 			break;
 		case IASTSimpleDeclSpecifier.t_auto:
-			stack.push(builder.Type_auto());
+			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_auto()));
 			break;
 		case IASTSimpleDeclSpecifier.t_char16_t:
-			stack.push(builder.Type_char16_t());
+			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_char16_t()));
 			break;
 		case IASTSimpleDeclSpecifier.t_char32_t:
-			stack.push(builder.Type_char32_t());
+			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_char32_t()));
 			break;
 		case IASTSimpleDeclSpecifier.t_int128:
-			stack.push(builder.Type_int128());
+			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_int128()));
 			break;
 		case IASTSimpleDeclSpecifier.t_float128:
-			stack.push(builder.Type_float128());
+			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_float128()));
 			break;
 		case IASTSimpleDeclSpecifier.t_decimal32:
-			stack.push(builder.Type_decimal32());
+			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_decimal128()));
 			break;
 		case IASTSimpleDeclSpecifier.t_decimal64:
-			stack.push(builder.Type_decimal64());
+			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_decimal64()));
 			break;
 		case IASTSimpleDeclSpecifier.t_decimal128:
-			stack.push(builder.Type_decimal128());
+			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_decimal128()));
 			break;
 		default:
 			throw new RuntimeException("Unknown IASTSimpleDeclSpecifier kind " + type + ". Exiting");
