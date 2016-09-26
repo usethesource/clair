@@ -1,7 +1,9 @@
 package lang.cpp.internal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 import java.util.stream.Stream;
 
@@ -44,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -72,6 +75,7 @@ import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArrayDeclarator;
@@ -83,10 +87,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
@@ -105,6 +112,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNaryTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpansionExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
@@ -217,9 +225,8 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			// should not happen
 			visit((IASTProblemDeclaration) declaration);
 		else {
-			ctx.getStdErr()
-					.println("Declaration: encountered non-implemented subtype " + declaration.getClass().getName());
-			stack.push(builder.Declaration_class(null));
+			throw new RuntimeException(
+					"Declaration: encountered non-implemented subtype " + declaration.getClass().getName());
 		}
 
 		return PROCESS_ABORT;
@@ -312,8 +319,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			declarator.accept(this);
 			declarators.append(stack.pop());
 		}
-		stack.push(builder.Declaration_simpleDeclaration(declSpecifier, vf.list(declarators.done())));
-		IASTName foo;
+		stack.push(builder.Declaration_simpleDeclaration(declSpecifier, declarators.done()));
 		return PROCESS_ABORT;
 	}
 
@@ -336,13 +342,21 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTInitializer initializer) {
-		ctx.getStdOut().println(initializer.getClass().getName());
-		ctx.getStdErr().println("Initializer: " + initializer.getRawSignature());
 		if (initializer instanceof IASTEqualsInitializer)
 			visit((IASTEqualsInitializer) initializer);
+		else if (initializer instanceof IASTInitializerList)
+			visit((IASTInitializerList) initializer);
+		else if (initializer instanceof ICASTDesignatedInitializer)
+			visit((ICASTDesignatedInitializer) initializer);
+		else if (initializer instanceof ICPPASTConstructorChainInitializer)
+			visit((ICPPASTConstructorChainInitializer) initializer);
+		else if (initializer instanceof ICPPASTConstructorInitializer)
+			visit((ICPPASTConstructorInitializer) initializer);
+		else if (initializer instanceof ICPPASTDesignatedInitializer)
+			visit((ICPPASTDesignatedInitializer) initializer);
 		else {
-			ctx.getStdErr()
-					.println("Initializer: encountered unknown subtype " + initializer.getClass().getSimpleName());
+			throw new RuntimeException(
+					"Initializer: encountered unknown subtype " + initializer.getClass().getSimpleName());
 		}
 		return PROCESS_ABORT;
 	}
@@ -358,9 +372,54 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
+	public int visit(IASTInitializerList initializer) {
+		ctx.getStdErr().println("IASTInitializerList: " + initializer.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICASTDesignatedInitializer initializer) {
+		ctx.getStdErr().println("ICASTDesignatedInitializer: " + initializer.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTConstructorChainInitializer initializer) {
+		ctx.getStdErr().println("ICPPASTConstructorChainInitializer: " + initializer.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTConstructorInitializer initializer) {
+		ctx.getStdErr().println("ICPPASTConstructorInitializer: " + initializer.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTDesignatedInitializer initializer) {
+		ctx.getStdErr().println("ICPPASTDesignatedInitializer: " + initializer.getRawSignature());
+		return PROCESS_ABORT;
+	}
+
 	@Override
 	public int visit(IASTParameterDeclaration parameterDeclaration) {
 		ctx.getStdErr().println("ParameterDeclaration: " + parameterDeclaration.getRawSignature());
+		if (parameterDeclaration instanceof ICPPASTParameterDeclaration) {
+			ICPPASTParameterDeclaration declaration = (ICPPASTParameterDeclaration) parameterDeclaration;
+			IASTDeclSpecifier _declSpecifier = declaration.getDeclSpecifier();
+			ICPPASTDeclarator _declarator = declaration.getDeclarator();
+
+			_declSpecifier.accept(this);
+			IConstructor declSpecifier = (IConstructor) stack.pop();
+			if (_declarator == null)
+				;
+			// stack.push(builder.Declaration_parameter(name.toString()));
+			else {
+				_declarator.accept(this);
+				IConstructor declarator = (IConstructor) stack.pop();
+				// stack.push(item)
+			}
+		} else {
+			// implement C parameter declaration
+			IASTDeclSpecifier _declSpecifier = parameterDeclaration.getDeclSpecifier();
+			IASTDeclarator _declarator = parameterDeclaration.getDeclarator();
+		}
 		return PROCESS_ABORT;
 	}
 
@@ -418,6 +477,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTFunctionDeclarator declarator) {
+		ctx.getStdOut().println(declarator.getClass().getName() + ": " + declarator.getRawSignature());
 		if (declarator instanceof IASTStandardFunctionDeclarator)
 			visit((IASTStandardFunctionDeclarator) declarator);
 		else if (declarator instanceof ICASTKnRFunctionDeclarator)
@@ -449,11 +509,19 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(ICASTKnRFunctionDeclarator declarator) {
 		ctx.getStdErr().println("CKnRFunctionDeclarator: " + declarator.getRawSignature());
+		IASTName[] names = declarator.getParameterNames();
+		IASTDeclaration[] declarations = declarator.getParameterDeclarations();
+		Map<IASTName, IASTDeclarator> map = new HashMap<IASTName, IASTDeclarator>();
+		for (IASTName name : names)
+			map.put(name, declarator.getDeclaratorForParameterName(name));
+
 		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTDeclarator declarator) {
-		// array field function
+		// ctx.getStdOut()
+		// .println("CPPDeclarator: " + declarator.getRawSignature() + "; " +
+		// declarator.getClass().getName());
 		if (declarator instanceof ICPPASTArrayDeclarator)
 			visit((ICPPASTArrayDeclarator) declarator);
 		else if (declarator instanceof ICPPASTFieldDeclarator)
@@ -480,13 +548,20 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			IConstructor name = (IConstructor) stack.pop();
 			IConstructor initializer = null;
 			if (_initializer == null) {
-
+				stack.push(builder.Declaration_parameter(name));
 			} else {
 				_initializer.accept(this);
 				initializer = (IConstructor) stack.pop();
+				stack.push(builder.Declaration_parameter(name, initializer));
 			}
 
-			stack.push(vf.string("TODOCPPDeclarator:" + declarator.getRawSignature()));
+			// ctx.getStdOut().println("#_pointerOperators=" +
+			// _pointerOperators.length + " _nestedDeclarator="
+			// + _nestedDeclarator + " _name=" + _name + " _initializer=" +
+			// _initializer);
+
+			// stack.push(vf.string("TODOCPPDeclarator:" +
+			// declarator.getRawSignature()));
 		}
 		return PROCESS_ABORT;
 	}
@@ -502,7 +577,8 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTFunctionDeclarator declarator) {
-		ctx.getStdErr().println("CPPFunctionDeclarator: " + declarator.getRawSignature());
+		// ctx.getStdErr().println("CPPFunctionDeclarator: " +
+		// declarator.getRawSignature());
 		boolean isConst = declarator.isConst();
 		boolean isVolatile = declarator.isVolatile();
 		boolean isMutable = declarator.isMutable();
@@ -519,14 +595,20 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IScope _functionScope = declarator.getFunctionScope();
 		boolean _takesVarArgs = declarator.takesVarArgs();
 
-		ctx.getStdOut()
-				.println("isConst=" + isConst + " isVolatile=" + isVolatile + " isMutable=" + isMutable
-						+ " isPureVirtual=" + isPureVirtual + " refQualifier=" + refQualifier + " _parameters.length="
-						+ _parameters.length + " exeptionSpecification.length=" + exceptionSpecification.length
-						+ " noexceptExpression=" + noexceptExpression + " trailingReturnType=" + trailingReturnType
-						+ " functionScope=" + functionScope + " isOverride=" + isOverride + " isFinal=" + isFinal
-						+ " virtSpecifiers.length=" + virtSpecifiers.length + " functionScope=" + _functionScope
-						+ " takesVarArgs=" + _takesVarArgs);
+		// ctx.getStdOut()
+		// .println("isConst=" + isConst + " isVolatile=" + isVolatile + "
+		// isMutable=" + isMutable
+		// + " isPureVirtual=" + isPureVirtual + " refQualifier=" + refQualifier
+		// + " _parameters.length="
+		// + _parameters.length + " exeptionSpecification.length=" +
+		// exceptionSpecification.length
+		// + " noexceptExpression=" + noexceptExpression + "
+		// trailingReturnType=" + trailingReturnType
+		// + " functionScope=" + functionScope + " isOverride=" + isOverride + "
+		// isFinal=" + isFinal
+		// + " virtSpecifiers.length=" + virtSpecifiers.length + "
+		// functionScope=" + _functionScope
+		// + " takesVarArgs=" + _takesVarArgs);
 
 		IListWriter parameters = vf.listWriter();
 		for (IASTParameterDeclaration parameter : _parameters) {
@@ -860,9 +942,8 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			// Should not happen
 			visit((IASTProblemExpression) expression);
 		else {
-			ctx.getStdErr()
-					.println("Expression: encountered non-implemented subtype " + expression.getClass().getName());
-			stack.push(vf.string("TODO:" + expression.getRawSignature()));
+			throw new RuntimeException(
+					"Expression: encountered non-implemented subtype " + expression.getClass().getName());
 		}
 		return PROCESS_ABORT;
 	}
@@ -1120,7 +1201,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTIdExpression expression) {
-		ctx.getStdOut().println("IdExpression: " + expression.getName().toString());
 		stack.push(builder.Expression_name(expression.getName().toString()));
 		return PROCESS_ABORT;
 	}
@@ -1291,8 +1371,8 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			// Should not happen, will hopefully extract some useful hints
 			visit((IASTProblemStatement) statement);
 		else {
-			ctx.getStdErr().println("Statement: encountered non-implemented subtype " + statement.getClass().getName());
-			stack.push(vf.bool(false));
+			throw new RuntimeException(
+					"Statement: encountered non-implemented subtype " + statement.getClass().getName());
 		}
 		return PROCESS_ABORT;
 	}
@@ -1318,7 +1398,8 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTReturnStatement statement) {
-		ctx.getStdErr().println("IASTReturnStatement: " + statement.getRawSignature());
+		// ctx.getStdErr().println("IASTReturnStatement: " +
+		// statement.getRawSignature());
 		IASTExpression returnValue = statement.getReturnValue();
 		IASTInitializerClause returnArgument = statement.getReturnArgument();
 		// TODO: returnArgument?
@@ -1492,7 +1573,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	@Override
 	public int visit(IASTTypeId typeId) {
 		ctx.getStdErr().println("TypeId: " + typeId.getRawSignature());
-		stack.push(builder.Expression_typeid(builder.Type_char()));// TODO
+		// stack.push(builder.Expression_typeid(builder.Type_char()));// TODO
 		return PROCESS_ABORT;
 	}
 

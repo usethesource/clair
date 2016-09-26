@@ -23,8 +23,14 @@ data Declaration
     
     | \pointerNYI()//TODO: fix
     
+    | \declarator(str name)
+    | \declarator(str name, Declaration init)
+    | \equalsInitializer(Expression initializer)
+    | \parameter(Expression nname)
+    | \parameter(Expression nname, Declaration init)
     
-    | \declarationEqualsInitializer(str name, Expression initializer)
+    
+    | \declarationEqualsInitializer(str name, Expression initializer) //weg
     
     | \compilationUnit(Declaration package, list[Declaration] imports, list[Declaration] types)
     //| \enum(str name, list[Type] implements, list[Declaration] constants, list[Declaration] body)
