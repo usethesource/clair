@@ -24,14 +24,16 @@ public class AST {
    
   
   
-  private static final Type _Declaration_simpleDeclaration_2 
-    = tf.constructor(typestore,_Declaration,"simpleDeclaration",_Type,"declSpecifier",tf.listType(_Declaration),"declarators");
   private static final Type _Declaration_enumerator_2 
     = tf.constructor(typestore,_Declaration,"enumerator",tf.stringType(),"name",_Expression,"evalue");
   private static final Type _Declaration_class_2 
     = tf.constructor(typestore,_Declaration,"class",tf.stringType(),"name",tf.listType(_Declaration),"members");
+  private static final Type _Declaration_initializer_1 
+    = tf.constructor(typestore,_Declaration,"initializer",_Statement,"initializerBody");
   private static final Type _Declaration_compilationUnit_3 
     = tf.constructor(typestore,_Declaration,"compilationUnit",_Declaration,"package",tf.listType(_Declaration),"imports",tf.listType(_Declaration),"types");
+  private static final Type _Declaration_annotationTypeMember_2 
+    = tf.constructor(typestore,_Declaration,"annotationTypeMember",_Type,"type",tf.stringType(),"name");
   private static final Type _Declaration_method_4 
     = tf.constructor(typestore,_Declaration,"method",_Type,"return",tf.stringType(),"name",tf.listType(_Declaration),"parameters",tf.listType(_Expression),"exceptions");
   private static final Type _Declaration_declSpecifier_3 
@@ -54,16 +56,16 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"enum",tf.stringType(),"name",tf.listType(_Expression),"enumerators");
   private static final Type _Declaration_vararg_2 
     = tf.constructor(typestore,_Declaration,"vararg",_Type,"type",tf.stringType(),"name");
-  private static final Type _Declaration_equalsInitializer_1 
-    = tf.constructor(typestore,_Declaration,"equalsInitializer",_Expression,"initializer");
+  private static final Type _Declaration_parameter_1 
+    = tf.constructor(typestore,_Declaration,"parameter",_Declaration,"declSpecifier");
   private static final Type _Declaration_declSpecifier_2 
     = tf.constructor(typestore,_Declaration,"declSpecifier",tf.listType(_Modifier),"modifiers",_Type,"type");
   private static final Type _Declaration_constructor_4 
     = tf.constructor(typestore,_Declaration,"constructor",tf.stringType(),"name",tf.listType(_Declaration),"parameters",tf.listType(_Expression),"exceptions",_Statement,"impl");
-  private static final Type _Declaration_parameter_1 
-    = tf.constructor(typestore,_Declaration,"parameter",_Expression,"nname");
-  private static final Type _Declaration_initializer_1 
-    = tf.constructor(typestore,_Declaration,"initializer",_Statement,"initializerBody");
+  private static final Type _Declaration_simpleDeclaration_2 
+    = tf.constructor(typestore,_Declaration,"simpleDeclaration",_Type,"ddeclSpecifier",tf.listType(_Declaration),"declarators");
+  private static final Type _Declaration_equalsInitializer_1 
+    = tf.constructor(typestore,_Declaration,"equalsInitializer",_Expression,"initializer");
   private static final Type _Declaration_annotationTypeMember_3 
     = tf.constructor(typestore,_Declaration,"annotationTypeMember",_Type,"type",tf.stringType(),"name",_Expression,"defaultBlock");
   private static final Type _Declaration_translationUnit_1 
@@ -74,20 +76,16 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"visibilityLabel",_Modifier,"visibility");
   private static final Type _Declaration_struct_2 
     = tf.constructor(typestore,_Declaration,"struct",tf.stringType(),"name",tf.listType(_Declaration),"members");
-  private static final Type _Declaration_annotationTypeMember_2 
-    = tf.constructor(typestore,_Declaration,"annotationTypeMember",_Type,"type",tf.stringType(),"name");
-  private static final Type _Declaration_parameter_2 
-    = tf.constructor(typestore,_Declaration,"parameter",_Expression,"nname",_Declaration,"init");
   private static final Type _Declaration_enumerator_1 
     = tf.constructor(typestore,_Declaration,"enumerator",tf.stringType(),"name");
   private static final Type _Declaration_asmDeclaration_1 
     = tf.constructor(typestore,_Declaration,"asmDeclaration",tf.stringType(),"assembly");
-  private static final Type _Declaration_annotationType_2 
-    = tf.constructor(typestore,_Declaration,"annotationType",tf.stringType(),"name",tf.listType(_Declaration),"body");
   private static final Type _Declaration_import_1 
     = tf.constructor(typestore,_Declaration,"import",tf.stringType(),"name");
-  private static final Type _Declaration_functionDefinition_3 
-    = tf.constructor(typestore,_Declaration,"functionDefinition",_Type,"declSpecifier",_Declaration,"ddeclarators",_Statement,"sbody");
+  private static final Type _Declaration_annotationType_2 
+    = tf.constructor(typestore,_Declaration,"annotationType",tf.stringType(),"name",tf.listType(_Declaration),"body");
+  private static final Type _Declaration_parameter_2 
+    = tf.constructor(typestore,_Declaration,"parameter",_Declaration,"declSpecifier",_Declaration,"declarator");
   private static final Type _Declaration_union_2 
     = tf.constructor(typestore,_Declaration,"union",tf.stringType(),"name",tf.listType(_Declaration),"members");
   private static final Type _Declaration_package_1 
@@ -102,6 +100,8 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"typeParameter",tf.stringType(),"name",tf.listType(_Type),"extendsList");
   private static final Type _Declaration_field_2 
     = tf.constructor(typestore,_Declaration,"field",_Type,"type",tf.listType(_Expression),"fragments");
+  private static final Type _Declaration_functionDefinition_3 
+    = tf.constructor(typestore,_Declaration,"functionDefinition",_Type,"ddeclSpecifier",_Declaration,"ddeclarators",_Statement,"sbody");
   private static final Type _Declaration_declarator_1 
     = tf.constructor(typestore,_Declaration,"declarator",_Expression,"nname");
   private static final Type _Declaration_pointerNYI_0 
@@ -467,10 +467,6 @@ public class AST {
   
    
   
-  public IConstructor Declaration_simpleDeclaration( IConstructor $declSpecifier, IList $declarators) {
-    return vf.constructor(_Declaration_simpleDeclaration_2 , $declSpecifier, $declarators);
-  }
-  
   public IConstructor Declaration_enumerator( String $name, IConstructor $evalue) {
     return vf.constructor(_Declaration_enumerator_2 , vf.string($name), $evalue);
   }
@@ -479,8 +475,16 @@ public class AST {
     return vf.constructor(_Declaration_class_2 , vf.string($name), $members);
   }
   
+  public IConstructor Declaration_initializer( IConstructor $initializerBody) {
+    return vf.constructor(_Declaration_initializer_1 , $initializerBody);
+  }
+  
   public IConstructor Declaration_compilationUnit( IConstructor $package, IList $imports, IList $types) {
     return vf.constructor(_Declaration_compilationUnit_3 , $package, $imports, $types);
+  }
+  
+  public IConstructor Declaration_annotationTypeMember( IConstructor $type, String $name) {
+    return vf.constructor(_Declaration_annotationTypeMember_2 , $type, vf.string($name));
   }
   
   public IConstructor Declaration_method( IConstructor $return, String $name, IList $parameters, IList $exceptions) {
@@ -527,8 +531,8 @@ public class AST {
     return vf.constructor(_Declaration_vararg_2 , $type, vf.string($name));
   }
   
-  public IConstructor Declaration_equalsInitializer( IConstructor $initializer) {
-    return vf.constructor(_Declaration_equalsInitializer_1 , $initializer);
+  public IConstructor Declaration_parameter( IConstructor $declSpecifier) {
+    return vf.constructor(_Declaration_parameter_1 , $declSpecifier);
   }
   
   public IConstructor Declaration_declSpecifier( IList $modifiers, IConstructor $type) {
@@ -539,12 +543,12 @@ public class AST {
     return vf.constructor(_Declaration_constructor_4 , vf.string($name), $parameters, $exceptions, $impl);
   }
   
-  public IConstructor Declaration_parameter( IConstructor $nname) {
-    return vf.constructor(_Declaration_parameter_1 , $nname);
+  public IConstructor Declaration_simpleDeclaration( IConstructor $ddeclSpecifier, IList $declarators) {
+    return vf.constructor(_Declaration_simpleDeclaration_2 , $ddeclSpecifier, $declarators);
   }
   
-  public IConstructor Declaration_initializer( IConstructor $initializerBody) {
-    return vf.constructor(_Declaration_initializer_1 , $initializerBody);
+  public IConstructor Declaration_equalsInitializer( IConstructor $initializer) {
+    return vf.constructor(_Declaration_equalsInitializer_1 , $initializer);
   }
   
   public IConstructor Declaration_annotationTypeMember( IConstructor $type, String $name, IConstructor $defaultBlock) {
@@ -567,14 +571,6 @@ public class AST {
     return vf.constructor(_Declaration_struct_2 , vf.string($name), $members);
   }
   
-  public IConstructor Declaration_annotationTypeMember( IConstructor $type, String $name) {
-    return vf.constructor(_Declaration_annotationTypeMember_2 , $type, vf.string($name));
-  }
-  
-  public IConstructor Declaration_parameter( IConstructor $nname, IConstructor $init) {
-    return vf.constructor(_Declaration_parameter_2 , $nname, $init);
-  }
-  
   public IConstructor Declaration_enumerator( String $name) {
     return vf.constructor(_Declaration_enumerator_1 , vf.string($name));
   }
@@ -583,16 +579,16 @@ public class AST {
     return vf.constructor(_Declaration_asmDeclaration_1 , vf.string($assembly));
   }
   
-  public IConstructor Declaration_annotationType( String $name, IList $body) {
-    return vf.constructor(_Declaration_annotationType_2 , vf.string($name), $body);
-  }
-  
   public IConstructor Declaration_import( String $name) {
     return vf.constructor(_Declaration_import_1 , vf.string($name));
   }
   
-  public IConstructor Declaration_functionDefinition( IConstructor $declSpecifier, IConstructor $ddeclarators, IConstructor $sbody) {
-    return vf.constructor(_Declaration_functionDefinition_3 , $declSpecifier, $ddeclarators, $sbody);
+  public IConstructor Declaration_annotationType( String $name, IList $body) {
+    return vf.constructor(_Declaration_annotationType_2 , vf.string($name), $body);
+  }
+  
+  public IConstructor Declaration_parameter( IConstructor $declSpecifier, IConstructor $declarator) {
+    return vf.constructor(_Declaration_parameter_2 , $declSpecifier, $declarator);
   }
   
   public IConstructor Declaration_union( String $name, IList $members) {
@@ -621,6 +617,10 @@ public class AST {
   
   public IConstructor Declaration_field( IConstructor $type, IList $fragments) {
     return vf.constructor(_Declaration_field_2 , $type, $fragments);
+  }
+  
+  public IConstructor Declaration_functionDefinition( IConstructor $ddeclSpecifier, IConstructor $ddeclarators, IConstructor $sbody) {
+    return vf.constructor(_Declaration_functionDefinition_3 , $ddeclSpecifier, $ddeclarators, $sbody);
   }
   
   public IConstructor Declaration_declarator( IConstructor $nname) {

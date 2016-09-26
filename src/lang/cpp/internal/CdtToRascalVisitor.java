@@ -412,17 +412,23 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			_declSpecifier.accept(this);
 			IConstructor declSpecifier = (IConstructor) stack.pop();
 			if (_declarator == null)
-				;
-			// stack.push(builder.Declaration_parameter(name.toString()));
+				stack.push(builder.Declaration_parameter(declSpecifier));
 			else {
 				_declarator.accept(this);
-				IConstructor declarator = (IConstructor) stack.pop();
-				// stack.push(item)
+				stack.push(builder.Declaration_parameter(declSpecifier, (IConstructor) stack.pop()));
 			}
 		} else {
-			// implement C parameter declaration
 			IASTDeclSpecifier _declSpecifier = parameterDeclaration.getDeclSpecifier();
 			IASTDeclarator _declarator = parameterDeclaration.getDeclarator();
+
+			_declSpecifier.accept(this);
+			IConstructor declSpecifier = (IConstructor) stack.pop();
+			if (_declarator == null)
+				stack.push(builder.Declaration_parameter(declSpecifier));
+			else {
+				_declarator.accept(this);
+				stack.push(builder.Declaration_parameter(declSpecifier, (IConstructor) stack.pop()));
+			}
 		}
 		return PROCESS_ABORT;
 	}
@@ -504,7 +510,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			IListWriter parameters = vf.listWriter();
 			for (IASTParameterDeclaration parameter : _parameters) {
 				parameter.accept(this);
-				parameters.append(builder.Expression_nyi("parameternyi"));
+				parameters.append((IConstructor) stack.pop());
 			}
 			stack.push(builder.Expression_functionDeclarator(parameters.done()));
 		}
@@ -523,9 +529,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTDeclarator declarator) {
-		// ctx.getStdOut()
-		// .println("CPPDeclarator: " + declarator.getRawSignature() + "; " +
-		// declarator.getClass().getName());
 		if (declarator instanceof ICPPASTArrayDeclarator)
 			visit((ICPPASTArrayDeclarator) declarator);
 		else if (declarator instanceof ICPPASTFieldDeclarator)
@@ -617,7 +620,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IListWriter parameters = vf.listWriter();
 		for (IASTParameterDeclaration parameter : _parameters) {
 			parameter.accept(this);
-			parameters.append(builder.Expression_nyi("parameternyi"));
+			parameters.append((IConstructor) stack.pop());
 		}
 		stack.push(builder.Expression_functionDeclarator(parameters.done()));
 		return PROCESS_ABORT;

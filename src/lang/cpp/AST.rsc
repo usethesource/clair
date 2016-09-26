@@ -4,8 +4,8 @@ extend analysis::m3::AST;
    
 data Declaration
     = \translationUnit(list[Declaration] declarations)
-    | \simpleDeclaration(Type declSpecifier, list[Declaration] declarators)//?
-    | \functionDefinition(Type declSpecifier, Declaration ddeclarators, Statement sbody)//?
+    | \simpleDeclaration(Type ddeclSpecifier, list[Declaration] declarators)//?
+    | \functionDefinition(Type ddeclSpecifier, Declaration ddeclarators, Statement sbody)//?
     //| \declaration(str name, str declarator, list[Statement])
     //| \amb(set[Declaration] alternatives)
     
@@ -26,8 +26,8 @@ data Declaration
     | \declarator(Expression nname)
     | \declarator(Expression nname, Declaration init)
     | \equalsInitializer(Expression initializer)
-    | \parameter(Expression nname)
-    | \parameter(Expression nname, Declaration init)
+    | \parameter(Declaration declSpecifier)
+    | \parameter(Declaration declSpecifier, Declaration declarator)
     
     | \declSpecifier(list[Modifier] modifiers, Type \type)
     | \declSpecifier(list[Modifier] modifiers, Type \type, Expression expression) //decltype and type_of
