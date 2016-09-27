@@ -627,7 +627,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			stack.push(builder.Declaration_union(name.toString(), members.done()));
 			break;
 		case ICPPASTCompositeTypeSpecifier.k_class:
-			break;
+			throw new RuntimeException("NYI");
 		default:
 			throw new RuntimeException("Unknown IASTCompositeTypeSpecifier code " + key + ". Exiting");
 		}
