@@ -417,8 +417,14 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTConstructorInitializer initializer) {
-		err("ICPPASTConstructorInitializer: " + initializer.getRawSignature());
-		throw new RuntimeException("NYI");
+		IASTInitializerClause[] _arguments = initializer.getArguments();
+		IListWriter arguments = vf.listWriter();
+		Stream.of(_arguments).forEach(it -> {
+			it.accept(this);
+			arguments.append((IConstructor) stack.pop());
+		});
+		stack.push(builder.Expression_constructorInitializer(arguments.done()));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTDesignatedInitializer initializer) {
@@ -768,9 +774,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(IASTNamedTypeSpecifier declSpec) {
-		out("NamedTypeSpecifier: " + declSpec.getRawSignature());// is this
-																	// correct?
+	public int visit(IASTNamedTypeSpecifier declSpec) { // Is this correct?
 		stack.push(builder.Expression_namedTypeSpecifier(declSpec.getName().toString()));
 		return PROCESS_ABORT;
 	}
@@ -975,8 +979,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTExpression expression) {
-		out("----");
-		out(expression.getClass().getSimpleName() + ": " + expression.getRawSignature());
 		if (expression instanceof IASTBinaryExpression)
 			visit((IASTBinaryExpression) expression);
 		else if (expression instanceof IASTBinaryTypeIdExpression)// TODO
@@ -1144,12 +1146,10 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTFieldReference expression) {
-		out("FieldReference: " + expression.getRawSignature());
 		if (expression instanceof ICPPASTFieldReference) {
 			ICPPASTFieldReference reference = (ICPPASTFieldReference) expression;
 			IASTExpression _fieldOwner = reference.getFieldOwner();
-			IType _fieldOwnerType = reference.getFieldOwnerType();
-			out(_fieldOwnerType.getClass().getName());
+			IType _fieldOwnerType = reference.getFieldOwnerType();// CPPClassType
 			IASTName _fieldName = reference.getFieldName();
 
 			_fieldOwner.accept(this);

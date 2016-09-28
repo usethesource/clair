@@ -100,6 +100,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"noexcept",_Expression,"expression");
   private static final Type _Expression_plus_1 
     = tf.constructor(typestore,_Expression,"plus",_Expression,"expression");
+  private static final Type _Expression_constructorInitializer_1 
+    = tf.constructor(typestore,_Expression,"constructorInitializer",tf.listType(_Expression),"arguments");
   private static final Type _Expression_min_2 
     = tf.constructor(typestore,_Expression,"min",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_notEquals_2 
@@ -466,6 +468,10 @@ public class AST {
   
   public IConstructor Expression_plus( IConstructor $expression) {
     return vf.constructor(_Expression_plus_1 , $expression);
+  }
+  
+  public IConstructor Expression_constructorInitializer( IList $arguments) {
+    return vf.constructor(_Expression_constructorInitializer_1 , $arguments);
   }
   
   public IConstructor Expression_min( IConstructor $lhs, IConstructor $rhs) {
