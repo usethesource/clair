@@ -435,7 +435,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTDeclarator declarator) {
-		ctx.getStdOut().println(declarator.getRawSignature());
 		if (declarator instanceof IASTArrayDeclarator)
 			visit((IASTArrayDeclarator) declarator);
 		else if (declarator instanceof IASTFieldDeclarator)
@@ -487,7 +486,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTFunctionDeclarator declarator) {
-		ctx.getStdOut().println(declarator.getClass().getName() + ": " + declarator.getRawSignature());
 		if (declarator instanceof IASTStandardFunctionDeclarator)
 			visit((IASTStandardFunctionDeclarator) declarator);
 		else if (declarator instanceof ICASTKnRFunctionDeclarator)
@@ -716,7 +714,8 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			stack.push(builder.Declaration_union(name.toString(), members.done()));
 			break;
 		case ICPPASTCompositeTypeSpecifier.k_class:
-			throw new RuntimeException("NYI");
+			stack.push(builder.Declaration_class(name.toString(), members.done()));
+			break;
 		default:
 			throw new RuntimeException("Unknown IASTCompositeTypeSpecifier code " + key + ". Exiting");
 		}
