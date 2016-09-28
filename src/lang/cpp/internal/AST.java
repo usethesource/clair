@@ -36,8 +36,6 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"parameter",_Declaration,"declSpecifier",_Declaration,"declarator");
   private static final Type _Declaration_union_2 
     = tf.constructor(typestore,_Declaration,"union",tf.stringType(),"name",tf.listType(_Declaration),"members");
-  private static final Type _Declaration_declarationEqualsInitializer_2 
-    = tf.constructor(typestore,_Declaration,"declarationEqualsInitializer",tf.stringType(),"name",_Expression,"initializer");
   private static final Type _Declaration_usingDirective_1 
     = tf.constructor(typestore,_Declaration,"usingDirective",tf.stringType(),"qualifiedName");
   private static final Type _Declaration_enum_2 
@@ -62,6 +60,10 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"declarator",_Expression,"nname",_Declaration,"init");
   private static final Type _Declaration_initializerClause_1 
     = tf.constructor(typestore,_Declaration,"initializerClause",_Expression,"expression");
+  private static final Type _Declaration_declarationEqualsInitializer_2 
+    = tf.constructor(typestore,_Declaration,"declarationEqualsInitializer",tf.stringType(),"name",_Expression,"initializer");
+  private static final Type _Declaration_initializerList_1 
+    = tf.constructor(typestore,_Declaration,"initializerList",tf.listType(_Expression),"clauses");
   private static final Type _Declaration_functionDefinition_3 
     = tf.constructor(typestore,_Declaration,"functionDefinition",_Type,"ddeclSpecifier",_Declaration,"ddeclarators",_Statement,"sbody");
   private static final Type _Declaration_declarator_1 
@@ -104,6 +106,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"constructorInitializer",tf.listType(_Expression),"arguments");
   private static final Type _Expression_min_2 
     = tf.constructor(typestore,_Expression,"min",_Expression,"lhs",_Expression,"rhs");
+  private static final Type _Expression_new_2 
+    = tf.constructor(typestore,_Expression,"new",_Type,"type",_Expression,"initializer");
   private static final Type _Expression_notEquals_2 
     = tf.constructor(typestore,_Expression,"notEquals",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_binaryOrAssign_2 
@@ -345,10 +349,6 @@ public class AST {
     return vf.constructor(_Declaration_union_2 , vf.string($name), $members);
   }
   
-  public IConstructor Declaration_declarationEqualsInitializer( String $name, IConstructor $initializer) {
-    return vf.constructor(_Declaration_declarationEqualsInitializer_2 , vf.string($name), $initializer);
-  }
-  
   public IConstructor Declaration_usingDirective( String $qualifiedName) {
     return vf.constructor(_Declaration_usingDirective_1 , vf.string($qualifiedName));
   }
@@ -395,6 +395,14 @@ public class AST {
   
   public IConstructor Declaration_initializerClause( IConstructor $expression) {
     return vf.constructor(_Declaration_initializerClause_1 , $expression);
+  }
+  
+  public IConstructor Declaration_declarationEqualsInitializer( String $name, IConstructor $initializer) {
+    return vf.constructor(_Declaration_declarationEqualsInitializer_2 , vf.string($name), $initializer);
+  }
+  
+  public IConstructor Declaration_initializerList( IList $clauses) {
+    return vf.constructor(_Declaration_initializerList_1 , $clauses);
   }
   
   public IConstructor Declaration_functionDefinition( IConstructor $ddeclSpecifier, IConstructor $ddeclarators, IConstructor $sbody) {
@@ -476,6 +484,10 @@ public class AST {
   
   public IConstructor Expression_min( IConstructor $lhs, IConstructor $rhs) {
     return vf.constructor(_Expression_min_2 , $lhs, $rhs);
+  }
+  
+  public IConstructor Expression_new( IConstructor $type, IConstructor $initializer) {
+    return vf.constructor(_Expression_new_2 , $type, $initializer);
   }
   
   public IConstructor Expression_notEquals( IConstructor $lhs, IConstructor $rhs) {

@@ -107,6 +107,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator.RefQualifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
@@ -383,12 +384,31 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTEqualsInitializer initializer) {
+		out(initializer.getRawSignature());
 		IASTInitializerClause initializerClause = initializer.getInitializerClause();
-		IASTExpression clause = (IASTExpression) initializerClause;
-		clause.accept(this);
-		if (true)
-			throw new RuntimeException("Are we pushing something to the stack here?");
+		initializerClause.accept(this);
+		stack.push(builder.Declaration_equalsInitializer((IConstructor) stack.pop()));
 		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTInitializerClause initializerClause) {
+		if (initializerClause instanceof IASTExpression)
+			visit((IASTExpression) initializerClause);
+		else if (initializerClause instanceof IASTInitializerList)
+			visit((IASTInitializerList) initializerClause);
+		else if (initializerClause instanceof ICASTDesignatedInitializer)
+			visit((ICASTDesignatedInitializer) initializerClause);
+		else if (initializerClause instanceof ICPPASTInitializerClause)
+			visit((ICPPASTInitializerClause) initializerClause);
+		else
+			throw new RuntimeException(
+					"Unknown IASTInitializerClause subclass " + initializerClause.getClass().getName() + ". Exiting");
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTInitializerClause initializer) {
+		err("ICPPASTInitializerClause: " + initializer.getRawSignature());
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(IASTInitializerList initializer) {
@@ -401,8 +421,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			it.accept(this);
 			clauses.append((IConstructor) stack.pop());
 		});
-		if (true)
-			throw new RuntimeException("Are we pushing something to the stack here?");
+		stack.push(builder.Declaration_initializerList(clauses.done()));
 		return PROCESS_ABORT;
 	}
 
@@ -933,8 +952,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTPointerOperator ptrOperator) {
-		// Stream.of(Thread.currentThread().getStackTrace()).forEach(it ->
-		// out(it));
+		out("PointerOperator " + ptrOperator.getClass().getName() + ": " + ptrOperator.getRawSignature());
 		if (ptrOperator instanceof IASTPointer)
 			visit((IASTPointer) ptrOperator);
 		else if (ptrOperator instanceof ICPPASTReferenceOperator)
@@ -1049,6 +1067,11 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		throw new RuntimeException("NYI");
 	}
 
+	public int visit(ICPPASTBinaryExpression expression) {
+		out("CPPBinaryExpression: " + expression.getRawSignature());
+		throw new RuntimeException("NYI");
+	}
+
 	public int visit(ICPPASTTypeIdExpression expression) {
 		out("CPPTypeIdExpression: " + expression.getRawSignature());
 		throw new RuntimeException("NYI");
@@ -1066,7 +1089,24 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(ICPPASTNewExpression expression) {
 		out("NewExpression: " + expression.getRawSignature());
-		throw new RuntimeException("NYI");
+		boolean isGlobal = expression.isGlobal();
+		boolean isArrayAllocation = expression.isArrayAllocation();
+		boolean isNewTypeId = expression.isNewTypeId();
+		IASTInitializerClause[] placementArguments = expression.getPlacementArguments();
+		if (isGlobal || isArrayAllocation || isNewTypeId || placementArguments != null)
+			err("WARNING: ICPPASTNewExpression has unimplemented field set. isGlobal=" + isGlobal
+					+ ", isArrayAllocation=" + isArrayAllocation + ", isNewTypeId=" + isNewTypeId
+					+ ", #placementArguments=" + (placementArguments == null ? null : placementArguments.length));
+		IASTTypeId _typeId = expression.getTypeId();
+		IASTInitializer _initializer = expression.getInitializer();
+
+		_typeId.accept(this);
+		IConstructor typeId = (IConstructor) stack.pop();
+		_initializer.accept(this);
+		IConstructor initializer = (IConstructor) stack.pop();
+
+		stack.push(builder.Expression_new(typeId, initializer));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTNaryTypeIdExpression expression) {
