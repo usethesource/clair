@@ -274,53 +274,53 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(ICPPASTUsingDeclaration declaration) {
 		out("CPPUsingDeclaration: " + declaration.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTTemplateSpecialization declaration) {
 		out("CPPTemplateSpecialization: " + declaration.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTTemplateDeclaration declaration) {
 		out("CPPTemplateDeclaration: " + declaration.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTStaticAssertDeclaration declaration) {
 		out("CPPStaticAssertDeclaration: " + declaration.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTNamespaceAlias declaration) {
 		out("NamespaceAlias: " + declaration.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTLinkageSpecification declaration) {
 		out("LinkageSpecification: " + declaration.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTExplicitTemplateInstantiation declaration) {
 		out("CPPExplicitTemplateInstantiation: " + declaration.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTAliasDeclaration declaration) {
 		out("CPPAliasDeclaration: " + declaration.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(IASTProblemDeclaration declaration) {
 		err("ProblemDeclaration: " + declaration.getProblem().getMessageWithLocation());
 		err("ProblemDeclaration: " + declaration.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("ERROR");
 	}
 
 	public int visit(IASTASMDeclaration declaration) {
 		stack.push(builder.Declaration_asmDeclaration(declaration.getAssembly()));
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	static int prefix = 0;
@@ -386,6 +386,8 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IASTInitializerClause initializerClause = initializer.getInitializerClause();
 		IASTExpression clause = (IASTExpression) initializerClause;
 		clause.accept(this);
+		if (true)
+			throw new RuntimeException("Are we pushing something to the stack here?");
 		return PROCESS_ABORT;
 	}
 
@@ -399,27 +401,29 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			it.accept(this);
 			clauses.append((IConstructor) stack.pop());
 		});
+		if (true)
+			throw new RuntimeException("Are we pushing something to the stack here?");
 		return PROCESS_ABORT;
 	}
 
 	public int visit(ICASTDesignatedInitializer initializer) {
 		err("ICASTDesignatedInitializer: " + initializer.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTConstructorChainInitializer initializer) {
 		err("ICPPASTConstructorChainInitializer: " + initializer.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTConstructorInitializer initializer) {
 		err("ICPPASTConstructorInitializer: " + initializer.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTDesignatedInitializer initializer) {
 		err("ICPPASTDesignatedInitializer: " + initializer.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	@Override
@@ -496,12 +500,12 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(IASTArrayDeclarator declarator) {
 		err("ArrayDeclarator: " + declarator.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(IASTFieldDeclarator declarator) {
 		err("FieldDeclarator: " + declarator.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(IASTFunctionDeclarator declarator) {
@@ -542,7 +546,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		for (IASTName name : names)
 			map.put(name, declarator.getDeclaratorForParameterName(name));
 
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTDeclarator declarator) {
@@ -592,12 +596,12 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(ICPPASTArrayDeclarator declarator) {
 		err("CPPArrayDeclarator: " + declarator.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTFieldDeclarator declarator) {
 		err("CPPFieldDeclarator: " + declarator.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTFunctionDeclarator declarator) {
@@ -743,7 +747,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(IASTElaboratedTypeSpecifier declSpec) {
 		out("ElaboratedTypeSpecifier: " + declSpec.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(IASTEnumerationSpecifier declSpec) {
@@ -870,7 +874,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(ICASTDeclSpecifier declSpec) {
 		out("CDeclSpecifier: " + declSpec.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTDeclSpecifier declSpec) {
@@ -894,7 +898,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(ICPPASTElaboratedTypeSpecifier declSpec) {
 		out("CPPElaboratedTypeSpecifier: " + declSpec.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTEnumerationSpecifier declSpec) {
@@ -904,7 +908,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(ICPPASTNamedTypeSpecifier declSpec) {
 		out("CPPNamedTypeSpecifier: " + declSpec.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTSimpleDeclSpecifier declSpec) {
@@ -914,13 +918,13 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(ICPPASTTypeTransformationSpecifier declSpec) {
 		err("ICPPASTTypeTransformationSpecifier: " + declSpec.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	@Override
 	public int visit(IASTArrayModifier arrayModifier) {
 		err("ArrayModifier: " + arrayModifier.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	@Override
@@ -948,25 +952,25 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(ICPPASTReferenceOperator referenceOperator) {
 		err("CPPReferenceOperator: " + referenceOperator.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	@Override
 	public int visit(IASTAttribute attribute) {
 		err("Attribute: " + attribute.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	@Override
 	public int visit(IASTAttributeSpecifier specifier) {
 		err("Specifier: " + specifier.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	@Override
 	public int visit(IASTToken token) {
 		err("Token: " + new String(token.getTokenCharImage()));
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	@Override
@@ -1040,32 +1044,32 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(ICPPASTUnaryExpression expression) {
 		out("CPPUnaryExpression: " + expression.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTTypeIdExpression expression) {
 		out("CPPTypeIdExpression: " + expression.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTSimpleTypeConstructorExpression expression) {
 		out("CPPSimpleTypeConstructorExpression: " + expression.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTPackExpansionExpression expression) {
 		out("CPPPackExpansionExpression: " + expression.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTNewExpression expression) {
 		out("NewExpression: " + expression.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTNaryTypeIdExpression expression) {
 		out("CPPNaryTypeIdExpression: " + expression.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTLiteralExpression expression) {
@@ -1076,52 +1080,52 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(ICPPASTLambdaExpression expression) {
 		out("CPPLambdaExpression: " + expression.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTFunctionCallExpression expression) {
 		out("CPPFunctionCallExpression: " + expression.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTFieldReference expression) {
 		out("CPPFieldReference: " + expression.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTExpressionList expression) {
 		out("CPPExpressionList: " + expression.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTDeleteExpression expression) {
 		out("CPPDeleteExpression: " + expression.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTCastExpression expression) {
 		out("CPPCastExpression: " + expression.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTArraySubscriptExpression expression) {
 		out("CPPArraySubscriptExpression: " + expression.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(IASTTypeIdInitializerExpression expression) {
 		out("TypeIdInitializerExpression: " + expression.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(IASTTypeIdExpression expression) {
 		out("TypeIdExpression: " + expression.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(IASTProblemExpression expression) {
 		out("ProblemExpression: " + expression.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(IASTFunctionCallExpression expression) {
@@ -1168,12 +1172,12 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	public int visit(IASTExpressionList expression) {
 		out("ExpressionList: " + expression.getRawSignature());
 		IASTExpression[] expressions = expression.getExpressions();
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(IASTBinaryTypeIdExpression expression) {
 		out("BinaryTypeIdExpression: " + expression.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(IASTConditionalExpression expression) {
@@ -1488,22 +1492,22 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(IGNUASTGotoStatement statement) {
 		err("IGNUAstGotoStatement: " + statement.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTTryBlockStatement statement) {
 		err("CPPTryBlockStatement: " + statement.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTRangeBasedForStatement statement) {
 		err("CPPRangeBasedForStatement: " + statement.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTCatchHandler statement) {
 		err("CPPCatchHandler: " + statement.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(IASTReturnStatement statement) {
@@ -1611,7 +1615,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(IASTProblemStatement statement) {
 		err(statement.getProblem().getMessage());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(IASTForStatement statement) {
@@ -1683,7 +1687,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	public int visit(IASTTypeId typeId) {
 		err("TypeId: " + typeId.getRawSignature());
 		// stack.push(builder.Expression_typeid(builder.Type_char()));// TODO
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	@Override
@@ -1705,7 +1709,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	@Override
 	public int visit(IASTProblem problem) {
 		err("Problem: " + problem.getMessage());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	@Override
@@ -1732,54 +1736,54 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	@Override
 	public int visit(ICPPASTNamespaceDefinition namespaceDefinition) {
 		err("NamespaceDefinition: " + namespaceDefinition.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	@Override
 	public int visit(ICPPASTTemplateParameter templateParameter) {
 		err("TemplateParameter: " + templateParameter.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	@Override
 	public int visit(ICPPASTCapture capture) {
 		err("Capture: " + capture.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	@Override
 	public int visit(ICASTDesignator designator) {
 		err("Designator: " + designator.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	@Override
 	public int visit(ICPPASTDesignator designator) {
 		err("DesignatorCPP: " + designator.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	@Override
 	public int visit(ICPPASTVirtSpecifier virtSpecifier) {
 		err("VirtSpecifier: " + virtSpecifier.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	@Override
 	public int visit(ICPPASTClassVirtSpecifier classVirtSpecifier) {
 		err("ClassVirtSpecifier: " + classVirtSpecifier.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	@Override
 	public int visit(ICPPASTDecltypeSpecifier decltypeSpecifier) {
 		err("DecltypeSpecifier: " + decltypeSpecifier.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 
 	@Override
 	public int visit(ASTAmbiguousNode astAmbiguousNode) {
 		err("AstAmbiguousNode: " + astAmbiguousNode.getRawSignature());
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI");
 	}
 }
