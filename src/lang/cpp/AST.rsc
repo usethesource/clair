@@ -32,6 +32,7 @@ data Declaration
     | \declSpecifier(list[Modifier] modifiers, Type \type)
     | \declSpecifier(list[Modifier] modifiers, Type \type, Expression expression) //decltype and type_of
     | \initializerClause(Expression expression)
+    | \initializerList(list[Expression] clauses)
     
     | \declarationEqualsInitializer(str name, Expression initializer) //weg
     
@@ -139,6 +140,7 @@ data Expression
     
     | \fieldReference(Expression fieldOwner, Expression nname, Type fieldType)
     | \constructorInitializer(list[Expression] arguments)
+    | \new(Type \type, Expression initializer)
     
     | \nyi(str raw)
     
