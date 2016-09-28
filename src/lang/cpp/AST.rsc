@@ -138,6 +138,7 @@ data Expression
     | \functionCall(Expression functionName, list[Expression] arguments)
     
     | \fieldReference(Expression fieldOwner, Expression nname, Type fieldType)
+    | \constructorInitializer(list[Expression] arguments)
     
     | \nyi(str raw)
     
