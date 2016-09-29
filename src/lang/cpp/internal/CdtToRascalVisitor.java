@@ -1240,7 +1240,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			org.eclipse.cdt.core.dom.ast.IValue _size = ((IArrayType) cdtType).getSize();
 			stack.push(builder.Type_arrayType(convertType(_type), _size.numericalValue().intValue()));
 		} else if (cdtType instanceof IBasicType) {
-			Kind _kind = ((IBasicType) cdtType).getKind();
+			Kind kind = ((IBasicType) cdtType).getKind();
 			boolean isSigned = ((IBasicType) cdtType).isSigned();
 			boolean isUnsigned = ((IBasicType) cdtType).isUnsigned();
 			boolean isShort = ((IBasicType) cdtType).isShort();
@@ -1265,7 +1265,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			if (isImaginary)
 				modifiers.append(builder.Modifier_imaginary());
 
-			switch (_kind) {
+			switch (kind) {
 			case eBoolean:
 				return builder.Type_basicType(builder.Type_bool(), modifiers.done());
 			case eChar:
@@ -1299,7 +1299,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			case eWChar:
 				return builder.Type_basicType(builder.Type_wchar_t(), modifiers.done());
 			default:
-				throw new RuntimeException("Unknown basictype encountered: " + type + ". Exiting");
+				throw new RuntimeException("Unknown basictype kind encountered: " + kind + ". Exiting");
 			}
 		} else if (cdtType instanceof ICompositeType) { // check subinterfaces
 			int key = ((ICompositeType) cdtType).getKey();
