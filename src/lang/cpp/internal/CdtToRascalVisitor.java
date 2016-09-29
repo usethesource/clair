@@ -411,7 +411,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTEqualsInitializer initializer) {
-		out(initializer.getRawSignature());
 		IASTInitializerClause initializerClause = initializer.getInitializerClause();
 		initializerClause.accept(this);
 		stack.push(builder.Declaration_equalsInitializer(stack.pop()));
@@ -617,10 +616,10 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			IASTName _name = declarator.getName();
 			IASTInitializer _initializer = declarator.getInitializer();
 
-			List<IConstructor> pointerOperators = new ArrayList<IConstructor>();
+			IListWriter pointerOperators = vf.listWriter();
 			for (IASTPointerOperator op : _pointerOperators) {
 				op.accept(this);
-				pointerOperators.add(stack.pop());
+				pointerOperators.append(stack.pop());
 			}
 			IConstructor nestedDeclarator = null;
 			if (_nestedDeclarator != null) {
@@ -631,20 +630,12 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			IConstructor name = stack.pop();
 			IConstructor initializer = null;
 			if (_initializer == null) {
-				stack.push(builder.Declaration_declarator(name));
+				stack.push(builder.Declaration_declarator(name, pointerOperators.done()));
 			} else {
 				_initializer.accept(this);
 				initializer = stack.pop();
-				stack.push(builder.Declaration_declarator(name, initializer));
+				stack.push(builder.Declaration_declarator(name, pointerOperators.done(), initializer));
 			}
-
-			// out("#_pointerOperators=" +
-			// _pointerOperators.length + " _nestedDeclarator="
-			// + _nestedDeclarator + " _name=" + _name + " _initializer=" +
-			// _initializer);
-
-			// stack.push(vf.string("TODOCPPDeclarator:" +
-			// declarator.getRawSignature()));
 		}
 		return PROCESS_ABORT;
 	}
@@ -994,7 +985,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTPointer pointer) {
-		err("Pointer: " + pointer.getRawSignature());
 		boolean isConst = pointer.isConst();
 		boolean isVolatile = pointer.isVolatile();
 		boolean isRestrict = pointer.isRestrict();
@@ -1736,8 +1726,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTReturnStatement statement) {
-		// err("IASTReturnStatement: " +
-		// statement.getRawSignature());
 		IASTExpression returnValue = statement.getReturnValue();
 		IASTInitializerClause returnArgument = statement.getReturnArgument();
 		// TODO: returnArgument?

@@ -30,6 +30,10 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"pointer");
   private static final Type _Declaration_enumerator_2 
     = tf.constructor(typestore,_Declaration,"enumerator",tf.stringType(),"name",_Expression,"evalue");
+  private static final Type _Declaration_declarator_3 
+    = tf.constructor(typestore,_Declaration,"declarator",_Expression,"nname",tf.listType(_Declaration),"pointerOperators",_Declaration,"init");
+  private static final Type _Declaration_declarator_2 
+    = tf.constructor(typestore,_Declaration,"declarator",_Expression,"nname",tf.listType(_Declaration),"pointerOperators");
   private static final Type _Declaration_translationUnit_1 
     = tf.constructor(typestore,_Declaration,"translationUnit",tf.listType(_Declaration),"declarations");
   private static final Type _Declaration_visibilityLabel_1 
@@ -40,6 +44,8 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"class",_Expression,"nname",tf.listType(_Declaration),"members");
   private static final Type _Declaration_reference_0 
     = tf.constructor(typestore,_Declaration,"reference");
+  private static final Type _Declaration_initializerClause_1 
+    = tf.constructor(typestore,_Declaration,"initializerClause",_Expression,"expression");
   private static final Type _Declaration_parameter_1 
     = tf.constructor(typestore,_Declaration,"parameter",_Declaration,"declSpecifier");
   private static final Type _Declaration_declSpecifier_2 
@@ -58,10 +64,6 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"parameter",_Declaration,"declSpecifier",_Declaration,"declarator");
   private static final Type _Declaration_usingDirective_1 
     = tf.constructor(typestore,_Declaration,"usingDirective",_Expression,"qualifiedName");
-  private static final Type _Declaration_declarator_2 
-    = tf.constructor(typestore,_Declaration,"declarator",_Expression,"nname",_Declaration,"init");
-  private static final Type _Declaration_initializerClause_1 
-    = tf.constructor(typestore,_Declaration,"initializerClause",_Expression,"expression");
   private static final Type _Declaration_declarationEqualsInitializer_2 
     = tf.constructor(typestore,_Declaration,"declarationEqualsInitializer",tf.stringType(),"name",_Expression,"initializer");
   private static final Type _Declaration_initializerList_1 
@@ -70,8 +72,6 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"functionDefinition",_Type,"ddeclSpecifier",_Declaration,"ddeclarators",_Statement,"sbody");
   private static final Type _Declaration_struct_2 
     = tf.constructor(typestore,_Declaration,"struct",_Expression,"nname",tf.listType(_Declaration),"members");
-  private static final Type _Declaration_declarator_1 
-    = tf.constructor(typestore,_Declaration,"declarator",_Expression,"nname");
   
   
   private static final Type _Expression_ellipses_2 
@@ -351,6 +351,14 @@ public class AST {
     return vf.constructor(_Declaration_enumerator_2 , vf.string($name), $evalue);
   }
   
+  public IConstructor Declaration_declarator( IConstructor $nname, IList $pointerOperators, IConstructor $init) {
+    return vf.constructor(_Declaration_declarator_3 , $nname, $pointerOperators, $init);
+  }
+  
+  public IConstructor Declaration_declarator( IConstructor $nname, IList $pointerOperators) {
+    return vf.constructor(_Declaration_declarator_2 , $nname, $pointerOperators);
+  }
+  
   public IConstructor Declaration_translationUnit( IList $declarations) {
     return vf.constructor(_Declaration_translationUnit_1 , $declarations);
   }
@@ -369,6 +377,10 @@ public class AST {
   
   public IConstructor Declaration_reference() {
     return vf.constructor(_Declaration_reference_0 );
+  }
+  
+  public IConstructor Declaration_initializerClause( IConstructor $expression) {
+    return vf.constructor(_Declaration_initializerClause_1 , $expression);
   }
   
   public IConstructor Declaration_parameter( IConstructor $declSpecifier) {
@@ -407,14 +419,6 @@ public class AST {
     return vf.constructor(_Declaration_usingDirective_1 , $qualifiedName);
   }
   
-  public IConstructor Declaration_declarator( IConstructor $nname, IConstructor $init) {
-    return vf.constructor(_Declaration_declarator_2 , $nname, $init);
-  }
-  
-  public IConstructor Declaration_initializerClause( IConstructor $expression) {
-    return vf.constructor(_Declaration_initializerClause_1 , $expression);
-  }
-  
   public IConstructor Declaration_declarationEqualsInitializer( String $name, IConstructor $initializer) {
     return vf.constructor(_Declaration_declarationEqualsInitializer_2 , vf.string($name), $initializer);
   }
@@ -429,10 +433,6 @@ public class AST {
   
   public IConstructor Declaration_struct( IConstructor $nname, IList $members) {
     return vf.constructor(_Declaration_struct_2 , $nname, $members);
-  }
-  
-  public IConstructor Declaration_declarator( IConstructor $nname) {
-    return vf.constructor(_Declaration_declarator_1 , $nname);
   }
     
   
