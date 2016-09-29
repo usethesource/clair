@@ -24,8 +24,8 @@ data Declaration
     | \pointer()    // *
     | \reference()  // &
     
-    | \declarator(Expression nname)
-    | \declarator(Expression nname, Declaration init)
+    | \declarator(Expression nname, list[Declaration] pointerOperators)
+    | \declarator(Expression nname, list[Declaration] pointerOperators, Declaration init)
     | \equalsInitializer(Expression initializer)
     | \parameter(Declaration declSpecifier)
     | \parameter(Declaration declSpecifier, Declaration declarator)
