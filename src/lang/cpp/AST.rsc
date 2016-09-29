@@ -15,13 +15,14 @@ data Declaration
     | \enumerator(str name)//?
     | \enum(str name, list[Expression] enumerators)
     
-    | \usingDirective(str qualifiedName)
+    | \usingDirective(Expression qualifiedName)
     | \visibilityLabel(Modifier visibility)
-    | \struct(str name, list[Declaration] members)
-    | \union(str name, list[Declaration] members)
-    | \class(str name, list[Declaration] members)
+    | \struct(Expression nname, list[Declaration] members)
+    | \union(Expression nname, list[Declaration] members)
+    | \class(Expression nname, list[Declaration] members)
     
-    | \pointerNYI()//TODO: fix
+    | \pointer()    // *
+    | \reference()  // &
     
     | \declarator(Expression nname)
     | \declarator(Expression nname, Declaration init)
@@ -133,7 +134,7 @@ data Expression
     | \false()
     | \nullptr()
     
-    | \functionDeclarator(list[Expression] arguments)
+    | \functionDeclarator(Expression nname, list[Expression] arguments)
     | \namedTypeSpecifier(str name)
     
     | \functionCall(Expression functionName, list[Expression] arguments)
@@ -141,6 +142,9 @@ data Expression
     | \fieldReference(Expression fieldOwner, Expression nname, Type fieldType)
     | \constructorInitializer(list[Expression] arguments)
     | \new(Type \type, Expression initializer)
+    | \delete(Expression expression)
+    
+    | \arraySubscriptExpression(Expression array, Expression argument)
     
     | \nyi(str raw)
     
@@ -252,6 +256,8 @@ data Type
     | \decimal32()
     | \decimal64()
     | \decimal128()
+    
+    | \typeId(Type \type)
     
     //| arrayType(Type \type)
     //| parameterizedType(Type \type)
