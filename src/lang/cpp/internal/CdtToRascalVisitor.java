@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -75,8 +76,10 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemType;
@@ -145,12 +148,18 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumerationSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation.Operator;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
@@ -1227,41 +1236,74 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public IConstructor convertType(IType type) {
 		if (type instanceof IArrayType) {
-
+			IType _type = ((IArrayType) type).getType();
+			org.eclipse.cdt.core.dom.ast.IValue _size = ((IArrayType) type).getSize();
 		} else if (type instanceof IBasicType) {
-
-		} else if (type instanceof ICompositeType) {
-
+			Kind _kind = ((IBasicType) type).getKind();
+			int modifiers = ((IBasicType) type).getModifiers();
+		} else if (type instanceof ICompositeType) { // check subinterfaces
+			int key = ((ICompositeType) type).getKey();
+			boolean isAnonymous = ((ICompositeType) type).isAnonymous();
+			IField[] _fields = ((ICompositeType) type).getFields();
+			IScope scope = ((ICompositeType) type).getCompositeScope();
 		} else if (type instanceof ICPPAliasTemplate) {
-
+			org.eclipse.cdt.core.dom.ast.IType _type = ((ICPPAliasTemplate) type).getType();
+			ICPPTemplateParameter[] _parameters = ((ICPPAliasTemplate) type).getTemplateParameters();
 		} else if (type instanceof ICPPParameterPackType) {
-
+			// Not actually a type?
+			org.eclipse.cdt.core.dom.ast.IType _type = ((ICPPParameterPackType) type).getType();
 		} else if (type instanceof ICPPReferenceType) {
-
+			org.eclipse.cdt.core.dom.ast.IType _type = ((ICPPReferenceType) type).getType();
+			boolean isRValueReference = ((ICPPReferenceType) type).isRValueReference();
 		} else if (type instanceof ICPPTemplateTypeParameter) {
-
+			try {
+				org.eclipse.cdt.core.dom.ast.IType _default = ((ICPPTemplateTypeParameter) type).getDefault();
+				short parameterPosition = ((ICPPTemplateTypeParameter) type).getParameterPosition();
+				short templateNestingLevel = ((ICPPTemplateTypeParameter) type).getTemplateNestingLevel();
+				int parameterId = ((ICPPTemplateTypeParameter) type).getParameterID();
+				ICPPTemplateArgument defaultValue = ((ICPPTemplateTypeParameter) type).getDefaultValue();
+				boolean isParameterPack = ((ICPPTemplateTypeParameter) type).isParameterPack();
+			} catch (DOMException e) {
+				e.printStackTrace(ctx.getStdErr());
+			}
 		} else if (type instanceof ICPPTypeSpecialization) {
+			if (type instanceof ICPPClassSpecialization) {
 
+			} else if (type instanceof ICPPEnumerationSpecialization) {
+
+			} else
+				throw new RuntimeException(
+						"Unknown ICPPTypeSpecialization subclass " + type.getClass().getName() + ". Exiting");
 		} else if (type instanceof ICPPUnaryTypeTransformation) {
-
+			Operator _operator = ((ICPPUnaryTypeTransformation) type).getOperator();
+			org.eclipse.cdt.core.dom.ast.IType _operand = ((ICPPUnaryTypeTransformation) type).getOperand();
 		} else if (type instanceof ICPPUnknownType) {
-
+			// Do not implement?
 		} else if (type instanceof IEnumeration) {
+			if (type instanceof ICPPEnumeration) {
 
+			} else {
+
+			}
 		} else if (type instanceof IIndexType) {
-
+			// Do not implement?
 		} else if (type instanceof IPointerType) {
-
+			org.eclipse.cdt.core.dom.ast.IType _type = ((IPointerType) type).getType();
+			boolean isConst = ((IPointerType) type).isConst();
+			boolean isVolatile = ((IPointerType) type).isVolatile();
+			boolean isRestruct = ((IPointerType) type).isRestrict();
 		} else if (type instanceof IProblemBinding) {
-
+			throw new RuntimeException("IProblemBinding: " + ((IProblemBinding) type).getMessage());
 		} else if (type instanceof IProblemType) {
-
+			throw new RuntimeException("IProblemType: " + ((IProblemType) type).getMessage());
 		} else if (type instanceof IQualifierType) {
-
+			boolean isConst = ((IQualifierType) type).isConst();
+			boolean isVolatile = ((IQualifierType) type).isVolatile();
+			org.eclipse.cdt.core.dom.ast.IType _type = ((IQualifierType) type).getType();
 		} else if (type instanceof ITypeContainer) {
-
+			// Do not implement? CDT internal
 		} else if (type instanceof ITypedef) {
-
+			org.eclipse.cdt.core.dom.ast.IType _type = ((ITypedef) type).getType();
 		} else { // unsubinterfaced classes
 
 		}
