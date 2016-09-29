@@ -874,7 +874,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_char()));
 			break;
 		case IASTSimpleDeclSpecifier.t_int:
-			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_int()));
+			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_integer()));
 			break;
 		case IASTSimpleDeclSpecifier.t_float:
 			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_float()));
@@ -1234,76 +1234,136 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public IConstructor convertType(IType type) {
-		if (type instanceof IArrayType) {
-			IType _type = ((IArrayType) type).getType();
-			org.eclipse.cdt.core.dom.ast.IValue _size = ((IArrayType) type).getSize();
-		} else if (type instanceof IBasicType) {
-			Kind _kind = ((IBasicType) type).getKind();
-			int modifiers = ((IBasicType) type).getModifiers();
-		} else if (type instanceof ICompositeType) { // check subinterfaces
-			int key = ((ICompositeType) type).getKey();
-			boolean isAnonymous = ((ICompositeType) type).isAnonymous();
-			IField[] _fields = ((ICompositeType) type).getFields();
-			IScope scope = ((ICompositeType) type).getCompositeScope();
-		} else if (type instanceof ICPPAliasTemplate) {
-			org.eclipse.cdt.core.dom.ast.IType _type = ((ICPPAliasTemplate) type).getType();
-			ICPPTemplateParameter[] _parameters = ((ICPPAliasTemplate) type).getTemplateParameters();
-		} else if (type instanceof ICPPParameterPackType) {
+	public IConstructor convertType(IType cdtType) {
+		if (cdtType instanceof IArrayType) {
+			IType _type = ((IArrayType) cdtType).getType();
+			org.eclipse.cdt.core.dom.ast.IValue _size = ((IArrayType) cdtType).getSize();
+			stack.push(builder.Type_arrayType(convertType(_type), _size.numericalValue().intValue()));
+		} else if (cdtType instanceof IBasicType) {
+			Kind _kind = ((IBasicType) cdtType).getKind();
+			boolean isSigned = ((IBasicType) cdtType).isSigned();
+			boolean isUnsigned = ((IBasicType) cdtType).isUnsigned();
+			boolean isShort = ((IBasicType) cdtType).isShort();
+			boolean isLong = ((IBasicType) cdtType).isLong();
+			boolean isLongLong = ((IBasicType) cdtType).isLongLong();
+			boolean isComplex = ((IBasicType) cdtType).isComplex();
+			boolean isImaginary = ((IBasicType) cdtType).isImaginary();
+
+			IListWriter modifiers = vf.listWriter();
+			if (isSigned)
+				modifiers.append(builder.Modifier_signed());
+			if (isUnsigned)
+				modifiers.append(builder.Modifier_unsigned());
+			if (isShort)
+				modifiers.append(builder.Modifier_short());
+			if (isLong)
+				modifiers.append(builder.Modifier_long());
+			if (isLongLong)
+				modifiers.append(builder.Modifier_longlong());
+			if (isComplex)
+				modifiers.append(builder.Modifier_complex());
+			if (isImaginary)
+				modifiers.append(builder.Modifier_imaginary());
+
+			switch (_kind) {
+			case eBoolean:
+				return builder.Type_basicType(builder.Type_bool(), modifiers.done());
+			case eChar:
+				return builder.Type_basicType(builder.Type_char(), modifiers.done());
+			case eChar16:
+				return builder.Type_basicType(builder.Type_char16_t(), modifiers.done());
+			case eChar32:
+				return builder.Type_basicType(builder.Type_char32_t(), modifiers.done());
+			case eDecimal128:
+				return builder.Type_basicType(builder.Type_decimal128(), modifiers.done());
+			case eDecimal32:
+				return builder.Type_basicType(builder.Type_decimal32(), modifiers.done());
+			case eDecimal64:
+				return builder.Type_basicType(builder.Type_decimal64(), modifiers.done());
+			case eDouble:
+				return builder.Type_basicType(builder.Type_double(), modifiers.done());
+			case eFloat:
+				return builder.Type_basicType(builder.Type_float(), modifiers.done());
+			case eFloat128:
+				return builder.Type_basicType(builder.Type_float128(), modifiers.done());
+			case eInt:
+				return builder.Type_basicType(builder.Type_integer(), modifiers.done());
+			case eInt128:
+				return builder.Type_basicType(builder.Type_int128(), modifiers.done());
+			case eNullPtr:
+				return builder.Type_basicType(builder.Type_nullptr(), modifiers.done());
+			case eUnspecified:
+				return builder.Type_basicType(builder.Type_unspecified(), modifiers.done());
+			case eVoid:
+				return builder.Type_basicType(builder.Type_void(), modifiers.done());
+			case eWChar:
+				return builder.Type_basicType(builder.Type_wchar_t(), modifiers.done());
+			default:
+				throw new RuntimeException("Unknown basictype encountered: " + type + ". Exiting");
+			}
+		} else if (cdtType instanceof ICompositeType) { // check subinterfaces
+			int key = ((ICompositeType) cdtType).getKey();
+			boolean isAnonymous = ((ICompositeType) cdtType).isAnonymous();
+			IField[] _fields = ((ICompositeType) cdtType).getFields();
+			IScope scope = ((ICompositeType) cdtType).getCompositeScope();
+		} else if (cdtType instanceof ICPPAliasTemplate) {
+			org.eclipse.cdt.core.dom.ast.IType _type = ((ICPPAliasTemplate) cdtType).getType();
+			ICPPTemplateParameter[] _parameters = ((ICPPAliasTemplate) cdtType).getTemplateParameters();
+		} else if (cdtType instanceof ICPPParameterPackType) {
 			// Not actually a type?
-			org.eclipse.cdt.core.dom.ast.IType _type = ((ICPPParameterPackType) type).getType();
-		} else if (type instanceof ICPPReferenceType) {
-			org.eclipse.cdt.core.dom.ast.IType _type = ((ICPPReferenceType) type).getType();
-			boolean isRValueReference = ((ICPPReferenceType) type).isRValueReference();
-		} else if (type instanceof ICPPTemplateTypeParameter) {
+			org.eclipse.cdt.core.dom.ast.IType _type = ((ICPPParameterPackType) cdtType).getType();
+		} else if (cdtType instanceof ICPPReferenceType) {
+			org.eclipse.cdt.core.dom.ast.IType _type = ((ICPPReferenceType) cdtType).getType();
+			boolean isRValueReference = ((ICPPReferenceType) cdtType).isRValueReference();
+		} else if (cdtType instanceof ICPPTemplateTypeParameter) {
 			try {
-				org.eclipse.cdt.core.dom.ast.IType _default = ((ICPPTemplateTypeParameter) type).getDefault();
-				short parameterPosition = ((ICPPTemplateTypeParameter) type).getParameterPosition();
-				short templateNestingLevel = ((ICPPTemplateTypeParameter) type).getTemplateNestingLevel();
-				int parameterId = ((ICPPTemplateTypeParameter) type).getParameterID();
-				ICPPTemplateArgument defaultValue = ((ICPPTemplateTypeParameter) type).getDefaultValue();
-				boolean isParameterPack = ((ICPPTemplateTypeParameter) type).isParameterPack();
+				org.eclipse.cdt.core.dom.ast.IType _default = ((ICPPTemplateTypeParameter) cdtType).getDefault();
+				short parameterPosition = ((ICPPTemplateTypeParameter) cdtType).getParameterPosition();
+				short templateNestingLevel = ((ICPPTemplateTypeParameter) cdtType).getTemplateNestingLevel();
+				int parameterId = ((ICPPTemplateTypeParameter) cdtType).getParameterID();
+				ICPPTemplateArgument defaultValue = ((ICPPTemplateTypeParameter) cdtType).getDefaultValue();
+				boolean isParameterPack = ((ICPPTemplateTypeParameter) cdtType).isParameterPack();
 			} catch (DOMException e) {
 				e.printStackTrace(ctx.getStdErr());
 			}
-		} else if (type instanceof ICPPTypeSpecialization) {
-			if (type instanceof ICPPClassSpecialization) {
+		} else if (cdtType instanceof ICPPTypeSpecialization) {
+			if (cdtType instanceof ICPPClassSpecialization) {
 
-			} else if (type instanceof ICPPEnumerationSpecialization) {
+			} else if (cdtType instanceof ICPPEnumerationSpecialization) {
 
 			} else
 				throw new RuntimeException(
-						"Unknown ICPPTypeSpecialization subclass " + type.getClass().getName() + ". Exiting");
-		} else if (type instanceof ICPPUnaryTypeTransformation) {
-			Operator _operator = ((ICPPUnaryTypeTransformation) type).getOperator();
-			org.eclipse.cdt.core.dom.ast.IType _operand = ((ICPPUnaryTypeTransformation) type).getOperand();
-		} else if (type instanceof ICPPUnknownType) {
+						"Unknown ICPPTypeSpecialization subclass " + cdtType.getClass().getName() + ". Exiting");
+		} else if (cdtType instanceof ICPPUnaryTypeTransformation) {
+			Operator _operator = ((ICPPUnaryTypeTransformation) cdtType).getOperator();
+			org.eclipse.cdt.core.dom.ast.IType _operand = ((ICPPUnaryTypeTransformation) cdtType).getOperand();
+		} else if (cdtType instanceof ICPPUnknownType) {
 			// Do not implement?
-		} else if (type instanceof IEnumeration) {
-			if (type instanceof ICPPEnumeration) {
+		} else if (cdtType instanceof IEnumeration) {
+			if (cdtType instanceof ICPPEnumeration) {
 
 			} else {
 
 			}
-		} else if (type instanceof IIndexType) {
+		} else if (cdtType instanceof IIndexType) {
 			// Do not implement?
-		} else if (type instanceof IPointerType) {
-			org.eclipse.cdt.core.dom.ast.IType _type = ((IPointerType) type).getType();
-			boolean isConst = ((IPointerType) type).isConst();
-			boolean isVolatile = ((IPointerType) type).isVolatile();
-			boolean isRestruct = ((IPointerType) type).isRestrict();
-		} else if (type instanceof IProblemBinding) {
-			throw new RuntimeException("IProblemBinding: " + ((IProblemBinding) type).getMessage());
-		} else if (type instanceof IProblemType) {
-			throw new RuntimeException("IProblemType: " + ((IProblemType) type).getMessage());
-		} else if (type instanceof IQualifierType) {
-			boolean isConst = ((IQualifierType) type).isConst();
-			boolean isVolatile = ((IQualifierType) type).isVolatile();
-			org.eclipse.cdt.core.dom.ast.IType _type = ((IQualifierType) type).getType();
-		} else if (type instanceof ITypeContainer) {
+		} else if (cdtType instanceof IPointerType) {
+			org.eclipse.cdt.core.dom.ast.IType _type = ((IPointerType) cdtType).getType();
+			boolean isConst = ((IPointerType) cdtType).isConst();
+			boolean isVolatile = ((IPointerType) cdtType).isVolatile();
+			boolean isRestruct = ((IPointerType) cdtType).isRestrict();
+		} else if (cdtType instanceof IProblemBinding) {
+			throw new RuntimeException("IProblemBinding: " + ((IProblemBinding) cdtType).getMessage());
+		} else if (cdtType instanceof IProblemType) {
+			throw new RuntimeException("IProblemType: " + ((IProblemType) cdtType).getMessage());
+		} else if (cdtType instanceof IQualifierType) {
+			boolean isConst = ((IQualifierType) cdtType).isConst();
+			boolean isVolatile = ((IQualifierType) cdtType).isVolatile();
+			org.eclipse.cdt.core.dom.ast.IType _type = ((IQualifierType) cdtType).getType();
+		} else if (cdtType instanceof ITypeContainer) {
 			// Do not implement? CDT internal
-		} else if (type instanceof ITypedef) {
-			org.eclipse.cdt.core.dom.ast.IType _type = ((ITypedef) type).getType();
+		} else if (cdtType instanceof ITypedef) {
+			org.eclipse.cdt.core.dom.ast.IType _type = ((ITypedef) cdtType).getType();
 		} else { // unsubinterfaced classes
 
 		}

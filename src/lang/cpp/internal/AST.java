@@ -224,16 +224,22 @@ public class AST {
   
   private static final Type _Type_int128_0 
     = tf.constructor(typestore,_Type,"int128");
+  private static final Type _Type_nullptr_0 
+    = tf.constructor(typestore,_Type,"nullptr");
   private static final Type _Type_decimal128_0 
     = tf.constructor(typestore,_Type,"decimal128");
   private static final Type _Type_decltype_0 
     = tf.constructor(typestore,_Type,"decltype");
   private static final Type _Type_wchar_t_0 
     = tf.constructor(typestore,_Type,"wchar_t");
+  private static final Type _Type_integer_0 
+    = tf.constructor(typestore,_Type,"integer");
   private static final Type _Type_float_0 
     = tf.constructor(typestore,_Type,"float");
   private static final Type _Type_float128_0 
     = tf.constructor(typestore,_Type,"float128");
+  private static final Type _Type_arrayType_2 
+    = tf.constructor(typestore,_Type,"arrayType",_Type,"type",tf.integerType(),"size");
   private static final Type _Type_typeId_1 
     = tf.constructor(typestore,_Type,"typeId",_Type,"type");
   private static final Type _Type_unspecified_0 
@@ -242,8 +248,8 @@ public class AST {
     = tf.constructor(typestore,_Type,"char");
   private static final Type _Type_void_0 
     = tf.constructor(typestore,_Type,"void");
-  private static final Type _Type_int_0 
-    = tf.constructor(typestore,_Type,"int");
+  private static final Type _Type_basicType_2 
+    = tf.constructor(typestore,_Type,"basicType",_Type,"type",tf.listType(_Modifier),"modifiers");
   private static final Type _Type_auto_0 
     = tf.constructor(typestore,_Type,"auto");
   private static final Type _Type_decimal64_0 
@@ -454,8 +460,8 @@ public class AST {
     return vf.constructor(_Expression_fieldReference_3 , $fieldOwner, $nname, $fieldType);
   }
   
-  public IConstructor Expression_integerLiteral( IValue $number) {
-    return vf.constructor(_Expression_integerLiteral_1 , $number);
+  public IConstructor Expression_integerLiteral( int $number) {
+    return vf.constructor(_Expression_integerLiteral_1 , vf.integer($number));
   }
   
   public IConstructor Expression_assign( IConstructor $lhs, IConstructor $rhs) {
@@ -727,6 +733,10 @@ public class AST {
     return vf.constructor(_Type_int128_0 );
   }
   
+  public IConstructor Type_nullptr() {
+    return vf.constructor(_Type_nullptr_0 );
+  }
+  
   public IConstructor Type_decimal128() {
     return vf.constructor(_Type_decimal128_0 );
   }
@@ -739,12 +749,20 @@ public class AST {
     return vf.constructor(_Type_wchar_t_0 );
   }
   
+  public IConstructor Type_integer() {
+    return vf.constructor(_Type_integer_0 );
+  }
+  
   public IConstructor Type_float() {
     return vf.constructor(_Type_float_0 );
   }
   
   public IConstructor Type_float128() {
     return vf.constructor(_Type_float128_0 );
+  }
+  
+  public IConstructor Type_arrayType( IConstructor $type, int $size) {
+    return vf.constructor(_Type_arrayType_2 , $type, vf.integer($size));
   }
   
   public IConstructor Type_typeId( IConstructor $type) {
@@ -763,8 +781,8 @@ public class AST {
     return vf.constructor(_Type_void_0 );
   }
   
-  public IConstructor Type_int() {
-    return vf.constructor(_Type_int_0 );
+  public IConstructor Type_basicType( IConstructor $type, IList $modifiers) {
+    return vf.constructor(_Type_basicType_2 , $type, $modifiers);
   }
   
   public IConstructor Type_auto() {
