@@ -167,7 +167,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	private IValueFactory vf;
 	private AST builder;
 	private IEvaluatorContext ctx;
-	private Stack<IValue> stack = new Stack<IValue>();
+	private Stack<IConstructor> stack = new Stack<IConstructor>();
 
 	public CdtToRascalVisitor(IValueFactory vf) {
 		super(true);
@@ -287,7 +287,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	public int visit(ICPPASTUsingDirective declaration) {
 		IASTName qualifiedName = declaration.getQualifiedName();
 		qualifiedName.accept(this);
-		stack.push(builder.Declaration_usingDirective((IConstructor) stack.pop()));
+		stack.push(builder.Declaration_usingDirective(stack.pop()));
 		return PROCESS_ABORT;
 	}
 
@@ -353,7 +353,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IASTDeclarator[] _declarators = declaration.getDeclarators();
 
 		_declSpecifier.accept(this);
-		IConstructor declSpecifier = (IConstructor) stack.pop();
+		IConstructor declSpecifier = stack.pop();
 		IListWriter declarators = vf.listWriter();
 		for (IASTDeclarator declarator : _declarators) {
 			declarator.accept(this);
@@ -369,11 +369,11 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IASTStatement _body = definition.getBody();
 
 		_declSpecifier.accept(this);
-		IConstructor declSpecifier = (IConstructor) stack.pop();
+		IConstructor declSpecifier = stack.pop();
 		_declarator.accept(this);
-		IConstructor declarator = (IConstructor) stack.pop();
+		IConstructor declarator = stack.pop();
 		_body.accept(this);
-		IConstructor body = (IConstructor) stack.pop();
+		IConstructor body = stack.pop();
 
 		stack.push(builder.Declaration_functionDefinition(declSpecifier, declarator, body));
 
@@ -405,7 +405,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		out(initializer.getRawSignature());
 		IASTInitializerClause initializerClause = initializer.getInitializerClause();
 		initializerClause.accept(this);
-		stack.push(builder.Declaration_equalsInitializer((IConstructor) stack.pop()));
+		stack.push(builder.Declaration_equalsInitializer(stack.pop()));
 		return PROCESS_ABORT;
 	}
 
@@ -437,7 +437,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IListWriter clauses = vf.listWriter();
 		Stream.of(_clauses).forEach(it -> {
 			it.accept(this);
-			clauses.append((IConstructor) stack.pop());
+			clauses.append(stack.pop());
 		});
 		stack.push(builder.Declaration_initializerList(clauses.done()));
 		return PROCESS_ABORT;
@@ -458,7 +458,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IListWriter arguments = vf.listWriter();
 		Stream.of(_arguments).forEach(it -> {
 			it.accept(this);
-			arguments.append((IConstructor) stack.pop());
+			arguments.append(stack.pop());
 		});
 		stack.push(builder.Expression_constructorInitializer(arguments.done()));
 		return PROCESS_ABORT;
@@ -477,24 +477,24 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			ICPPASTDeclarator _declarator = declaration.getDeclarator();
 
 			_declSpecifier.accept(this);
-			IConstructor declSpecifier = (IConstructor) stack.pop();
+			IConstructor declSpecifier = stack.pop();
 			if (_declarator == null)
 				stack.push(builder.Declaration_parameter(declSpecifier));
 			else {
 				_declarator.accept(this);
-				stack.push(builder.Declaration_parameter(declSpecifier, (IConstructor) stack.pop()));
+				stack.push(builder.Declaration_parameter(declSpecifier, stack.pop()));
 			}
 		} else {
 			IASTDeclSpecifier _declSpecifier = parameterDeclaration.getDeclSpecifier();
 			IASTDeclarator _declarator = parameterDeclaration.getDeclarator();
 
 			_declSpecifier.accept(this);
-			IConstructor declSpecifier = (IConstructor) stack.pop();
+			IConstructor declSpecifier = stack.pop();
 			if (_declarator == null)
 				stack.push(builder.Declaration_parameter(declSpecifier));
 			else {
 				_declarator.accept(this);
-				stack.push(builder.Declaration_parameter(declSpecifier, (IConstructor) stack.pop()));
+				stack.push(builder.Declaration_parameter(declSpecifier, stack.pop()));
 			}
 		}
 		return PROCESS_ABORT;
@@ -519,24 +519,24 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			List<IConstructor> pointerOperators = new ArrayList<IConstructor>();
 			for (IASTPointerOperator op : _pointerOperators) {
 				op.accept(this);
-				pointerOperators.add((IConstructor) stack.pop());
+				pointerOperators.add(stack.pop());
 			}
 			IConstructor nestedDeclarator = null;
 			if (_nestedDeclarator != null) {
 				_nestedDeclarator.accept(this);
-				nestedDeclarator = (IConstructor) stack.pop();
+				nestedDeclarator = stack.pop();
 			}
 			_name.accept(this);
-			IConstructor name = (IConstructor) stack.pop();
+			IConstructor name = stack.pop();
 			IConstructor initializer = null;
 			if (_initializer == null) {
 
 			} else {
 				_initializer.accept(this);
-				initializer = (IConstructor) stack.pop();
+				initializer = stack.pop();
 			}
 
-			stack.push(vf.string("TODODeclarator:" + declarator.getRawSignature()));
+			throw new RuntimeException("NYI");
 		}
 		return PROCESS_ABORT;
 	}
@@ -573,11 +573,11 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			boolean _takesVarArgs = declarator.takesVarArgs();
 
 			_name.accept(this);
-			IConstructor name = (IConstructor) stack.pop();
+			IConstructor name = stack.pop();
 			IListWriter parameters = vf.listWriter();
 			for (IASTParameterDeclaration parameter : _parameters) {
 				parameter.accept(this);
-				parameters.append((IConstructor) stack.pop());
+				parameters.append(stack.pop());
 			}
 			stack.push(builder.Expression_functionDeclarator(name, parameters.done()));
 		}
@@ -611,21 +611,21 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			List<IConstructor> pointerOperators = new ArrayList<IConstructor>();
 			for (IASTPointerOperator op : _pointerOperators) {
 				op.accept(this);
-				pointerOperators.add((IConstructor) stack.pop());
+				pointerOperators.add(stack.pop());
 			}
 			IConstructor nestedDeclarator = null;
 			if (_nestedDeclarator != null) {
 				_nestedDeclarator.accept(this);
-				nestedDeclarator = (IConstructor) stack.pop();
+				nestedDeclarator = stack.pop();
 			}
 			_name.accept(this);
-			IConstructor name = (IConstructor) stack.pop();
+			IConstructor name = stack.pop();
 			IConstructor initializer = null;
 			if (_initializer == null) {
 				stack.push(builder.Declaration_declarator(name));
 			} else {
 				_initializer.accept(this);
-				initializer = (IConstructor) stack.pop();
+				initializer = stack.pop();
 				stack.push(builder.Declaration_declarator(name, initializer));
 			}
 
@@ -686,11 +686,11 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		// + " takesVarArgs=" + _takesVarArgs);
 
 		_name.accept(this);
-		IConstructor name = (IConstructor) stack.pop();
+		IConstructor name = stack.pop();
 		IListWriter parameters = vf.listWriter();
 		for (IASTParameterDeclaration parameter : _parameters) {
 			parameter.accept(this);
-			parameters.append((IConstructor) stack.pop());
+			parameters.append(stack.pop());
 		}
 		stack.push(builder.Expression_functionDeclarator(name, parameters.done()));
 		return PROCESS_ABORT;
@@ -736,11 +736,11 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IASTDeclaration[] _members = declSpec.getMembers();
 		IScope _scope = declSpec.getScope();
 		_name.accept(this);
-		IConstructor name = (IConstructor) stack.pop();
+		IConstructor name = stack.pop();
 		IListWriter members = vf.listWriter();
 		Stream.of(_members).forEach(it -> {
 			it.accept(this);
-			members.append((IConstructor) stack.pop());
+			members.append(stack.pop());
 		});
 
 		if (true)
@@ -770,11 +770,11 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		ICPPASTClassVirtSpecifier virtSpecifier = declSpec.getVirtSpecifier();
 
 		_name.accept(this);
-		IConstructor name = (IConstructor) stack.pop();
+		IConstructor name = stack.pop();
 		IListWriter members = vf.listWriter();
 		Stream.of(_members).forEach(it -> {
 			it.accept(this);
-			members.append((IConstructor) stack.pop());
+			members.append(stack.pop());
 		});
 
 		switch (key) {
@@ -805,11 +805,11 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IASTEnumerator[] _enumerators = declSpec.getEnumerators();
 
 		_name.accept(this);
-		IConstructor name = (IConstructor) stack.pop();
+		IConstructor name = stack.pop();
 		IListWriter enumerators = vf.listWriter();
 		Stream.of(_enumerators).forEach(it -> {
 			it.accept(this);
-			enumerators.append((IConstructor) stack.pop());
+			enumerators.append(stack.pop());
 		});
 
 		stack.push(builder.Declaration_enum(name.getName(), enumerators.done()));
@@ -881,13 +881,11 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			break;
 		case IASTSimpleDeclSpecifier.t_typeof:
 			declTypeExpression.accept(this);
-			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_typeof(),
-					(IConstructor) stack.pop()));
+			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_typeof(), stack.pop()));
 			break;
 		case IASTSimpleDeclSpecifier.t_decltype:
 			declTypeExpression.accept(this);
-			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_decltype(),
-					(IConstructor) stack.pop()));
+			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_decltype(), stack.pop()));
 			break;
 		case IASTSimpleDeclSpecifier.t_auto:
 			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_auto()));
@@ -1127,9 +1125,9 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IASTInitializer _initializer = expression.getInitializer();
 
 		_typeId.accept(this);
-		IConstructor typeId = (IConstructor) stack.pop();
+		IConstructor typeId = stack.pop();
 		_initializer.accept(this);
-		IConstructor initializer = (IConstructor) stack.pop();
+		IConstructor initializer = stack.pop();
 
 		stack.push(builder.Expression_new(typeId, initializer));
 		return PROCESS_ABORT;
@@ -1174,7 +1172,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 					+ ", isVectored=" + isVectored);
 		IASTExpression operand = expression.getOperand();
 		operand.accept(this);
-		stack.push(builder.Expression_delete((IConstructor) stack.pop()));
+		stack.push(builder.Expression_delete(stack.pop()));
 		return PROCESS_ABORT;
 	}
 
@@ -1188,9 +1186,9 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		ICPPASTInitializerClause _argument = expression.getArgument();
 
 		_arrayExpression.accept(this);
-		IConstructor arrayExpression = (IConstructor) stack.pop();
+		IConstructor arrayExpression = stack.pop();
 		_argument.accept(this);
-		IConstructor argument = (IConstructor) stack.pop();
+		IConstructor argument = stack.pop();
 
 		stack.push(builder.Expression_arraySubscriptExpression(arrayExpression, argument));
 
@@ -1217,7 +1215,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IASTInitializerClause[] _arguments = expression.getArguments();
 
 		_functionName.accept(this);
-		IConstructor functionName = (IConstructor) stack.pop();
+		IConstructor functionName = stack.pop();
 		IListWriter arguments = vf.listWriter();
 		for (IASTInitializerClause argument : _arguments) {
 			argument.accept(this);
@@ -1278,11 +1276,11 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			IASTName _fieldName = reference.getFieldName();
 
 			_fieldOwner.accept(this);
-			IConstructor fieldOwner = (IConstructor) stack.pop();
+			IConstructor fieldOwner = stack.pop();
 			// _fieldOwnerType.accept(this);
-			// IConstructor fieldOwnerType = (IConstructor) stack.pop();
+			// IConstructor fieldOwnerType = stack.pop();
 			_fieldName.accept(this);
-			IConstructor fieldName = (IConstructor) stack.pop();
+			IConstructor fieldName = stack.pop();
 			// HIER
 			stack.push(builder.Expression_fieldReference(fieldOwner, fieldName, builder.Type_unspecified()));// TODO
 		} else {
@@ -1311,11 +1309,11 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IASTExpression _negative = expression.getNegativeResultExpression();
 
 		_condition.accept(this);
-		IConstructor condition = (IConstructor) stack.pop();
+		IConstructor condition = stack.pop();
 		_positive.accept(this);
-		IConstructor positive = (IConstructor) stack.pop();
+		IConstructor positive = stack.pop();
 		_negative.accept(this);
-		IConstructor negative = (IConstructor) stack.pop();
+		IConstructor negative = stack.pop();
 
 		stack.push(builder.Expression_conditional(condition, positive, negative));
 
@@ -1327,9 +1325,9 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IASTExpression _operand = expression.getOperand();
 		IASTTypeId typeId = expression.getTypeId();
 		_operand.accept(this);
-		IConstructor operand = (IConstructor) stack.pop();
+		IConstructor operand = stack.pop();
 		typeId.accept(this);
-		IConstructor type = (IConstructor) stack.pop();
+		IConstructor type = stack.pop();
 
 		stack.push(builder.Expression_cast(type, operand));
 		return PROCESS_ABORT;
@@ -1339,7 +1337,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		int operator = expression.getOperator();
 		IASTExpression _operand = expression.getOperand();
 		_operand.accept(this);
-		IConstructor $expression = (IConstructor) stack.pop();
+		IConstructor $expression = stack.pop();
 
 		switch (operator) {
 		case IASTUnaryExpression.op_prefixIncr:
@@ -1446,11 +1444,11 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	public int visit(IASTBinaryExpression expression) {
 		IASTExpression _lhs = expression.getOperand1();
 		_lhs.accept(this);
-		IConstructor lhs = (IConstructor) stack.pop();
+		IConstructor lhs = stack.pop();
 		int op = expression.getOperator();
 		IASTExpression _rhs = expression.getOperand2();
 		_rhs.accept(this);
-		IConstructor rhs = (IConstructor) stack.pop();
+		IConstructor rhs = stack.pop();
 
 		switch (op) {
 		case IASTBinaryExpression.op_multiply:
@@ -1645,7 +1643,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			stack.push(builder.Statement_return());
 		else {
 			returnValue.accept(this);
-			stack.push(builder.Statement_return((IConstructor) stack.pop()));
+			stack.push(builder.Statement_return(stack.pop()));
 		}
 		return PROCESS_ABORT;
 	}
@@ -1660,9 +1658,9 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IASTStatement _nestedStatement = statement.getNestedStatement();
 
 		_name.accept(this);
-		IConstructor name = (IConstructor) stack.pop();
+		IConstructor name = stack.pop();
 		_nestedStatement.accept(this);
-		IConstructor nestedStatement = (IConstructor) stack.pop();
+		IConstructor nestedStatement = stack.pop();
 
 		stack.push(builder.Statement_label(name.getName(), nestedStatement));
 		return PROCESS_ABORT;
@@ -1671,7 +1669,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	public int visit(IASTGotoStatement statement) {
 		IASTName _name = statement.getName();
 		_name.accept(this);
-		IConstructor name = (IConstructor) stack.pop();
+		IConstructor name = stack.pop();
 		stack.push(builder.Statement_goto(name.getName()));
 		return PROCESS_ABORT;
 	}
@@ -1681,9 +1679,9 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IASTExpression _condition = statement.getCondition();
 
 		_body.accept(this);
-		IConstructor body = (IConstructor) stack.pop();
+		IConstructor body = stack.pop();
 		_condition.accept(this);
-		IConstructor condition = (IConstructor) stack.pop();
+		IConstructor condition = stack.pop();
 		stack.push(builder.Statement_do(condition, body));
 
 		return PROCESS_ABORT;
@@ -1699,9 +1697,9 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IASTStatement _body = statement.getBody();
 
 		_condition.accept(this);
-		IConstructor condition = (IConstructor) stack.pop();
+		IConstructor condition = stack.pop();
 		_body.accept(this);
-		IConstructor body = (IConstructor) stack.pop();
+		IConstructor body = stack.pop();
 		stack.push(builder.Statement_while(condition, body));
 		return PROCESS_ABORT;
 	}
@@ -1719,7 +1717,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	public int visit(IASTCaseStatement statement) {
 		IASTExpression _expression = statement.getExpression();
 		_expression.accept(this);
-		IConstructor expression = (IConstructor) stack.pop();
+		IConstructor expression = stack.pop();
 		stack.push(builder.Statement_case(expression));
 		return PROCESS_ABORT;
 	}
@@ -1729,9 +1727,9 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IASTStatement _body = statement.getBody();
 
 		_controller.accept(this);
-		IConstructor controller = (IConstructor) stack.pop();
+		IConstructor controller = stack.pop();
 		_body.accept(this);
-		IConstructor body = (IConstructor) stack.pop();
+		IConstructor body = stack.pop();
 
 		stack.push(builder.Statement_switch(controller, body));
 
@@ -1750,13 +1748,13 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IASTStatement _body = statement.getBody();
 
 		_initializer.accept(this);
-		IConstructor initializer = (IConstructor) stack.pop();
+		IConstructor initializer = stack.pop();
 		_condition.accept(this);
-		IConstructor condition = (IConstructor) stack.pop();
+		IConstructor condition = stack.pop();
 		_iteration.accept(this);
-		IConstructor iteration = (IConstructor) stack.pop();
+		IConstructor iteration = stack.pop();
 		_body.accept(this);
-		IConstructor body = (IConstructor) stack.pop();
+		IConstructor body = stack.pop();
 
 		stack.push(builder.Statement_for(initializer, condition, iteration, body));
 
@@ -1768,7 +1766,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IListWriter statements = vf.listWriter();
 		for (IASTStatement statement : _statements) {
 			statement.accept(this);
-			statements.append((IConstructor) stack.pop());
+			statements.append(stack.pop());
 		}
 		stack.push(builder.Statement_compoundStatement(statements.done()));
 		return PROCESS_ABORT;
@@ -1777,14 +1775,14 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	public int visit(IASTDeclarationStatement statement) {
 		IASTDeclaration _declaration = statement.getDeclaration();
 		_declaration.accept(this);
-		stack.push(builder.Statement_declarationStatement((IConstructor) stack.pop()));
+		stack.push(builder.Statement_declarationStatement(stack.pop()));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTExpressionStatement statement) {
 		IASTExpression _expression = statement.getExpression();
 		_expression.accept(this);
-		stack.push(builder.Statement_expressionStatement((IConstructor) stack.pop()));
+		stack.push(builder.Statement_expressionStatement(stack.pop()));
 		return PROCESS_ABORT;
 	}
 
@@ -1794,15 +1792,15 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IASTStatement _elseClause = statement.getElseClause();
 
 		_condition.accept(this);
-		IConstructor condition = (IConstructor) stack.pop();
+		IConstructor condition = stack.pop();
 		_thenClause.accept(this);
-		IConstructor thenClause = (IConstructor) stack.pop();
+		IConstructor thenClause = stack.pop();
 
 		if (_elseClause == null) {
 			stack.push(builder.Statement_if(condition, thenClause));
 		} else {
 			_elseClause.accept(this);
-			IConstructor elseClause = (IConstructor) stack.pop();
+			IConstructor elseClause = stack.pop();
 			stack.push(builder.Statement_if(condition, thenClause, elseClause));
 		}
 		return PROCESS_ABORT;
@@ -1815,7 +1813,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 		_declSpecifier.accept(this);
 		// TODO: abstractDeclarator?
-		IConstructor declSpecifier = (IConstructor) stack.pop();
+		IConstructor declSpecifier = stack.pop();
 		// if (_abstractDeclarator.equals(String.class))
 		stack.push(builder.Type_typeId(declSpecifier));
 		// else {
@@ -1832,12 +1830,12 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IASTExpression _value = enumerator.getValue();
 
 		_name.accept(this);
-		IConstructor name = (IConstructor) stack.pop();
+		IConstructor name = stack.pop();
 		if (_value == null)
 			stack.push(builder.Declaration_enumerator(name.toString()));
 		else {
 			_value.accept(this);
-			stack.push(builder.Declaration_enumerator(name.toString(), (IConstructor) stack.pop()));
+			stack.push(builder.Declaration_enumerator(name.toString(), stack.pop()));
 		}
 		return PROCESS_ABORT;
 	}
