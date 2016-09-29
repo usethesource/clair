@@ -241,7 +241,7 @@ data Type
     = \unspecified()
     | \void()
     | \char()
-    | \int()
+    | \integer()
     | \float()
     | \double()
     | \bool()
@@ -259,6 +259,10 @@ data Type
     
     | \typeId(Type \type)
     
+    | \arrayType(Type \type, int size)
+    | \basicType(Type \type, list[Modifier] modifiers)
+    | \nullptr()
+
     //| arrayType(Type \type)
     //| parameterizedType(Type \type)
     //| qualifiedType(Type qualifier, Expression simpleName)
