@@ -73,8 +73,17 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemType;
+import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
@@ -135,10 +144,19 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
+import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
+import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.rascalmpl.interpreter.IEvaluatorContext;
 import org.rascalmpl.value.IConstructor;
 import org.rascalmpl.value.IListWriter;
@@ -1207,6 +1225,49 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		}
 		stack.push(builder.Expression_functionCall(functionName, arguments.done()));
 		return PROCESS_ABORT;
+	}
+
+	public IConstructor convertType(IType type) {
+		if (type instanceof IArrayType) {
+
+		} else if (type instanceof IBasicType) {
+
+		} else if (type instanceof ICompositeType) {
+
+		} else if (type instanceof ICPPAliasTemplate) {
+
+		} else if (type instanceof ICPPParameterPackType) {
+
+		} else if (type instanceof ICPPReferenceType) {
+
+		} else if (type instanceof ICPPTemplateTypeParameter) {
+
+		} else if (type instanceof ICPPTypeSpecialization) {
+
+		} else if (type instanceof ICPPUnaryTypeTransformation) {
+
+		} else if (type instanceof ICPPUnknownType) {
+
+		} else if (type instanceof IEnumeration) {
+
+		} else if (type instanceof IIndexType) {
+
+		} else if (type instanceof IPointerType) {
+
+		} else if (type instanceof IProblemBinding) {
+
+		} else if (type instanceof IProblemType) {
+
+		} else if (type instanceof IQualifierType) {
+
+		} else if (type instanceof ITypeContainer) {
+
+		} else if (type instanceof ITypedef) {
+
+		} else { // unsubinterfaced classes
+
+		}
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(IASTFieldReference expression) {
