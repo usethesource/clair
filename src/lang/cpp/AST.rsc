@@ -137,7 +137,7 @@ data Expression
     | \nullptr()
     
     | \functionDeclarator(Expression nname, list[Expression] arguments)
-    | \namedTypeSpecifier(str name)
+    | \namedTypeSpecifier(Expression nname, list[Modifier] modifiers)
     
     | \functionCall(Expression functionName, list[Expression] arguments)
     
@@ -302,6 +302,10 @@ data Modifier
     | \longlong()
     | \complex()
     | \imaginary()
+    
+    | \const()
+    | \volatile()
+    | \restrict()
     
     
     //| \private()
