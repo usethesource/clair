@@ -38,6 +38,9 @@ data Declaration
     | \declarationEqualsInitializer(str name, Expression initializer) //weg
     
     | \arraydeclarator(Expression nname, list[Expression] arrayModifier)
+    | \template(Declaration declaration, list[Expression] parameters)
+    | \sttClass(Expression nname) //simpleTypeTemplateParameter    
+    | \sttTypename(Expression nname) //simpleTypeTemplateParameter
     
     //| \compilationUnit(Declaration package, list[Declaration] imports, list[Declaration] types)
     //| \enum(str name, list[Type] implements, list[Declaration] constants, list[Declaration] body)

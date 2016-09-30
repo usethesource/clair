@@ -34,14 +34,16 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"translationUnit",tf.listType(_Declaration),"declarations");
   private static final Type _Declaration_visibilityLabel_1 
     = tf.constructor(typestore,_Declaration,"visibilityLabel",_Modifier,"visibility");
+  private static final Type _Declaration_sttClass_1 
+    = tf.constructor(typestore,_Declaration,"sttClass",_Expression,"nname");
   private static final Type _Declaration_declSpecifier_3 
     = tf.constructor(typestore,_Declaration,"declSpecifier",tf.listType(_Modifier),"modifiers",_Type,"type",_Expression,"expression");
   private static final Type _Declaration_class_2 
     = tf.constructor(typestore,_Declaration,"class",_Expression,"nname",tf.listType(_Declaration),"members");
   private static final Type _Declaration_reference_0 
     = tf.constructor(typestore,_Declaration,"reference");
-  private static final Type _Declaration_arraydeclarator_2 
-    = tf.constructor(typestore,_Declaration,"arraydeclarator",_Expression,"nname",tf.listType(_Expression),"arrayModifier");
+  private static final Type _Declaration_template_2 
+    = tf.constructor(typestore,_Declaration,"template",_Declaration,"declaration",tf.listType(_Expression),"parameters");
   private static final Type _Declaration_parameter_1 
     = tf.constructor(typestore,_Declaration,"parameter",_Declaration,"declSpecifier");
   private static final Type _Declaration_declSpecifier_2 
@@ -64,6 +66,10 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"declarator",_Expression,"nname",_Declaration,"init");
   private static final Type _Declaration_initializerClause_1 
     = tf.constructor(typestore,_Declaration,"initializerClause",_Expression,"expression");
+  private static final Type _Declaration_sttTypename_1 
+    = tf.constructor(typestore,_Declaration,"sttTypename",_Expression,"nname");
+  private static final Type _Declaration_arraydeclarator_2 
+    = tf.constructor(typestore,_Declaration,"arraydeclarator",_Expression,"nname",tf.listType(_Expression),"arrayModifier");
   private static final Type _Declaration_declarationEqualsInitializer_2 
     = tf.constructor(typestore,_Declaration,"declarationEqualsInitializer",tf.stringType(),"name",_Expression,"initializer");
   private static final Type _Declaration_initializerList_1 
@@ -365,6 +371,10 @@ public class AST {
     return vf.constructor(_Declaration_visibilityLabel_1 , $visibility);
   }
   
+  public IConstructor Declaration_sttClass( IConstructor $nname) {
+    return vf.constructor(_Declaration_sttClass_1 , $nname);
+  }
+  
   public IConstructor Declaration_declSpecifier( IList $modifiers, IConstructor $type, IConstructor $expression) {
     return vf.constructor(_Declaration_declSpecifier_3 , $modifiers, $type, $expression);
   }
@@ -377,8 +387,8 @@ public class AST {
     return vf.constructor(_Declaration_reference_0 );
   }
   
-  public IConstructor Declaration_arraydeclarator( IConstructor $nname, IList $arrayModifier) {
-    return vf.constructor(_Declaration_arraydeclarator_2 , $nname, $arrayModifier);
+  public IConstructor Declaration_template( IConstructor $declaration, IList $parameters) {
+    return vf.constructor(_Declaration_template_2 , $declaration, $parameters);
   }
   
   public IConstructor Declaration_parameter( IConstructor $declSpecifier) {
@@ -423,6 +433,14 @@ public class AST {
   
   public IConstructor Declaration_initializerClause( IConstructor $expression) {
     return vf.constructor(_Declaration_initializerClause_1 , $expression);
+  }
+  
+  public IConstructor Declaration_sttTypename( IConstructor $nname) {
+    return vf.constructor(_Declaration_sttTypename_1 , $nname);
+  }
+  
+  public IConstructor Declaration_arraydeclarator( IConstructor $nname, IList $arrayModifier) {
+    return vf.constructor(_Declaration_arraydeclarator_2 , $nname, $arrayModifier);
   }
   
   public IConstructor Declaration_declarationEqualsInitializer( String $name, IConstructor $initializer) {
