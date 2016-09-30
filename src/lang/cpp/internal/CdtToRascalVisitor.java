@@ -133,10 +133,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStaticAssertDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeTransformationSpecifier;
@@ -303,8 +305,18 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTTemplateDeclaration declaration) {
-		out("CPPTemplateDeclaration: " + declaration.getRawSignature());
-		throw new RuntimeException("NYI");
+		boolean isExported = declaration.isExported();
+		IASTDeclaration _declaration = declaration.getDeclaration();
+		ICPPASTTemplateParameter[] _templateParameters = declaration.getTemplateParameters();
+		IScope scope = declaration.getScope();
+		IListWriter templateParameters = vf.listWriter();
+		Stream.of(_templateParameters).forEach(it -> {
+			it.accept(this);
+			templateParameters.append(stack.pop());
+		});
+		_declaration.accept(this);
+		stack.push(builder.Declaration_template(stack.pop(), templateParameters.done()));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTStaticAssertDeclaration declaration) {
@@ -1931,8 +1943,46 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(ICPPASTTemplateParameter templateParameter) {
-		err("TemplateParameter: " + templateParameter.getRawSignature());
-		throw new RuntimeException("NYI");
+		boolean isParameterPack = templateParameter.isParameterPack();
+		if (isParameterPack)
+			err("WARNING: ICPPASTTemplateParameter has isParameterPack=true, unimplemented");
+		if (templateParameter instanceof ICPPASTParameterDeclaration) {
+			IASTDeclSpecifier _declSpecifier = ((ICPPASTParameterDeclaration) templateParameter).getDeclSpecifier();
+			ICPPASTDeclarator _declarator = ((ICPPASTParameterDeclaration) templateParameter).getDeclarator();
+			_declSpecifier.accept(this);
+			IConstructor declSpecifier = stack.pop();
+			if (_declarator == null)
+				stack.push(builder.Declaration_parameter(declSpecifier));
+			else {
+				_declarator.accept(this);
+				IConstructor declarator = stack.pop();
+				stack.push(builder.Declaration_parameter(declSpecifier, declarator));
+			}
+		} else if (templateParameter instanceof ICPPASTSimpleTypeTemplateParameter) {
+			int parameterType = ((ICPPASTSimpleTypeTemplateParameter) templateParameter).getParameterType();
+			IASTTypeId defaultType = ((ICPPASTSimpleTypeTemplateParameter) templateParameter).getDefaultType();
+			IASTName _name = ((ICPPASTSimpleTypeTemplateParameter) templateParameter).getName();
+			_name.accept(this);
+			IConstructor name = stack.pop();
+			switch (parameterType) {
+			case ICPPASTSimpleTypeTemplateParameter.st_class:
+				stack.push(builder.Declaration_sttClass(name));
+				break;
+			case ICPPASTSimpleTypeTemplateParameter.st_typename:
+				stack.push(builder.Declaration_sttTypename(name));
+				break;
+			default:
+				throw new RuntimeException(
+						"ICPPASTTemplateParameter encountered non-implemented parameter type " + parameterType);
+			}
+			if (defaultType != null)
+				err("WARNING: ICPPASTTemplateParameter has defaultType, not implemented");
+		} else if (templateParameter instanceof ICPPASTTemplatedTypeTemplateParameter) {
+			throw new RuntimeException("NYI");
+		} else
+			throw new RuntimeException("ICPPASTTemplateParameter encountered unknown subtype "
+					+ templateParameter.getClass().getName() + ". Exiting");
+		return PROCESS_ABORT;
 	}
 
 	@Override
