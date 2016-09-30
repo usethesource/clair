@@ -40,6 +40,8 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"class",_Expression,"nname",tf.listType(_Declaration),"members");
   private static final Type _Declaration_reference_0 
     = tf.constructor(typestore,_Declaration,"reference");
+  private static final Type _Declaration_arraydeclarator_2 
+    = tf.constructor(typestore,_Declaration,"arraydeclarator",_Expression,"nname",tf.listType(_Expression),"arrayModifier");
   private static final Type _Declaration_parameter_1 
     = tf.constructor(typestore,_Declaration,"parameter",_Declaration,"declSpecifier");
   private static final Type _Declaration_declSpecifier_2 
@@ -164,6 +166,10 @@ public class AST {
     = tf.constructor(typestore,_Expression,"greaterThan",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_minus_1 
     = tf.constructor(typestore,_Expression,"minus",_Expression,"expression");
+  private static final Type _Expression_arrayModifier_1 
+    = tf.constructor(typestore,_Expression,"arrayModifier",_Expression,"constExpression");
+  private static final Type _Expression_new_1 
+    = tf.constructor(typestore,_Expression,"new",_Type,"type");
   private static final Type _Expression_true_0 
     = tf.constructor(typestore,_Expression,"true");
   private static final Type _Expression_typeid_1 
@@ -363,6 +369,10 @@ public class AST {
   
   public IConstructor Declaration_reference() {
     return vf.constructor(_Declaration_reference_0 );
+  }
+  
+  public IConstructor Declaration_arraydeclarator( IConstructor $nname, IList $arrayModifier) {
+    return vf.constructor(_Declaration_arraydeclarator_2 , $nname, $arrayModifier);
   }
   
   public IConstructor Declaration_parameter( IConstructor $declSpecifier) {
@@ -608,6 +618,14 @@ public class AST {
   
   public IConstructor Expression_minus( IConstructor $expression) {
     return vf.constructor(_Expression_minus_1 , $expression);
+  }
+  
+  public IConstructor Expression_arrayModifier( IConstructor $constExpression) {
+    return vf.constructor(_Expression_arrayModifier_1 , $constExpression);
+  }
+  
+  public IConstructor Expression_new( IConstructor $type) {
+    return vf.constructor(_Expression_new_1 , $type);
   }
   
   public IConstructor Expression_true() {

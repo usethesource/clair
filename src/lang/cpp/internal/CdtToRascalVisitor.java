@@ -84,6 +84,7 @@ import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
@@ -402,7 +403,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTEqualsInitializer initializer) {
-		out(initializer.getRawSignature());
 		IASTInitializerClause initializerClause = initializer.getInitializerClause();
 		initializerClause.accept(this);
 		stack.push(builder.Declaration_equalsInitializer(stack.pop()));
@@ -542,8 +542,35 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTArrayDeclarator declarator) {
-		err("ArrayDeclarator: " + declarator.getRawSignature());
-		throw new RuntimeException("NYI");
+		if (declarator instanceof IASTArrayDeclarator) {
+			IASTArrayModifier[] _arrayModifiers = declarator.getArrayModifiers();
+			IASTPointerOperator[] _pointerOperators = declarator.getPointerOperators();
+			IASTDeclarator _nestedDeclarator = declarator.getNestedDeclarator();
+			IASTName _name = declarator.getName();
+			IASTInitializer initializer = declarator.getInitializer();
+			IListWriter arrayModifiers = vf.listWriter();
+			Stream.of(_arrayModifiers).forEach(it -> {
+				it.accept(this);
+				arrayModifiers.append(stack.pop());
+			});
+			IListWriter pointerOperators = vf.listWriter();
+			Stream.of(_pointerOperators).forEach(it -> {
+				it.accept(this);
+				pointerOperators.append(stack.pop());
+			});
+			IConstructor nestedDeclarator;
+			if (_nestedDeclarator != null) {
+				_nestedDeclarator.accept(this);
+				nestedDeclarator = stack.pop();
+			}
+			_name.accept(this);
+			IConstructor name = stack.pop();
+			if (_pointerOperators.length > 0 || _nestedDeclarator != null)
+				err("WARNING: IASTArrayDeclarator encountered unimplemented field");
+			stack.push(builder.Declaration_arraydeclarator(name, arrayModifiers.done()));
+		} else
+			throw new RuntimeException("NYI");
+		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTFieldDeclarator declarator) {
@@ -968,8 +995,19 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTArrayModifier arrayModifier) {
-		err("ArrayModifier: " + arrayModifier.getRawSignature());
-		throw new RuntimeException("NYI");
+		if (arrayModifier instanceof ICASTArrayModifier) {
+			throw new RuntimeException("NYI");
+		} else {
+			IASTExpression _constantExpression = arrayModifier.getConstantExpression();
+			IASTAttributeSpecifier[] _attributeSpecifiers = arrayModifier.getAttributeSpecifiers();
+			IASTAttribute[] _attributes = arrayModifier.getAttributes();
+
+			_constantExpression.accept(this);
+			if (_attributeSpecifiers.length > 0 || _attributes.length > 0)
+				err("WARNING: IASTArrayModifier has unimplemented field set");
+			stack.push(builder.Expression_arrayModifier(stack.pop()));
+		}
+		return PROCESS_ABORT;
 	}
 
 	@Override
@@ -985,10 +1023,11 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTPointer pointer) {
-		err("Pointer: " + pointer.getRawSignature());
 		boolean isConst = pointer.isConst();
 		boolean isVolatile = pointer.isVolatile();
 		boolean isRestrict = pointer.isRestrict();
+		if (isConst || isVolatile || isRestrict)
+			err("WARNING: IASTPointer encountered unimplemented field set");
 		stack.push(builder.Declaration_pointer());
 		return PROCESS_ABORT;
 	}
@@ -1112,7 +1151,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTNewExpression expression) {
-		out("NewExpression: " + expression.getRawSignature());
 		boolean isGlobal = expression.isGlobal();
 		boolean isArrayAllocation = expression.isArrayAllocation();
 		boolean isNewTypeId = expression.isNewTypeId();
@@ -1126,10 +1164,13 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 		_typeId.accept(this);
 		IConstructor typeId = stack.pop();
-		_initializer.accept(this);
-		IConstructor initializer = stack.pop();
-
-		stack.push(builder.Expression_new(typeId, initializer));
+		if (_initializer == null)
+			stack.push(builder.Expression_new(typeId));
+		else {
+			_initializer.accept(this);
+			IConstructor initializer = stack.pop();
+			stack.push(builder.Expression_new(typeId, initializer));
+		}
 		return PROCESS_ABORT;
 	}
 
