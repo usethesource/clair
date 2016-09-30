@@ -349,9 +349,17 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		return StringUtils.repeat(" ", prefix);
 	}
 
-	public synchronized int visit(IASTSimpleDeclaration declaration) {// FIX!
+	public synchronized int visit(IASTSimpleDeclaration declaration) {
 		IASTDeclSpecifier _declSpecifier = declaration.getDeclSpecifier();
 		IASTDeclarator[] _declarators = declaration.getDeclarators();
+
+		IASTAttributeSpecifier[] attributeSpecifiers = declaration.getAttributeSpecifiers();
+		IASTAttribute[] attributes = declaration.getAttributes();
+
+		if (attributeSpecifiers.length > 0)
+			err("WARNING: IASTSimpleDeclaration: attributeSpecifiers not empty");
+		if (attributes.length > 0)
+			err("WARNING: IASTSimpleDeclaration: attributes not empty");
 
 		_declSpecifier.accept(this);
 		IConstructor declSpecifier = stack.pop();
@@ -655,14 +663,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 				initializer = stack.pop();
 				stack.push(builder.Declaration_declarator(name, initializer));
 			}
-
-			// out("#_pointerOperators=" +
-			// _pointerOperators.length + " _nestedDeclarator="
-			// + _nestedDeclarator + " _name=" + _name + " _initializer=" +
-			// _initializer);
-
-			// stack.push(vf.string("TODOCPPDeclarator:" +
-			// declarator.getRawSignature()));
 		}
 		return PROCESS_ABORT;
 	}
@@ -721,6 +721,10 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		}
 		stack.push(builder.Expression_functionDeclarator(name, parameters.done()));
 		return PROCESS_ABORT;
+	}
+
+	void info(String msg) {
+		out(msg);
 	}
 
 	@Override
@@ -827,7 +831,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTEnumerationSpecifier declSpec) {
-		out("EnumerationSpecifier: " + declSpec.getRawSignature());
 		IASTName _name = declSpec.getName();
 		IASTEnumerator[] _enumerators = declSpec.getEnumerators();
 
@@ -844,16 +847,28 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(IASTNamedTypeSpecifier declSpec) { // Is this correct?
-		stack.push(builder.Expression_namedTypeSpecifier(declSpec.getName().toString()));
+	public int visit(IASTNamedTypeSpecifier declSpec) {
+		// int storageClass = declSpec.getStorageClass();
+		boolean isConst = declSpec.isConst();
+		boolean isVolatile = declSpec.isVolatile();
+		boolean isRestrict = declSpec.isRestrict();
+		boolean isInline = declSpec.isInline();
+
+		IListWriter modifiers = vf.listWriter();
+		if (isConst)
+			modifiers.append(builder.Modifier_const());
+		if (isVolatile)
+			modifiers.append(builder.Modifier_volatile());
+		if (isRestrict)
+			modifiers.append(builder.Modifier_restrict());
+		if (isInline)
+			err("WARNING: IASTNamedTypeSpecifier has isInline=true, not implemented");
+		declSpec.getName().accept(this);
+		stack.push(builder.Expression_namedTypeSpecifier(stack.pop(), modifiers.done()));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTSimpleDeclSpecifier declSpec) {
-		// Stream.of(Thread.currentThread().getStackTrace())
-		// .forEach(it -> out(it.getFileName() + "@" + it.getMethodName() + ":"
-		// + it.getLineNumber()));
-		// out("------");
 		// TODO: implement modifiers
 		int type = declSpec.getType();
 		boolean isSigned = declSpec.isSigned();

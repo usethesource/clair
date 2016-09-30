@@ -94,8 +94,6 @@ public class AST {
     = tf.constructor(typestore,_Expression,"assign",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_nyi_1 
     = tf.constructor(typestore,_Expression,"nyi",tf.stringType(),"raw");
-  private static final Type _Expression_namedTypeSpecifier_1 
-    = tf.constructor(typestore,_Expression,"namedTypeSpecifier",tf.stringType(),"name");
   private static final Type _Expression_minus_2 
     = tf.constructor(typestore,_Expression,"minus",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_name_1 
@@ -144,6 +142,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"divide",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_greaterEqual_2 
     = tf.constructor(typestore,_Expression,"greaterEqual",_Expression,"lhs",_Expression,"rhs");
+  private static final Type _Expression_namedTypeSpecifier_2 
+    = tf.constructor(typestore,_Expression,"namedTypeSpecifier",_Expression,"nname",tf.listType(_Modifier),"modifiers");
   private static final Type _Expression_shiftRight_2 
     = tf.constructor(typestore,_Expression,"shiftRight",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_plus_2 
@@ -326,12 +326,18 @@ public class AST {
     = tf.constructor(typestore,_Modifier,"private");
   private static final Type _Modifier_register_0 
     = tf.constructor(typestore,_Modifier,"register");
+  private static final Type _Modifier_const_0 
+    = tf.constructor(typestore,_Modifier,"const");
   private static final Type _Modifier_static_0 
     = tf.constructor(typestore,_Modifier,"static");
   private static final Type _Modifier_protected_0 
     = tf.constructor(typestore,_Modifier,"protected");
   private static final Type _Modifier_short_0 
     = tf.constructor(typestore,_Modifier,"short");
+  private static final Type _Modifier_volatile_0 
+    = tf.constructor(typestore,_Modifier,"volatile");
+  private static final Type _Modifier_restrict_0 
+    = tf.constructor(typestore,_Modifier,"restrict");
   private static final Type _Modifier_long_0 
     = tf.constructor(typestore,_Modifier,"long");
   private static final Type _Modifier_signed_0 
@@ -476,10 +482,6 @@ public class AST {
     return vf.constructor(_Expression_nyi_1 , vf.string($raw));
   }
   
-  public IConstructor Expression_namedTypeSpecifier( String $name) {
-    return vf.constructor(_Expression_namedTypeSpecifier_1 , vf.string($name));
-  }
-  
   public IConstructor Expression_minus( IConstructor $lhs, IConstructor $rhs) {
     return vf.constructor(_Expression_minus_2 , $lhs, $rhs);
   }
@@ -574,6 +576,10 @@ public class AST {
   
   public IConstructor Expression_greaterEqual( IConstructor $lhs, IConstructor $rhs) {
     return vf.constructor(_Expression_greaterEqual_2 , $lhs, $rhs);
+  }
+  
+  public IConstructor Expression_namedTypeSpecifier( IConstructor $nname, IList $modifiers) {
+    return vf.constructor(_Expression_namedTypeSpecifier_2 , $nname, $modifiers);
   }
   
   public IConstructor Expression_shiftRight( IConstructor $lhs, IConstructor $rhs) {
@@ -931,6 +937,10 @@ public class AST {
     return vf.constructor(_Modifier_register_0 );
   }
   
+  public IConstructor Modifier_const() {
+    return vf.constructor(_Modifier_const_0 );
+  }
+  
   public IConstructor Modifier_static() {
     return vf.constructor(_Modifier_static_0 );
   }
@@ -941,6 +951,14 @@ public class AST {
   
   public IConstructor Modifier_short() {
     return vf.constructor(_Modifier_short_0 );
+  }
+  
+  public IConstructor Modifier_volatile() {
+    return vf.constructor(_Modifier_volatile_0 );
+  }
+  
+  public IConstructor Modifier_restrict() {
+    return vf.constructor(_Modifier_restrict_0 );
   }
   
   public IConstructor Modifier_long() {
