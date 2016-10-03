@@ -48,8 +48,10 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"class",_Expression,"nname",tf.listType(_Declaration),"members");
   private static final Type _Declaration_initializerClause_1 
     = tf.constructor(typestore,_Declaration,"initializerClause",_Expression,"expression");
-  private static final Type _Declaration_etsStruct_1 
-    = tf.constructor(typestore,_Declaration,"etsStruct",_Expression,"nname");
+  private static final Type _Declaration_constructorChainInitializer_2 
+    = tf.constructor(typestore,_Declaration,"constructorChainInitializer",_Expression,"nname",_Expression,"initializer");
+  private static final Type _Declaration_struct_2 
+    = tf.constructor(typestore,_Declaration,"struct",_Expression,"nname",tf.listType(_Declaration),"members");
   private static final Type _Declaration_struct_3 
     = tf.constructor(typestore,_Declaration,"struct",_Expression,"nname",tf.listType(_Declaration),"members",tf.listType(_Declaration),"baseSpecifiers");
   private static final Type _Declaration_parameter_1 
@@ -74,6 +76,8 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"sttClass",_Expression,"nname");
   private static final Type _Declaration_enumerator_1 
     = tf.constructor(typestore,_Declaration,"enumerator",tf.stringType(),"name");
+  private static final Type _Declaration_functionDefinition_3 
+    = tf.constructor(typestore,_Declaration,"functionDefinition",_Type,"ddeclSpecifier",_Declaration,"ddeclarator",_Statement,"sbody");
   private static final Type _Declaration_asmDeclaration_1 
     = tf.constructor(typestore,_Declaration,"asmDeclaration",tf.stringType(),"assembly");
   private static final Type _Declaration_parameter_2 
@@ -82,8 +86,14 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"usingDirective",_Expression,"qualifiedName");
   private static final Type _Declaration_reference_0 
     = tf.constructor(typestore,_Declaration,"reference");
+  private static final Type _Declaration_defaultedFunctionDefinition_3 
+    = tf.constructor(typestore,_Declaration,"defaultedFunctionDefinition",_Type,"ddeclSpecifier",tf.listType(_Declaration),"memberInitializer",_Declaration,"ddeclarator");
   private static final Type _Declaration_baseSpecifier_2 
     = tf.constructor(typestore,_Declaration,"baseSpecifier",_Modifier,"modifier",_Expression,"nname");
+  private static final Type _Declaration_etsStruct_1 
+    = tf.constructor(typestore,_Declaration,"etsStruct",_Expression,"nname");
+  private static final Type _Declaration_functionDefinition_4 
+    = tf.constructor(typestore,_Declaration,"functionDefinition",_Type,"ddeclSpecifier",tf.listType(_Declaration),"memberInitializer",_Declaration,"ddeclarator",_Statement,"sbody");
   private static final Type _Declaration_sttTypename_1 
     = tf.constructor(typestore,_Declaration,"sttTypename",_Expression,"nname");
   private static final Type _Declaration_arraydeclarator_2 
@@ -92,14 +102,12 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"declarationEqualsInitializer",tf.stringType(),"name",_Expression,"initializer");
   private static final Type _Declaration_initializerList_1 
     = tf.constructor(typestore,_Declaration,"initializerList",tf.listType(_Expression),"clauses");
+  private static final Type _Declaration_deletedFunctionDefinition_3 
+    = tf.constructor(typestore,_Declaration,"deletedFunctionDefinition",_Type,"ddeclSpecifier",tf.listType(_Declaration),"memberInitializer",_Declaration,"ddeclarator");
   private static final Type _Declaration_etsClass_1 
     = tf.constructor(typestore,_Declaration,"etsClass",_Expression,"nname");
   private static final Type _Declaration_template_2 
     = tf.constructor(typestore,_Declaration,"template",_Declaration,"declaration",tf.listType(_Expression),"parameters");
-  private static final Type _Declaration_functionDefinition_3 
-    = tf.constructor(typestore,_Declaration,"functionDefinition",_Type,"ddeclSpecifier",_Declaration,"ddeclarators",_Statement,"sbody");
-  private static final Type _Declaration_struct_2 
-    = tf.constructor(typestore,_Declaration,"struct",_Expression,"nname",tf.listType(_Declaration),"members");
   
   
   private static final Type _Expression_functionDeclarator_3 
@@ -433,8 +441,12 @@ public class AST {
     return vf.constructor(_Declaration_initializerClause_1 , $expression);
   }
   
-  public IConstructor Declaration_etsStruct( IConstructor $nname) {
-    return vf.constructor(_Declaration_etsStruct_1 , $nname);
+  public IConstructor Declaration_constructorChainInitializer( IConstructor $nname, IConstructor $initializer) {
+    return vf.constructor(_Declaration_constructorChainInitializer_2 , $nname, $initializer);
+  }
+  
+  public IConstructor Declaration_struct( IConstructor $nname, IList $members) {
+    return vf.constructor(_Declaration_struct_2 , $nname, $members);
   }
   
   public IConstructor Declaration_struct( IConstructor $nname, IList $members, IList $baseSpecifiers) {
@@ -485,6 +497,10 @@ public class AST {
     return vf.constructor(_Declaration_enumerator_1 , vf.string($name));
   }
   
+  public IConstructor Declaration_functionDefinition( IConstructor $ddeclSpecifier, IConstructor $ddeclarator, IConstructor $sbody) {
+    return vf.constructor(_Declaration_functionDefinition_3 , $ddeclSpecifier, $ddeclarator, $sbody);
+  }
+  
   public IConstructor Declaration_asmDeclaration( String $assembly) {
     return vf.constructor(_Declaration_asmDeclaration_1 , vf.string($assembly));
   }
@@ -501,8 +517,20 @@ public class AST {
     return vf.constructor(_Declaration_reference_0 );
   }
   
+  public IConstructor Declaration_defaultedFunctionDefinition( IConstructor $ddeclSpecifier, IList $memberInitializer, IConstructor $ddeclarator) {
+    return vf.constructor(_Declaration_defaultedFunctionDefinition_3 , $ddeclSpecifier, $memberInitializer, $ddeclarator);
+  }
+  
   public IConstructor Declaration_baseSpecifier( IConstructor $modifier, IConstructor $nname) {
     return vf.constructor(_Declaration_baseSpecifier_2 , $modifier, $nname);
+  }
+  
+  public IConstructor Declaration_etsStruct( IConstructor $nname) {
+    return vf.constructor(_Declaration_etsStruct_1 , $nname);
+  }
+  
+  public IConstructor Declaration_functionDefinition( IConstructor $ddeclSpecifier, IList $memberInitializer, IConstructor $ddeclarator, IConstructor $sbody) {
+    return vf.constructor(_Declaration_functionDefinition_4 , $ddeclSpecifier, $memberInitializer, $ddeclarator, $sbody);
   }
   
   public IConstructor Declaration_sttTypename( IConstructor $nname) {
@@ -521,20 +549,16 @@ public class AST {
     return vf.constructor(_Declaration_initializerList_1 , $clauses);
   }
   
+  public IConstructor Declaration_deletedFunctionDefinition( IConstructor $ddeclSpecifier, IList $memberInitializer, IConstructor $ddeclarator) {
+    return vf.constructor(_Declaration_deletedFunctionDefinition_3 , $ddeclSpecifier, $memberInitializer, $ddeclarator);
+  }
+  
   public IConstructor Declaration_etsClass( IConstructor $nname) {
     return vf.constructor(_Declaration_etsClass_1 , $nname);
   }
   
   public IConstructor Declaration_template( IConstructor $declaration, IList $parameters) {
     return vf.constructor(_Declaration_template_2 , $declaration, $parameters);
-  }
-  
-  public IConstructor Declaration_functionDefinition( IConstructor $ddeclSpecifier, IConstructor $ddeclarators, IConstructor $sbody) {
-    return vf.constructor(_Declaration_functionDefinition_3 , $ddeclSpecifier, $ddeclarators, $sbody);
-  }
-  
-  public IConstructor Declaration_struct( IConstructor $nname, IList $members) {
-    return vf.constructor(_Declaration_struct_2 , $nname, $members);
   }
     
   
