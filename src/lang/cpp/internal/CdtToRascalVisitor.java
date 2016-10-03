@@ -150,6 +150,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier.SpecifierKind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -402,6 +403,8 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTFunctionDefinition definition) {
+		if (true)
+			throw new RuntimeException("C function definition??");wefwfwfwf
 		IASTDeclSpecifier _declSpecifier = definition.getDeclSpecifier();
 		IASTFunctionDeclarator _declarator = definition.getDeclarator();
 		IASTStatement _body = definition.getBody();
@@ -726,25 +729,16 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		ICPPFunctionScope functionScope = declarator.getFunctionScope();
 		boolean isOverride = declarator.isOverride();
 		boolean isFinal = declarator.isFinal();
-		ICPPASTVirtSpecifier[] virtSpecifiers = declarator.getVirtSpecifiers();
+		ICPPASTVirtSpecifier[] _virtSpecifiers = declarator.getVirtSpecifiers();
 		IScope _functionScope = declarator.getFunctionScope();
 		boolean _takesVarArgs = declarator.takesVarArgs();
 
-		// ctx.getStdOut()
-		// .println("isConst=" + isConst + " isVolatile=" + isVolatile + "
-		// isMutable=" + isMutable
-		// + " isPureVirtual=" + isPureVirtual + " refQualifier=" + refQualifier
-		// + " _parameters.length="
-		// + _parameters.length + " exeptionSpecification.length=" +
-		// exceptionSpecification.length
-		// + " noexceptExpression=" + noexceptExpression + "
-		// trailingReturnType=" + trailingReturnType
-		// + " functionScope=" + functionScope + " isOverride=" + isOverride + "
-		// isFinal=" + isFinal
-		// + " virtSpecifiers.length=" + virtSpecifiers.length + "
-		// functionScope=" + _functionScope
-		// + " takesVarArgs=" + _takesVarArgs);
-
+		if (isConst || isVolatile || isMutable || isPureVirtual || isOverride || isFinal || _takesVarArgs)
+			err("WARNING: ICPPASTFunctionDeclarator has unimplemented field");
+		if (refQualifier != null)
+			err("WARNING: ICPPASTFunctionDeclarator has refQualifier, unimplemented");
+		if (exceptionSpecification != null || noexceptExpression != null || trailingReturnType != null)
+			err("WARNING: ICPPASTFunctionDeclarator has unimplemented field set");
 		_name.accept(this);
 		IConstructor name = stack.pop();
 		IListWriter parameters = vf.listWriter();
@@ -752,7 +746,12 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			parameter.accept(this);
 			parameters.append(stack.pop());
 		}
-		stack.push(builder.Expression_functionDeclarator(name, parameters.done()));
+		IListWriter virtSpecifiers = vf.listWriter();
+		Stream.of(_virtSpecifiers).forEach(it -> {
+			it.accept(this);
+			virtSpecifiers.append(stack.pop());
+		});
+		stack.push(builder.Expression_functionDeclarator(name, parameters.done(), virtSpecifiers.done()));
 		return PROCESS_ABORT;
 	}
 
@@ -2168,8 +2167,18 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(ICPPASTVirtSpecifier virtSpecifier) {
-		err("VirtSpecifier: " + virtSpecifier.getRawSignature());
-		throw new RuntimeException("NYI");
+		SpecifierKind kind = virtSpecifier.getKind();
+		switch (kind) {
+		case Final:
+			stack.push(builder.Declaration_virtSpecifier(builder.Modifier_final()));
+			break;
+		case Override:
+			stack.push(builder.Declaration_virtSpecifier(builder.Modifier_override()));
+			break;
+		default:
+			throw new RuntimeException("ICPPASTVirtSpecifier encountered unknown SpecifierKind " + kind.name());
+		}
+		return PROCESS_ABORT;
 	}
 
 	@Override
