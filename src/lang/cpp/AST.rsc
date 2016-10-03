@@ -5,7 +5,11 @@ extend analysis::m3::AST;
 data Declaration
     = \translationUnit(list[Declaration] declarations)
     | \simpleDeclaration(Type ddeclSpecifier, list[Declaration] declarators)//?
-    | \functionDefinition(Type ddeclSpecifier, Declaration ddeclarators, Statement sbody)//?
+    | \functionDefinition(Type ddeclSpecifier, Declaration ddeclarator, Statement sbody)//?
+    | \defaultedFunctionDefinition(Type ddeclSpecifier, list[Declaration] memberInitializer, Declaration ddeclarator)
+    | \deletedFunctionDefinition(Type ddeclSpecifier, list[Declaration] memberInitializer, Declaration ddeclarator)
+    | \functionDefinition(Type ddeclSpecifier, list[Declaration] memberInitializer, Declaration ddeclarator, Statement sbody)
+    | \constructorChainInitializer(Expression nname, Expression initializer) 
     //| \declaration(str name, str declarator, list[Statement])
     //| \amb(set[Declaration] alternatives)
     

@@ -121,6 +121,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator.RefQualifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
@@ -403,25 +405,62 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTFunctionDefinition definition) {
-		if (true)
-			throw new RuntimeException("C function definition??");wefwfwfwf
-		IASTDeclSpecifier _declSpecifier = definition.getDeclSpecifier();
-		IASTFunctionDeclarator _declarator = definition.getDeclarator();
-		IASTStatement _body = definition.getBody();
+		if (definition instanceof ICPPASTFunctionDefinition) {
+			IASTDeclSpecifier _declSpecifier = definition.getDeclSpecifier();
+			IASTFunctionDeclarator _declarator = definition.getDeclarator();
+			IASTStatement _body = definition.getBody();
+			ICPPASTConstructorChainInitializer[] _memberInitializers = ((ICPPASTFunctionDefinition) definition)
+					.getMemberInitializers();
+			boolean isDefaulted = ((ICPPASTFunctionDefinition) definition).isDefaulted();
+			boolean isDeleted = ((ICPPASTFunctionDefinition) definition).isDeleted();
 
-		_declSpecifier.accept(this);
-		IConstructor declSpecifier = stack.pop();
-		_declarator.accept(this);
-		IConstructor declarator = stack.pop();
-		if (_body == null)
-			stack.push(builder.Declaration_functionDefinition(declSpecifier, declarator,
-					builder.Statement_NYIspecialmember()));
-		else {
+			_declSpecifier.accept(this);
+			IConstructor declSpecifier = stack.pop();
+			_declarator.accept(this);
+			IConstructor declarator = stack.pop();
+
+			IListWriter memberInitializers = vf.listWriter();
+			Stream.of(_memberInitializers).forEach(it -> {
+				it.accept(this);
+				memberInitializers.append(stack.pop());
+			});
+
+			if (isDefaulted && isDeleted)
+				err("WARNING: IASTFunctionDefinition both deleted and defaulted");
+			if (isDefaulted)
+				stack.push(builder.Declaration_defaultedFunctionDefinition(declSpecifier, memberInitializers.done(),
+						declarator));
+			else if (isDeleted)
+				stack.push(builder.Declaration_deletedFunctionDefinition(declSpecifier, memberInitializers.done(),
+						declarator));
+			else if (definition instanceof ICPPASTFunctionWithTryBlock) {
+				ICPPASTCatchHandler[] _catchHandlers = ((ICPPASTFunctionWithTryBlock) definition).getCatchHandlers();
+				IListWriter catchHandlers = vf.listWriter();
+				Stream.of(_catchHandlers).forEach(it -> {
+					it.accept(this);
+					catchHandlers.append(stack.pop());
+				});
+				throw new RuntimeException("NYI");
+			} else {
+				_body.accept(this);
+				stack.push(builder.Declaration_functionDefinition(declSpecifier, memberInitializers.done(), declarator,
+						stack.pop()));
+			}
+		} else { // C Function definition
+			if (true)
+				throw new RuntimeException("QUE??");
+			IASTDeclSpecifier _declSpecifier = definition.getDeclSpecifier();
+			IASTFunctionDeclarator _declarator = definition.getDeclarator();
+			IASTStatement _body = definition.getBody();
+
+			_declSpecifier.accept(this);
+			IConstructor declSpecifier = stack.pop();
+			_declarator.accept(this);
+			IConstructor declarator = stack.pop();
 			_body.accept(this);
 			IConstructor body = stack.pop();
 			stack.push(builder.Declaration_functionDefinition(declSpecifier, declarator, body));
 		}
-
 		return PROCESS_ABORT;
 	}
 
@@ -493,8 +532,14 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTConstructorChainInitializer initializer) {
-		err("ICPPASTConstructorChainInitializer: " + initializer.getRawSignature());
-		throw new RuntimeException("NYI");
+		IASTName _memberInitializerId = initializer.getMemberInitializerId();
+		IASTInitializer _memberInitializer = initializer.getInitializer();
+		_memberInitializerId.accept(this);
+		IConstructor memberInitializerId = stack.pop();
+		_memberInitializer.accept(this);
+		IConstructor memberInitializer = stack.pop();
+		stack.push(builder.Declaration_constructorChainInitializer(memberInitializerId, memberInitializer));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTConstructorInitializer initializer) {
@@ -1843,6 +1888,10 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(ICPPASTCatchHandler statement) {
 		err("CPPCatchHandler: " + statement.getRawSignature());
+		boolean isCatchAll = statement.isCatchAll();
+		IASTStatement _catchBody = statement.getCatchBody();
+		IASTDeclaration _declaration = statement.getDeclaration();
+		IScope scope = statement.getScope();
 		throw new RuntimeException("NYI");
 	}
 
