@@ -24,9 +24,9 @@ data Declaration
     | \struct(Expression nname, list[Declaration] members)  //c
     | \union(Expression nname, list[Declaration] members)   //c
     | \class(Expression nname, list[Declaration] members)   //c
-    | \struct(Expression nname, list[Declaration] members, list[Declaration] baseSpecifiers)
-    | \union(Expression nname, list[Declaration] members, list[Declaration] baseSpecifiers)
-    | \class(Expression nname, list[Declaration] members, list[Declaration] baseSpecifiers)
+    | \struct(Expression nname,  list[Declaration] baseSpecifiers,list[Declaration] members)
+    | \union(Expression nname, list[Declaration] baseSpecifiers, list[Declaration] members)
+    | \class(Expression nname, list[Declaration] baseSpecifiers, list[Declaration] members)
     
     | \etsEnum(Expression nname)
     | \etsStruct(Expression nname) //ElaboratedTypeSpecifier
@@ -144,6 +144,7 @@ data Expression
     | \cast(Type \type, Expression expression)
     
     | \name(str name)
+    | \qualifiedName(Expression qualifier, Expression lastName)
     | \integerLiteral(int number)
     | \conditional(Expression condition, Expression positive, Expression negative)
     

@@ -46,6 +46,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
@@ -77,6 +78,7 @@ import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -105,6 +107,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
@@ -127,14 +130,17 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNaryTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpansionExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
@@ -142,6 +148,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStaticAssertDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
@@ -230,21 +237,76 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTName name) {
+		IBinding _binding = name.getBinding();
+		int _role = name.getRoleOfName(true);
+		boolean _isQualified = name.isQualified();
 
-		// IBinding _binding = name.getBinding();
-		// int _role = name.getRoleOfName(true);
-		// IASTCompletionContext _completionContext =
-		// name.getCompletionContext();
-		// ILinkage _linkage = name.getLinkage();
-		// IASTImageLocation _imageLocation = name.getImageLocation();
-		// IASTName _lastName = name.getLastName();
-		// char[] _lookupKey = name.getLookupKey();
-		// err(_lookupKey);
-		// IBinding _preBinding = name.getPreBinding();
-		// boolean _isQualified = name.isQualified();
+		if (name instanceof IASTImplicitName)
+			visit((IASTImplicitName) name);
+		else if (name instanceof ICPPASTName)
+			visit((ICPPASTName) name);
+		else {
+			err("No sub-interfaced IASTName? " + name.getClass().getName() + ": " + name.getRawSignature());
+			throw new RuntimeException("NYI");
+		}
 
-		stack.push(builder.Expression_name(name.toString()));
 		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTImplicitName name) {
+		err("IASTImplicitName " + name.getRawSignature());
+		throw new RuntimeException("NYI");
+	}
+
+	public int visit(ICPPASTName name) {
+		if (name instanceof ICPPASTConversionName)
+			visit((ICPPASTConversionName) name);
+		else if (name instanceof ICPPASTOperatorName)
+			visit((ICPPASTOperatorName) name);
+		else if (name instanceof ICPPASTQualifiedName)
+			visit((ICPPASTQualifiedName) name);
+		else if (name instanceof ICPPASTTemplateId)
+			visit((ICPPASTTemplateId) name);
+		else {// TODO is this correct?
+			stack.push(builder.Expression_name(name.toString()));
+		}
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTConversionName name) {
+		err("ICPPASTConversionName: " + name.getRawSignature());
+		throw new RuntimeException("NYI");
+	}
+
+	public int visit(ICPPASTOperatorName name) {
+		err("ICPPASTOperatorName: " + name.getRawSignature());
+		throw new RuntimeException("NYI");
+	}
+
+	public int visit(ICPPASTQualifiedName name) {
+		ICPPASTNameSpecifier[] _qualifier = name.getQualifier();
+		IASTName _lastName = name.getLastName();
+		boolean fullyQualified = name.isFullyQualified();
+		boolean conversionOrOperator = name.isConversionOrOperator();
+
+		if (_qualifier.length != 1) {
+			err("ERROR: ICPPASTQualifiedName #qualifiers!=1, exiting");
+			throw new RuntimeException("NYI");
+		}
+
+		_qualifier[0].accept(this);
+		IConstructor qualifier = stack.pop();
+		_lastName.accept(this);
+		IConstructor lastName = stack.pop();
+		if (fullyQualified || conversionOrOperator)
+			err("WARNING: ICPPASTQualifiedName has unimplemented field set");
+		stack.push(builder.Expression_qualifiedName(qualifier, lastName));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTTemplateId name) {
+		err("ICPPASTTemplateId: " + name.getRawSignature());
+		throw new RuntimeException("NYI");
 	}
 
 	@Override
@@ -894,13 +956,13 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 		switch (key) {
 		case ICPPASTCompositeTypeSpecifier.k_struct:
-			stack.push(builder.Declaration_struct(name, members.done(), baseSpecifiers.done()));
+			stack.push(builder.Declaration_struct(name, baseSpecifiers.done(), members.done()));
 			break;
 		case ICPPASTCompositeTypeSpecifier.k_union:
-			stack.push(builder.Declaration_union(name, members.done(), baseSpecifiers.done()));
+			stack.push(builder.Declaration_union(name, baseSpecifiers.done(), members.done()));
 			break;
 		case ICPPASTCompositeTypeSpecifier.k_class:
-			stack.push(builder.Declaration_class(name, members.done(), baseSpecifiers.done()));
+			stack.push(builder.Declaration_class(name, baseSpecifiers.done(), members.done()));
 			break;
 		default:
 			throw new RuntimeException("Unknown IASTCompositeTypeSpecifier code " + key + ". Exiting");
