@@ -17,9 +17,17 @@ data Declaration
     
     | \usingDirective(Expression qualifiedName)
     | \visibilityLabel(Modifier visibility)
-    | \struct(Expression nname, list[Declaration] members)
-    | \union(Expression nname, list[Declaration] members)
-    | \class(Expression nname, list[Declaration] members)
+    | \struct(Expression nname, list[Declaration] members)  //c
+    | \union(Expression nname, list[Declaration] members)   //c
+    | \class(Expression nname, list[Declaration] members)   //c
+    | \struct(Expression nname, list[Declaration] members, list[Declaration] baseSpecifiers)
+    | \union(Expression nname, list[Declaration] members, list[Declaration] baseSpecifiers)
+    | \class(Expression nname, list[Declaration] members, list[Declaration] baseSpecifiers)
+    
+    | \etsEnum(Expression nname)
+    | \etsStruct(Expression nname) //ElaboratedTypeSpecifier
+    | \etsUnion(Expression nname)
+    | \etsClass(Expression nname)
     
     | \pointer()    // *
     | \reference()  // &
@@ -41,6 +49,9 @@ data Declaration
     | \template(Declaration declaration, list[Expression] parameters)
     | \sttClass(Expression nname) //simpleTypeTemplateParameter    
     | \sttTypename(Expression nname) //simpleTypeTemplateParameter
+    
+    | \baseSpecifier(Modifier modifier)
+    | \baseSpecifier(Modifier modifier, Expression nname)
     
     //| \compilationUnit(Declaration package, list[Declaration] imports, list[Declaration] types)
     //| \enum(str name, list[Type] implements, list[Declaration] constants, list[Declaration] body)
@@ -214,6 +225,8 @@ data Statement
     | \nullStatement()
     | \label(str name, Statement nestedStatement)
     | \goto(str name)
+    
+    | \NYIspecialmember()  //?? foo() = default; foo() = delete;
     
     
     //| \assert(Expression expression)
