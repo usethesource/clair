@@ -92,6 +92,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
+import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArraySubscriptExpression;
@@ -193,7 +194,14 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public IValue convert(IASTTranslationUnit tu) {
 		tu.accept(this);
-		return stack.pop();
+		if (stack.size() == 1)
+			return stack.pop();
+		if (stack.size() == 0)
+			throw new RuntimeException("Stack empty after converting, error");
+		IConstructor ast = stack.pop();
+		err("Superfluous nodes on the stack after converting:");
+		stack.iterator().forEachRemaining(it -> err(it.toString()));
+		return ast;
 	}
 
 	private void out(String msg) {
@@ -402,10 +410,14 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IConstructor declSpecifier = stack.pop();
 		_declarator.accept(this);
 		IConstructor declarator = stack.pop();
-		_body.accept(this);
-		IConstructor body = stack.pop();
-
-		stack.push(builder.Declaration_functionDefinition(declSpecifier, declarator, body));
+		if (_body == null)
+			stack.push(builder.Declaration_functionDefinition(declSpecifier, declarator,
+					builder.Statement_NYIspecialmember()));
+		else {
+			_body.accept(this);
+			IConstructor body = stack.pop();
+			stack.push(builder.Declaration_functionDefinition(declSpecifier, declarator, body));
+		}
 
 		return PROCESS_ABORT;
 	}
@@ -821,6 +833,8 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		boolean isFinal = declSpec.isFinal();
 		ICPPASTClassVirtSpecifier virtSpecifier = declSpec.getVirtSpecifier();
 
+		if (virtSpecifier != null)
+			err("WARNING: ICPPASTCompositeTypeSpecifier has virtSpecifier: " + virtSpecifier.getRawSignature());
 		_name.accept(this);
 		IConstructor name = stack.pop();
 		IListWriter members = vf.listWriter();
@@ -828,16 +842,21 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			it.accept(this);
 			members.append(stack.pop());
 		});
+		IListWriter baseSpecifiers = vf.listWriter();
+		Stream.of(_baseSpecifiers).forEach(it -> {
+			it.accept(this);
+			baseSpecifiers.append(stack.pop());
+		});
 
 		switch (key) {
 		case ICPPASTCompositeTypeSpecifier.k_struct:
-			stack.push(builder.Declaration_struct(name, members.done()));
+			stack.push(builder.Declaration_struct(name, members.done(), baseSpecifiers.done()));
 			break;
 		case ICPPASTCompositeTypeSpecifier.k_union:
-			stack.push(builder.Declaration_union(name, members.done()));
+			stack.push(builder.Declaration_union(name, members.done(), baseSpecifiers.done()));
 			break;
 		case ICPPASTCompositeTypeSpecifier.k_class:
-			stack.push(builder.Declaration_class(name, members.done()));
+			stack.push(builder.Declaration_class(name, members.done(), baseSpecifiers.done()));
 			break;
 		default:
 			throw new RuntimeException("Unknown IASTCompositeTypeSpecifier code " + key + ". Exiting");
@@ -847,8 +866,33 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTElaboratedTypeSpecifier declSpec) {
-		out("ElaboratedTypeSpecifier: " + declSpec.getRawSignature());
-		throw new RuntimeException("NYI");
+		if (declSpec instanceof ICASTElaboratedTypeSpecifier) {
+			out("ElaboratedTypeSpecifier: " + declSpec.getRawSignature());
+			throw new RuntimeException("NYI");
+		} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier) {
+			int kind = declSpec.getKind();
+			IASTName _name = declSpec.getName();
+			if (declSpec.isConst() || declSpec.isVolatile() || declSpec.isRestrict() || declSpec.isInline())
+				err("WARNING: IASTElaboratedTypeSpecifier encountered unimplemented flag");
+			_name.accept(this);
+			switch (kind) {
+			case ICPPASTElaboratedTypeSpecifier.k_enum:
+				stack.push(builder.Declaration_etsEnum(stack.pop()));
+				break;
+			case ICPPASTElaboratedTypeSpecifier.k_struct:
+				stack.push(builder.Declaration_etsStruct(stack.pop()));
+				break;
+			case ICPPASTElaboratedTypeSpecifier.k_union:
+				stack.push(builder.Declaration_etsUnion(stack.pop()));
+				break;
+			case ICPPASTElaboratedTypeSpecifier.k_class:
+				stack.push(builder.Declaration_etsClass(stack.pop()));
+				break;
+			default:
+				throw new RuntimeException("IASTElaboratedTypeSpecifier encountered unknown kind " + kind);
+			}
+		}
+		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTEnumerationSpecifier declSpec) {
@@ -2017,20 +2061,39 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	@Override
 	public int visit(ICPPASTBaseSpecifier baseSpecifier) {
 		boolean isVirtual = baseSpecifier.isVirtual();
+		if (isVirtual)
+			err("WARNING: ICPPASTBaseSpecifier has isVirtual set, not implemented");
 		int visibility = baseSpecifier.getVisibility();
-		ICPPASTNameSpecifier nameSpecifier = baseSpecifier.getNameSpecifier();
-		switch (visibility) {
-		case ICPPASTBaseSpecifier.v_public:
-			stack.push(builder.Modifier_public());
-			break;
-		case ICPPASTBaseSpecifier.v_protected:
-			stack.push(builder.Modifier_protected());
-			break;
-		case ICPPASTBaseSpecifier.v_private:
-			stack.push(builder.Modifier_private());
-			break;
-		default:
-			throw new RuntimeException("Unknown BaseSpecifier visibility code " + visibility + ". Exiting");
+		ICPPASTNameSpecifier _nameSpecifier = baseSpecifier.getNameSpecifier();
+		if (_nameSpecifier == null) {
+			switch (visibility) {
+			case ICPPASTBaseSpecifier.v_public:
+				stack.push(builder.Declaration_baseSpecifier(builder.Modifier_public()));
+				break;
+			case ICPPASTBaseSpecifier.v_protected:
+				stack.push(builder.Declaration_baseSpecifier(builder.Modifier_protected()));
+				break;
+			case ICPPASTBaseSpecifier.v_private:
+				stack.push(builder.Declaration_baseSpecifier(builder.Modifier_private()));
+				break;
+			default:
+				throw new RuntimeException("Unknown BaseSpecifier visibility code " + visibility + ". Exiting");
+			}
+		} else {
+			_nameSpecifier.accept(this);
+			switch (visibility) {
+			case ICPPASTBaseSpecifier.v_public:
+				stack.push(builder.Declaration_baseSpecifier(builder.Modifier_public(), stack.pop()));
+				break;
+			case ICPPASTBaseSpecifier.v_protected:
+				stack.push(builder.Declaration_baseSpecifier(builder.Modifier_protected(), stack.pop()));
+				break;
+			case ICPPASTBaseSpecifier.v_private:
+				stack.push(builder.Declaration_baseSpecifier(builder.Modifier_private(), stack.pop()));
+				break;
+			default:
+				throw new RuntimeException("Unknown BaseSpecifier visibility code " + visibility + ". Exiting");
+			}
 		}
 		return PROCESS_ABORT;
 	}
