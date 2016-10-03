@@ -53,6 +53,8 @@ data Declaration
     | \baseSpecifier(Modifier modifier)
     | \baseSpecifier(Modifier modifier, Expression nname)
     
+    | \virtSpecifier(Modifier modifier)
+    
     //| \compilationUnit(Declaration package, list[Declaration] imports, list[Declaration] types)
     //| \enum(str name, list[Type] implements, list[Declaration] constants, list[Declaration] body)
     //| \enumConstant(str name, list[Expression] arguments, Declaration class)
@@ -151,6 +153,7 @@ data Expression
     | \nullptr()
     
     | \functionDeclarator(Expression nname, list[Expression] arguments)
+    | \functionDeclarator(Expression nname, list[Expression] arguments, list[Declaration] virtSpecifiers)
     | \namedTypeSpecifier(Expression nname, list[Modifier] modifiers)
     
     | \functionCall(Expression functionName, list[Expression] arguments)
@@ -326,6 +329,9 @@ data Modifier
     | \const()
     | \volatile()
     | \restrict()
+    
+    | \final()
+    | \override()
     
     
     //| \private()

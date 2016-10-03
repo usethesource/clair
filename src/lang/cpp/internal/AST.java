@@ -38,6 +38,8 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"visibilityLabel",_Modifier,"visibility");
   private static final Type _Declaration_baseSpecifier_1 
     = tf.constructor(typestore,_Declaration,"baseSpecifier",_Modifier,"modifier");
+  private static final Type _Declaration_virtSpecifier_1 
+    = tf.constructor(typestore,_Declaration,"virtSpecifier",_Modifier,"modifier");
   private static final Type _Declaration_declSpecifier_3 
     = tf.constructor(typestore,_Declaration,"declSpecifier",tf.listType(_Modifier),"modifiers",_Type,"type",_Expression,"expression");
   private static final Type _Declaration_class_3 
@@ -100,6 +102,8 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"struct",_Expression,"nname",tf.listType(_Declaration),"members");
   
   
+  private static final Type _Expression_functionDeclarator_3 
+    = tf.constructor(typestore,_Expression,"functionDeclarator",_Expression,"nname",tf.listType(_Expression),"arguments",tf.listType(_Declaration),"virtSpecifiers");
   private static final Type _Expression_ellipses_2 
     = tf.constructor(typestore,_Expression,"ellipses",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_labelReference_1 
@@ -346,8 +350,12 @@ public class AST {
     = tf.constructor(typestore,_Modifier,"typedef");
   private static final Type _Modifier_public_0 
     = tf.constructor(typestore,_Modifier,"public");
+  private static final Type _Modifier_override_0 
+    = tf.constructor(typestore,_Modifier,"override");
   private static final Type _Modifier_complex_0 
     = tf.constructor(typestore,_Modifier,"complex");
+  private static final Type _Modifier_final_0 
+    = tf.constructor(typestore,_Modifier,"final");
   private static final Type _Modifier_unsigned_0 
     = tf.constructor(typestore,_Modifier,"unsigned");
   private static final Type _Modifier_longlong_0 
@@ -403,6 +411,10 @@ public class AST {
   
   public IConstructor Declaration_baseSpecifier( IConstructor $modifier) {
     return vf.constructor(_Declaration_baseSpecifier_1 , $modifier);
+  }
+  
+  public IConstructor Declaration_virtSpecifier( IConstructor $modifier) {
+    return vf.constructor(_Declaration_virtSpecifier_1 , $modifier);
   }
   
   public IConstructor Declaration_declSpecifier( IList $modifiers, IConstructor $type, IConstructor $expression) {
@@ -525,6 +537,10 @@ public class AST {
     return vf.constructor(_Declaration_struct_2 , $nname, $members);
   }
     
+  
+  public IConstructor Expression_functionDeclarator( IConstructor $nname, IList $arguments, IList $virtSpecifiers) {
+    return vf.constructor(_Expression_functionDeclarator_3 , $nname, $arguments, $virtSpecifiers);
+  }
   
   public IConstructor Expression_ellipses( IConstructor $lhs, IConstructor $rhs) {
     return vf.constructor(_Expression_ellipses_2 , $lhs, $rhs);
@@ -1009,8 +1025,16 @@ public class AST {
     return vf.constructor(_Modifier_public_0 );
   }
   
+  public IConstructor Modifier_override() {
+    return vf.constructor(_Modifier_override_0 );
+  }
+  
   public IConstructor Modifier_complex() {
     return vf.constructor(_Modifier_complex_0 );
+  }
+  
+  public IConstructor Modifier_final() {
+    return vf.constructor(_Modifier_final_0 );
   }
   
   public IConstructor Modifier_unsigned() {
