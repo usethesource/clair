@@ -37,6 +37,11 @@ data Declaration
     
     | \declarationEqualsInitializer(str name, Expression initializer) //weg
     
+    | \arraydeclarator(Expression nname, list[Expression] arrayModifier)
+    | \template(Declaration declaration, list[Expression] parameters)
+    | \sttClass(Expression nname) //simpleTypeTemplateParameter    
+    | \sttTypename(Expression nname) //simpleTypeTemplateParameter
+    
     //| \compilationUnit(Declaration package, list[Declaration] imports, list[Declaration] types)
     //| \enum(str name, list[Type] implements, list[Declaration] constants, list[Declaration] body)
     //| \enumConstant(str name, list[Expression] arguments, Declaration class)
@@ -135,16 +140,18 @@ data Expression
     | \nullptr()
     
     | \functionDeclarator(Expression nname, list[Expression] arguments)
-    | \namedTypeSpecifier(str name)
+    | \namedTypeSpecifier(Expression nname, list[Modifier] modifiers)
     
     | \functionCall(Expression functionName, list[Expression] arguments)
     
     | \fieldReference(Expression fieldOwner, Expression nname, Type fieldType)
     | \constructorInitializer(list[Expression] arguments)
+    | \new(Type \type)
     | \new(Type \type, Expression initializer)
     | \delete(Expression expression)
     
     | \arraySubscriptExpression(Expression array, Expression argument)
+    | \arrayModifier(Expression constExpression)
     
     | \nyi(str raw)
     
@@ -302,6 +309,10 @@ data Modifier
     | \longlong()
     | \complex()
     | \imaginary()
+    
+    | \const()
+    | \volatile()
+    | \restrict()
     
     
     //| \private()

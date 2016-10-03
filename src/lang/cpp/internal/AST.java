@@ -38,6 +38,8 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"translationUnit",tf.listType(_Declaration),"declarations");
   private static final Type _Declaration_visibilityLabel_1 
     = tf.constructor(typestore,_Declaration,"visibilityLabel",_Modifier,"visibility");
+  private static final Type _Declaration_sttClass_1 
+    = tf.constructor(typestore,_Declaration,"sttClass",_Expression,"nname");
   private static final Type _Declaration_declSpecifier_3 
     = tf.constructor(typestore,_Declaration,"declSpecifier",tf.listType(_Modifier),"modifiers",_Type,"type",_Expression,"expression");
   private static final Type _Declaration_class_2 
@@ -46,6 +48,8 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"reference");
   private static final Type _Declaration_initializerClause_1 
     = tf.constructor(typestore,_Declaration,"initializerClause",_Expression,"expression");
+  private static final Type _Declaration_template_2 
+    = tf.constructor(typestore,_Declaration,"template",_Declaration,"declaration",tf.listType(_Expression),"parameters");
   private static final Type _Declaration_parameter_1 
     = tf.constructor(typestore,_Declaration,"parameter",_Declaration,"declSpecifier");
   private static final Type _Declaration_declSpecifier_2 
@@ -64,6 +68,10 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"parameter",_Declaration,"declSpecifier",_Declaration,"declarator");
   private static final Type _Declaration_usingDirective_1 
     = tf.constructor(typestore,_Declaration,"usingDirective",_Expression,"qualifiedName");
+  private static final Type _Declaration_sttTypename_1 
+    = tf.constructor(typestore,_Declaration,"sttTypename",_Expression,"nname");
+  private static final Type _Declaration_arraydeclarator_2 
+    = tf.constructor(typestore,_Declaration,"arraydeclarator",_Expression,"nname",tf.listType(_Expression),"arrayModifier");
   private static final Type _Declaration_declarationEqualsInitializer_2 
     = tf.constructor(typestore,_Declaration,"declarationEqualsInitializer",tf.stringType(),"name",_Expression,"initializer");
   private static final Type _Declaration_initializerList_1 
@@ -92,8 +100,6 @@ public class AST {
     = tf.constructor(typestore,_Expression,"assign",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_nyi_1 
     = tf.constructor(typestore,_Expression,"nyi",tf.stringType(),"raw");
-  private static final Type _Expression_namedTypeSpecifier_1 
-    = tf.constructor(typestore,_Expression,"namedTypeSpecifier",tf.stringType(),"name");
   private static final Type _Expression_minus_2 
     = tf.constructor(typestore,_Expression,"minus",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_name_1 
@@ -142,6 +148,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"divide",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_greaterEqual_2 
     = tf.constructor(typestore,_Expression,"greaterEqual",_Expression,"lhs",_Expression,"rhs");
+  private static final Type _Expression_namedTypeSpecifier_2 
+    = tf.constructor(typestore,_Expression,"namedTypeSpecifier",_Expression,"nname",tf.listType(_Modifier),"modifiers");
   private static final Type _Expression_shiftRight_2 
     = tf.constructor(typestore,_Expression,"shiftRight",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_plus_2 
@@ -164,6 +172,10 @@ public class AST {
     = tf.constructor(typestore,_Expression,"greaterThan",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_minus_1 
     = tf.constructor(typestore,_Expression,"minus",_Expression,"expression");
+  private static final Type _Expression_arrayModifier_1 
+    = tf.constructor(typestore,_Expression,"arrayModifier",_Expression,"constExpression");
+  private static final Type _Expression_new_1 
+    = tf.constructor(typestore,_Expression,"new",_Type,"type");
   private static final Type _Expression_true_0 
     = tf.constructor(typestore,_Expression,"true");
   private static final Type _Expression_typeid_1 
@@ -326,12 +338,18 @@ public class AST {
     = tf.constructor(typestore,_Modifier,"private");
   private static final Type _Modifier_register_0 
     = tf.constructor(typestore,_Modifier,"register");
+  private static final Type _Modifier_const_0 
+    = tf.constructor(typestore,_Modifier,"const");
   private static final Type _Modifier_static_0 
     = tf.constructor(typestore,_Modifier,"static");
   private static final Type _Modifier_protected_0 
     = tf.constructor(typestore,_Modifier,"protected");
   private static final Type _Modifier_short_0 
     = tf.constructor(typestore,_Modifier,"short");
+  private static final Type _Modifier_volatile_0 
+    = tf.constructor(typestore,_Modifier,"volatile");
+  private static final Type _Modifier_restrict_0 
+    = tf.constructor(typestore,_Modifier,"restrict");
   private static final Type _Modifier_long_0 
     = tf.constructor(typestore,_Modifier,"long");
   private static final Type _Modifier_signed_0 
@@ -367,6 +385,10 @@ public class AST {
     return vf.constructor(_Declaration_visibilityLabel_1 , $visibility);
   }
   
+  public IConstructor Declaration_sttClass( IConstructor $nname) {
+    return vf.constructor(_Declaration_sttClass_1 , $nname);
+  }
+  
   public IConstructor Declaration_declSpecifier( IList $modifiers, IConstructor $type, IConstructor $expression) {
     return vf.constructor(_Declaration_declSpecifier_3 , $modifiers, $type, $expression);
   }
@@ -381,6 +403,10 @@ public class AST {
   
   public IConstructor Declaration_initializerClause( IConstructor $expression) {
     return vf.constructor(_Declaration_initializerClause_1 , $expression);
+  }
+  
+  public IConstructor Declaration_template( IConstructor $declaration, IList $parameters) {
+    return vf.constructor(_Declaration_template_2 , $declaration, $parameters);
   }
   
   public IConstructor Declaration_parameter( IConstructor $declSpecifier) {
@@ -417,6 +443,14 @@ public class AST {
   
   public IConstructor Declaration_usingDirective( IConstructor $qualifiedName) {
     return vf.constructor(_Declaration_usingDirective_1 , $qualifiedName);
+  }
+  
+  public IConstructor Declaration_sttTypename( IConstructor $nname) {
+    return vf.constructor(_Declaration_sttTypename_1 , $nname);
+  }
+  
+  public IConstructor Declaration_arraydeclarator( IConstructor $nname, IList $arrayModifier) {
+    return vf.constructor(_Declaration_arraydeclarator_2 , $nname, $arrayModifier);
   }
   
   public IConstructor Declaration_declarationEqualsInitializer( String $name, IConstructor $initializer) {
@@ -470,10 +504,6 @@ public class AST {
   
   public IConstructor Expression_nyi( String $raw) {
     return vf.constructor(_Expression_nyi_1 , vf.string($raw));
-  }
-  
-  public IConstructor Expression_namedTypeSpecifier( String $name) {
-    return vf.constructor(_Expression_namedTypeSpecifier_1 , vf.string($name));
   }
   
   public IConstructor Expression_minus( IConstructor $lhs, IConstructor $rhs) {
@@ -572,6 +602,10 @@ public class AST {
     return vf.constructor(_Expression_greaterEqual_2 , $lhs, $rhs);
   }
   
+  public IConstructor Expression_namedTypeSpecifier( IConstructor $nname, IList $modifiers) {
+    return vf.constructor(_Expression_namedTypeSpecifier_2 , $nname, $modifiers);
+  }
+  
   public IConstructor Expression_shiftRight( IConstructor $lhs, IConstructor $rhs) {
     return vf.constructor(_Expression_shiftRight_2 , $lhs, $rhs);
   }
@@ -614,6 +648,14 @@ public class AST {
   
   public IConstructor Expression_minus( IConstructor $expression) {
     return vf.constructor(_Expression_minus_1 , $expression);
+  }
+  
+  public IConstructor Expression_arrayModifier( IConstructor $constExpression) {
+    return vf.constructor(_Expression_arrayModifier_1 , $constExpression);
+  }
+  
+  public IConstructor Expression_new( IConstructor $type) {
+    return vf.constructor(_Expression_new_1 , $type);
   }
   
   public IConstructor Expression_true() {
@@ -931,6 +973,10 @@ public class AST {
     return vf.constructor(_Modifier_register_0 );
   }
   
+  public IConstructor Modifier_const() {
+    return vf.constructor(_Modifier_const_0 );
+  }
+  
   public IConstructor Modifier_static() {
     return vf.constructor(_Modifier_static_0 );
   }
@@ -941,6 +987,14 @@ public class AST {
   
   public IConstructor Modifier_short() {
     return vf.constructor(_Modifier_short_0 );
+  }
+  
+  public IConstructor Modifier_volatile() {
+    return vf.constructor(_Modifier_volatile_0 );
+  }
+  
+  public IConstructor Modifier_restrict() {
+    return vf.constructor(_Modifier_restrict_0 );
   }
   
   public IConstructor Modifier_long() {
