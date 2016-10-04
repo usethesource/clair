@@ -110,8 +110,6 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"constructorChainInitializer",_Expression,"nname",_Expression,"initializer");
   
   
-  private static final Type _Expression_functionDeclarator_3 
-    = tf.constructor(typestore,_Expression,"functionDeclarator",_Expression,"nname",tf.listType(_Expression),"arguments",tf.listType(_Declaration),"virtSpecifiers");
   private static final Type _Expression_ellipses_2 
     = tf.constructor(typestore,_Expression,"ellipses",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_labelReference_1 
@@ -148,6 +146,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"notEquals",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_binaryOrAssign_2 
     = tf.constructor(typestore,_Expression,"binaryOrAssign",_Expression,"lhs",_Expression,"rhs");
+  private static final Type _Expression_idExpression_1 
+    = tf.constructor(typestore,_Expression,"idExpression",_Expression,"nname");
   private static final Type _Expression_false_0 
     = tf.constructor(typestore,_Expression,"false");
   private static final Type _Expression_sizeof_1 
@@ -216,6 +216,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"equals",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_minusAssign_2 
     = tf.constructor(typestore,_Expression,"minusAssign",_Expression,"lhs",_Expression,"rhs");
+  private static final Type _Expression_functionDeclarator_4 
+    = tf.constructor(typestore,_Expression,"functionDeclarator",tf.listType(_Modifier),"modifiers",_Expression,"nname",tf.listType(_Expression),"arguments",tf.listType(_Declaration),"virtSpecifiers");
   private static final Type _Expression_charConstant_1 
     = tf.constructor(typestore,_Expression,"charConstant",tf.stringType(),"vvalue");
   private static final Type _Expression_delete_1 
@@ -354,30 +356,40 @@ public class AST {
   
   private static final Type _Modifier_extern_0 
     = tf.constructor(typestore,_Modifier,"extern");
+  private static final Type _Modifier_threadLocal_0 
+    = tf.constructor(typestore,_Modifier,"threadLocal");
   private static final Type _Modifier_mutable_0 
     = tf.constructor(typestore,_Modifier,"mutable");
-  private static final Type _Modifier_typedef_0 
-    = tf.constructor(typestore,_Modifier,"typedef");
   private static final Type _Modifier_public_0 
     = tf.constructor(typestore,_Modifier,"public");
   private static final Type _Modifier_override_0 
     = tf.constructor(typestore,_Modifier,"override");
+  private static final Type _Modifier_pureVirtual_0 
+    = tf.constructor(typestore,_Modifier,"pureVirtual");
   private static final Type _Modifier_complex_0 
     = tf.constructor(typestore,_Modifier,"complex");
   private static final Type _Modifier_final_0 
     = tf.constructor(typestore,_Modifier,"final");
+  private static final Type _Modifier_explicit_0 
+    = tf.constructor(typestore,_Modifier,"explicit");
   private static final Type _Modifier_unsigned_0 
     = tf.constructor(typestore,_Modifier,"unsigned");
   private static final Type _Modifier_longlong_0 
     = tf.constructor(typestore,_Modifier,"longlong");
   private static final Type _Modifier_imaginary_0 
     = tf.constructor(typestore,_Modifier,"imaginary");
+  private static final Type _Modifier_friend_0 
+    = tf.constructor(typestore,_Modifier,"friend");
   private static final Type _Modifier_private_0 
     = tf.constructor(typestore,_Modifier,"private");
   private static final Type _Modifier_register_0 
     = tf.constructor(typestore,_Modifier,"register");
   private static final Type _Modifier_const_0 
     = tf.constructor(typestore,_Modifier,"const");
+  private static final Type _Modifier_typedef_0 
+    = tf.constructor(typestore,_Modifier,"typedef");
+  private static final Type _Modifier_virtual_0 
+    = tf.constructor(typestore,_Modifier,"virtual");
   private static final Type _Modifier_static_0 
     = tf.constructor(typestore,_Modifier,"static");
   private static final Type _Modifier_protected_0 
@@ -564,10 +576,6 @@ public class AST {
   }
     
   
-  public IConstructor Expression_functionDeclarator( IConstructor $nname, IList $arguments, IList $virtSpecifiers) {
-    return vf.constructor(_Expression_functionDeclarator_3 , $nname, $arguments, $virtSpecifiers);
-  }
-  
   public IConstructor Expression_ellipses( IConstructor $lhs, IConstructor $rhs) {
     return vf.constructor(_Expression_ellipses_2 , $lhs, $rhs);
   }
@@ -638,6 +646,10 @@ public class AST {
   
   public IConstructor Expression_binaryOrAssign( IConstructor $lhs, IConstructor $rhs) {
     return vf.constructor(_Expression_binaryOrAssign_2 , $lhs, $rhs);
+  }
+  
+  public IConstructor Expression_idExpression( IConstructor $nname) {
+    return vf.constructor(_Expression_idExpression_1 , $nname);
   }
   
   public IConstructor Expression_false() {
@@ -774,6 +786,10 @@ public class AST {
   
   public IConstructor Expression_minusAssign( IConstructor $lhs, IConstructor $rhs) {
     return vf.constructor(_Expression_minusAssign_2 , $lhs, $rhs);
+  }
+  
+  public IConstructor Expression_functionDeclarator( IList $modifiers, IConstructor $nname, IList $arguments, IList $virtSpecifiers) {
+    return vf.constructor(_Expression_functionDeclarator_4 , $modifiers, $nname, $arguments, $virtSpecifiers);
   }
   
   public IConstructor Expression_charConstant( String $vvalue) {
@@ -1043,12 +1059,12 @@ public class AST {
     return vf.constructor(_Modifier_extern_0 );
   }
   
-  public IConstructor Modifier_mutable() {
-    return vf.constructor(_Modifier_mutable_0 );
+  public IConstructor Modifier_threadLocal() {
+    return vf.constructor(_Modifier_threadLocal_0 );
   }
   
-  public IConstructor Modifier_typedef() {
-    return vf.constructor(_Modifier_typedef_0 );
+  public IConstructor Modifier_mutable() {
+    return vf.constructor(_Modifier_mutable_0 );
   }
   
   public IConstructor Modifier_public() {
@@ -1059,12 +1075,20 @@ public class AST {
     return vf.constructor(_Modifier_override_0 );
   }
   
+  public IConstructor Modifier_pureVirtual() {
+    return vf.constructor(_Modifier_pureVirtual_0 );
+  }
+  
   public IConstructor Modifier_complex() {
     return vf.constructor(_Modifier_complex_0 );
   }
   
   public IConstructor Modifier_final() {
     return vf.constructor(_Modifier_final_0 );
+  }
+  
+  public IConstructor Modifier_explicit() {
+    return vf.constructor(_Modifier_explicit_0 );
   }
   
   public IConstructor Modifier_unsigned() {
@@ -1079,6 +1103,10 @@ public class AST {
     return vf.constructor(_Modifier_imaginary_0 );
   }
   
+  public IConstructor Modifier_friend() {
+    return vf.constructor(_Modifier_friend_0 );
+  }
+  
   public IConstructor Modifier_private() {
     return vf.constructor(_Modifier_private_0 );
   }
@@ -1089,6 +1117,14 @@ public class AST {
   
   public IConstructor Modifier_const() {
     return vf.constructor(_Modifier_const_0 );
+  }
+  
+  public IConstructor Modifier_typedef() {
+    return vf.constructor(_Modifier_typedef_0 );
+  }
+  
+  public IConstructor Modifier_virtual() {
+    return vf.constructor(_Modifier_virtual_0 );
   }
   
   public IConstructor Modifier_static() {
