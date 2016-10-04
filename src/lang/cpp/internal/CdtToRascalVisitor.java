@@ -62,6 +62,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
+import org.eclipse.cdt.core.dom.ast.IASTProblemTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -80,7 +81,6 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
-import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemType;
@@ -161,6 +161,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier.SpecifierKind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumerationSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
@@ -270,13 +272,16 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTConversionName name) {
-		err("ICPPASTConversionName: " + name.getRawSignature());
-		throw new RuntimeException("NYI");
+		// TODO: check
+		name.getTypeId().accept(this);
+		stack.push(builder.Expression_conversionName(name.toString(), stack.pop()));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTOperatorName name) {
-		err("ICPPASTOperatorName: " + name.getRawSignature());
-		throw new RuntimeException("NYI");
+		// TODO: check
+		stack.push(builder.Expression_operatorName(name.toString()));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTQualifiedName name) {
@@ -1525,9 +1530,14 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			}
 		} else if (cdtType instanceof ICompositeType) { // check subinterfaces
 			int key = ((ICompositeType) cdtType).getKey();
-			boolean isAnonymous = ((ICompositeType) cdtType).isAnonymous();
-			IField[] _fields = ((ICompositeType) cdtType).getFields();
-			IScope scope = ((ICompositeType) cdtType).getCompositeScope();
+			if (!(cdtType instanceof ICPPClassType))
+				throw new RuntimeException("ICompositeType has C-style type?");
+			if (cdtType instanceof ICPPClassSpecialization) {
+			} else if (cdtType instanceof ICPPClassTemplate) {
+				throw new RuntimeException("NYI");
+			} else {// TODO: check
+				return builder.Type_classType(((ICompositeType) cdtType).getName());
+			}
 		} else if (cdtType instanceof ICPPAliasTemplate) {
 			org.eclipse.cdt.core.dom.ast.IType _type = ((ICPPAliasTemplate) cdtType).getType();
 			ICPPTemplateParameter[] _parameters = ((ICPPAliasTemplate) cdtType).getTemplateParameters();
@@ -1596,7 +1606,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		if (expression instanceof ICPPASTFieldReference) {
 			ICPPASTFieldReference reference = (ICPPASTFieldReference) expression;
 			IASTExpression _fieldOwner = reference.getFieldOwner();
-			IType _fieldOwnerType = reference.getFieldOwnerType();// CPPClassType
+			IType _fieldOwnerType = reference.getFieldOwnerType();
 			IASTName _fieldName = reference.getFieldName();
 
 			_fieldOwner.accept(this);
@@ -1606,7 +1616,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			_fieldName.accept(this);
 			IConstructor fieldName = stack.pop();
 			// HIER
-			stack.push(builder.Expression_fieldReference(fieldOwner, fieldName, builder.Type_unspecified()));// TODO
+			stack.push(builder.Expression_fieldReference(fieldOwner, fieldName, convertType(_fieldOwnerType)));
 		} else {
 			IASTExpression fieldOwner = expression.getFieldOwner();
 			IASTName fieldName = expression.getFieldName();
@@ -2135,19 +2145,28 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTTypeId typeId) {
-		IASTDeclSpecifier _declSpecifier = typeId.getDeclSpecifier();
-		IASTDeclarator _abstractDeclarator = typeId.getAbstractDeclarator();
+		if (typeId instanceof IASTProblemTypeId) {
+			throw new RuntimeException("IASTProblemTypeId encountered! "
+					+ ((IASTProblemTypeId) typeId).getProblem().getMessageWithLocation());
+		} else {
+			IASTDeclSpecifier _declSpecifier = typeId.getDeclSpecifier();
+			IASTDeclarator _abstractDeclarator = typeId.getAbstractDeclarator();
 
-		_declSpecifier.accept(this);
-		// TODO: abstractDeclarator?
-		IConstructor declSpecifier = stack.pop();
-		// if (_abstractDeclarator.equals(String.class))
-		stack.push(builder.Type_typeId(declSpecifier));
-		// else {
-		// out("QUE? " + _abstractDeclarator.getRawSignature());
-		// out("name " + _abstractDeclarator.getName().toString());
-		// throw new RuntimeException("NYI");
-		// }
+			if (_abstractDeclarator != null)
+				err("WARNING: IASTTypeId has abstractDeclarator: " + _abstractDeclarator.getRawSignature());
+			out("abstractDeclarator name=" + _abstractDeclarator.getName());
+
+			_declSpecifier.accept(this);
+			// TODO: abstractDeclarator?
+			IConstructor declSpecifier = stack.pop();
+			// if (_abstractDeclarator.equals(String.class))
+			stack.push(builder.Type_typeId(declSpecifier));
+			// else {
+			// out("QUE? " + _abstractDeclarator.getRawSignature());
+			// out("name " + _abstractDeclarator.getName().toString());
+			// throw new RuntimeException("NYI");
+			// }
+		}
 		return PROCESS_ABORT;
 	}
 
