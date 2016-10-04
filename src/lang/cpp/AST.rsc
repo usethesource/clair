@@ -145,6 +145,7 @@ data Expression
     
     | \name(str name)
     | \qualifiedName(Expression qualifier, Expression lastName)
+    | \idExpression(Expression nname)
     | \integerLiteral(int number)
     | \conditional(Expression condition, Expression positive, Expression negative)
     
@@ -158,7 +159,7 @@ data Expression
     | \nullptr()
     
     | \functionDeclarator(Expression nname, list[Expression] arguments)
-    | \functionDeclarator(Expression nname, list[Expression] arguments, list[Declaration] virtSpecifiers)
+    | \functionDeclarator(list[Modifier] modifiers, Expression nname, list[Expression] arguments, list[Declaration] virtSpecifiers)
     | \namedTypeSpecifier(Expression nname, list[Modifier] modifiers)
     
     | \functionCall(Expression functionName, list[Expression] arguments)
@@ -338,6 +339,12 @@ data Modifier
     | \final()
     | \override()
     
+    | \friend()
+    | \virtual()
+    | \explicit()
+    //| \constexpr()
+    | \threadLocal()
+    | \pureVirtual()
     
     //| \private()
     //| \public()

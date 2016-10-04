@@ -122,7 +122,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator.RefQualifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
@@ -164,7 +163,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumerationSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
@@ -819,44 +817,49 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTFunctionDeclarator declarator) {
-		// err("CPPFunctionDeclarator: " +
-		// declarator.getRawSignature());
 		IASTName _name = declarator.getName();
-		boolean isConst = declarator.isConst();
-		boolean isVolatile = declarator.isVolatile();
-		boolean isMutable = declarator.isMutable();
-		boolean isPureVirtual = declarator.isPureVirtual();
-		RefQualifier refQualifier = declarator.getRefQualifier();
 		IASTParameterDeclaration[] _parameters = declarator.getParameters();
 		IASTTypeId[] exceptionSpecification = declarator.getExceptionSpecification();
 		ICPPASTExpression noexceptExpression = declarator.getNoexceptExpression();
 		IASTTypeId trailingReturnType = declarator.getTrailingReturnType();
-		ICPPFunctionScope functionScope = declarator.getFunctionScope();
-		boolean isOverride = declarator.isOverride();
-		boolean isFinal = declarator.isFinal();
 		ICPPASTVirtSpecifier[] _virtSpecifiers = declarator.getVirtSpecifiers();
-		IScope _functionScope = declarator.getFunctionScope();
-		boolean _takesVarArgs = declarator.takesVarArgs();
 
-		if (isConst || isVolatile || isMutable || isPureVirtual || isOverride || isFinal || _takesVarArgs)
-			err("WARNING: ICPPASTFunctionDeclarator has unimplemented field");
-		if (refQualifier != null)
-			err("WARNING: ICPPASTFunctionDeclarator has refQualifier, unimplemented");
-		if (exceptionSpecification != null || noexceptExpression != null || trailingReturnType != null)
-			err("WARNING: ICPPASTFunctionDeclarator has unimplemented field set");
+		IListWriter modifiers = vf.listWriter();
+		if (declarator.isConst())
+			modifiers.append(builder.Modifier_const());
+		if (declarator.isVolatile())
+			modifiers.append(builder.Modifier_volatile());
+		if (declarator.isMutable())
+			modifiers.append(builder.Modifier_mutable());
+		if (declarator.isPureVirtual())
+			modifiers.append(builder.Modifier_pureVirtual());
+		if (declarator.isFinal())
+			modifiers.append(builder.Modifier_final());
+		if (declarator.isOverride())
+			modifiers.append(builder.Modifier_override());
+
+		if (declarator.takesVarArgs())
+			err("WARNING: ICPPASTFunctionDeclarator has takesVarArgs=true");
+		if (exceptionSpecification != null)
+			err("WARNING: ICPPASTFunctionDeclarator has exceptionSpecification " + declarator.getRawSignature());
+		if (noexceptExpression != null)
+			err("WARNING: ICPPASTFunctionDeclarator has noexceptExpression " + noexceptExpression.getRawSignature());
+		if (trailingReturnType != null)
+			err("WARNING: ICPPASTFunctionDeclarator has trailingReturnType " + trailingReturnType.getRawSignature());
 		_name.accept(this);
 		IConstructor name = stack.pop();
 		IListWriter parameters = vf.listWriter();
-		for (IASTParameterDeclaration parameter : _parameters) {
-			parameter.accept(this);
+		Stream.of(_parameters).forEach(it -> {
+			it.accept(this);
 			parameters.append(stack.pop());
-		}
+		});
 		IListWriter virtSpecifiers = vf.listWriter();
 		Stream.of(_virtSpecifiers).forEach(it -> {
 			it.accept(this);
 			virtSpecifiers.append(stack.pop());
 		});
-		stack.push(builder.Expression_functionDeclarator(name, parameters.done(), virtSpecifiers.done()));
+		stack.push(builder.Expression_functionDeclarator(modifiers.done(), name, parameters.done(),
+				virtSpecifiers.done()));
 		return PROCESS_ABORT;
 	}
 
@@ -1039,34 +1042,36 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTSimpleDeclSpecifier declSpec) {
-		// TODO: implement modifiers
-		int type = declSpec.getType();
-		boolean isSigned = declSpec.isSigned();
-		boolean isUnsigned = declSpec.isUnsigned();
-		boolean isShort = declSpec.isShort();
-		boolean isLong = declSpec.isLong();
-		boolean isLongLong = declSpec.isLongLong();
-		boolean isComplex = declSpec.isComplex();
-		boolean isImaginary = declSpec.isImaginary();
-		IASTExpression declTypeExpression = declSpec.getDeclTypeExpression();
-
 		IListWriter modifiers = vf.listWriter();
-		if (isSigned)
+		if (declSpec.isSigned())
 			modifiers.append(builder.Modifier_signed());
-		if (isUnsigned)
+		if (declSpec.isUnsigned())
 			modifiers.append(builder.Modifier_unsigned());
-		if (isShort)
+		if (declSpec.isShort())
 			modifiers.append(builder.Modifier_short());
-		if (isLong)
+		if (declSpec.isLong())
 			modifiers.append(builder.Modifier_long());
-		if (isLongLong)
+		if (declSpec.isLongLong())
 			modifiers.append(builder.Modifier_longlong());
-		if (isComplex)
+		if (declSpec.isComplex())
 			modifiers.append(builder.Modifier_complex());
-		if (isImaginary)
+		if (declSpec.isImaginary())
 			modifiers.append(builder.Modifier_imaginary());
 
-		switch (type) {
+		if (declSpec instanceof ICPPASTDeclSpecifier) {
+			if (((ICPPASTDeclSpecifier) declSpec).isFriend())
+				modifiers.append(builder.Modifier_friend());
+			if (((ICPPASTDeclSpecifier) declSpec).isVirtual())
+				modifiers.append(builder.Modifier_virtual());
+			if (((ICPPASTDeclSpecifier) declSpec).isExplicit())
+				modifiers.append(builder.Modifier_explicit());
+			if (((ICPPASTDeclSpecifier) declSpec).isConstexpr())
+				modifiers.append(builder.Modifier_const());
+			if (((ICPPASTDeclSpecifier) declSpec).isThreadLocal())
+				modifiers.append(builder.Modifier_threadLocal());
+		}
+
+		switch (declSpec.getType()) {
 		case IASTSimpleDeclSpecifier.t_unspecified:
 			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_unspecified()));
 			break;
@@ -1092,11 +1097,11 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_wchar_t()));
 			break;
 		case IASTSimpleDeclSpecifier.t_typeof:
-			declTypeExpression.accept(this);
+			declSpec.getDeclTypeExpression().accept(this);
 			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_typeof(), stack.pop()));
 			break;
 		case IASTSimpleDeclSpecifier.t_decltype:
-			declTypeExpression.accept(this);
+			declSpec.getDeclTypeExpression().accept(this);
 			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_decltype(), stack.pop()));
 			break;
 		case IASTSimpleDeclSpecifier.t_auto:
@@ -1124,7 +1129,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			stack.push(builder.Declaration_declSpecifier(modifiers.done(), builder.Type_decimal128()));
 			break;
 		default:
-			throw new RuntimeException("Unknown IASTSimpleDeclSpecifier kind " + type + ". Exiting");
+			throw new RuntimeException("Unknown IASTSimpleDeclSpecifier kind " + declSpec.getType() + ". Exiting");
 		}
 		return PROCESS_ABORT;
 	}
@@ -1756,7 +1761,8 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTIdExpression expression) {
-		stack.push(builder.Expression_name(expression.getName().toString()));
+		expression.getName().accept(this);
+		stack.push(builder.Expression_idExpression(stack.pop()));
 		return PROCESS_ABORT;
 	}
 
