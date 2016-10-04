@@ -8,7 +8,7 @@ data Declaration
     | \functionDefinition(Type ddeclSpecifier, Declaration ddeclarator, Statement sbody)//?
     | \defaultedFunctionDefinition(Type ddeclSpecifier, list[Declaration] memberInitializer, Declaration ddeclarator)
     | \deletedFunctionDefinition(Type ddeclSpecifier, list[Declaration] memberInitializer, Declaration ddeclarator)
-    | \functionDefinition(Type ddeclSpecifier, list[Declaration] memberInitializer, Declaration ddeclarator, Statement sbody)
+    | \functionDefinition(Type ddeclSpecifier, Declaration ddeclarator, list[Declaration] memberInitializer, Statement sbody)
     | \constructorChainInitializer(Expression nname, Expression initializer) 
     //| \declaration(str name, str declarator, list[Statement])
     //| \amb(set[Declaration] alternatives)

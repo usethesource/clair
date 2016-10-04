@@ -78,7 +78,6 @@ import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IField;
@@ -237,10 +236,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(IASTName name) {
-		IBinding _binding = name.getBinding();
-		int _role = name.getRoleOfName(true);
-		boolean _isQualified = name.isQualified();
-
 		if (name instanceof IASTImplicitName)
 			visit((IASTImplicitName) name);
 		else if (name instanceof ICPPASTName)
@@ -255,6 +250,9 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(IASTImplicitName name) {
 		err("IASTImplicitName " + name.getRawSignature());
+		boolean alternate = name.isAlternate();
+		boolean operator = name.isOperator();
+		IASTName _lastName = name.getLastName();
 		throw new RuntimeException("NYI");
 	}
 
@@ -505,7 +503,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 				throw new RuntimeException("NYI");
 			} else {
 				_body.accept(this);
-				stack.push(builder.Declaration_functionDefinition(declSpecifier, memberInitializers.done(), declarator,
+				stack.push(builder.Declaration_functionDefinition(declSpecifier, declarator, memberInitializers.done(),
 						stack.pop()));
 			}
 		} else { // C Function definition
@@ -935,12 +933,13 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		int key = declSpec.getKey();
 		IASTName _name = declSpec.getName();
 		IASTDeclaration[] _members = declSpec.getMembers();
-		IScope _scope = declSpec.getScope();
 		boolean isFinal = declSpec.isFinal();
 		ICPPASTClassVirtSpecifier virtSpecifier = declSpec.getVirtSpecifier();
 
 		if (virtSpecifier != null)
 			err("WARNING: ICPPASTCompositeTypeSpecifier has virtSpecifier: " + virtSpecifier.getRawSignature());
+		if (isFinal)
+			err("WARNING: ICPPASTCompositeTypeSpecifier has isFinal=true");
 		_name.accept(this);
 		IConstructor name = stack.pop();
 		IListWriter members = vf.listWriter();
