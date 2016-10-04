@@ -110,8 +110,6 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"constructorChainInitializer",_Expression,"nname",_Expression,"initializer");
   
   
-  private static final Type _Expression_ellipses_2 
-    = tf.constructor(typestore,_Expression,"ellipses",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_labelReference_1 
     = tf.constructor(typestore,_Expression,"labelReference",_Expression,"expression");
   private static final Type _Expression_sizeofParameterPack_1 
@@ -158,6 +156,10 @@ public class AST {
     = tf.constructor(typestore,_Expression,"functionDeclarator",_Expression,"nname",tf.listType(_Expression),"arguments");
   private static final Type _Expression_tilde_1 
     = tf.constructor(typestore,_Expression,"tilde",_Expression,"expression");
+  private static final Type _Expression_operatorName_1 
+    = tf.constructor(typestore,_Expression,"operatorName",tf.stringType(),"vvalue");
+  private static final Type _Expression_ellipses_2 
+    = tf.constructor(typestore,_Expression,"ellipses",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_binaryAnd_2 
     = tf.constructor(typestore,_Expression,"binaryAnd",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_modulo_2 
@@ -238,6 +240,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"binaryAndAssign",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_plusAssign_2 
     = tf.constructor(typestore,_Expression,"plusAssign",_Expression,"lhs",_Expression,"rhs");
+  private static final Type _Expression_conversionName_2 
+    = tf.constructor(typestore,_Expression,"conversionName",tf.stringType(),"vvalue",_Type,"type");
   private static final Type _Expression_shiftLeft_2 
     = tf.constructor(typestore,_Expression,"shiftLeft",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_binaryXorAssign_2 
@@ -278,14 +282,14 @@ public class AST {
     = tf.constructor(typestore,_Type,"decltype");
   private static final Type _Type_wchar_t_0 
     = tf.constructor(typestore,_Type,"wchar_t");
+  private static final Type _Type_structType_1 
+    = tf.constructor(typestore,_Type,"structType",_Expression,"nname");
   private static final Type _Type_integer_0 
     = tf.constructor(typestore,_Type,"integer");
   private static final Type _Type_float_0 
     = tf.constructor(typestore,_Type,"float");
   private static final Type _Type_float128_0 
     = tf.constructor(typestore,_Type,"float128");
-  private static final Type _Type_arrayType_2 
-    = tf.constructor(typestore,_Type,"arrayType",_Type,"type",tf.integerType(),"size");
   private static final Type _Type_typeId_1 
     = tf.constructor(typestore,_Type,"typeId",_Type,"type");
   private static final Type _Type_unspecified_0 
@@ -304,6 +308,12 @@ public class AST {
     = tf.constructor(typestore,_Type,"char32_t");
   private static final Type _Type_bool_0 
     = tf.constructor(typestore,_Type,"bool");
+  private static final Type _Type_arrayType_2 
+    = tf.constructor(typestore,_Type,"arrayType",_Type,"type",tf.integerType(),"size");
+  private static final Type _Type_unionType_1 
+    = tf.constructor(typestore,_Type,"unionType",_Expression,"nname");
+  private static final Type _Type_classType_1 
+    = tf.constructor(typestore,_Type,"classType",tf.stringType(),"name");
   private static final Type _Type_double_0 
     = tf.constructor(typestore,_Type,"double");
   private static final Type _Type_typeof_0 
@@ -576,10 +586,6 @@ public class AST {
   }
     
   
-  public IConstructor Expression_ellipses( IConstructor $lhs, IConstructor $rhs) {
-    return vf.constructor(_Expression_ellipses_2 , $lhs, $rhs);
-  }
-  
   public IConstructor Expression_labelReference( IConstructor $expression) {
     return vf.constructor(_Expression_labelReference_1 , $expression);
   }
@@ -670,6 +676,14 @@ public class AST {
   
   public IConstructor Expression_tilde( IConstructor $expression) {
     return vf.constructor(_Expression_tilde_1 , $expression);
+  }
+  
+  public IConstructor Expression_operatorName( String $vvalue) {
+    return vf.constructor(_Expression_operatorName_1 , vf.string($vvalue));
+  }
+  
+  public IConstructor Expression_ellipses( IConstructor $lhs, IConstructor $rhs) {
+    return vf.constructor(_Expression_ellipses_2 , $lhs, $rhs);
   }
   
   public IConstructor Expression_binaryAnd( IConstructor $lhs, IConstructor $rhs) {
@@ -832,6 +846,10 @@ public class AST {
     return vf.constructor(_Expression_plusAssign_2 , $lhs, $rhs);
   }
   
+  public IConstructor Expression_conversionName( String $vvalue, IConstructor $type) {
+    return vf.constructor(_Expression_conversionName_2 , vf.string($vvalue), $type);
+  }
+  
   public IConstructor Expression_shiftLeft( IConstructor $lhs, IConstructor $rhs) {
     return vf.constructor(_Expression_shiftLeft_2 , $lhs, $rhs);
   }
@@ -909,6 +927,10 @@ public class AST {
     return vf.constructor(_Type_wchar_t_0 );
   }
   
+  public IConstructor Type_structType( IConstructor $nname) {
+    return vf.constructor(_Type_structType_1 , $nname);
+  }
+  
   public IConstructor Type_integer() {
     return vf.constructor(_Type_integer_0 );
   }
@@ -919,10 +941,6 @@ public class AST {
   
   public IConstructor Type_float128() {
     return vf.constructor(_Type_float128_0 );
-  }
-  
-  public IConstructor Type_arrayType( IConstructor $type, int $size) {
-    return vf.constructor(_Type_arrayType_2 , $type, vf.integer($size));
   }
   
   public IConstructor Type_typeId( IConstructor $type) {
@@ -959,6 +977,18 @@ public class AST {
   
   public IConstructor Type_bool() {
     return vf.constructor(_Type_bool_0 );
+  }
+  
+  public IConstructor Type_arrayType( IConstructor $type, int $size) {
+    return vf.constructor(_Type_arrayType_2 , $type, vf.integer($size));
+  }
+  
+  public IConstructor Type_unionType( IConstructor $nname) {
+    return vf.constructor(_Type_unionType_1 , $nname);
+  }
+  
+  public IConstructor Type_classType( String $name) {
+    return vf.constructor(_Type_classType_1 , vf.string($name));
   }
   
   public IConstructor Type_double() {

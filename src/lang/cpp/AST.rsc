@@ -145,6 +145,8 @@ data Expression
     
     | \name(str name)
     | \qualifiedName(Expression qualifier, Expression lastName)
+    | \operatorName(str vvalue)
+    | \conversionName(str vvalue, Type \type)
     | \idExpression(Expression nname)
     | \integerLiteral(int number)
     | \conditional(Expression condition, Expression positive, Expression negative)
@@ -291,6 +293,10 @@ data Type
     | \arrayType(Type \type, int size)
     | \basicType(Type \type, list[Modifier] modifiers)
     | \nullptr()
+    
+    | \structType(Expression nname)
+    | \unionType(Expression nname)
+    | \classType(str name)
 
     //| arrayType(Type \type)
     //| parameterizedType(Type \type)
