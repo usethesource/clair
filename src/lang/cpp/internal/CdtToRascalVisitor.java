@@ -1490,8 +1490,20 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTTypeIdExpression expression) {
-		out("TypeIdExpression: " + expression.getRawSignature());
-		throw new RuntimeException("NYI");
+		int operator = expression.getOperator();
+		expression.getTypeId().accept(this);
+		switch (operator) {
+		case IASTTypeIdExpression.op_sizeof:
+			stack.push(builder.Expression_sizeof(stack.pop()));
+			break;
+		case IASTTypeIdExpression.op_typeid:
+			stack.push(builder.Expression_typeid(stack.pop()));
+			break;
+		default:
+			throw new RuntimeException(
+					"ERROR: IASTTypeIdExpression called with unimplemented/unknown operator " + operator);
+		}
+		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTProblemExpression expression) {
