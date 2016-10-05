@@ -9,6 +9,7 @@ data Declaration
     | \defaultedFunctionDefinition(Type ddeclSpecifier, list[Declaration] memberInitializer, Declaration ddeclarator)
     | \deletedFunctionDefinition(Type ddeclSpecifier, list[Declaration] memberInitializer, Declaration ddeclarator)
     | \functionDefinition(Type ddeclSpecifier, Declaration ddeclarator, list[Declaration] memberInitializer, Statement sbody)
+    | \functionWithTryBlockDefinition(Type ddeclSpecifier, Declaration ddeclarator, list[Declaration] memberInitializer, Statement sbody, list[Statement] catchHandlers)
     | \constructorChainInitializer(Expression nname, Expression initializer) 
     //| \declaration(str name, str declarator, list[Statement])
     //| \amb(set[Declaration] alternatives)
@@ -244,8 +245,8 @@ data Statement
     | \goto(str name)
     
     | \tryBlock(Statement tryBody, list[Statement] catchHandlers)
-    | \catch(Declaration declaration, Statement body)    
-    
+    | \catch(Declaration declaration, Statement body)
+    | \catchAll(Statement body)    
     
     //| \assert(Expression expression)
     //| \assert(Expression expression, Expression message)

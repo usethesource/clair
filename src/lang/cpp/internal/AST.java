@@ -94,6 +94,8 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"sttTypename",_Expression,"nname");
   private static final Type _Declaration_arraydeclarator_2 
     = tf.constructor(typestore,_Declaration,"arraydeclarator",_Expression,"nname",tf.listType(_Expression),"arrayModifier");
+  private static final Type _Declaration_functionWithTryBlockDefinition_5 
+    = tf.constructor(typestore,_Declaration,"functionWithTryBlockDefinition",_Type,"ddeclSpecifier",_Declaration,"ddeclarator",tf.listType(_Declaration),"memberInitializer",_Statement,"sbody",tf.listType(_Statement),"catchHandlers");
   private static final Type _Declaration_declarationEqualsInitializer_2 
     = tf.constructor(typestore,_Declaration,"declarationEqualsInitializer",tf.stringType(),"name",_Expression,"initializer");
   private static final Type _Declaration_initializerList_1 
@@ -346,8 +348,6 @@ public class AST {
     = tf.constructor(typestore,_Statement,"defaultCase");
   private static final Type _Statement_return_0 
     = tf.constructor(typestore,_Statement,"return");
-  private static final Type _Statement_declarationStatement_1 
-    = tf.constructor(typestore,_Statement,"declarationStatement",_Declaration,"declaration");
   private static final Type _Statement_expressionStatement_1 
     = tf.constructor(typestore,_Statement,"expressionStatement",_Expression,"expression");
   private static final Type _Statement_compoundStatement_1 
@@ -368,6 +368,10 @@ public class AST {
     = tf.constructor(typestore,_Statement,"while",_Expression,"condition",_Statement,"body");
   private static final Type _Statement_if_3 
     = tf.constructor(typestore,_Statement,"if",_Expression,"condition",_Statement,"thenClause",_Statement,"elseClause");
+  private static final Type _Statement_catchAll_1 
+    = tf.constructor(typestore,_Statement,"catchAll",_Statement,"body");
+  private static final Type _Statement_declarationStatement_1 
+    = tf.constructor(typestore,_Statement,"declarationStatement",_Declaration,"declaration");
   private static final Type _Statement_case_1 
     = tf.constructor(typestore,_Statement,"case",_Expression,"expression");
   private static final Type _Statement_return_1 
@@ -569,6 +573,10 @@ public class AST {
   
   public IConstructor Declaration_arraydeclarator( IConstructor $nname, IList $arrayModifier) {
     return vf.constructor(_Declaration_arraydeclarator_2 , $nname, $arrayModifier);
+  }
+  
+  public IConstructor Declaration_functionWithTryBlockDefinition( IConstructor $ddeclSpecifier, IConstructor $ddeclarator, IList $memberInitializer, IConstructor $sbody, IList $catchHandlers) {
+    return vf.constructor(_Declaration_functionWithTryBlockDefinition_5 , $ddeclSpecifier, $ddeclarator, $memberInitializer, $sbody, $catchHandlers);
   }
   
   public IConstructor Declaration_declarationEqualsInitializer( String $name, IConstructor $initializer) {
@@ -1066,10 +1074,6 @@ public class AST {
     return vf.constructor(_Statement_return_0 );
   }
   
-  public IConstructor Statement_declarationStatement( IConstructor $declaration) {
-    return vf.constructor(_Statement_declarationStatement_1 , $declaration);
-  }
-  
   public IConstructor Statement_expressionStatement( IConstructor $expression) {
     return vf.constructor(_Statement_expressionStatement_1 , $expression);
   }
@@ -1108,6 +1112,14 @@ public class AST {
   
   public IConstructor Statement_if( IConstructor $condition, IConstructor $thenClause, IConstructor $elseClause) {
     return vf.constructor(_Statement_if_3 , $condition, $thenClause, $elseClause);
+  }
+  
+  public IConstructor Statement_catchAll( IConstructor $body) {
+    return vf.constructor(_Statement_catchAll_1 , $body);
+  }
+  
+  public IConstructor Statement_declarationStatement( IConstructor $declaration) {
+    return vf.constructor(_Statement_declarationStatement_1 , $declaration);
   }
   
   public IConstructor Statement_case( IConstructor $expression) {
