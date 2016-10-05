@@ -142,6 +142,10 @@ data Expression
     | \labelReference(Expression expression)//&&label, gcc only?
     
     | \cast(Type \type, Expression expression)
+    | \dynamicCast(Type \type, Expression expression)
+    | \staticCast(Type \type, Expression expression)
+    | \reinterpretCast(Type \type, Expression expression)
+    | \constCast(Type \type, Expression expression)
     
     | \name(str name)
     | \qualifiedName(Expression qualifier, Expression lastName)
@@ -160,8 +164,8 @@ data Expression
     | \false()
     | \nullptr()
     
-    | \functionDeclarator(Expression nname, list[Expression] arguments)
-    | \functionDeclarator(list[Modifier] modifiers, Expression nname, list[Expression] arguments, list[Declaration] virtSpecifiers)
+    | \functionDeclarator(Expression nname, list[Declaration] pointerOperators, list[Expression] arguments)
+    | \functionDeclarator(list[Modifier] modifiers, Expression nname, list[Declaration] pointerOperators, list[Expression] arguments, list[Declaration] virtSpecifiers)
     | \namedTypeSpecifier(Expression nname, list[Modifier] modifiers)
     
     | \functionCall(Expression functionName, list[Expression] arguments)
@@ -169,11 +173,13 @@ data Expression
     | \fieldReference(Expression fieldOwner, Expression nname, Type fieldType)
     | \constructorInitializer(list[Expression] arguments)
     | \new(Type \type)
-    | \new(Type \type, Expression initializer)
+    | \new(Type \type, Statement initializer)
     | \delete(Expression expression)
     
     | \arraySubscriptExpression(Expression array, Expression argument)
     | \arrayModifier(Expression constExpression)
+    
+    | \simpleTypeConstructor(Declaration declSpecifier, Statement initializer)
     
     | \nyi(str raw)
     
@@ -237,7 +243,8 @@ data Statement
     | \label(str name, Statement nestedStatement)
     | \goto(str name)
     
-    | \NYIspecialmember()  //?? foo() = default; foo() = delete;
+    | \tryBlock(Statement tryBody, list[Statement] catchHandlers)
+    | \catch(Declaration declaration, Statement body)    
     
     
     //| \assert(Expression expression)
@@ -289,6 +296,7 @@ data Type
     | \decimal128()
     
     | \typeId(Type \type)
+    | \typeId(Type \type, Declaration abstractDeclarator)
     
     | \arrayType(Type \type, int size)
     | \basicType(Type \type, list[Modifier] modifiers)
