@@ -116,6 +116,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"sizeofParameterPack",_Expression,"expression");
   private static final Type _Expression_functionDeclarator_3 
     = tf.constructor(typestore,_Expression,"functionDeclarator",_Expression,"nname",tf.listType(_Declaration),"pointerOperators",tf.listType(_Expression),"arguments");
+  private static final Type _Expression_functionDeclaratorWithES_6 
+    = tf.constructor(typestore,_Expression,"functionDeclaratorWithES",tf.listType(_Modifier),"modifiers",_Expression,"nname",tf.listType(_Declaration),"pointerOperators",tf.listType(_Expression),"arguments",tf.listType(_Declaration),"virtSpecifiers",tf.listType(_Type),"exceptionSpecification");
   private static final Type _Expression_integerLiteral_1 
     = tf.constructor(typestore,_Expression,"integerLiteral",tf.integerType(),"number");
   private static final Type _Expression_nyi_1 
@@ -158,6 +160,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"modulo",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_throw_0 
     = tf.constructor(typestore,_Expression,"throw");
+  private static final Type _Expression_functionDeclaratorWithES_5 
+    = tf.constructor(typestore,_Expression,"functionDeclaratorWithES",tf.listType(_Modifier),"modifiers",_Expression,"nname",tf.listType(_Declaration),"pointerOperators",tf.listType(_Expression),"arguments",tf.listType(_Declaration),"virtSpecifiers");
   private static final Type _Expression_alignOf_1 
     = tf.constructor(typestore,_Expression,"alignOf",_Expression,"expression");
   private static final Type _Expression_nullptr_0 
@@ -618,6 +622,10 @@ public class AST {
     return vf.constructor(_Expression_functionDeclarator_3 , $nname, $pointerOperators, $arguments);
   }
   
+  public IConstructor Expression_functionDeclaratorWithES( IList $modifiers, IConstructor $nname, IList $pointerOperators, IList $arguments, IList $virtSpecifiers, IList $exceptionSpecification) {
+    return vf.constructor(_Expression_functionDeclaratorWithES_6 , $modifiers, $nname, $pointerOperators, $arguments, $virtSpecifiers, $exceptionSpecification);
+  }
+  
   public IConstructor Expression_integerLiteral( int $number) {
     return vf.constructor(_Expression_integerLiteral_1 , vf.integer($number));
   }
@@ -700,6 +708,10 @@ public class AST {
   
   public IConstructor Expression_throw() {
     return vf.constructor(_Expression_throw_0 );
+  }
+  
+  public IConstructor Expression_functionDeclaratorWithES( IList $modifiers, IConstructor $nname, IList $pointerOperators, IList $arguments, IList $virtSpecifiers) {
+    return vf.constructor(_Expression_functionDeclaratorWithES_5 , $modifiers, $nname, $pointerOperators, $arguments, $virtSpecifiers);
   }
   
   public IConstructor Expression_alignOf( IConstructor $expression) {
