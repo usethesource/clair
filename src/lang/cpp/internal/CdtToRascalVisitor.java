@@ -1738,64 +1738,71 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	public int visit(IASTUnaryExpression expression) {
 		int operator = expression.getOperator();
 		IASTExpression _operand = expression.getOperand();
-		_operand.accept(this);
-		IConstructor $expression = stack.pop();
+
+		IConstructor operand = null;
+		if (_operand != null) {
+			expression.getOperand().accept(this);
+			operand = stack.pop();
+		}
 
 		switch (operator) {
 		case IASTUnaryExpression.op_prefixIncr:
-			stack.push(builder.Expression_prefixIncr($expression));
+			stack.push(builder.Expression_prefixIncr(operand));
 			break;
 		case IASTUnaryExpression.op_prefixDecr:
-			stack.push(builder.Expression_prefixDecr($expression));
+			stack.push(builder.Expression_prefixDecr(operand));
 			break;
 		case IASTUnaryExpression.op_plus:
-			stack.push(builder.Expression_plus($expression));
+			stack.push(builder.Expression_plus(operand));
 			break;
 		case IASTUnaryExpression.op_minus:
-			stack.push(builder.Expression_minus($expression));
+			stack.push(builder.Expression_minus(operand));
 			break;
 		case IASTUnaryExpression.op_star:
-			stack.push(builder.Expression_star($expression));
+			stack.push(builder.Expression_star(operand));
 			break;
 		case IASTUnaryExpression.op_amper:
-			stack.push(builder.Expression_amper($expression));
+			stack.push(builder.Expression_amper(operand));
 			break;
 		case IASTUnaryExpression.op_tilde:
-			stack.push(builder.Expression_tilde($expression));
+			stack.push(builder.Expression_tilde(operand));
 			break;
 		case IASTUnaryExpression.op_not:
-			stack.push(builder.Expression_not($expression));
+			stack.push(builder.Expression_not(operand));
 			break;
 		case IASTUnaryExpression.op_sizeof:
-			stack.push(builder.Expression_sizeof($expression));
+			stack.push(builder.Expression_sizeof(operand));
 			break;
 		case IASTUnaryExpression.op_postFixIncr:
-			stack.push(builder.Expression_postfixIncr($expression));
+			stack.push(builder.Expression_postfixIncr(operand));
 			break;
 		case IASTUnaryExpression.op_postFixDecr:
-			stack.push(builder.Expression_postfixDecr($expression));
+			stack.push(builder.Expression_postfixDecr(operand));
 			break;
 		case IASTUnaryExpression.op_bracketedPrimary:
-			stack.push(builder.Expression_bracketed($expression));
+			stack.push(builder.Expression_bracketed(operand));
 			break;
 		case IASTUnaryExpression.op_throw:
-			stack.push(builder.Expression_throw($expression));
+			if (operand == null)
+				stack.push(builder.Expression_throw());
+			else
+				stack.push(builder.Expression_throw(operand));
 			break;
 		case IASTUnaryExpression.op_typeid:
-			stack.push(builder.Expression_typeid($expression));
+			stack.push(builder.Expression_typeid(operand));
 			break;
 		// case IASTUnaryExpression.op_typeof: (14) typeOf is deprecated
 		case IASTUnaryExpression.op_alignOf:
-			stack.push(builder.Expression_alignOf($expression));
+			stack.push(builder.Expression_alignOf(operand));
 			break;
 		case IASTUnaryExpression.op_sizeofParameterPack:
-			stack.push(builder.Expression_sizeofParameterPack($expression));
+			stack.push(builder.Expression_sizeofParameterPack(operand));
 			break;
 		case IASTUnaryExpression.op_noexcept:
-			stack.push(builder.Expression_noexcept($expression));
+			stack.push(builder.Expression_noexcept(operand));
 			break;
 		case IASTUnaryExpression.op_labelReference:
-			stack.push(builder.Expression_labelReference($expression));
+			stack.push(builder.Expression_labelReference(operand));
 			break;
 		default:
 			throw new RuntimeException("Unknown unary operator " + operator + ". Exiting");
