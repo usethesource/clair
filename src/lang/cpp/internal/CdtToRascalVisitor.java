@@ -834,7 +834,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	public int visit(ICPPASTFunctionDeclarator declarator) {
 		IASTName _name = declarator.getName();
 		IASTParameterDeclaration[] _parameters = declarator.getParameters();
-		IASTTypeId[] exceptionSpecification = declarator.getExceptionSpecification();
+		IASTTypeId[] _exceptionSpecification = declarator.getExceptionSpecification();
 		ICPPASTExpression noexceptExpression = declarator.getNoexceptExpression();
 		IASTTypeId trailingReturnType = declarator.getTrailingReturnType();
 		ICPPASTVirtSpecifier[] _virtSpecifiers = declarator.getVirtSpecifiers();
@@ -863,8 +863,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			err("WARNING: ICPPASTFunctionDeclarator has initializer");
 		if (declarator.takesVarArgs())
 			err("WARNING: ICPPASTFunctionDeclarator has takesVarArgs=true");
-		if (exceptionSpecification != null)
-			err("WARNING: ICPPASTFunctionDeclarator has exceptionSpecification " + declarator.getRawSignature());
 		if (noexceptExpression != null)
 			err("WARNING: ICPPASTFunctionDeclarator has noexceptExpression " + noexceptExpression.getRawSignature());
 		if (trailingReturnType != null)
@@ -886,8 +884,23 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			it.accept(this);
 			pointerOperators.append(stack.pop());
 		});
-		stack.push(builder.Expression_functionDeclarator(modifiers.done(), name, pointerOperators.done(),
-				parameters.done(), virtSpecifiers.done()));
+
+		if (_exceptionSpecification.equals(ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION))
+			stack.push(builder.Expression_functionDeclarator(modifiers.done(), name, pointerOperators.done(),
+					parameters.done(), virtSpecifiers.done()));
+		else if (_exceptionSpecification.equals(IASTTypeId.EMPTY_TYPEID_ARRAY))
+			stack.push(builder.Expression_functionDeclaratorWithES(modifiers.done(), name, pointerOperators.done(),
+					parameters.done(), virtSpecifiers.done()));
+		else {
+			IListWriter exceptionSpecification = vf.listWriter();
+			Stream.of(_exceptionSpecification).forEach(it -> {
+				it.accept(this);
+				exceptionSpecification.append(stack.pop());
+			});
+			stack.push(builder.Expression_functionDeclaratorWithES(modifiers.done(), name, pointerOperators.done(),
+					parameters.done(), virtSpecifiers.done(), exceptionSpecification.done()));
+		}
+
 		return PROCESS_ABORT;
 	}
 
