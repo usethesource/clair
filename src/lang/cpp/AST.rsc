@@ -185,6 +185,8 @@ data Expression
     
     | \simpleTypeConstructor(Declaration declSpecifier, Statement initializer)
     
+    | \expressionList(list[Expression] expressions)
+    
     | \nyi(str raw)
     
     //| \functionCall(Expression functionName, list[Expression] arguments)

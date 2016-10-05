@@ -1702,9 +1702,13 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTExpressionList expression) {
-		out("ExpressionList: " + expression.getRawSignature());
-		IASTExpression[] expressions = expression.getExpressions();
-		throw new RuntimeException("NYI");
+		IListWriter expressions = vf.listWriter();
+		Stream.of(expression.getExpressions()).forEach(it -> {
+			it.accept(this);
+			expressions.append(stack.pop());
+		});
+		stack.push(builder.Expression_expressionList(expressions.done()));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTBinaryTypeIdExpression expression) {
