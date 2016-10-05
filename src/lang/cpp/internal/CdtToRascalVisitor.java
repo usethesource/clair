@@ -490,6 +490,8 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 			if (isDefaulted && isDeleted)
 				err("WARNING: IASTFunctionDefinition both deleted and defaulted");
+			if ((isDefaulted || isDeleted) && definition instanceof ICPPASTFunctionWithTryBlock)
+				throw new RuntimeException("IASTFunctionDefinition defaulted/deleted and with try?");
 			if (isDefaulted)
 				stack.push(builder.Declaration_defaultedFunctionDefinition(declSpecifier, memberInitializers.done(),
 						declarator));
@@ -503,7 +505,9 @@ public class CdtToRascalVisitor extends ASTVisitor {
 					it.accept(this);
 					catchHandlers.append(stack.pop());
 				});
-				throw new RuntimeException("NYI");
+				_body.accept(this);
+				stack.push(builder.Declaration_functionWithTryBlockDefinition(declSpecifier, declarator,
+						memberInitializers.done(), stack.pop(), catchHandlers.done()));
 			} else {
 				_body.accept(this);
 				stack.push(builder.Declaration_functionDefinition(declSpecifier, declarator, memberInitializers.done(),
@@ -1045,7 +1049,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTNamedTypeSpecifier declSpec) {
-		out("IASTNamedTypeSpecifier " + declSpec.getClass().getSimpleName() + ": " + declSpec.getRawSignature());
 		// int storageClass = declSpec.getStorageClass();
 		IListWriter modifiers = vf.listWriter();
 		if (declSpec.isConst())
@@ -1088,6 +1091,10 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			modifiers.append(builder.Modifier_complex());
 		if (declSpec.isImaginary())
 			modifiers.append(builder.Modifier_imaginary());
+		if (declSpec.isConst())
+			modifiers.append(builder.Modifier_const());
+		if (declSpec.isVolatile())
+			modifiers.append(builder.Modifier_volatile());
 
 		if (declSpec instanceof ICPPASTDeclSpecifier) {
 			if (((ICPPASTDeclSpecifier) declSpec).isFriend())
@@ -2034,16 +2041,18 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTCatchHandler statement) {
-		boolean isCatchAll = statement.isCatchAll();
 		IASTStatement _catchBody = statement.getCatchBody();
 		IASTDeclaration _declaration = statement.getDeclaration();
 
-		if (isCatchAll)
-			out("WARNING: ICPPASTCatchHandler has catchAll=true");
 		_catchBody.accept(this);
 		IConstructor catchBody = stack.pop();
-		_declaration.accept(this);
-		stack.push(builder.Statement_catch(stack.pop(), catchBody));
+
+		if (statement.isCatchAll())
+			stack.push(builder.Statement_catchAll(catchBody));
+		else {
+			_declaration.accept(this);
+			stack.push(builder.Statement_catch(stack.pop(), catchBody));
+		}
 		return PROCESS_ABORT;
 	}
 
