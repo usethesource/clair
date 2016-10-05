@@ -114,14 +114,18 @@ public class AST {
   
   private static final Type _Expression_sizeofParameterPack_1 
     = tf.constructor(typestore,_Expression,"sizeofParameterPack",_Expression,"expression");
-  private static final Type _Expression_functionDeclarator_3 
-    = tf.constructor(typestore,_Expression,"functionDeclarator",_Expression,"nname",tf.listType(_Declaration),"pointerOperators",tf.listType(_Expression),"arguments");
+  private static final Type _Expression_postfixIncr_1 
+    = tf.constructor(typestore,_Expression,"postfixIncr",_Expression,"expression");
   private static final Type _Expression_functionDeclaratorWithES_6 
-    = tf.constructor(typestore,_Expression,"functionDeclaratorWithES",tf.listType(_Modifier),"modifiers",_Expression,"nname",tf.listType(_Declaration),"pointerOperators",tf.listType(_Expression),"arguments",tf.listType(_Declaration),"virtSpecifiers",tf.listType(_Type),"exceptionSpecification");
+    = tf.constructor(typestore,_Expression,"functionDeclaratorWithES",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Expression,"nname",tf.listType(_Expression),"arguments",tf.listType(_Declaration),"virtSpecifiers",tf.listType(_Type),"exceptionSpecification");
   private static final Type _Expression_integerLiteral_1 
     = tf.constructor(typestore,_Expression,"integerLiteral",tf.integerType(),"number");
+  private static final Type _Expression_functionDeclarator_3 
+    = tf.constructor(typestore,_Expression,"functionDeclarator",tf.listType(_Declaration),"pointerOperators",_Expression,"nname",tf.listType(_Expression),"arguments");
   private static final Type _Expression_nyi_1 
     = tf.constructor(typestore,_Expression,"nyi",tf.stringType(),"raw");
+  private static final Type _Expression_functionDeclarator_5 
+    = tf.constructor(typestore,_Expression,"functionDeclarator",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Expression,"nname",tf.listType(_Expression),"arguments",tf.listType(_Declaration),"virtSpecifiers");
   private static final Type _Expression_minus_2 
     = tf.constructor(typestore,_Expression,"minus",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_name_1 
@@ -160,8 +164,6 @@ public class AST {
     = tf.constructor(typestore,_Expression,"modulo",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_throw_0 
     = tf.constructor(typestore,_Expression,"throw");
-  private static final Type _Expression_functionDeclaratorWithES_5 
-    = tf.constructor(typestore,_Expression,"functionDeclaratorWithES",tf.listType(_Modifier),"modifiers",_Expression,"nname",tf.listType(_Declaration),"pointerOperators",tf.listType(_Expression),"arguments",tf.listType(_Declaration),"virtSpecifiers");
   private static final Type _Expression_alignOf_1 
     = tf.constructor(typestore,_Expression,"alignOf",_Expression,"expression");
   private static final Type _Expression_nullptr_0 
@@ -226,10 +228,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"charConstant",tf.stringType(),"vvalue");
   private static final Type _Expression_delete_1 
     = tf.constructor(typestore,_Expression,"delete",_Expression,"expression");
-  private static final Type _Expression_functionDeclarator_5 
-    = tf.constructor(typestore,_Expression,"functionDeclarator",tf.listType(_Modifier),"modifiers",_Expression,"nname",tf.listType(_Declaration),"pointerOperators",tf.listType(_Expression),"arguments",tf.listType(_Declaration),"virtSpecifiers");
-  private static final Type _Expression_postfixIncr_1 
-    = tf.constructor(typestore,_Expression,"postfixIncr",_Expression,"expression");
+  private static final Type _Expression_functionDeclaratorWithES_5 
+    = tf.constructor(typestore,_Expression,"functionDeclaratorWithES",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Expression,"nname",tf.listType(_Expression),"arguments",tf.listType(_Declaration),"virtSpecifiers");
   private static final Type _Expression_multiply_2 
     = tf.constructor(typestore,_Expression,"multiply",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_max_2 
@@ -618,20 +618,28 @@ public class AST {
     return vf.constructor(_Expression_sizeofParameterPack_1 , $expression);
   }
   
-  public IConstructor Expression_functionDeclarator( IConstructor $nname, IList $pointerOperators, IList $arguments) {
-    return vf.constructor(_Expression_functionDeclarator_3 , $nname, $pointerOperators, $arguments);
+  public IConstructor Expression_postfixIncr( IConstructor $expression) {
+    return vf.constructor(_Expression_postfixIncr_1 , $expression);
   }
   
-  public IConstructor Expression_functionDeclaratorWithES( IList $modifiers, IConstructor $nname, IList $pointerOperators, IList $arguments, IList $virtSpecifiers, IList $exceptionSpecification) {
-    return vf.constructor(_Expression_functionDeclaratorWithES_6 , $modifiers, $nname, $pointerOperators, $arguments, $virtSpecifiers, $exceptionSpecification);
+  public IConstructor Expression_functionDeclaratorWithES( IList $pointerOperators, IList $modifiers, IConstructor $nname, IList $arguments, IList $virtSpecifiers, IList $exceptionSpecification) {
+    return vf.constructor(_Expression_functionDeclaratorWithES_6 , $pointerOperators, $modifiers, $nname, $arguments, $virtSpecifiers, $exceptionSpecification);
   }
   
   public IConstructor Expression_integerLiteral( int $number) {
     return vf.constructor(_Expression_integerLiteral_1 , vf.integer($number));
   }
   
+  public IConstructor Expression_functionDeclarator( IList $pointerOperators, IConstructor $nname, IList $arguments) {
+    return vf.constructor(_Expression_functionDeclarator_3 , $pointerOperators, $nname, $arguments);
+  }
+  
   public IConstructor Expression_nyi( String $raw) {
     return vf.constructor(_Expression_nyi_1 , vf.string($raw));
+  }
+  
+  public IConstructor Expression_functionDeclarator( IList $pointerOperators, IList $modifiers, IConstructor $nname, IList $arguments, IList $virtSpecifiers) {
+    return vf.constructor(_Expression_functionDeclarator_5 , $pointerOperators, $modifiers, $nname, $arguments, $virtSpecifiers);
   }
   
   public IConstructor Expression_minus( IConstructor $lhs, IConstructor $rhs) {
@@ -708,10 +716,6 @@ public class AST {
   
   public IConstructor Expression_throw() {
     return vf.constructor(_Expression_throw_0 );
-  }
-  
-  public IConstructor Expression_functionDeclaratorWithES( IList $modifiers, IConstructor $nname, IList $pointerOperators, IList $arguments, IList $virtSpecifiers) {
-    return vf.constructor(_Expression_functionDeclaratorWithES_5 , $modifiers, $nname, $pointerOperators, $arguments, $virtSpecifiers);
   }
   
   public IConstructor Expression_alignOf( IConstructor $expression) {
@@ -842,12 +846,8 @@ public class AST {
     return vf.constructor(_Expression_delete_1 , $expression);
   }
   
-  public IConstructor Expression_functionDeclarator( IList $modifiers, IConstructor $nname, IList $pointerOperators, IList $arguments, IList $virtSpecifiers) {
-    return vf.constructor(_Expression_functionDeclarator_5 , $modifiers, $nname, $pointerOperators, $arguments, $virtSpecifiers);
-  }
-  
-  public IConstructor Expression_postfixIncr( IConstructor $expression) {
-    return vf.constructor(_Expression_postfixIncr_1 , $expression);
+  public IConstructor Expression_functionDeclaratorWithES( IList $pointerOperators, IList $modifiers, IConstructor $nname, IList $arguments, IList $virtSpecifiers) {
+    return vf.constructor(_Expression_functionDeclaratorWithES_5 , $pointerOperators, $modifiers, $nname, $arguments, $virtSpecifiers);
   }
   
   public IConstructor Expression_multiply( IConstructor $lhs, IConstructor $rhs) {
