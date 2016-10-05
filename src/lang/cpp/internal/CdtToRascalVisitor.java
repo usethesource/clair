@@ -768,7 +768,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 				it.accept(this);
 				parameters.append(stack.pop());
 			});
-			stack.push(builder.Expression_functionDeclarator(name, pointerOperators.done(), parameters.done()));
+			stack.push(builder.Expression_functionDeclarator(pointerOperators.done(), name, parameters.done()));
 		}
 		return PROCESS_ABORT;
 	}
@@ -886,10 +886,10 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		});
 
 		if (_exceptionSpecification.equals(ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION))
-			stack.push(builder.Expression_functionDeclarator(modifiers.done(), name, pointerOperators.done(),
+			stack.push(builder.Expression_functionDeclarator(pointerOperators.done(), modifiers.done(), name,
 					parameters.done(), virtSpecifiers.done()));
 		else if (_exceptionSpecification.equals(IASTTypeId.EMPTY_TYPEID_ARRAY))
-			stack.push(builder.Expression_functionDeclaratorWithES(modifiers.done(), name, pointerOperators.done(),
+			stack.push(builder.Expression_functionDeclaratorWithES(pointerOperators.done(), modifiers.done(), name,
 					parameters.done(), virtSpecifiers.done()));
 		else {
 			IListWriter exceptionSpecification = vf.listWriter();
@@ -897,7 +897,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 				it.accept(this);
 				exceptionSpecification.append(stack.pop());
 			});
-			stack.push(builder.Expression_functionDeclaratorWithES(modifiers.done(), name, pointerOperators.done(),
+			stack.push(builder.Expression_functionDeclaratorWithES(pointerOperators.done(), modifiers.done(), name,
 					parameters.done(), virtSpecifiers.done(), exceptionSpecification.done()));
 		}
 

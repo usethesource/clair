@@ -166,10 +166,10 @@ data Expression
     | \false()
     | \nullptr()
     
-    | \functionDeclarator(Expression nname, list[Declaration] pointerOperators, list[Expression] arguments)
-    | \functionDeclarator(list[Modifier] modifiers, Expression nname, list[Declaration] pointerOperators, list[Expression] arguments, list[Declaration] virtSpecifiers)
-    | \functionDeclaratorWithES(list[Modifier] modifiers, Expression nname, list[Declaration] pointerOperators, list[Expression] arguments, list[Declaration] virtSpecifiers) //empty exception specification
-    | \functionDeclaratorWithES(list[Modifier] modifiers, Expression nname, list[Declaration] pointerOperators, list[Expression] arguments, list[Declaration] virtSpecifiers, list[Type] exceptionSpecification)
+    | \functionDeclarator(list[Declaration] pointerOperators, Expression nname, list[Expression] arguments)
+    | \functionDeclarator(list[Declaration] pointerOperators, list[Modifier] modifiers, Expression nname, list[Expression] arguments, list[Declaration] virtSpecifiers)
+    | \functionDeclaratorWithES(list[Declaration] pointerOperators, list[Modifier] modifiers, Expression nname, list[Expression] arguments, list[Declaration] virtSpecifiers) //empty exception specification
+    | \functionDeclaratorWithES(list[Declaration] pointerOperators, list[Modifier] modifiers, Expression nname, list[Expression] arguments, list[Declaration] virtSpecifiers, list[Type] exceptionSpecification)
     | \namedTypeSpecifier(Expression nname, list[Modifier] modifiers)
     
     | \functionCall(Expression functionName, list[Expression] arguments)
