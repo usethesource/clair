@@ -747,18 +747,24 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			visit((ICPPASTFunctionDeclarator) declarator);
 		else {
 			IASTName _name = declarator.getName();
-			IScope _functionScope = declarator.getFunctionScope();
 			IASTParameterDeclaration[] _parameters = declarator.getParameters();
 			boolean _takesVarArgs = declarator.takesVarArgs();
+
+			IASTPointerOperator[] _pointerOperators = declarator.getPointerOperators();
+			IListWriter pointerOperators = vf.listWriter();
+			Stream.of(_pointerOperators).forEach(it -> {
+				it.accept(this);
+				pointerOperators.append(stack.pop());
+			});
 
 			_name.accept(this);
 			IConstructor name = stack.pop();
 			IListWriter parameters = vf.listWriter();
-			for (IASTParameterDeclaration parameter : _parameters) {
-				parameter.accept(this);
+			Stream.of(_parameters).forEach(it -> {
+				it.accept(this);
 				parameters.append(stack.pop());
-			}
-			stack.push(builder.Expression_functionDeclarator(name, parameters.done()));
+			});
+			stack.push(builder.Expression_functionDeclarator(name, pointerOperators.done(), parameters.done()));
 		}
 		return PROCESS_ABORT;
 	}
@@ -828,6 +834,10 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		ICPPASTExpression noexceptExpression = declarator.getNoexceptExpression();
 		IASTTypeId trailingReturnType = declarator.getTrailingReturnType();
 		ICPPASTVirtSpecifier[] _virtSpecifiers = declarator.getVirtSpecifiers();
+		IASTPointerOperator[] _pointerOperators = declarator.getPointerOperators();
+
+		IASTDeclarator nestedDeclarator = declarator.getNestedDeclarator();
+		IASTInitializer initializer = declarator.getInitializer();
 
 		IListWriter modifiers = vf.listWriter();
 		if (declarator.isConst())
@@ -843,6 +853,10 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		if (declarator.isOverride())
 			modifiers.append(builder.Modifier_override());
 
+		if (nestedDeclarator != null)
+			err("WARNING: ICPPASTFunctionDeclarator has nestedDeclarator");
+		if (initializer != null)
+			err("WARNING: ICPPASTFunctionDeclarator has initializer");
 		if (declarator.takesVarArgs())
 			err("WARNING: ICPPASTFunctionDeclarator has takesVarArgs=true");
 		if (exceptionSpecification != null)
@@ -863,8 +877,13 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			it.accept(this);
 			virtSpecifiers.append(stack.pop());
 		});
-		stack.push(builder.Expression_functionDeclarator(modifiers.done(), name, parameters.done(),
-				virtSpecifiers.done()));
+		IListWriter pointerOperators = vf.listWriter();
+		Stream.of(_pointerOperators).forEach(it -> {
+			it.accept(this);
+			pointerOperators.append(stack.pop());
+		});
+		stack.push(builder.Expression_functionDeclarator(modifiers.done(), name, pointerOperators.done(),
+				parameters.done(), virtSpecifiers.done()));
 		return PROCESS_ABORT;
 	}
 
@@ -1026,21 +1045,28 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTNamedTypeSpecifier declSpec) {
+		out("IASTNamedTypeSpecifier " + declSpec.getClass().getSimpleName() + ": " + declSpec.getRawSignature());
 		// int storageClass = declSpec.getStorageClass();
-		boolean isConst = declSpec.isConst();
-		boolean isVolatile = declSpec.isVolatile();
-		boolean isRestrict = declSpec.isRestrict();
-		boolean isInline = declSpec.isInline();
-
 		IListWriter modifiers = vf.listWriter();
-		if (isConst)
+		if (declSpec.isConst())
 			modifiers.append(builder.Modifier_const());
-		if (isVolatile)
+		if (declSpec.isVolatile())
 			modifiers.append(builder.Modifier_volatile());
-		if (isRestrict)
+		if (declSpec.isRestrict())
 			modifiers.append(builder.Modifier_restrict());
-		if (isInline)
+		if (declSpec.isInline())
 			err("WARNING: IASTNamedTypeSpecifier has isInline=true, not implemented");
+		if (declSpec instanceof ICPPASTNamedTypeSpecifier) {
+			if (((ICPPASTNamedTypeSpecifier) declSpec).isFriend())
+				modifiers.append(builder.Modifier_friend());
+			if (((ICPPASTNamedTypeSpecifier) declSpec).isVirtual())
+				modifiers.append(builder.Modifier_virtual());
+			if (((ICPPASTNamedTypeSpecifier) declSpec).isExplicit())
+				modifiers.append(builder.Modifier_explicit());
+			// isConstexpr?
+			if (((ICPPASTNamedTypeSpecifier) declSpec).isThreadLocal())
+				modifiers.append(builder.Modifier_threadLocal());
+		}
 		declSpec.getName().accept(this);
 		stack.push(builder.Expression_namedTypeSpecifier(stack.pop(), modifiers.done()));
 		return PROCESS_ABORT;
@@ -1336,8 +1362,14 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTSimpleTypeConstructorExpression expression) {
-		out("CPPSimpleTypeConstructorExpression: " + expression.getRawSignature());
-		throw new RuntimeException("NYI");
+		ICPPASTDeclSpecifier _declSpecifier = expression.getDeclSpecifier();
+		IASTInitializer _initializer = expression.getInitializer();
+		_declSpecifier.accept(this);
+		IConstructor declSpecifier = stack.pop();
+		_initializer.accept(this);
+		IConstructor initializer = stack.pop();
+		stack.push(builder.Expression_simpleTypeConstructor(declSpecifier, initializer));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTPackExpansionExpression expression) {
@@ -1587,7 +1619,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		} else if (cdtType instanceof IProblemBinding) {
 			throw new RuntimeException("IProblemBinding: " + ((IProblemBinding) cdtType).getMessage());
 		} else if (cdtType instanceof IProblemType) {
-			throw new RuntimeException("IProblemType: " + ((IProblemType) cdtType).getMessage());
+			throw new RuntimeException("ERROR: IProblemType: " + ((IProblemType) cdtType).getMessage());
 		} else if (cdtType instanceof IQualifierType) {
 			boolean isConst = ((IQualifierType) cdtType).isConst();
 			boolean isVolatile = ((IQualifierType) cdtType).isVolatile();
@@ -1615,7 +1647,17 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			// IConstructor fieldOwnerType = stack.pop();
 			_fieldName.accept(this);
 			IConstructor fieldName = stack.pop();
-			// HIER
+
+			if (_fieldOwnerType instanceof IProblemType) {
+				out("IASTFieldReference " + expression.getClass().getName() + ": " + expression.getRawSignature());
+				prefix += 4;
+				out("reference=" + reference.getRawSignature());
+				out("fieldOwner=" + _fieldOwner.getRawSignature());
+				out("fieldOwnerType=" + _fieldOwnerType.toString());
+				out("fieldName=" + _fieldName.toString());
+				out("expressionType=" + _fieldOwner.getClass().getSimpleName());
+				prefix -= 4;
+			}
 			stack.push(builder.Expression_fieldReference(fieldOwner, fieldName, convertType(_fieldOwnerType)));
 		} else {
 			IASTExpression fieldOwner = expression.getFieldOwner();
@@ -1655,15 +1697,34 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTCastExpression expression) {
-		// int _operator = expression.getOperator();
+		int operator = expression.getOperator();
 		IASTExpression _operand = expression.getOperand();
 		IASTTypeId typeId = expression.getTypeId();
+		out("CastExpression type: " + typeId.getRawSignature());
 		_operand.accept(this);
 		IConstructor operand = stack.pop();
 		typeId.accept(this);
 		IConstructor type = stack.pop();
 
-		stack.push(builder.Expression_cast(type, operand));
+		switch (operator) {
+		case ICPPASTCastExpression.op_cast:
+			stack.push(builder.Expression_cast(type, operand));
+			break;
+		case ICPPASTCastExpression.op_dynamic_cast:
+			stack.push(builder.Expression_dynamicCast(type, operand));
+			break;
+		case ICPPASTCastExpression.op_static_cast:
+			stack.push(builder.Expression_staticCast(type, operand));
+			break;
+		case ICPPASTCastExpression.op_reinterpret_cast:
+			stack.push(builder.Expression_reinterpretCast(type, operand));
+			break;
+		case ICPPASTCastExpression.op_const_cast:
+			stack.push(builder.Expression_constCast(type, operand));
+			break;
+		default:
+			throw new RuntimeException("Unknown cast type " + operator);
+		}
 		return PROCESS_ABORT;
 	}
 
@@ -1954,8 +2015,17 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTTryBlockStatement statement) {
-		err("CPPTryBlockStatement: " + statement.getRawSignature());
-		throw new RuntimeException("NYI");
+		IASTStatement _tryBody = statement.getTryBody();
+		ICPPASTCatchHandler[] _catchHandlers = statement.getCatchHandlers();
+		_tryBody.accept(this);
+		IConstructor tryBody = stack.pop();
+		IListWriter catchHandlers = vf.listWriter();
+		Stream.of(_catchHandlers).forEach(it -> {
+			it.accept(this);
+			catchHandlers.append(stack.pop());
+		});
+		stack.push(builder.Statement_tryBlock(tryBody, catchHandlers.done()));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTRangeBasedForStatement statement) {
@@ -1964,12 +2034,17 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTCatchHandler statement) {
-		err("CPPCatchHandler: " + statement.getRawSignature());
 		boolean isCatchAll = statement.isCatchAll();
 		IASTStatement _catchBody = statement.getCatchBody();
 		IASTDeclaration _declaration = statement.getDeclaration();
-		IScope scope = statement.getScope();
-		throw new RuntimeException("NYI");
+
+		if (isCatchAll)
+			out("WARNING: ICPPASTCatchHandler has catchAll=true");
+		_catchBody.accept(this);
+		IConstructor catchBody = stack.pop();
+		_declaration.accept(this);
+		stack.push(builder.Statement_catch(stack.pop(), catchBody));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTReturnStatement statement) {
@@ -2152,20 +2227,10 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			IASTDeclSpecifier _declSpecifier = typeId.getDeclSpecifier();
 			IASTDeclarator _abstractDeclarator = typeId.getAbstractDeclarator();
 
-			if (_abstractDeclarator != null)
-				err("WARNING: IASTTypeId has abstractDeclarator: " + _abstractDeclarator.getRawSignature());
-			out("abstractDeclarator name=" + _abstractDeclarator.getName());
-
 			_declSpecifier.accept(this);
-			// TODO: abstractDeclarator?
 			IConstructor declSpecifier = stack.pop();
-			// if (_abstractDeclarator.equals(String.class))
-			stack.push(builder.Type_typeId(declSpecifier));
-			// else {
-			// out("QUE? " + _abstractDeclarator.getRawSignature());
-			// out("name " + _abstractDeclarator.getName().toString());
-			// throw new RuntimeException("NYI");
-			// }
+			_abstractDeclarator.accept(this);
+			stack.push(builder.Type_typeId(declSpecifier, stack.pop()));
 		}
 		return PROCESS_ABORT;
 	}
