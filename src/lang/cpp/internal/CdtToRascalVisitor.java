@@ -892,6 +892,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			stack.push(builder.Expression_functionDeclaratorWithES(pointerOperators.done(), modifiers.done(), name,
 					parameters.done(), virtSpecifiers.done()));
 		else {
+			err("WARNING: Unfinished: e.what() fails");
 			IListWriter exceptionSpecification = vf.listWriter();
 			Stream.of(_exceptionSpecification).forEach(it -> {
 				it.accept(this);
