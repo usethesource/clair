@@ -226,6 +226,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"minusAssign",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_charConstant_1 
     = tf.constructor(typestore,_Expression,"charConstant",tf.stringType(),"vvalue");
+  private static final Type _Expression_expressionList_1 
+    = tf.constructor(typestore,_Expression,"expressionList",tf.listType(_Expression),"expressions");
   private static final Type _Expression_delete_1 
     = tf.constructor(typestore,_Expression,"delete",_Expression,"expression");
   private static final Type _Expression_functionDeclaratorWithES_5 
@@ -840,6 +842,10 @@ public class AST {
   
   public IConstructor Expression_charConstant( String $vvalue) {
     return vf.constructor(_Expression_charConstant_1 , vf.string($vvalue));
+  }
+  
+  public IConstructor Expression_expressionList( IList $expressions) {
+    return vf.constructor(_Expression_expressionList_1 , $expressions);
   }
   
   public IConstructor Expression_delete( IConstructor $expression) {
