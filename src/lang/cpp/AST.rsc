@@ -134,6 +134,7 @@ data Expression
     | \postfixIncr(Expression expression)   //exp++
     | \postfixDecr(Expression expression)   //exp--
     | \bracketed(Expression expression)     //(exp)
+    | \throw()
     | \throw(Expression expression)         //throw exp, c++ only
     | \typeid(Expression expression)        //typeid exp, c++ only
     //| \typeof(Expression expression)        //typeof exp, deprecated

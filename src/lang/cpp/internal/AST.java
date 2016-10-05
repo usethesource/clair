@@ -156,6 +156,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"binaryAnd",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_modulo_2 
     = tf.constructor(typestore,_Expression,"modulo",_Expression,"lhs",_Expression,"rhs");
+  private static final Type _Expression_throw_0 
+    = tf.constructor(typestore,_Expression,"throw");
   private static final Type _Expression_alignOf_1 
     = tf.constructor(typestore,_Expression,"alignOf",_Expression,"expression");
   private static final Type _Expression_nullptr_0 
@@ -694,6 +696,10 @@ public class AST {
   
   public IConstructor Expression_modulo( IConstructor $lhs, IConstructor $rhs) {
     return vf.constructor(_Expression_modulo_2 , $lhs, $rhs);
+  }
+  
+  public IConstructor Expression_throw() {
+    return vf.constructor(_Expression_throw_0 );
   }
   
   public IConstructor Expression_alignOf( IConstructor $expression) {
