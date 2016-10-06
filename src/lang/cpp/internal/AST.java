@@ -124,8 +124,6 @@ public class AST {
     = tf.constructor(typestore,_Expression,"sizeofParameterPack",_Expression,"expression");
   private static final Type _Expression_postfixIncr_1 
     = tf.constructor(typestore,_Expression,"postfixIncr",_Expression,"expression");
-  private static final Type _Expression_fieldReference_3 
-    = tf.constructor(typestore,_Expression,"fieldReference",_Expression,"fieldOwner",_Expression,"nname",_Type,"fieldType");
   private static final Type _Expression_integerLiteral_1 
     = tf.constructor(typestore,_Expression,"integerLiteral",tf.integerType(),"number");
   private static final Type _Expression_functionDeclarator_3 
@@ -186,6 +184,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"integerConstant",tf.stringType(),"vvalue");
   private static final Type _Expression_shiftLeftAssign_2 
     = tf.constructor(typestore,_Expression,"shiftLeftAssign",_Expression,"lhs",_Expression,"rhs");
+  private static final Type _Expression_newWithArgs_3 
+    = tf.constructor(typestore,_Expression,"newWithArgs",tf.listType(_Expression),"arguments",_Type,"type",_Expression,"initializer");
   private static final Type _Expression_star_1 
     = tf.constructor(typestore,_Expression,"star",_Expression,"expression");
   private static final Type _Expression_divide_2 
@@ -280,6 +280,10 @@ public class AST {
     = tf.constructor(typestore,_Expression,"prefixDecr",_Expression,"expression");
   private static final Type _Expression_shiftRightAssign_2 
     = tf.constructor(typestore,_Expression,"shiftRightAssign",_Expression,"lhs",_Expression,"rhs");
+  private static final Type _Expression_fieldReference_3 
+    = tf.constructor(typestore,_Expression,"fieldReference",_Expression,"fieldOwner",_Expression,"nname",_Type,"fieldType");
+  private static final Type _Expression_newWithArgs_2 
+    = tf.constructor(typestore,_Expression,"newWithArgs",tf.listType(_Expression),"arguments",_Type,"type");
   private static final Type _Expression_logicalOr_2 
     = tf.constructor(typestore,_Expression,"logicalOr",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_bracketed_1 
@@ -660,10 +664,6 @@ public class AST {
     return vf.constructor(_Expression_postfixIncr_1 , $expression);
   }
   
-  public IConstructor Expression_fieldReference( IConstructor $fieldOwner, IConstructor $nname, IConstructor $fieldType) {
-    return vf.constructor(_Expression_fieldReference_3 , $fieldOwner, $nname, $fieldType);
-  }
-  
   public IConstructor Expression_integerLiteral( int $number) {
     return vf.constructor(_Expression_integerLiteral_1 , vf.integer($number));
   }
@@ -782,6 +782,10 @@ public class AST {
   
   public IConstructor Expression_shiftLeftAssign( IConstructor $lhs, IConstructor $rhs) {
     return vf.constructor(_Expression_shiftLeftAssign_2 , $lhs, $rhs);
+  }
+  
+  public IConstructor Expression_newWithArgs( IList $arguments, IConstructor $type, IConstructor $initializer) {
+    return vf.constructor(_Expression_newWithArgs_3 , $arguments, $type, $initializer);
   }
   
   public IConstructor Expression_star( IConstructor $expression) {
@@ -970,6 +974,14 @@ public class AST {
   
   public IConstructor Expression_shiftRightAssign( IConstructor $lhs, IConstructor $rhs) {
     return vf.constructor(_Expression_shiftRightAssign_2 , $lhs, $rhs);
+  }
+  
+  public IConstructor Expression_fieldReference( IConstructor $fieldOwner, IConstructor $nname, IConstructor $fieldType) {
+    return vf.constructor(_Expression_fieldReference_3 , $fieldOwner, $nname, $fieldType);
+  }
+  
+  public IConstructor Expression_newWithArgs( IList $arguments, IConstructor $type) {
+    return vf.constructor(_Expression_newWithArgs_2 , $arguments, $type);
   }
   
   public IConstructor Expression_logicalOr( IConstructor $lhs, IConstructor $rhs) {
