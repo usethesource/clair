@@ -352,8 +352,8 @@ public class AST {
     = tf.constructor(typestore,_Statement,"switch",_Expression,"controller",_Statement,"body");
   private static final Type _Statement_rangeBasedFor_3 
     = tf.constructor(typestore,_Statement,"rangeBasedFor",_Declaration,"declaration",_Statement,"initializer",_Statement,"body");
-  private static final Type _Statement_label_2 
-    = tf.constructor(typestore,_Statement,"label",tf.stringType(),"name",_Statement,"nestedStatement");
+  private static final Type _Statement_goto_1 
+    = tf.constructor(typestore,_Statement,"goto",_Expression,"nname");
   private static final Type _Statement_defaultCase_0 
     = tf.constructor(typestore,_Statement,"defaultCase");
   private static final Type _Statement_return_0 
@@ -362,10 +362,14 @@ public class AST {
     = tf.constructor(typestore,_Statement,"expressionStatement",_Expression,"expression");
   private static final Type _Statement_compoundStatement_1 
     = tf.constructor(typestore,_Statement,"compoundStatement",tf.listType(_Statement),"statements");
+  private static final Type _Statement_nullStatement_0 
+    = tf.constructor(typestore,_Statement,"nullStatement");
   private static final Type _Statement_continue_0 
     = tf.constructor(typestore,_Statement,"continue");
   private static final Type _Statement_for_4 
     = tf.constructor(typestore,_Statement,"for",_Statement,"initializer",_Expression,"condition",_Expression,"iteration",_Statement,"body");
+  private static final Type _Statement_label_2 
+    = tf.constructor(typestore,_Statement,"label",_Expression,"nname",_Statement,"nestedStatement");
   private static final Type _Statement_catch_2 
     = tf.constructor(typestore,_Statement,"catch",_Declaration,"declaration",_Statement,"body");
   private static final Type _Statement_if_2 
@@ -386,10 +390,6 @@ public class AST {
     = tf.constructor(typestore,_Statement,"case",_Expression,"expression");
   private static final Type _Statement_return_1 
     = tf.constructor(typestore,_Statement,"return",_Expression,"expression");
-  private static final Type _Statement_goto_1 
-    = tf.constructor(typestore,_Statement,"goto",tf.stringType(),"name");
-  private static final Type _Statement_nullStatement_0 
-    = tf.constructor(typestore,_Statement,"nullStatement");
   
   
   private static final Type _Modifier_extern_0 
@@ -1092,8 +1092,8 @@ public class AST {
     return vf.constructor(_Statement_rangeBasedFor_3 , $declaration, $initializer, $body);
   }
   
-  public IConstructor Statement_label( String $name, IConstructor $nestedStatement) {
-    return vf.constructor(_Statement_label_2 , vf.string($name), $nestedStatement);
+  public IConstructor Statement_goto( IConstructor $nname) {
+    return vf.constructor(_Statement_goto_1 , $nname);
   }
   
   public IConstructor Statement_defaultCase() {
@@ -1112,12 +1112,20 @@ public class AST {
     return vf.constructor(_Statement_compoundStatement_1 , $statements);
   }
   
+  public IConstructor Statement_nullStatement() {
+    return vf.constructor(_Statement_nullStatement_0 );
+  }
+  
   public IConstructor Statement_continue() {
     return vf.constructor(_Statement_continue_0 );
   }
   
   public IConstructor Statement_for( IConstructor $initializer, IConstructor $condition, IConstructor $iteration, IConstructor $body) {
     return vf.constructor(_Statement_for_4 , $initializer, $condition, $iteration, $body);
+  }
+  
+  public IConstructor Statement_label( IConstructor $nname, IConstructor $nestedStatement) {
+    return vf.constructor(_Statement_label_2 , $nname, $nestedStatement);
   }
   
   public IConstructor Statement_catch( IConstructor $declaration, IConstructor $body) {
@@ -1158,14 +1166,6 @@ public class AST {
   
   public IConstructor Statement_return( IConstructor $expression) {
     return vf.constructor(_Statement_return_1 , $expression);
-  }
-  
-  public IConstructor Statement_goto( String $name) {
-    return vf.constructor(_Statement_goto_1 , vf.string($name));
-  }
-  
-  public IConstructor Statement_nullStatement() {
-    return vf.constructor(_Statement_nullStatement_0 );
   }
     
   
