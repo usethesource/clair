@@ -350,6 +350,8 @@ public class AST {
     = tf.constructor(typestore,_Statement,"break");
   private static final Type _Statement_switch_2 
     = tf.constructor(typestore,_Statement,"switch",_Expression,"controller",_Statement,"body");
+  private static final Type _Statement_rangeBasedFor_3 
+    = tf.constructor(typestore,_Statement,"rangeBasedFor",_Declaration,"declaration",_Statement,"initializer",_Statement,"body");
   private static final Type _Statement_label_2 
     = tf.constructor(typestore,_Statement,"label",tf.stringType(),"name",_Statement,"nestedStatement");
   private static final Type _Statement_defaultCase_0 
@@ -1084,6 +1086,10 @@ public class AST {
   
   public IConstructor Statement_switch( IConstructor $controller, IConstructor $body) {
     return vf.constructor(_Statement_switch_2 , $controller, $body);
+  }
+  
+  public IConstructor Statement_rangeBasedFor( IConstructor $declaration, IConstructor $initializer, IConstructor $body) {
+    return vf.constructor(_Statement_rangeBasedFor_3 , $declaration, $initializer, $body);
   }
   
   public IConstructor Statement_label( String $name, IConstructor $nestedStatement) {

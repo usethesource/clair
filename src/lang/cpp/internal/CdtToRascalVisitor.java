@@ -2073,8 +2073,19 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTRangeBasedForStatement statement) {
-		err("CPPRangeBasedForStatement: " + statement.getRawSignature());
-		throw new RuntimeException("NYI");
+		IASTDeclaration _declaration = statement.getDeclaration();
+		IASTInitializerClause _initializerClause = statement.getInitializerClause();
+		IASTStatement _body = statement.getBody();
+
+		_declaration.accept(this);
+		IConstructor declaration = stack.pop();
+		_initializerClause.accept(this);
+		IConstructor initializerClause = stack.pop();
+		_body.accept(this);
+		IConstructor body = stack.pop();
+
+		stack.push(builder.Statement_rangeBasedFor(declaration, initializerClause, body));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTCatchHandler statement) {

@@ -235,6 +235,7 @@ data Statement
     | \if(Expression condition, Statement thenClause)
     | \if(Expression condition, Statement thenClause, Statement elseClause)
     | \for(Statement initializer, Expression condition, Expression iteration, Statement body)
+    | \rangeBasedFor(Declaration declaration, Statement initializer, Statement body)
     | \switch(Expression controller, Statement body)
     | \case(Expression expression)
     | \defaultCase()
