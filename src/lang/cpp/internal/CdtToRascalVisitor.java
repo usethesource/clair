@@ -54,6 +54,7 @@ import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
@@ -306,8 +307,18 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTTemplateId name) {
-		err("ICPPASTTemplateId: " + name.getRawSignature());
-		throw new RuntimeException("NYI");
+		IASTName _templateName = name.getTemplateName();
+		IASTNode[] _templateArguments = name.getTemplateArguments();
+
+		_templateName.accept(this);
+		IConstructor templateName = stack.pop();
+		IListWriter templateArguments = vf.listWriter();
+		Stream.of(_templateArguments).forEach(it -> {
+			it.accept(this);
+			templateArguments.append(stack.pop());
+		});
+		stack.push(builder.Expression_templateId(templateName, templateArguments.done()));
+		return PROCESS_ABORT;
 	}
 
 	@Override
