@@ -187,6 +187,8 @@ data Expression
     
     | \expressionList(list[Expression] expressions)
     
+    | \templateId(Expression nname, list[Type] argumentTypes)
+    
     | \nyi(str raw)
     
     //| \functionCall(Expression functionName, list[Expression] arguments)
