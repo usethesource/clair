@@ -37,8 +37,8 @@ data Declaration
     | \pointer()    // *
     | \reference()  // &
     
-    | \declarator(Expression nname, list[Declaration] pointerOperators)
-    | \declarator(Expression nname, list[Declaration] pointerOperators, Declaration init)
+    | \declarator(list[Declaration] pointerOperators, Expression nname)
+    | \declarator(list[Declaration] pointerOperators, Expression nname, Declaration init)
     | \equalsInitializer(Expression initializer)
     | \parameter(Declaration declSpecifier)
     | \parameter(Declaration declSpecifier, Declaration declarator)
