@@ -34,7 +34,7 @@ data Declaration
     | \etsUnion(Expression nname)
     | \etsClass(Expression nname)
     
-    | \pointer()    // *
+    | \pointer(list[Modifier] modifiers)    // *
     | \reference()  // &
     
     | \declarator(list[Declaration] pointerOperators, Expression nname)
