@@ -86,7 +86,6 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
-import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
@@ -406,7 +405,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		boolean isExported = declaration.isExported();
 		IASTDeclaration _declaration = declaration.getDeclaration();
 		ICPPASTTemplateParameter[] _templateParameters = declaration.getTemplateParameters();
-		IScope scope = declaration.getScope();
 		IListWriter templateParameters = vf.listWriter();
 		Stream.of(_templateParameters).forEach(it -> {
 			it.accept(this);
@@ -466,14 +464,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	public synchronized int visit(IASTSimpleDeclaration declaration) {
 		IASTDeclSpecifier _declSpecifier = declaration.getDeclSpecifier();
 		IASTDeclarator[] _declarators = declaration.getDeclarators();
-
-		IASTAttributeSpecifier[] attributeSpecifiers = declaration.getAttributeSpecifiers();
-		IASTAttribute[] attributes = declaration.getAttributes();
-
-		if (attributeSpecifiers.length > 0)
-			err("WARNING: IASTSimpleDeclaration: attributeSpecifiers not empty");
-		if (attributes.length > 0)
-			err("WARNING: IASTSimpleDeclaration: attributes not empty");
 
 		_declSpecifier.accept(this);
 		IConstructor declSpecifier = stack.pop();
@@ -765,13 +755,13 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTStandardFunctionDeclarator declarator) {
-		// Scope NYI
 		if (declarator instanceof ICPPASTFunctionDeclarator)
 			visit((ICPPASTFunctionDeclarator) declarator);
 		else {
 			IASTName _name = declarator.getName();
 			IASTParameterDeclaration[] _parameters = declarator.getParameters();
-			boolean _takesVarArgs = declarator.takesVarArgs();
+			if (declarator.takesVarArgs())
+				err("WARNING: IASTStandardFunctionDeclarator has takesVarArgs=true");
 
 			IASTPointerOperator[] _pointerOperators = declarator.getPointerOperators();
 			IListWriter pointerOperators = vf.listWriter();
@@ -821,11 +811,8 @@ public class CdtToRascalVisitor extends ASTVisitor {
 				it.accept(this);
 				pointerOperators.append(stack.pop());
 			});
-			IConstructor nestedDeclarator = null;
-			if (_nestedDeclarator != null) {
-				_nestedDeclarator.accept(this);
-				nestedDeclarator = stack.pop();
-			}
+			if (_nestedDeclarator != null)
+				err("WARNING: ICPPASTDeclarator has nestedDeclarator");
 			_name.accept(this);
 			IConstructor name = stack.pop();
 			IConstructor initializer = null;
@@ -975,7 +962,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		int key = declSpec.getKey();
 		IASTName _name = declSpec.getName();
 		IASTDeclaration[] _members = declSpec.getMembers();
-		IScope _scope = declSpec.getScope();
 		_name.accept(this);
 		IConstructor name = stack.pop();
 		IListWriter members = vf.listWriter();
@@ -1091,7 +1077,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTNamedTypeSpecifier declSpec) {
-		// int storageClass = declSpec.getStorageClass();
 		IListWriter modifiers = vf.listWriter();
 		if (declSpec.isConst())
 			modifiers.append(builder.Modifier_const());
