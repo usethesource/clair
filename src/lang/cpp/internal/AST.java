@@ -124,6 +124,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"sizeofParameterPack",_Expression,"expression");
   private static final Type _Expression_postfixIncr_1 
     = tf.constructor(typestore,_Expression,"postfixIncr",_Expression,"expression");
+  private static final Type _Expression_fieldReference_3 
+    = tf.constructor(typestore,_Expression,"fieldReference",_Expression,"fieldOwner",_Expression,"nname",_Type,"fieldType");
   private static final Type _Expression_integerLiteral_1 
     = tf.constructor(typestore,_Expression,"integerLiteral",tf.integerType(),"number");
   private static final Type _Expression_functionDeclarator_3 
@@ -144,6 +146,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"constructorInitializer",tf.listType(_Expression),"arguments");
   private static final Type _Expression_min_2 
     = tf.constructor(typestore,_Expression,"min",_Expression,"lhs",_Expression,"rhs");
+  private static final Type _Expression_new_2 
+    = tf.constructor(typestore,_Expression,"new",_Type,"type",_Expression,"initializer");
   private static final Type _Expression_notEquals_2 
     = tf.constructor(typestore,_Expression,"notEquals",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_binaryOrAssign_2 
@@ -154,6 +158,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"idExpression",_Expression,"nname");
   private static final Type _Expression_false_0 
     = tf.constructor(typestore,_Expression,"false");
+  private static final Type _Expression_functionDeclaratorNested_5 
+    = tf.constructor(typestore,_Expression,"functionDeclaratorNested",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Declaration,"declarator",tf.listType(_Expression),"arguments",tf.listType(_Declaration),"virtSpecifiers");
   private static final Type _Expression_sizeof_1 
     = tf.constructor(typestore,_Expression,"sizeof",_Expression,"expression");
   private static final Type _Expression_multiplyAssign_2 
@@ -206,8 +212,6 @@ public class AST {
     = tf.constructor(typestore,_Expression,"functionCall",_Expression,"functionName",tf.listType(_Expression),"arguments");
   private static final Type _Expression_lessEqual_2 
     = tf.constructor(typestore,_Expression,"lessEqual",_Expression,"lhs",_Expression,"rhs");
-  private static final Type _Expression_new_2 
-    = tf.constructor(typestore,_Expression,"new",_Type,"type",_Statement,"initializer");
   private static final Type _Expression_greaterThan_2 
     = tf.constructor(typestore,_Expression,"greaterThan",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_minus_1 
@@ -242,6 +246,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"templateId",_Expression,"nname",tf.listType(_Type),"argumentTypes");
   private static final Type _Expression_functionDeclaratorWithES_6 
     = tf.constructor(typestore,_Expression,"functionDeclaratorWithES",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Expression,"nname",tf.listType(_Expression),"arguments",tf.listType(_Declaration),"virtSpecifiers",tf.listType(_Type),"exceptionSpecification");
+  private static final Type _Expression_simpleTypeConstructor_2 
+    = tf.constructor(typestore,_Expression,"simpleTypeConstructor",_Declaration,"declSpecifier",_Expression,"initializer");
   private static final Type _Expression_functionDeclaratorWithES_5 
     = tf.constructor(typestore,_Expression,"functionDeclaratorWithES",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Expression,"nname",tf.listType(_Expression),"arguments",tf.listType(_Declaration),"virtSpecifiers");
   private static final Type _Expression_multiply_2 
@@ -274,10 +280,6 @@ public class AST {
     = tf.constructor(typestore,_Expression,"prefixDecr",_Expression,"expression");
   private static final Type _Expression_shiftRightAssign_2 
     = tf.constructor(typestore,_Expression,"shiftRightAssign",_Expression,"lhs",_Expression,"rhs");
-  private static final Type _Expression_fieldReference_3 
-    = tf.constructor(typestore,_Expression,"fieldReference",_Expression,"fieldOwner",_Expression,"nname",_Type,"fieldType");
-  private static final Type _Expression_simpleTypeConstructor_2 
-    = tf.constructor(typestore,_Expression,"simpleTypeConstructor",_Declaration,"declSpecifier",_Statement,"initializer");
   private static final Type _Expression_logicalOr_2 
     = tf.constructor(typestore,_Expression,"logicalOr",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_bracketed_1 
@@ -298,6 +300,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"this");
   private static final Type _Expression_postfixDecr_1 
     = tf.constructor(typestore,_Expression,"postfixDecr",_Expression,"expression");
+  private static final Type _Expression_functionDeclaratorNested_6 
+    = tf.constructor(typestore,_Expression,"functionDeclaratorNested",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Declaration,"declarator",tf.listType(_Expression),"arguments",tf.listType(_Declaration),"virtSpecifiers",_Expression,"initializer");
   private static final Type _Expression_dynamicCast_2 
     = tf.constructor(typestore,_Expression,"dynamicCast",_Type,"type",_Expression,"expression");
   private static final Type _Expression_assign_2 
@@ -362,8 +366,6 @@ public class AST {
     = tf.constructor(typestore,_Statement,"break");
   private static final Type _Statement_switch_2 
     = tf.constructor(typestore,_Statement,"switch",_Expression,"controller",_Statement,"body");
-  private static final Type _Statement_rangeBasedFor_3 
-    = tf.constructor(typestore,_Statement,"rangeBasedFor",_Declaration,"declaration",_Statement,"initializer",_Statement,"body");
   private static final Type _Statement_goto_1 
     = tf.constructor(typestore,_Statement,"goto",_Expression,"nname");
   private static final Type _Statement_defaultCase_0 
@@ -374,12 +376,12 @@ public class AST {
     = tf.constructor(typestore,_Statement,"expressionStatement",_Expression,"expression");
   private static final Type _Statement_compoundStatement_1 
     = tf.constructor(typestore,_Statement,"compoundStatement",tf.listType(_Statement),"statements");
+  private static final Type _Statement_for_4 
+    = tf.constructor(typestore,_Statement,"for",_Expression,"initializer",_Expression,"condition",_Expression,"iteration",_Statement,"body");
   private static final Type _Statement_nullStatement_0 
     = tf.constructor(typestore,_Statement,"nullStatement");
   private static final Type _Statement_continue_0 
     = tf.constructor(typestore,_Statement,"continue");
-  private static final Type _Statement_for_4 
-    = tf.constructor(typestore,_Statement,"for",_Statement,"initializer",_Expression,"condition",_Expression,"iteration",_Statement,"body");
   private static final Type _Statement_label_2 
     = tf.constructor(typestore,_Statement,"label",_Expression,"nname",_Statement,"nestedStatement");
   private static final Type _Statement_catch_2 
@@ -400,6 +402,8 @@ public class AST {
     = tf.constructor(typestore,_Statement,"declarationStatement",_Declaration,"declaration");
   private static final Type _Statement_case_1 
     = tf.constructor(typestore,_Statement,"case",_Expression,"expression");
+  private static final Type _Statement_rangeBasedFor_3 
+    = tf.constructor(typestore,_Statement,"rangeBasedFor",_Declaration,"declaration",_Expression,"initializer",_Statement,"body");
   private static final Type _Statement_return_1 
     = tf.constructor(typestore,_Statement,"return",_Expression,"expression");
   
@@ -656,6 +660,10 @@ public class AST {
     return vf.constructor(_Expression_postfixIncr_1 , $expression);
   }
   
+  public IConstructor Expression_fieldReference( IConstructor $fieldOwner, IConstructor $nname, IConstructor $fieldType) {
+    return vf.constructor(_Expression_fieldReference_3 , $fieldOwner, $nname, $fieldType);
+  }
+  
   public IConstructor Expression_integerLiteral( int $number) {
     return vf.constructor(_Expression_integerLiteral_1 , vf.integer($number));
   }
@@ -696,6 +704,10 @@ public class AST {
     return vf.constructor(_Expression_min_2 , $lhs, $rhs);
   }
   
+  public IConstructor Expression_new( IConstructor $type, IConstructor $initializer) {
+    return vf.constructor(_Expression_new_2 , $type, $initializer);
+  }
+  
   public IConstructor Expression_notEquals( IConstructor $lhs, IConstructor $rhs) {
     return vf.constructor(_Expression_notEquals_2 , $lhs, $rhs);
   }
@@ -714,6 +726,10 @@ public class AST {
   
   public IConstructor Expression_false() {
     return vf.constructor(_Expression_false_0 );
+  }
+  
+  public IConstructor Expression_functionDeclaratorNested( IList $pointerOperators, IList $modifiers, IConstructor $declarator, IList $arguments, IList $virtSpecifiers) {
+    return vf.constructor(_Expression_functionDeclaratorNested_5 , $pointerOperators, $modifiers, $declarator, $arguments, $virtSpecifiers);
   }
   
   public IConstructor Expression_sizeof( IConstructor $expression) {
@@ -820,10 +836,6 @@ public class AST {
     return vf.constructor(_Expression_lessEqual_2 , $lhs, $rhs);
   }
   
-  public IConstructor Expression_new( IConstructor $type, IConstructor $initializer) {
-    return vf.constructor(_Expression_new_2 , $type, $initializer);
-  }
-  
   public IConstructor Expression_greaterThan( IConstructor $lhs, IConstructor $rhs) {
     return vf.constructor(_Expression_greaterThan_2 , $lhs, $rhs);
   }
@@ -892,6 +904,10 @@ public class AST {
     return vf.constructor(_Expression_functionDeclaratorWithES_6 , $pointerOperators, $modifiers, $nname, $arguments, $virtSpecifiers, $exceptionSpecification);
   }
   
+  public IConstructor Expression_simpleTypeConstructor( IConstructor $declSpecifier, IConstructor $initializer) {
+    return vf.constructor(_Expression_simpleTypeConstructor_2 , $declSpecifier, $initializer);
+  }
+  
   public IConstructor Expression_functionDeclaratorWithES( IList $pointerOperators, IList $modifiers, IConstructor $nname, IList $arguments, IList $virtSpecifiers) {
     return vf.constructor(_Expression_functionDeclaratorWithES_5 , $pointerOperators, $modifiers, $nname, $arguments, $virtSpecifiers);
   }
@@ -956,14 +972,6 @@ public class AST {
     return vf.constructor(_Expression_shiftRightAssign_2 , $lhs, $rhs);
   }
   
-  public IConstructor Expression_fieldReference( IConstructor $fieldOwner, IConstructor $nname, IConstructor $fieldType) {
-    return vf.constructor(_Expression_fieldReference_3 , $fieldOwner, $nname, $fieldType);
-  }
-  
-  public IConstructor Expression_simpleTypeConstructor( IConstructor $declSpecifier, IConstructor $initializer) {
-    return vf.constructor(_Expression_simpleTypeConstructor_2 , $declSpecifier, $initializer);
-  }
-  
   public IConstructor Expression_logicalOr( IConstructor $lhs, IConstructor $rhs) {
     return vf.constructor(_Expression_logicalOr_2 , $lhs, $rhs);
   }
@@ -1002,6 +1010,10 @@ public class AST {
   
   public IConstructor Expression_postfixDecr( IConstructor $expression) {
     return vf.constructor(_Expression_postfixDecr_1 , $expression);
+  }
+  
+  public IConstructor Expression_functionDeclaratorNested( IList $pointerOperators, IList $modifiers, IConstructor $declarator, IList $arguments, IList $virtSpecifiers, IConstructor $initializer) {
+    return vf.constructor(_Expression_functionDeclaratorNested_6 , $pointerOperators, $modifiers, $declarator, $arguments, $virtSpecifiers, $initializer);
   }
   
   public IConstructor Expression_dynamicCast( IConstructor $type, IConstructor $expression) {
@@ -1126,10 +1138,6 @@ public class AST {
     return vf.constructor(_Statement_switch_2 , $controller, $body);
   }
   
-  public IConstructor Statement_rangeBasedFor( IConstructor $declaration, IConstructor $initializer, IConstructor $body) {
-    return vf.constructor(_Statement_rangeBasedFor_3 , $declaration, $initializer, $body);
-  }
-  
   public IConstructor Statement_goto( IConstructor $nname) {
     return vf.constructor(_Statement_goto_1 , $nname);
   }
@@ -1150,16 +1158,16 @@ public class AST {
     return vf.constructor(_Statement_compoundStatement_1 , $statements);
   }
   
+  public IConstructor Statement_for( IConstructor $initializer, IConstructor $condition, IConstructor $iteration, IConstructor $body) {
+    return vf.constructor(_Statement_for_4 , $initializer, $condition, $iteration, $body);
+  }
+  
   public IConstructor Statement_nullStatement() {
     return vf.constructor(_Statement_nullStatement_0 );
   }
   
   public IConstructor Statement_continue() {
     return vf.constructor(_Statement_continue_0 );
-  }
-  
-  public IConstructor Statement_for( IConstructor $initializer, IConstructor $condition, IConstructor $iteration, IConstructor $body) {
-    return vf.constructor(_Statement_for_4 , $initializer, $condition, $iteration, $body);
   }
   
   public IConstructor Statement_label( IConstructor $nname, IConstructor $nestedStatement) {
@@ -1200,6 +1208,10 @@ public class AST {
   
   public IConstructor Statement_case( IConstructor $expression) {
     return vf.constructor(_Statement_case_1 , $expression);
+  }
+  
+  public IConstructor Statement_rangeBasedFor( IConstructor $declaration, IConstructor $initializer, IConstructor $body) {
+    return vf.constructor(_Statement_rangeBasedFor_3 , $declaration, $initializer, $body);
   }
   
   public IConstructor Statement_return( IConstructor $expression) {

@@ -859,8 +859,8 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		ICPPASTVirtSpecifier[] _virtSpecifiers = declarator.getVirtSpecifiers();
 		IASTPointerOperator[] _pointerOperators = declarator.getPointerOperators();
 
-		IASTDeclarator nestedDeclarator = declarator.getNestedDeclarator();
-		IASTInitializer initializer = declarator.getInitializer();
+		IASTDeclarator _nestedDeclarator = declarator.getNestedDeclarator();
+		IASTInitializer _initializer = declarator.getInitializer();
 
 		IListWriter modifiers = vf.listWriter();
 		if (declarator.isConst())
@@ -876,10 +876,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		if (declarator.isOverride())
 			modifiers.append(builder.Modifier_override());
 
-		if (nestedDeclarator != null)
-			err("WARNING: ICPPASTFunctionDeclarator has nestedDeclarator");
-		if (initializer != null)
-			err("WARNING: ICPPASTFunctionDeclarator has initializer");
 		if (declarator.takesVarArgs())
 			err("WARNING: ICPPASTFunctionDeclarator has takesVarArgs=true");
 		if (noexceptExpression != null)
@@ -904,7 +900,20 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			pointerOperators.append(stack.pop());
 		});
 
-		if (_exceptionSpecification.equals(ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION))
+		if (_nestedDeclarator != null) {
+			_nestedDeclarator.accept(this);
+			IConstructor nestedDeclarator = stack.pop();
+			if (_initializer == null)
+				stack.push(builder.Expression_functionDeclaratorNested(pointerOperators.done(), modifiers.done(),
+						nestedDeclarator, parameters.done(), virtSpecifiers.done()));
+			else {
+				_initializer.accept(this);
+				stack.push(builder.Expression_functionDeclaratorNested(pointerOperators.done(), modifiers.done(),
+						nestedDeclarator, parameters.done(), virtSpecifiers.done(), stack.pop()));
+			}
+			if (!(_exceptionSpecification.equals(ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION)))
+				err("WARNING: ICPPASTFunctionDeclaration had nestedDeclarator and also exceptionSpecification");
+		} else if (_exceptionSpecification.equals(ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION))
 			stack.push(builder.Expression_functionDeclarator(pointerOperators.done(), modifiers.done(), name,
 					parameters.done(), virtSpecifiers.done()));
 		else if (_exceptionSpecification.equals(IASTTypeId.EMPTY_TYPEID_ARRAY))
@@ -1762,7 +1771,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		int operator = expression.getOperator();
 		IASTExpression _operand = expression.getOperand();
 		IASTTypeId typeId = expression.getTypeId();
-		out("CastExpression type: " + typeId.getRawSignature());
 		_operand.accept(this);
 		IConstructor operand = stack.pop();
 		typeId.accept(this);
