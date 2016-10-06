@@ -1433,20 +1433,34 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTNewExpression expression) {
-		boolean isGlobal = expression.isGlobal();
-		boolean isArrayAllocation = expression.isArrayAllocation();
-		boolean isNewTypeId = expression.isNewTypeId();
-		IASTInitializerClause[] placementArguments = expression.getPlacementArguments();
-		if (isGlobal || isArrayAllocation || isNewTypeId || placementArguments != null)
-			err("WARNING: ICPPASTNewExpression has unimplemented field set. isGlobal=" + isGlobal
-					+ ", isArrayAllocation=" + isArrayAllocation + ", isNewTypeId=" + isNewTypeId
-					+ ", #placementArguments=" + (placementArguments == null ? null : placementArguments.length));
+		if (expression.isGlobal())
+			err("WARNING: ICPPASTNewExpression has isGlobal=true");
+		if (expression.isArrayAllocation())
+			err("WARNING: ICPPASTNewExpression has isArrayAllocation=true");
+		if (expression.isNewTypeId())
+			err("WARNING: ICPPASTNewExpression has isNewTypeId=true");
+
 		IASTTypeId _typeId = expression.getTypeId();
 		IASTInitializer _initializer = expression.getInitializer();
 
 		_typeId.accept(this);
 		IConstructor typeId = stack.pop();
-		if (_initializer == null)
+
+		IASTInitializerClause[] _placementArguments = expression.getPlacementArguments();
+		if (_placementArguments != null) {
+			IListWriter placementArguments = vf.listWriter();
+			Stream.of(_placementArguments).forEach(it -> {
+				it.accept(this);
+				placementArguments.append(stack.pop());
+			});
+			if (_initializer == null)
+				stack.push(builder.Expression_newWithArgs(placementArguments.done(), typeId));
+			else {
+				_initializer.accept(this);
+				IConstructor initializer = stack.pop();
+				stack.push(builder.Expression_newWithArgs(placementArguments.done(), typeId, initializer));
+			}
+		} else if (_initializer == null)
 			stack.push(builder.Expression_new(typeId));
 		else {
 			_initializer.accept(this);

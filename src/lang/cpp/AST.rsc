@@ -185,6 +185,8 @@ data Expression
     | \constructorInitializer(list[Expression] arguments)
     | \new(Type \type)
     | \new(Type \type, Expression initializer)
+    | \newWithArgs(list[Expression] arguments, Type \type)
+    | \newWithArgs(list[Expression] arguments, Type \type, Expression initializer)
     | \delete(Expression expression)
     
     | \arraySubscriptExpression(Expression array, Expression argument)
