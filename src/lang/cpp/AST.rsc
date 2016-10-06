@@ -247,8 +247,8 @@ data Statement
     | \return(Expression expression)
     | \return()
     | \nullStatement()
-    | \label(str name, Statement nestedStatement)
-    | \goto(str name)
+    | \label(Expression nname, Statement nestedStatement)
+    | \goto(Expression nname)
     
     | \tryBlock(Statement tryBody, list[Statement] catchHandlers)
     | \catch(Declaration declaration, Statement body)

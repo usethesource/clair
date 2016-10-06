@@ -2131,15 +2131,14 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		_nestedStatement.accept(this);
 		IConstructor nestedStatement = stack.pop();
 
-		stack.push(builder.Statement_label(name.getName(), nestedStatement));
+		stack.push(builder.Statement_label(name, nestedStatement));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTGotoStatement statement) {
 		IASTName _name = statement.getName();
 		_name.accept(this);
-		IConstructor name = stack.pop();
-		stack.push(builder.Statement_goto(name.getName()));
+		stack.push(builder.Statement_goto(stack.pop()));
 		return PROCESS_ABORT;
 	}
 
