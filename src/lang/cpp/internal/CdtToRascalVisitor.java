@@ -2366,8 +2366,19 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	@Override
 	public int visit(ICPPASTNamespaceDefinition namespaceDefinition) {
-		err("NamespaceDefinition: " + namespaceDefinition.getRawSignature());
-		throw new RuntimeException("NYI");
+		IASTName _name = namespaceDefinition.getName();
+		boolean isInline = namespaceDefinition.isInline();
+		IASTDeclaration[] _declarations = namespaceDefinition.getDeclarations();
+
+		_name.accept(this);
+		IConstructor name = stack.pop();
+		IListWriter declarations = vf.listWriter();
+		Stream.of(_declarations).forEach(it -> {
+			it.accept(this);
+			declarations.append(stack.pop());
+		});
+		stack.push(builder.Declaration_namespaceDefinition(name, declarations.done(), vf.bool(isInline)));
+		return PROCESS_ABORT;
 	}
 
 	@Override

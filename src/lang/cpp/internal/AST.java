@@ -108,6 +108,8 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"template",_Declaration,"declaration",tf.listType(_Expression),"parameters");
   private static final Type _Declaration_functionDefinition_4 
     = tf.constructor(typestore,_Declaration,"functionDefinition",_Type,"ddeclSpecifier",_Declaration,"ddeclarator",tf.listType(_Declaration),"memberInitializer",_Statement,"sbody");
+  private static final Type _Declaration_namespaceDefinition_3 
+    = tf.constructor(typestore,_Declaration,"namespaceDefinition",_Expression,"nname",tf.listType(_Declaration),"declarations",tf.boolType(),"isInline");
   private static final Type _Declaration_constructorChainInitializer_2 
     = tf.constructor(typestore,_Declaration,"constructorChainInitializer",_Expression,"nname",_Expression,"initializer");
   
@@ -615,6 +617,10 @@ public class AST {
   
   public IConstructor Declaration_functionDefinition( IConstructor $ddeclSpecifier, IConstructor $ddeclarator, IList $memberInitializer, IConstructor $sbody) {
     return vf.constructor(_Declaration_functionDefinition_4 , $ddeclSpecifier, $ddeclarator, $memberInitializer, $sbody);
+  }
+  
+  public IConstructor Declaration_namespaceDefinition( IConstructor $nname, IList $declarations, IValue $isInline) {
+    return vf.constructor(_Declaration_namespaceDefinition_3 , $nname, $declarations, $isInline);
   }
   
   public IConstructor Declaration_constructorChainInitializer( IConstructor $nname, IConstructor $initializer) {
