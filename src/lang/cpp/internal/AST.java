@@ -236,8 +236,6 @@ public class AST {
     = tf.constructor(typestore,_Expression,"minusAssign",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_expressionList_1 
     = tf.constructor(typestore,_Expression,"expressionList",tf.listType(_Expression),"expressions");
-  private static final Type _Expression_delete_1 
-    = tf.constructor(typestore,_Expression,"delete",_Expression,"expression");
   private static final Type _Expression_arrayModifier_0 
     = tf.constructor(typestore,_Expression,"arrayModifier");
   private static final Type _Expression_charConstant_1 
@@ -306,6 +304,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"postfixDecr",_Expression,"expression");
   private static final Type _Expression_functionDeclaratorNested_6 
     = tf.constructor(typestore,_Expression,"functionDeclaratorNested",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Declaration,"declarator",tf.listType(_Expression),"arguments",tf.listType(_Declaration),"virtSpecifiers",_Expression,"initializer");
+  private static final Type _Expression_delete_2 
+    = tf.constructor(typestore,_Expression,"delete",tf.boolType(),"isVectored",_Expression,"expression");
   private static final Type _Expression_dynamicCast_2 
     = tf.constructor(typestore,_Expression,"dynamicCast",_Type,"type",_Expression,"expression");
   private static final Type _Expression_assign_2 
@@ -888,10 +888,6 @@ public class AST {
     return vf.constructor(_Expression_expressionList_1 , $expressions);
   }
   
-  public IConstructor Expression_delete( IConstructor $expression) {
-    return vf.constructor(_Expression_delete_1 , $expression);
-  }
-  
   public IConstructor Expression_arrayModifier() {
     return vf.constructor(_Expression_arrayModifier_0 );
   }
@@ -1026,6 +1022,10 @@ public class AST {
   
   public IConstructor Expression_functionDeclaratorNested( IList $pointerOperators, IList $modifiers, IConstructor $declarator, IList $arguments, IList $virtSpecifiers, IConstructor $initializer) {
     return vf.constructor(_Expression_functionDeclaratorNested_6 , $pointerOperators, $modifiers, $declarator, $arguments, $virtSpecifiers, $initializer);
+  }
+  
+  public IConstructor Expression_delete( IValue $isVectored, IConstructor $expression) {
+    return vf.constructor(_Expression_delete_2 , $isVectored, $expression);
   }
   
   public IConstructor Expression_dynamicCast( IConstructor $type, IConstructor $expression) {

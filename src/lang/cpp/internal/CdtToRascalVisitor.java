@@ -1502,14 +1502,11 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTDeleteExpression expression) {
-		boolean isGlobal = expression.isGlobal();
-		boolean isVectored = expression.isVectored();
-		if (isGlobal || isVectored)
-			err("WARNING: ICPPASTDeleteExpression encountered unimplemented field set: isGlobal=" + isGlobal
-					+ ", isVectored=" + isVectored);
+		if (expression.isGlobal())
+			err("WARNING: ICPPASTDeleteExpression has isGlobal=true");
 		IASTExpression operand = expression.getOperand();
 		operand.accept(this);
-		stack.push(builder.Expression_delete(stack.pop()));
+		stack.push(builder.Expression_delete(vf.bool(expression.isVectored()), stack.pop()));
 		return PROCESS_ABORT;
 	}
 
@@ -2252,8 +2249,10 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTProblemStatement statement) {
-		err(statement.getProblem().getMessage());
-		throw new RuntimeException("NYI");
+		err("IASTProblemStatement:");
+		err(statement.getProblem().getMessageWithLocation());
+		err(statement.getRawSignature());
+		throw new RuntimeException("ERROR");
 	}
 
 	public int visit(IASTForStatement statement) {
