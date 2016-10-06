@@ -30,22 +30,18 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"pointer");
   private static final Type _Declaration_enumerator_2 
     = tf.constructor(typestore,_Declaration,"enumerator",tf.stringType(),"name",_Expression,"evalue");
-  private static final Type _Declaration_declarator_2 
-    = tf.constructor(typestore,_Declaration,"declarator",_Expression,"nname",tf.listType(_Declaration),"pointerOperators");
+  private static final Type _Declaration_struct_3 
+    = tf.constructor(typestore,_Declaration,"struct",_Expression,"nname",tf.listType(_Declaration),"baseSpecifiers",tf.listType(_Declaration),"members");
   private static final Type _Declaration_translationUnit_1 
     = tf.constructor(typestore,_Declaration,"translationUnit",tf.listType(_Declaration),"declarations");
   private static final Type _Declaration_baseSpecifier_1 
     = tf.constructor(typestore,_Declaration,"baseSpecifier",_Modifier,"modifier");
   private static final Type _Declaration_virtSpecifier_1 
     = tf.constructor(typestore,_Declaration,"virtSpecifier",_Modifier,"modifier");
-  private static final Type _Declaration_declSpecifier_3 
-    = tf.constructor(typestore,_Declaration,"declSpecifier",tf.listType(_Modifier),"modifiers",_Type,"type",_Expression,"expression");
   private static final Type _Declaration_class_2 
     = tf.constructor(typestore,_Declaration,"class",_Expression,"nname",tf.listType(_Declaration),"members");
   private static final Type _Declaration_initializerClause_1 
     = tf.constructor(typestore,_Declaration,"initializerClause",_Expression,"expression");
-  private static final Type _Declaration_etsStruct_1 
-    = tf.constructor(typestore,_Declaration,"etsStruct",_Expression,"nname");
   private static final Type _Declaration_struct_2 
     = tf.constructor(typestore,_Declaration,"struct",_Expression,"nname",tf.listType(_Declaration),"members");
   private static final Type _Declaration_union_3 
@@ -62,10 +58,6 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"simpleDeclaration",_Type,"ddeclSpecifier",tf.listType(_Declaration),"declarators");
   private static final Type _Declaration_equalsInitializer_1 
     = tf.constructor(typestore,_Declaration,"equalsInitializer",_Expression,"initializer");
-  private static final Type _Declaration_struct_3 
-    = tf.constructor(typestore,_Declaration,"struct",_Expression,"nname",tf.listType(_Declaration),"baseSpecifiers",tf.listType(_Declaration),"members");
-  private static final Type _Declaration_declarator_3 
-    = tf.constructor(typestore,_Declaration,"declarator",_Expression,"nname",tf.listType(_Declaration),"pointerOperators",_Declaration,"init");
   private static final Type _Declaration_arrayDeclarator_3 
     = tf.constructor(typestore,_Declaration,"arrayDeclarator",_Expression,"nname",tf.listType(_Expression),"arrayModifier",_Expression,"initializer");
   private static final Type _Declaration_visibilityLabel_1 
@@ -76,6 +68,10 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"etsEnum",_Expression,"nname");
   private static final Type _Declaration_sttClass_1 
     = tf.constructor(typestore,_Declaration,"sttClass",_Expression,"nname");
+  private static final Type _Declaration_declSpecifier_3 
+    = tf.constructor(typestore,_Declaration,"declSpecifier",tf.listType(_Modifier),"modifiers",_Type,"type",_Expression,"expression");
+  private static final Type _Declaration_declarator_2 
+    = tf.constructor(typestore,_Declaration,"declarator",tf.listType(_Declaration),"pointerOperators",_Expression,"nname");
   private static final Type _Declaration_enumerator_1 
     = tf.constructor(typestore,_Declaration,"enumerator",tf.stringType(),"name");
   private static final Type _Declaration_functionDefinition_3 
@@ -92,6 +88,10 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"defaultedFunctionDefinition",_Type,"ddeclSpecifier",tf.listType(_Declaration),"memberInitializer",_Declaration,"ddeclarator");
   private static final Type _Declaration_baseSpecifier_2 
     = tf.constructor(typestore,_Declaration,"baseSpecifier",_Modifier,"modifier",_Expression,"nname");
+  private static final Type _Declaration_declarator_3 
+    = tf.constructor(typestore,_Declaration,"declarator",tf.listType(_Declaration),"pointerOperators",_Expression,"nname",_Declaration,"init");
+  private static final Type _Declaration_etsStruct_1 
+    = tf.constructor(typestore,_Declaration,"etsStruct",_Expression,"nname");
   private static final Type _Declaration_sttTypename_1 
     = tf.constructor(typestore,_Declaration,"sttTypename",_Expression,"nname");
   private static final Type _Declaration_arrayDeclarator_2 
@@ -471,8 +471,8 @@ public class AST {
     return vf.constructor(_Declaration_enumerator_2 , vf.string($name), $evalue);
   }
   
-  public IConstructor Declaration_declarator( IConstructor $nname, IList $pointerOperators) {
-    return vf.constructor(_Declaration_declarator_2 , $nname, $pointerOperators);
+  public IConstructor Declaration_struct( IConstructor $nname, IList $baseSpecifiers, IList $members) {
+    return vf.constructor(_Declaration_struct_3 , $nname, $baseSpecifiers, $members);
   }
   
   public IConstructor Declaration_translationUnit( IList $declarations) {
@@ -487,20 +487,12 @@ public class AST {
     return vf.constructor(_Declaration_virtSpecifier_1 , $modifier);
   }
   
-  public IConstructor Declaration_declSpecifier( IList $modifiers, IConstructor $type, IConstructor $expression) {
-    return vf.constructor(_Declaration_declSpecifier_3 , $modifiers, $type, $expression);
-  }
-  
   public IConstructor Declaration_class( IConstructor $nname, IList $members) {
     return vf.constructor(_Declaration_class_2 , $nname, $members);
   }
   
   public IConstructor Declaration_initializerClause( IConstructor $expression) {
     return vf.constructor(_Declaration_initializerClause_1 , $expression);
-  }
-  
-  public IConstructor Declaration_etsStruct( IConstructor $nname) {
-    return vf.constructor(_Declaration_etsStruct_1 , $nname);
   }
   
   public IConstructor Declaration_struct( IConstructor $nname, IList $members) {
@@ -535,14 +527,6 @@ public class AST {
     return vf.constructor(_Declaration_equalsInitializer_1 , $initializer);
   }
   
-  public IConstructor Declaration_struct( IConstructor $nname, IList $baseSpecifiers, IList $members) {
-    return vf.constructor(_Declaration_struct_3 , $nname, $baseSpecifiers, $members);
-  }
-  
-  public IConstructor Declaration_declarator( IConstructor $nname, IList $pointerOperators, IConstructor $init) {
-    return vf.constructor(_Declaration_declarator_3 , $nname, $pointerOperators, $init);
-  }
-  
   public IConstructor Declaration_arrayDeclarator( IConstructor $nname, IList $arrayModifier, IConstructor $initializer) {
     return vf.constructor(_Declaration_arrayDeclarator_3 , $nname, $arrayModifier, $initializer);
   }
@@ -561,6 +545,14 @@ public class AST {
   
   public IConstructor Declaration_sttClass( IConstructor $nname) {
     return vf.constructor(_Declaration_sttClass_1 , $nname);
+  }
+  
+  public IConstructor Declaration_declSpecifier( IList $modifiers, IConstructor $type, IConstructor $expression) {
+    return vf.constructor(_Declaration_declSpecifier_3 , $modifiers, $type, $expression);
+  }
+  
+  public IConstructor Declaration_declarator( IList $pointerOperators, IConstructor $nname) {
+    return vf.constructor(_Declaration_declarator_2 , $pointerOperators, $nname);
   }
   
   public IConstructor Declaration_enumerator( String $name) {
@@ -593,6 +585,14 @@ public class AST {
   
   public IConstructor Declaration_baseSpecifier( IConstructor $modifier, IConstructor $nname) {
     return vf.constructor(_Declaration_baseSpecifier_2 , $modifier, $nname);
+  }
+  
+  public IConstructor Declaration_declarator( IList $pointerOperators, IConstructor $nname, IConstructor $init) {
+    return vf.constructor(_Declaration_declarator_3 , $pointerOperators, $nname, $init);
+  }
+  
+  public IConstructor Declaration_etsStruct( IConstructor $nname) {
+    return vf.constructor(_Declaration_etsStruct_1 , $nname);
   }
   
   public IConstructor Declaration_sttTypename( IConstructor $nname) {

@@ -830,11 +830,11 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			IConstructor name = stack.pop();
 			IConstructor initializer = null;
 			if (_initializer == null) {
-				stack.push(builder.Declaration_declarator(name, pointerOperators.done()));
+				stack.push(builder.Declaration_declarator(pointerOperators.done(), name));
 			} else {
 				_initializer.accept(this);
 				initializer = stack.pop();
-				stack.push(builder.Declaration_declarator(name, pointerOperators.done(), initializer));
+				stack.push(builder.Declaration_declarator(pointerOperators.done(), name, initializer));
 			}
 		}
 		return PROCESS_ABORT;
