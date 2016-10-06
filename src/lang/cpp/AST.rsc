@@ -186,6 +186,7 @@ data Expression
     | \delete(Expression expression)
     
     | \arraySubscriptExpression(Expression array, Expression argument)
+    | \arrayModifier()
     | \arrayModifier(Expression constExpression)
     
     | \simpleTypeConstructor(Declaration declSpecifier, Statement initializer)
