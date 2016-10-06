@@ -187,7 +187,7 @@ data Expression
     | \new(Type \type, Expression initializer)
     | \newWithArgs(list[Expression] arguments, Type \type)
     | \newWithArgs(list[Expression] arguments, Type \type, Expression initializer)
-    | \delete(Expression expression)
+    | \delete(bool isVectored, Expression expression)
     
     | \arraySubscriptExpression(Expression array, Expression argument)
     | \arrayModifier()
