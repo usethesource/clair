@@ -356,6 +356,7 @@ data Modifier
     | \const()
     | \volatile()
     | \restrict()
+    | \inline()
     
     | \final()
     | \override()

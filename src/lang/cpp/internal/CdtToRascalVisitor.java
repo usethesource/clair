@@ -1072,7 +1072,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		if (declSpec.isRestrict())
 			modifiers.append(builder.Modifier_restrict());
 		if (declSpec.isInline())
-			err("WARNING: IASTNamedTypeSpecifier has isInline=true, not implemented");
+			modifiers.append(builder.Modifier_inline());
 		if (declSpec instanceof ICPPASTNamedTypeSpecifier) {
 			if (((ICPPASTNamedTypeSpecifier) declSpec).isFriend())
 				modifiers.append(builder.Modifier_friend());

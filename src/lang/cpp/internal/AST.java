@@ -414,8 +414,6 @@ public class AST {
     = tf.constructor(typestore,_Modifier,"unsigned");
   private static final Type _Modifier_longlong_0 
     = tf.constructor(typestore,_Modifier,"longlong");
-  private static final Type _Modifier_imaginary_0 
-    = tf.constructor(typestore,_Modifier,"imaginary");
   private static final Type _Modifier_friend_0 
     = tf.constructor(typestore,_Modifier,"friend");
   private static final Type _Modifier_private_0 
@@ -432,6 +430,10 @@ public class AST {
     = tf.constructor(typestore,_Modifier,"static");
   private static final Type _Modifier_protected_0 
     = tf.constructor(typestore,_Modifier,"protected");
+  private static final Type _Modifier_imaginary_0 
+    = tf.constructor(typestore,_Modifier,"imaginary");
+  private static final Type _Modifier_inline_0 
+    = tf.constructor(typestore,_Modifier,"inline");
   private static final Type _Modifier_short_0 
     = tf.constructor(typestore,_Modifier,"short");
   private static final Type _Modifier_volatile_0 
@@ -1213,10 +1215,6 @@ public class AST {
     return vf.constructor(_Modifier_longlong_0 );
   }
   
-  public IConstructor Modifier_imaginary() {
-    return vf.constructor(_Modifier_imaginary_0 );
-  }
-  
   public IConstructor Modifier_friend() {
     return vf.constructor(_Modifier_friend_0 );
   }
@@ -1247,6 +1245,14 @@ public class AST {
   
   public IConstructor Modifier_protected() {
     return vf.constructor(_Modifier_protected_0 );
+  }
+  
+  public IConstructor Modifier_imaginary() {
+    return vf.constructor(_Modifier_imaginary_0 );
+  }
+  
+  public IConstructor Modifier_inline() {
+    return vf.constructor(_Modifier_inline_0 );
   }
   
   public IConstructor Modifier_short() {
