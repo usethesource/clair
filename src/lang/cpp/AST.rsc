@@ -60,6 +60,8 @@ data Declaration
     
     | \virtSpecifier(Modifier modifier)
     
+    | \namespaceDefinition(Expression nname, list[Declaration] declarations, bool isInline)
+    
     //| \compilationUnit(Declaration package, list[Declaration] imports, list[Declaration] types)
     //| \enum(str name, list[Type] implements, list[Declaration] constants, list[Declaration] body)
     //| \enumConstant(str name, list[Expression] arguments, Declaration class)
