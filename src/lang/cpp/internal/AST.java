@@ -66,6 +66,8 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"struct",_Expression,"nname",tf.listType(_Declaration),"baseSpecifiers",tf.listType(_Declaration),"members");
   private static final Type _Declaration_declarator_3 
     = tf.constructor(typestore,_Declaration,"declarator",_Expression,"nname",tf.listType(_Declaration),"pointerOperators",_Declaration,"init");
+  private static final Type _Declaration_arrayDeclarator_3 
+    = tf.constructor(typestore,_Declaration,"arrayDeclarator",_Expression,"nname",tf.listType(_Expression),"arrayModifier",_Expression,"initializer");
   private static final Type _Declaration_visibilityLabel_1 
     = tf.constructor(typestore,_Declaration,"visibilityLabel",_Modifier,"visibility");
   private static final Type _Declaration_class_3 
@@ -92,14 +94,18 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"baseSpecifier",_Modifier,"modifier",_Expression,"nname");
   private static final Type _Declaration_sttTypename_1 
     = tf.constructor(typestore,_Declaration,"sttTypename",_Expression,"nname");
-  private static final Type _Declaration_arraydeclarator_2 
-    = tf.constructor(typestore,_Declaration,"arraydeclarator",_Expression,"nname",tf.listType(_Expression),"arrayModifier");
+  private static final Type _Declaration_arrayDeclarator_2 
+    = tf.constructor(typestore,_Declaration,"arrayDeclarator",_Expression,"nname",tf.listType(_Expression),"arrayModifier");
   private static final Type _Declaration_functionWithTryBlockDefinition_5 
     = tf.constructor(typestore,_Declaration,"functionWithTryBlockDefinition",_Type,"ddeclSpecifier",_Declaration,"ddeclarator",tf.listType(_Declaration),"memberInitializer",_Statement,"sbody",tf.listType(_Statement),"catchHandlers");
   private static final Type _Declaration_declarationEqualsInitializer_2 
     = tf.constructor(typestore,_Declaration,"declarationEqualsInitializer",tf.stringType(),"name",_Expression,"initializer");
   private static final Type _Declaration_initializerList_1 
     = tf.constructor(typestore,_Declaration,"initializerList",tf.listType(_Expression),"clauses");
+  private static final Type _Declaration_usingDeclaration_1 
+    = tf.constructor(typestore,_Declaration,"usingDeclaration",_Expression,"nname");
+  private static final Type _Declaration_namespaceAlias_2 
+    = tf.constructor(typestore,_Declaration,"namespaceAlias",_Expression,"alias",_Expression,"mapping");
   private static final Type _Declaration_deletedFunctionDefinition_3 
     = tf.constructor(typestore,_Declaration,"deletedFunctionDefinition",_Type,"ddeclSpecifier",tf.listType(_Declaration),"memberInitializer",_Declaration,"ddeclarator");
   private static final Type _Declaration_etsClass_1 
@@ -535,6 +541,10 @@ public class AST {
     return vf.constructor(_Declaration_declarator_3 , $nname, $pointerOperators, $init);
   }
   
+  public IConstructor Declaration_arrayDeclarator( IConstructor $nname, IList $arrayModifier, IConstructor $initializer) {
+    return vf.constructor(_Declaration_arrayDeclarator_3 , $nname, $arrayModifier, $initializer);
+  }
+  
   public IConstructor Declaration_visibilityLabel( IConstructor $visibility) {
     return vf.constructor(_Declaration_visibilityLabel_1 , $visibility);
   }
@@ -587,8 +597,8 @@ public class AST {
     return vf.constructor(_Declaration_sttTypename_1 , $nname);
   }
   
-  public IConstructor Declaration_arraydeclarator( IConstructor $nname, IList $arrayModifier) {
-    return vf.constructor(_Declaration_arraydeclarator_2 , $nname, $arrayModifier);
+  public IConstructor Declaration_arrayDeclarator( IConstructor $nname, IList $arrayModifier) {
+    return vf.constructor(_Declaration_arrayDeclarator_2 , $nname, $arrayModifier);
   }
   
   public IConstructor Declaration_functionWithTryBlockDefinition( IConstructor $ddeclSpecifier, IConstructor $ddeclarator, IList $memberInitializer, IConstructor $sbody, IList $catchHandlers) {
@@ -601,6 +611,14 @@ public class AST {
   
   public IConstructor Declaration_initializerList( IList $clauses) {
     return vf.constructor(_Declaration_initializerList_1 , $clauses);
+  }
+  
+  public IConstructor Declaration_usingDeclaration( IConstructor $nname) {
+    return vf.constructor(_Declaration_usingDeclaration_1 , $nname);
+  }
+  
+  public IConstructor Declaration_namespaceAlias( IConstructor $alias, IConstructor $mapping) {
+    return vf.constructor(_Declaration_namespaceAlias_2 , $alias, $mapping);
   }
   
   public IConstructor Declaration_deletedFunctionDefinition( IConstructor $ddeclSpecifier, IList $memberInitializer, IConstructor $ddeclarator) {

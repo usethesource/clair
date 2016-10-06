@@ -50,7 +50,8 @@ data Declaration
     
     | \declarationEqualsInitializer(str name, Expression initializer) //weg
     
-    | \arraydeclarator(Expression nname, list[Expression] arrayModifier)
+    | \arrayDeclarator(Expression nname, list[Expression] arrayModifier)
+    | \arrayDeclarator(Expression nname, list[Expression] arrayModifier, Expression initializer)
     | \template(Declaration declaration, list[Expression] parameters)
     | \sttClass(Expression nname) //simpleTypeTemplateParameter    
     | \sttTypename(Expression nname) //simpleTypeTemplateParameter
@@ -61,6 +62,8 @@ data Declaration
     | \virtSpecifier(Modifier modifier)
     
     | \namespaceDefinition(Expression nname, list[Declaration] declarations, bool isInline)
+    | \usingDeclaration(Expression nname)
+    | \namespaceAlias(Expression \alias, Expression mapping)
     
     //| \compilationUnit(Declaration package, list[Declaration] imports, list[Declaration] types)
     //| \enum(str name, list[Type] implements, list[Declaration] constants, list[Declaration] body)

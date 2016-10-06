@@ -389,8 +389,12 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTUsingDeclaration declaration) {
-		out("CPPUsingDeclaration: " + declaration.getRawSignature());
-		throw new RuntimeException("NYI");
+		if (declaration.isTypename())
+			err("WARNING: ICPPASTUsingDeclaration has isTypename=true");
+
+		declaration.getName().accept(this);
+		stack.push(builder.Declaration_usingDeclaration(stack.pop()));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTTemplateSpecialization declaration) {
@@ -419,8 +423,12 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTNamespaceAlias declaration) {
-		out("NamespaceAlias: " + declaration.getRawSignature());
-		throw new RuntimeException("NYI");
+		declaration.getAlias().accept(this);
+		IConstructor alias = stack.pop();
+		declaration.getMappingName().accept(this);
+		IConstructor mappingName = stack.pop();
+		stack.push(builder.Declaration_namespaceAlias(alias, mappingName));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTLinkageSpecification declaration) {
@@ -593,7 +601,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	public int visit(IASTInitializerList initializer) {
 		// err("IASTInitializerList: " +
 		// initializer.getRawSignature());
-		int size = initializer.getSize();
 		IASTInitializerClause[] _clauses = initializer.getClauses();
 		IListWriter clauses = vf.listWriter();
 		Stream.of(_clauses).forEach(it -> {
@@ -709,34 +716,35 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTArrayDeclarator declarator) {
-		if (declarator instanceof IASTArrayDeclarator) {
-			IASTArrayModifier[] _arrayModifiers = declarator.getArrayModifiers();
-			IASTPointerOperator[] _pointerOperators = declarator.getPointerOperators();
-			IASTDeclarator _nestedDeclarator = declarator.getNestedDeclarator();
-			IASTName _name = declarator.getName();
-			IASTInitializer initializer = declarator.getInitializer();
-			IListWriter arrayModifiers = vf.listWriter();
-			Stream.of(_arrayModifiers).forEach(it -> {
-				it.accept(this);
-				arrayModifiers.append(stack.pop());
-			});
-			IListWriter pointerOperators = vf.listWriter();
-			Stream.of(_pointerOperators).forEach(it -> {
-				it.accept(this);
-				pointerOperators.append(stack.pop());
-			});
-			IConstructor nestedDeclarator;
-			if (_nestedDeclarator != null) {
-				_nestedDeclarator.accept(this);
-				nestedDeclarator = stack.pop();
-			}
-			_name.accept(this);
-			IConstructor name = stack.pop();
-			if (_pointerOperators.length > 0 || _nestedDeclarator != null)
-				err("WARNING: IASTArrayDeclarator encountered unimplemented field");
-			stack.push(builder.Declaration_arraydeclarator(name, arrayModifiers.done()));
-		} else
-			throw new RuntimeException("NYI");
+		IASTArrayModifier[] _arrayModifiers = declarator.getArrayModifiers();
+		IASTPointerOperator[] _pointerOperators = declarator.getPointerOperators();
+		IASTDeclarator _nestedDeclarator = declarator.getNestedDeclarator();
+		IASTName _name = declarator.getName();
+		IASTInitializer _initializer = declarator.getInitializer();
+
+		IListWriter arrayModifiers = vf.listWriter();
+		Stream.of(_arrayModifiers).forEach(it -> {
+			it.accept(this);
+			arrayModifiers.append(stack.pop());
+		});
+		IListWriter pointerOperators = vf.listWriter();
+		Stream.of(_pointerOperators).forEach(it -> {
+			it.accept(this);
+			pointerOperators.append(stack.pop());
+		});
+		_name.accept(this);
+		IConstructor name = stack.pop();
+		if (declarator instanceof ICPPASTArrayDeclarator
+				&& ((ICPPASTArrayDeclarator) declarator).declaresParameterPack())
+			out("WARNING: IASTArrayDeclarator has declaresParameterPack=true");
+		if (_pointerOperators.length > 0 || _nestedDeclarator != null)
+			err("WARNING: IASTArrayDeclarator encountered unimplemented field");
+		if (_initializer == null)
+			stack.push(builder.Declaration_arrayDeclarator(name, arrayModifiers.done()));
+		else {
+			_initializer.accept(this);
+			stack.push(builder.Declaration_arrayDeclarator(name, arrayModifiers.done(), stack.pop()));
+		}
 		return PROCESS_ABORT;
 	}
 
@@ -833,8 +841,8 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTArrayDeclarator declarator) {
-		err("CPPArrayDeclarator: " + declarator.getRawSignature());
-		throw new RuntimeException("NYI");
+		visit((IASTArrayDeclarator) declarator);
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTFieldDeclarator declarator) {
