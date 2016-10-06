@@ -26,10 +26,6 @@ public class AST {
   
   private static final Type _Declaration_enum_2 
     = tf.constructor(typestore,_Declaration,"enum",tf.stringType(),"name",tf.listType(_Expression),"enumerators");
-  private static final Type _Declaration_pointer_0 
-    = tf.constructor(typestore,_Declaration,"pointer");
-  private static final Type _Declaration_enumerator_2 
-    = tf.constructor(typestore,_Declaration,"enumerator",tf.stringType(),"name",_Expression,"evalue");
   private static final Type _Declaration_struct_3 
     = tf.constructor(typestore,_Declaration,"struct",_Expression,"nname",tf.listType(_Declaration),"baseSpecifiers",tf.listType(_Declaration),"members");
   private static final Type _Declaration_translationUnit_1 
@@ -46,6 +42,10 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"struct",_Expression,"nname",tf.listType(_Declaration),"members");
   private static final Type _Declaration_union_3 
     = tf.constructor(typestore,_Declaration,"union",_Expression,"nname",tf.listType(_Declaration),"baseSpecifiers",tf.listType(_Declaration),"members");
+  private static final Type _Declaration_enumerator_2 
+    = tf.constructor(typestore,_Declaration,"enumerator",tf.stringType(),"name",_Expression,"evalue");
+  private static final Type _Declaration_pointer_1 
+    = tf.constructor(typestore,_Declaration,"pointer",tf.listType(_Modifier),"modifiers");
   private static final Type _Declaration_parameter_1 
     = tf.constructor(typestore,_Declaration,"parameter",_Declaration,"declSpecifier");
   private static final Type _Declaration_declSpecifier_2 
@@ -463,14 +463,6 @@ public class AST {
     return vf.constructor(_Declaration_enum_2 , vf.string($name), $enumerators);
   }
   
-  public IConstructor Declaration_pointer() {
-    return vf.constructor(_Declaration_pointer_0 );
-  }
-  
-  public IConstructor Declaration_enumerator( String $name, IConstructor $evalue) {
-    return vf.constructor(_Declaration_enumerator_2 , vf.string($name), $evalue);
-  }
-  
   public IConstructor Declaration_struct( IConstructor $nname, IList $baseSpecifiers, IList $members) {
     return vf.constructor(_Declaration_struct_3 , $nname, $baseSpecifiers, $members);
   }
@@ -501,6 +493,14 @@ public class AST {
   
   public IConstructor Declaration_union( IConstructor $nname, IList $baseSpecifiers, IList $members) {
     return vf.constructor(_Declaration_union_3 , $nname, $baseSpecifiers, $members);
+  }
+  
+  public IConstructor Declaration_enumerator( String $name, IConstructor $evalue) {
+    return vf.constructor(_Declaration_enumerator_2 , vf.string($name), $evalue);
+  }
+  
+  public IConstructor Declaration_pointer( IList $modifiers) {
+    return vf.constructor(_Declaration_pointer_1 , $modifiers);
   }
   
   public IConstructor Declaration_parameter( IConstructor $declSpecifier) {

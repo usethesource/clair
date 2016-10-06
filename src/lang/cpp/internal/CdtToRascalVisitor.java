@@ -1288,12 +1288,14 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTPointer pointer) {
-		boolean isConst = pointer.isConst();
-		boolean isVolatile = pointer.isVolatile();
-		boolean isRestrict = pointer.isRestrict();
-		if (isConst || isVolatile || isRestrict)
-			err("WARNING: IASTPointer encountered unimplemented field set");
-		stack.push(builder.Declaration_pointer());
+		IListWriter modifiers = vf.listWriter();
+		if (pointer.isConst())
+			modifiers.append(builder.Modifier_const());
+		if (pointer.isVolatile())
+			modifiers.append(builder.Modifier_volatile());
+		if (pointer.isRestrict())
+			modifiers.append(builder.Modifier_restrict());
+		stack.push(builder.Declaration_pointer(modifiers.done()));
 		return PROCESS_ABORT;
 	}
 
