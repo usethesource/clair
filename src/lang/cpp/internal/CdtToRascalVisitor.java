@@ -1261,12 +1261,16 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		} else {
 			IASTExpression _constantExpression = arrayModifier.getConstantExpression();
 			IASTAttributeSpecifier[] _attributeSpecifiers = arrayModifier.getAttributeSpecifiers();
-			IASTAttribute[] _attributes = arrayModifier.getAttributes();
 
-			_constantExpression.accept(this);
-			if (_attributeSpecifiers.length > 0 || _attributes.length > 0)
+			if (_attributeSpecifiers != null && _attributeSpecifiers.length > 0)
 				err("WARNING: IASTArrayModifier has unimplemented field set");
-			stack.push(builder.Expression_arrayModifier(stack.pop()));
+
+			if (_constantExpression == null)
+				stack.push(builder.Expression_arrayModifier());
+			else {
+				_constantExpression.accept(this);
+				stack.push(builder.Expression_arrayModifier(stack.pop()));
+			}
 		}
 		return PROCESS_ABORT;
 	}
