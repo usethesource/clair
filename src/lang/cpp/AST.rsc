@@ -173,6 +173,8 @@ data Expression
     
     | \functionDeclarator(list[Declaration] pointerOperators, Expression nname, list[Expression] arguments)
     | \functionDeclarator(list[Declaration] pointerOperators, list[Modifier] modifiers, Expression nname, list[Expression] arguments, list[Declaration] virtSpecifiers)
+    | \functionDeclaratorNested(list[Declaration] pointerOperators, list[Modifier] modifiers, Declaration declarator, list[Expression] arguments, list[Declaration] virtSpecifiers)
+    | \functionDeclaratorNested(list[Declaration] pointerOperators, list[Modifier] modifiers, Declaration declarator, list[Expression] arguments, list[Declaration] virtSpecifiers, Expression initializer)
     | \functionDeclaratorWithES(list[Declaration] pointerOperators, list[Modifier] modifiers, Expression nname, list[Expression] arguments, list[Declaration] virtSpecifiers) //empty exception specification
     | \functionDeclaratorWithES(list[Declaration] pointerOperators, list[Modifier] modifiers, Expression nname, list[Expression] arguments, list[Declaration] virtSpecifiers, list[Type] exceptionSpecification)
     | \namedTypeSpecifier(Expression nname, list[Modifier] modifiers)
@@ -182,14 +184,14 @@ data Expression
     | \fieldReference(Expression fieldOwner, Expression nname, Type fieldType)
     | \constructorInitializer(list[Expression] arguments)
     | \new(Type \type)
-    | \new(Type \type, Statement initializer)
+    | \new(Type \type, Expression initializer)
     | \delete(Expression expression)
     
     | \arraySubscriptExpression(Expression array, Expression argument)
     | \arrayModifier()
     | \arrayModifier(Expression constExpression)
     
-    | \simpleTypeConstructor(Declaration declSpecifier, Statement initializer)
+    | \simpleTypeConstructor(Declaration declSpecifier, Expression initializer)
     
     | \expressionList(list[Expression] expressions)
     
@@ -242,8 +244,8 @@ data Statement
     | \expressionStatement(Expression expression)
     | \if(Expression condition, Statement thenClause)
     | \if(Expression condition, Statement thenClause, Statement elseClause)
-    | \for(Statement initializer, Expression condition, Expression iteration, Statement body)
-    | \rangeBasedFor(Declaration declaration, Statement initializer, Statement body)
+    | \for(Expression initializer, Expression condition, Expression iteration, Statement body)
+    | \rangeBasedFor(Declaration declaration, Expression initializer, Statement body)
     | \switch(Expression controller, Statement body)
     | \case(Expression expression)
     | \defaultCase()
