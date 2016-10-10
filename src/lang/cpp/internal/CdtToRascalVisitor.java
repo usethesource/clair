@@ -1143,6 +1143,27 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		if (declSpec.isVolatile())
 			modifiers.append(builder.Modifier_volatile());
 
+		switch (declSpec.getStorageClass()) {
+		case IASTDeclSpecifier.sc_typedef:
+			modifiers.append(builder.Modifier_typedef());
+			break;
+		case IASTDeclSpecifier.sc_extern:
+			modifiers.append(builder.Modifier_extern());
+			break;
+		case IASTDeclSpecifier.sc_static:
+			modifiers.append(builder.Modifier_static());
+			break;
+		case IASTDeclSpecifier.sc_auto:
+			modifiers.append(builder.Modifier_auto());
+			break;
+		case IASTDeclSpecifier.sc_register:
+			modifiers.append(builder.Modifier_register());
+			break;
+		case IASTDeclSpecifier.sc_mutable:
+			modifiers.append(builder.Modifier_mutable());
+			break;
+		}
+
 		if (declSpec instanceof ICPPASTDeclSpecifier) {
 			if (((ICPPASTDeclSpecifier) declSpec).isFriend())
 				modifiers.append(builder.Modifier_friend());
@@ -1700,10 +1721,9 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			boolean isVolatile = ((IPointerType) cdtType).isVolatile();
 			boolean isRestruct = ((IPointerType) cdtType).isRestrict();
 		} else if (cdtType instanceof IProblemBinding) {
-			throw new RuntimeException("IProblemBinding: " + ((IProblemBinding) cdtType).getMessage());
+			err("ERROR: IProblemBinding: " + ((IProblemBinding) cdtType).getMessage() + ", returning unspecified");
 		} else if (cdtType instanceof IProblemType) {
 			err("ERROR: IProblemType: " + ((IProblemType) cdtType).getMessage() + ", returning unspecified");
-			return builder.Type_unspecified();
 		} else if (cdtType instanceof IQualifierType) {
 			boolean isConst = ((IQualifierType) cdtType).isConst();
 			boolean isVolatile = ((IQualifierType) cdtType).isVolatile();
