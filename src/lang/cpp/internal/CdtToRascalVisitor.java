@@ -1085,7 +1085,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		if (declSpec.isInline())
 			modifiers.append(builder.Modifier_inline());
 		if (declSpec instanceof ICPPASTNamedTypeSpecifier) {
-			out("isConstexpr=" + ((ICPPASTNamedTypeSpecifier) declSpec).isConstexpr());
 			if (((ICPPASTNamedTypeSpecifier) declSpec).isFriend())
 				modifiers.append(builder.Modifier_friend());
 			if (((ICPPASTNamedTypeSpecifier) declSpec).isVirtual())
