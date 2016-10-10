@@ -54,7 +54,7 @@ data Declaration
     
     | \arrayDeclarator(Expression nname, list[Expression] arrayModifier)
     | \arrayDeclarator(Expression nname, list[Expression] arrayModifier, Expression initializer)
-    | \template(Declaration declaration, list[Expression] parameters)
+    | \template(list[Expression] parameters,Declaration declaration)
     | \sttClass(Expression nname) //simpleTypeTemplateParameter    
     | \sttTypename(Expression nname) //simpleTypeTemplateParameter
     

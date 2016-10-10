@@ -26,6 +26,8 @@ public class AST {
   
   private static final Type _Declaration_enum_2 
     = tf.constructor(typestore,_Declaration,"enum",tf.stringType(),"name",tf.listType(_Expression),"enumerators");
+  private static final Type _Declaration_template_2 
+    = tf.constructor(typestore,_Declaration,"template",tf.listType(_Expression),"parameters",_Declaration,"declaration");
   private static final Type _Declaration_struct_3 
     = tf.constructor(typestore,_Declaration,"struct",_Expression,"nname",tf.listType(_Declaration),"baseSpecifiers",tf.listType(_Declaration),"members");
   private static final Type _Declaration_translationUnit_1 
@@ -110,8 +112,6 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"deletedFunctionDefinition",_Type,"ddeclSpecifier",tf.listType(_Declaration),"memberInitializer",_Declaration,"ddeclarator");
   private static final Type _Declaration_etsClass_1 
     = tf.constructor(typestore,_Declaration,"etsClass",_Expression,"nname");
-  private static final Type _Declaration_template_2 
-    = tf.constructor(typestore,_Declaration,"template",_Declaration,"declaration",tf.listType(_Expression),"parameters");
   private static final Type _Declaration_functionDefinition_4 
     = tf.constructor(typestore,_Declaration,"functionDefinition",_Type,"ddeclSpecifier",_Declaration,"ddeclarator",tf.listType(_Declaration),"memberInitializer",_Statement,"sbody");
   private static final Type _Declaration_namespaceDefinition_3 
@@ -475,6 +475,10 @@ public class AST {
     return vf.constructor(_Declaration_enum_2 , vf.string($name), $enumerators);
   }
   
+  public IConstructor Declaration_template( IList $parameters, IConstructor $declaration) {
+    return vf.constructor(_Declaration_template_2 , $parameters, $declaration);
+  }
+  
   public IConstructor Declaration_struct( IConstructor $nname, IList $baseSpecifiers, IList $members) {
     return vf.constructor(_Declaration_struct_3 , $nname, $baseSpecifiers, $members);
   }
@@ -641,10 +645,6 @@ public class AST {
   
   public IConstructor Declaration_etsClass( IConstructor $nname) {
     return vf.constructor(_Declaration_etsClass_1 , $nname);
-  }
-  
-  public IConstructor Declaration_template( IConstructor $declaration, IList $parameters) {
-    return vf.constructor(_Declaration_template_2 , $declaration, $parameters);
   }
   
   public IConstructor Declaration_functionDefinition( IConstructor $ddeclSpecifier, IConstructor $ddeclarator, IList $memberInitializer, IConstructor $sbody) {
