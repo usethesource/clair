@@ -290,18 +290,16 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		boolean fullyQualified = name.isFullyQualified();
 		boolean conversionOrOperator = name.isConversionOrOperator();
 
-		if (_qualifier.length != 1) {
-			err("ERROR: ICPPASTQualifiedName #qualifiers!=1, exiting");
-			throw new RuntimeException("NYI");
-		}
-
-		_qualifier[0].accept(this);
-		IConstructor qualifier = stack.pop();
+		IListWriter qualifier = vf.listWriter();
+		Stream.of(_qualifier).forEach(it -> {
+			it.accept(this);
+			qualifier.append(stack.pop());
+		});
 		_lastName.accept(this);
 		IConstructor lastName = stack.pop();
 		if (fullyQualified || conversionOrOperator)
 			err("WARNING: ICPPASTQualifiedName has unimplemented field set");
-		stack.push(builder.Expression_qualifiedName(qualifier, lastName));
+		stack.push(builder.Expression_qualifiedName(qualifier.done(), lastName));
 		return PROCESS_ABORT;
 	}
 
@@ -1087,18 +1085,40 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		if (declSpec.isInline())
 			modifiers.append(builder.Modifier_inline());
 		if (declSpec instanceof ICPPASTNamedTypeSpecifier) {
+			out("isConstexpr=" + ((ICPPASTNamedTypeSpecifier) declSpec).isConstexpr());
 			if (((ICPPASTNamedTypeSpecifier) declSpec).isFriend())
 				modifiers.append(builder.Modifier_friend());
 			if (((ICPPASTNamedTypeSpecifier) declSpec).isVirtual())
 				modifiers.append(builder.Modifier_virtual());
 			if (((ICPPASTNamedTypeSpecifier) declSpec).isExplicit())
 				modifiers.append(builder.Modifier_explicit());
-			// isConstexpr?
+			if (((ICPPASTNamedTypeSpecifier) declSpec).isConstexpr())
+				err("IASTNamedTypeSpecifier encountered isConstexpr==true");
 			if (((ICPPASTNamedTypeSpecifier) declSpec).isThreadLocal())
 				modifiers.append(builder.Modifier_threadLocal());
 		}
+		switch (declSpec.getStorageClass()) {
+		case IASTDeclSpecifier.sc_typedef:
+			modifiers.append(builder.Modifier_typedef());
+			break;
+		case IASTDeclSpecifier.sc_extern:
+			modifiers.append(builder.Modifier_extern());
+			break;
+		case IASTDeclSpecifier.sc_static:
+			modifiers.append(builder.Modifier_static());
+			break;
+		case IASTDeclSpecifier.sc_auto:
+			modifiers.append(builder.Modifier_auto());
+			break;
+		case IASTDeclSpecifier.sc_register:
+			modifiers.append(builder.Modifier_register());
+			break;
+		case IASTDeclSpecifier.sc_mutable:
+			modifiers.append(builder.Modifier_mutable());
+			break;
+		}
 		declSpec.getName().accept(this);
-		stack.push(builder.Expression_namedTypeSpecifier(stack.pop(), modifiers.done()));
+		stack.push(builder.Expression_namedTypeSpecifier(modifiers.done(), stack.pop()));
 		return PROCESS_ABORT;
 	}
 
@@ -1682,7 +1702,8 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		} else if (cdtType instanceof IProblemBinding) {
 			throw new RuntimeException("IProblemBinding: " + ((IProblemBinding) cdtType).getMessage());
 		} else if (cdtType instanceof IProblemType) {
-			throw new RuntimeException("ERROR: IProblemType: " + ((IProblemType) cdtType).getMessage());
+			err("ERROR: IProblemType: " + ((IProblemType) cdtType).getMessage() + ", returning unspecified");
+			return builder.Type_unspecified();
 		} else if (cdtType instanceof IQualifierType) {
 			boolean isConst = ((IQualifierType) cdtType).isConst();
 			boolean isVolatile = ((IQualifierType) cdtType).isVolatile();
@@ -1694,7 +1715,11 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		} else { // unsubinterfaced classes
 
 		}
-		throw new RuntimeException("NYI");
+		err("WARNING: Type unresolved, returning unspecified");
+		err("Input was " + cdtType);
+		return builder.Type_unspecified();
+
+		// throw new RuntimeException("NYI");
 	}
 
 	public int visit(IASTFieldReference expression) {
@@ -2246,12 +2271,27 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IASTExpression _iteration = statement.getIterationExpression();
 		IASTStatement _body = statement.getBody();
 
-		_initializer.accept(this);
-		IConstructor initializer = stack.pop();
-		_condition.accept(this);
-		IConstructor condition = stack.pop();
-		_iteration.accept(this);
-		IConstructor iteration = stack.pop();
+		IConstructor initializer;
+		if (_initializer == null)
+			initializer = builder.Expression_empty();
+		else {
+			_initializer.accept(this);
+			initializer = stack.pop();
+		}
+		IConstructor condition;
+		if (_condition == null)
+			condition = builder.Expression_empty();
+		else {
+			_condition.accept(this);
+			condition = stack.pop();
+		}
+		IConstructor iteration;
+		if (_iteration == null)
+			iteration = builder.Expression_empty();
+		else {
+			_iteration.accept(this);
+			iteration = stack.pop();
+		}
 		_body.accept(this);
 		IConstructor body = stack.pop();
 
