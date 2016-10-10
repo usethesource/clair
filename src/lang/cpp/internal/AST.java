@@ -192,8 +192,6 @@ public class AST {
     = tf.constructor(typestore,_Expression,"divide",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_greaterEqual_2 
     = tf.constructor(typestore,_Expression,"greaterEqual",_Expression,"lhs",_Expression,"rhs");
-  private static final Type _Expression_namedTypeSpecifier_2 
-    = tf.constructor(typestore,_Expression,"namedTypeSpecifier",_Expression,"nname",tf.listType(_Modifier),"modifiers");
   private static final Type _Expression_shiftRight_2 
     = tf.constructor(typestore,_Expression,"shiftRight",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_plus_2 
@@ -208,6 +206,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"arraySubscriptExpression",_Expression,"array",_Expression,"argument");
   private static final Type _Expression_lessThan_2 
     = tf.constructor(typestore,_Expression,"lessThan",_Expression,"lhs",_Expression,"rhs");
+  private static final Type _Expression_qualifiedName_2 
+    = tf.constructor(typestore,_Expression,"qualifiedName",tf.listType(_Expression),"qualifiers",_Expression,"lastName");
   private static final Type _Expression_functionCall_2 
     = tf.constructor(typestore,_Expression,"functionCall",_Expression,"functionName",tf.listType(_Expression),"arguments");
   private static final Type _Expression_lessEqual_2 
@@ -220,6 +220,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"staticCast",_Type,"type",_Expression,"expression");
   private static final Type _Expression_labelReference_1 
     = tf.constructor(typestore,_Expression,"labelReference",_Expression,"expression");
+  private static final Type _Expression_empty_0 
+    = tf.constructor(typestore,_Expression,"empty");
   private static final Type _Expression_arrayModifier_1 
     = tf.constructor(typestore,_Expression,"arrayModifier",_Expression,"constExpression");
   private static final Type _Expression_new_1 
@@ -228,8 +230,6 @@ public class AST {
     = tf.constructor(typestore,_Expression,"true");
   private static final Type _Expression_typeid_1 
     = tf.constructor(typestore,_Expression,"typeid",_Expression,"expression");
-  private static final Type _Expression_qualifiedName_2 
-    = tf.constructor(typestore,_Expression,"qualifiedName",_Expression,"qualifier",_Expression,"lastName");
   private static final Type _Expression_equals_2 
     = tf.constructor(typestore,_Expression,"equals",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_minusAssign_2 
@@ -276,6 +276,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"binaryXorAssign",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_prefixDecr_1 
     = tf.constructor(typestore,_Expression,"prefixDecr",_Expression,"expression");
+  private static final Type _Expression_namedTypeSpecifier_2 
+    = tf.constructor(typestore,_Expression,"namedTypeSpecifier",tf.listType(_Modifier),"modifiers",_Expression,"nname");
   private static final Type _Expression_shiftRightAssign_2 
     = tf.constructor(typestore,_Expression,"shiftRightAssign",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_fieldReference_3 
@@ -420,6 +422,8 @@ public class AST {
     = tf.constructor(typestore,_Modifier,"mutable");
   private static final Type _Modifier_public_0 
     = tf.constructor(typestore,_Modifier,"public");
+  private static final Type _Modifier_auto_0 
+    = tf.constructor(typestore,_Modifier,"auto");
   private static final Type _Modifier_override_0 
     = tf.constructor(typestore,_Modifier,"override");
   private static final Type _Modifier_pureVirtual_0 
@@ -800,10 +804,6 @@ public class AST {
     return vf.constructor(_Expression_greaterEqual_2 , $lhs, $rhs);
   }
   
-  public IConstructor Expression_namedTypeSpecifier( IConstructor $nname, IList $modifiers) {
-    return vf.constructor(_Expression_namedTypeSpecifier_2 , $nname, $modifiers);
-  }
-  
   public IConstructor Expression_shiftRight( IConstructor $lhs, IConstructor $rhs) {
     return vf.constructor(_Expression_shiftRight_2 , $lhs, $rhs);
   }
@@ -832,6 +832,10 @@ public class AST {
     return vf.constructor(_Expression_lessThan_2 , $lhs, $rhs);
   }
   
+  public IConstructor Expression_qualifiedName( IList $qualifiers, IConstructor $lastName) {
+    return vf.constructor(_Expression_qualifiedName_2 , $qualifiers, $lastName);
+  }
+  
   public IConstructor Expression_functionCall( IConstructor $functionName, IList $arguments) {
     return vf.constructor(_Expression_functionCall_2 , $functionName, $arguments);
   }
@@ -856,6 +860,10 @@ public class AST {
     return vf.constructor(_Expression_labelReference_1 , $expression);
   }
   
+  public IConstructor Expression_empty() {
+    return vf.constructor(_Expression_empty_0 );
+  }
+  
   public IConstructor Expression_arrayModifier( IConstructor $constExpression) {
     return vf.constructor(_Expression_arrayModifier_1 , $constExpression);
   }
@@ -870,10 +878,6 @@ public class AST {
   
   public IConstructor Expression_typeid( IConstructor $expression) {
     return vf.constructor(_Expression_typeid_1 , $expression);
-  }
-  
-  public IConstructor Expression_qualifiedName( IConstructor $qualifier, IConstructor $lastName) {
-    return vf.constructor(_Expression_qualifiedName_2 , $qualifier, $lastName);
   }
   
   public IConstructor Expression_equals( IConstructor $lhs, IConstructor $rhs) {
@@ -966,6 +970,10 @@ public class AST {
   
   public IConstructor Expression_prefixDecr( IConstructor $expression) {
     return vf.constructor(_Expression_prefixDecr_1 , $expression);
+  }
+  
+  public IConstructor Expression_namedTypeSpecifier( IList $modifiers, IConstructor $nname) {
+    return vf.constructor(_Expression_namedTypeSpecifier_2 , $modifiers, $nname);
   }
   
   public IConstructor Expression_shiftRightAssign( IConstructor $lhs, IConstructor $rhs) {
@@ -1245,6 +1253,10 @@ public class AST {
   
   public IConstructor Modifier_public() {
     return vf.constructor(_Modifier_public_0 );
+  }
+  
+  public IConstructor Modifier_auto() {
+    return vf.constructor(_Modifier_auto_0 );
   }
   
   public IConstructor Modifier_override() {

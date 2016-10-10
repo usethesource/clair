@@ -1,5 +1,7 @@
 module lang::cpp::AST
 
+import IO;
+
 extend analysis::m3::AST;
    
 data Declaration
@@ -65,29 +67,6 @@ data Declaration
     | \usingDeclaration(Expression nname)
     | \namespaceAlias(Expression \alias, Expression mapping)
     
-    //| \compilationUnit(Declaration package, list[Declaration] imports, list[Declaration] types)
-    //| \enum(str name, list[Type] implements, list[Declaration] constants, list[Declaration] body)
-    //| \enumConstant(str name, list[Expression] arguments, Declaration class)
-    //| \enumConstant(str name, list[Expression] arguments)
-    //| \class(str name, list[Type] extends, list[Type] implements, list[Declaration] body)
-    //| \class(list[Declaration] body)
-    //| \interface(str name, list[Type] extends, list[Type] implements, list[Declaration] body)
-    //| \field(Type \type, list[Expression] fragments)
-    //| \initializer(Statement initializerBody)
-    //| \method(Type \return, str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl)
-    //| \method(Type \return, str name, list[Declaration] parameters, list[Expression] exceptions)
-    //| \constructor(str name, list[Declaration] parameters, list[Expression] exceptions, Statement impl)
-    //| \import(str name)
-    //| \package(str name)
-    //| \package(Declaration parentPackage, str name)
-    //| \variables(Type \type, list[Expression] \fragments)
-    //| \typeParameter(str name, list[Type] extendsList)
-    //| \annotationType(str name, list[Declaration] body)
-    //| \annotationTypeMember(Type \type, str name)
-    //| \annotationTypeMember(Type \type, str name, Expression defaultBlock)
-    // initializers missing in parameter, is it needed in vararg?
-    //| \parameter(Type \type, str name, int extraDimensions)
-    //| \vararg(Type \type, str name)
     ;
 
 
@@ -155,7 +134,7 @@ data Expression
     | \constCast(Type \type, Expression expression)
     
     | \name(str name)
-    | \qualifiedName(Expression qualifier, Expression lastName)
+    | \qualifiedName(list[Expression] qualifiers, Expression lastName)
     | \operatorName(str vvalue)
     | \conversionName(str vvalue, Type \type)
     | \idExpression(Expression nname)
@@ -177,7 +156,7 @@ data Expression
     | \functionDeclaratorNested(list[Declaration] pointerOperators, list[Modifier] modifiers, Declaration declarator, list[Expression] arguments, list[Declaration] virtSpecifiers, Expression initializer)
     | \functionDeclaratorWithES(list[Declaration] pointerOperators, list[Modifier] modifiers, Expression nname, list[Expression] arguments, list[Declaration] virtSpecifiers) //empty exception specification
     | \functionDeclaratorWithES(list[Declaration] pointerOperators, list[Modifier] modifiers, Expression nname, list[Expression] arguments, list[Declaration] virtSpecifiers, list[Type] exceptionSpecification)
-    | \namedTypeSpecifier(Expression nname, list[Modifier] modifiers)
+    | \namedTypeSpecifier(list[Modifier] modifiers, Expression nname)
     
     | \functionCall(Expression functionName, list[Expression] arguments)
     
@@ -198,46 +177,10 @@ data Expression
     | \expressionList(list[Expression] expressions)
     
     | \templateId(Expression nname, list[Type] argumentTypes)
-    
+
+    | \empty()    
     | \nyi(str raw)
     
-    //| \functionCall(Expression functionName, list[Expression] arguments)
-    //| \arrayAccess(Expression array, Expression index)
-    //| \newArray(Type \type, list[Expression] dimensions, Expression init)
-    //| \newArray(Type \type, list[Expression] dimensions)
-    //| \arrayInitializer(list[Expression] elements)
-    //| \assignment(Expression lhs, str operator, Expression rhs)
-    //| \cast(Type \type, Expression expression)
-    //| \characterLiteral(str charValue)
-    //| \newObject(Expression expr, Type \type, list[Expression] args, Declaration class)
-    //| \newObject(Type \type, list[Expression] args)
-    //| \qualifiedName(Expression qualifier, Expression expression)
-    //| \conditional(Expression expression, Expression thenBranch, Expression elseBranch)
-    //| \fieldAccess(bool isSuper, Expression expression, str name)
-    //| \fieldAccess(bool isSuper, str name)
-    //| \instanceof(Expression leftSide, Type rightSide)
-    //| \methodCall(bool isSuper, str name, list[Expression] arguments)
-    //| \methodCall(bool isSuper, Expression receiver, str name, list[Expression] arguments)
-    //| \null()
-    //| \number(str numberValue)
-    //| \booleanLiteral(bool boolValue)
-    //| \stringLiteral(str stringValue)
-    //| \type(Type \type)
-    //| \variable(str name, int extraDimensions)
-    //| \variable(str name, int extraDimensions, Expression \initializer)
-    //| \bracket(Expression expression)
-    //| \this()
-    //| \this(Expression thisExpression)
-    //| \super()
-    //| \declarationExpression(Declaration declaration)
-    //| \infix(Expression lhs, str operator, Expression rhs)
-    //| \postfix(Expression operand, str operator)
-    //| \prefix(str operator, Expression operand)
-    //| \simpleName(str name)
-    //| \markerAnnotation(str typeName)
-    //| \normalAnnotation(str typeName, list[Expression] memberValuePairs)
-    //| \memberValuePair(str name, Expression \value)             
-    //| \singleMemberAnnotation(str typeName, Expression \value)
     ;                       
   
 data Statement              
@@ -266,32 +209,6 @@ data Statement
     | \catch(Declaration declaration, Statement body)
     | \catchAll(Statement body)    
     
-    //| \assert(Expression expression)
-    //| \assert(Expression expression, Expression message)
-    //| \block(list[Statement] statements)
-    //| \break(str label)
-    //| \continue()
-    //| \continue(str label)
-    //| \do(Statement body, Expression condition)
-    //| \empty()
-    //| \foreach(Declaration parameter, Expression collection, Statement body)
-    //| \for(list[Expression] initializers, list[Expression] updaters, Statement body)
-    //| \label(str name, Statement body)
-    //| \return(Expression expression)
-    //| \return()
-    //| \switch(Expression expression, list[Statement] statements)
-    //| \case(Expression expression)
-    //| \defaultCase()
-    //| \synchronizedStatement(Expression lock, Statement body)
-    //| \throw(Expression expression)
-    //| \try(Statement body, list[Statement] catchClauses)
-    //| \try(Statement body, list[Statement] catchClauses, Statement \finally)                                        
-    //| \catch(Declaration exception, Statement body)
-    //| \declarationStatement(Declaration declaration)
-    //| \while(Expression condition, Statement body)
-    //| \expressionStatement(Expression stmt)
-    //| \constructorCall(bool isSuper, Expression expr, list[Expression] arguments)
-    //| \constructorCall(bool isSuper, list[Expression] arguments)
     ;           
   
 data Type 
@@ -325,31 +242,13 @@ data Type
     | \unionType(Expression nname)
     | \classType(str name)
 
-    //| arrayType(Type \type)
-    //| parameterizedType(Type \type)
-    //| qualifiedType(Type qualifier, Expression simpleName)
-    //| simpleType(Expression typeName)
-    //| unionType(list[Type] types)
-    //| wildcard()
-    //| upperbound(Type \type)
-    //| lowerbound(Type \type)
-    //| \int()
-    //| short()
-    //| long()
-    //| float()
-    //| double()
-    //| char()
-    //| string()
-    //| byte()
-    //| \void()
-    //| \boolean()
     ;
- 
+  
 data Modifier
     = typedef()
     | \extern()
     | \static()
-    //| \auto()
+    | \auto()
     | \register()
     | \mutable()
     
@@ -380,21 +279,6 @@ data Modifier
     | \threadLocal()
     | \pureVirtual()
     
-    //| \private()
-    //| \public()
-    //| \protected()
-    //| \friendly()
-    //| \static()
-    //| \final()
-    //| \synchronized()
-    //| \transient()
-    //| \abstract()
-    //| \native()
-    //| \volatile()
-    //| \strictfp()
-    //| \annotation(Expression \anno)
-    //| \onDemand()
-    //| \default()
     ;
     
 @javaClass{lang.cpp.internal.Parser}  
