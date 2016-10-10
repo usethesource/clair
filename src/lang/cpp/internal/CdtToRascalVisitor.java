@@ -409,7 +409,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			templateParameters.append(stack.pop());
 		});
 		_declaration.accept(this);
-		stack.push(builder.Declaration_template(stack.pop(), templateParameters.done()));
+		stack.push(builder.Declaration_template(templateParameters.done(), stack.pop()));
 		return PROCESS_ABORT;
 	}
 
