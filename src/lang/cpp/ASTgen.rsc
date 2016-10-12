@@ -118,6 +118,11 @@ str type2FactoryCall(Symbol t){
   
   str declareMaker(Production::cons(label(str cname, Symbol typ:adt(str typeName, list[Symbol] ps)), list[Symbol] args, list[Symbol] kwTypes,set[Attr] _)) 
      = "public <typeToJavaType(typ)> <typeName>_<cname>(<declareConsArgs(args)[1..]>) {
+       '  <for (label(str l, Symbol t) <- args) { str argName = argToSimpleJavaArg(l, t); str argType = type2FactoryCall(t);>  
+       '  if (!<argName>.getType().isSubtypeOf(<argType>)) {
+       '    throw new IllegalArgumentException(\"Expected \" + <argType> + \" but got \" + <argName>.getType() + \" for <argName>:\" + <argName>);
+       '  }
+       '  <}>
        '  return vf.constructor(_<typeName>_<cname>_<size(args)> <callConsArgs(args)>);
        '}";
   
