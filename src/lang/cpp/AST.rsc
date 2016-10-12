@@ -6,12 +6,12 @@ extend analysis::m3::AST;
    
 data Declaration
     = \translationUnit(list[Declaration] declarations)
-    | \simpleDeclaration(Type ddeclSpecifier, list[Declaration] declarators)//?
-    | \functionDefinition(Type ddeclSpecifier, Declaration ddeclarator, Statement sbody)//?
-    | \defaultedFunctionDefinition(Type ddeclSpecifier, list[Declaration] memberInitializer, Declaration ddeclarator)
-    | \deletedFunctionDefinition(Type ddeclSpecifier, list[Declaration] memberInitializer, Declaration ddeclarator)
-    | \functionDefinition(Type ddeclSpecifier, Declaration ddeclarator, list[Declaration] memberInitializer, Statement sbody)
-    | \functionWithTryBlockDefinition(Type ddeclSpecifier, Declaration ddeclarator, list[Declaration] memberInitializer, Statement sbody, list[Statement] catchHandlers)
+    | \simpleDeclaration(Declaration ddeclSpecifier, list[Declaration] declarators)//?
+    | \functionDefinition(Expression returnSpec, Expression eddeclarator, Statement sbody)//?
+    | \defaultedFunctionDefinition(Declaration ddeclSpecifier, list[Declaration] memberInitializer, Declaration ddeclarator)
+    | \deletedFunctionDefinition(Declaration ddeclSpecifier, list[Declaration] memberInitializer, Declaration ddeclarator)
+    | \functionDefinition(Declaration ddeclSpecifier, Expression eddeclarator, list[Declaration] memberInitializer, Statement sbody)
+    | \functionWithTryBlockDefinition(Declaration ddeclSpecifier, Declaration ddeclarator, list[Declaration] memberInitializer, Statement sbody, list[Statement] catchHandlers)
     | \constructorChainInitializer(Expression nname, Expression initializer) 
     //| \declaration(str name, str declarator, list[Statement])
     //| \amb(set[Declaration] alternatives)
@@ -150,8 +150,8 @@ data Expression
     | \false()
     | \nullptr()
     
-    | \functionDeclarator(list[Declaration] pointerOperators, Expression nname, list[Expression] arguments)
-    | \functionDeclarator(list[Declaration] pointerOperators, list[Modifier] modifiers, Expression nname, list[Expression] arguments, list[Declaration] virtSpecifiers)
+    | \functionDeclarator(list[Declaration] pointerOperators, Expression nname, list[Declaration] parameters)
+    | \functionDeclarator(list[Declaration] pointerOperators, list[Modifier] modifiers, Expression nname, list[Declaration] parameters, list[Declaration] virtSpecifiers)
     | \functionDeclaratorNested(list[Declaration] pointerOperators, list[Modifier] modifiers, Declaration declarator, list[Expression] arguments, list[Declaration] virtSpecifiers)
     | \functionDeclaratorNested(list[Declaration] pointerOperators, list[Modifier] modifiers, Declaration declarator, list[Expression] arguments, list[Declaration] virtSpecifiers, Expression initializer)
     | \functionDeclaratorWithES(list[Declaration] pointerOperators, list[Modifier] modifiers, Expression nname, list[Expression] arguments, list[Declaration] virtSpecifiers) //empty exception specification
