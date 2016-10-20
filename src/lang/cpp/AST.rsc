@@ -4,26 +4,17 @@ import IO;
 
 extend analysis::m3::AST;
 
-data Initializer
-    = \equalsInitializer(Initializer initializer)
-    //| \equalsInitializer(Initializer initializerExpr) //workaround
-    | \initializerList(list[Expression] clauses) //initializerClause?
-    | \constructorChainInitializer(Expression name, Initializer initializer)
-    | \constructorInitializer(list[Expression] arguments)
-    //| \designatedInitializer() //another one for C?
-    ;
-    
 data Declarator
     = \declarator(list[Declaration] pointerOperators, Expression nname)
-    | \declarator(list[Declaration] pointerOperators, Expression nname, Initializer initializer)
+    | \declarator(list[Declaration] pointerOperators, Expression nname, Expression initializer)
     | \functionDeclarator(list[Declaration] pointerOperators, Expression name, list[Declaration] parameters)  //superfluous?
     | \functionDeclarator(list[Declaration] pointerOperators, list[Modifier] modifiers, Expression name, list[Declaration] parameters, list[Declaration] virtSpecifiers)
     | \functionDeclaratorNested(list[Declaration] pointerOperators, list[Modifier] modifiers, Declarator declarator, list[Expression] arguments, list[Declaration] virtSpecifiers)
-    | \functionDeclaratorNested(list[Declaration] pointerOperators, list[Modifier] modifiers, Declarator declarator, list[Expression] arguments, list[Declaration] virtSpecifiers, Initializer initializer)
+    | \functionDeclaratorNested(list[Declaration] pointerOperators, list[Modifier] modifiers, Declarator declarator, list[Expression] arguments, list[Declaration] virtSpecifiers, Expression initializer)
     | \functionDeclaratorWithES(list[Declaration] pointerOperators, list[Modifier] modifiers, Expression name, list[Expression] arguments, list[Declaration] virtSpecifiers) //empty exception specification
     | \functionDeclaratorWithES(list[Declaration] pointerOperators, list[Modifier] modifiers, Expression name, list[Expression] arguments, list[Declaration] virtSpecifiers, list[Type] exceptionSpecification)
     | \arrayDeclarator(Expression name, list[Expression] arrayModifier)
-    | \arrayDeclarator(Expression name, list[Expression] arrayModifier, Initializer initializer)
+    | \arrayDeclarator(Expression name, list[Expression] arrayModifier, Expression initializer)
     ;
     
 data DeclSpecifier
@@ -40,10 +31,10 @@ data Declaration
     = \translationUnit(list[Declaration] declarations)
     | \simpleDeclaration(DeclSpecifier declSpecifier, list[Declarator] declarators)//?
     | \functionDefinition(Expression returnSpec, Declarator declarator, Statement body)//?
-    | \defaultedFunctionDefinition(DeclSpecifier declSpecifier, list[Initializer] memberInitializer, Declarator declarator)
-    | \deletedFunctionDefinition(DeclSpecifier declSpecifier, list[Initializer] memberInitializer, Declarator declarator)
-    | \functionDefinition(DeclSpecifier declSpecifier, Declarator declarator, list[Initializer] memberInitializer, Statement body)
-    | \functionWithTryBlockDefinition(DeclSpecifier declSpecifier, Declarator declarator, list[Initializer] memberInitializers, Statement sbody, list[Statement] catchHandlers)
+    | \defaultedFunctionDefinition(DeclSpecifier declSpecifier, list[Expression] memberInitializer, Declarator declarator)
+    | \deletedFunctionDefinition(DeclSpecifier declSpecifier, list[Expression] memberInitializer, Declarator declarator)
+    | \functionDefinition(DeclSpecifier declSpecifier, Declarator declarator, list[Expression] memberInitializer, Statement body)
+    | \functionWithTryBlockDefinition(DeclSpecifier declSpecifier, Declarator declarator, list[Expression] memberInitializers, Statement sbody, list[Statement] catchHandlers)
     
     | \asmDeclaration(str assembly)
     
@@ -181,16 +172,16 @@ data Expression
     | \fieldReference(Expression fieldOwner, Expression nname, Type fieldType)
     //| \constructorInitializer(list[Expression] arguments)
     | \new(Type \type)
-    | \new(Type \type, Initializer initializer)
+    | \new(Type \type, Expression initializer)
     | \newWithArgs(list[Expression] arguments, Type \type)
-    | \newWithArgs(list[Expression] arguments, Type \type, Initializer initializer)
+    | \newWithArgs(list[Expression] arguments, Type \type, Expression initializer)
     | \delete(bool isVectored, Expression expression)
     
     | \arraySubscriptExpression(Expression array, Expression argument)
     | \arrayModifier()
     | \arrayModifier(Expression constExpression)
     
-    | \simpleTypeConstructor(DeclSpecifier declSpecifier, Initializer initializer)
+    | \simpleTypeConstructor(DeclSpecifier declSpecifier, Expression initializer)
     
     | \expressionList(list[Expression] expressions)
     
@@ -199,6 +190,14 @@ data Expression
     | \empty()    
     | \nyi(str raw)
     
+    | \typeId(DeclSpecifier declSpecifier)
+    | \typeId(DeclSpecifier declSpecifier, Declarator abstractDeclarator)
+    
+    // Initializers below
+    | \equalsInitializer(Expression initializer)
+    | \initializerList(list[Expression] clauses) //initializerClause?
+    | \constructorChainInitializer(Expression nname, Expression initializer)
+    | \constructorInitializer(list[Expression] arguments)
     ;                       
   
 data Statement              
@@ -249,8 +248,6 @@ data Type
     | \decimal64()
     | \decimal128()
     
-    | \typeId(Type \type)
-    | \typeId(Type \type, Declarator abstractDeclarator)
     
     | \arrayType(Type \type, int size)
     | \basicType(Type \type, list[Modifier] modifiers)
