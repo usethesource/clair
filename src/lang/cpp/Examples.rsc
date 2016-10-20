@@ -6,11 +6,11 @@ import vis::Figure;
 import vis::Render;
 import Relation;
 
-rel[str,str] vagueCalls(Declaration tu) 
+rel[str,str] showCalls(Declaration tu) 
   = {<from,to> | /functionDefinition(_,functionDeclarator(_,_,name(from),_,_),_,/functionCall(/name(to), _)) := tu};
 
 void vagueCallGraph(Declaration tu) {
-  calls = vagueCalls(tu);
+  calls = showCalls(tu);
   render(graph([box(text(name), id(name), size(50), fillColor("lightgreen")) | name <- carrier(calls)], 
                [edge(from,to, toArrow(box(size(20)))) | <from,to> <- calls], 
                hint("layered"), gap(100)));
