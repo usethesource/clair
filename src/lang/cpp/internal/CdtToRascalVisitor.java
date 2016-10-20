@@ -214,11 +214,11 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	private void out(String msg) {
-		ctx.getStdOut().println(spaces() + msg);
+		ctx.getStdOut().println(spaces() + msg.replace("\n", "\n"+spaces()));
 	}
 
 	private void err(String msg) {
-		ctx.getStdErr().println(spaces() + msg);
+		ctx.getStdErr().println(spaces() + msg.replace("\n", "\n"+spaces()));
 	}
 
 	@Override
@@ -443,8 +443,11 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTProblemDeclaration declaration) {
-		err("ProblemDeclaration: " + declaration.getProblem().getMessageWithLocation());
-		err("ProblemDeclaration: " + declaration.getRawSignature());
+		err("ProblemDeclaration: ");
+		prefix+=4;
+		err(declaration.getProblem().getMessageWithLocation());
+		err(declaration.getRawSignature());
+		prefix-=4;
 		throw new RuntimeException("ERROR");
 	}
 
@@ -562,7 +565,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	public int visit(IASTEqualsInitializer initializer) {
 		IASTInitializerClause initializerClause = initializer.getInitializerClause();
 		initializerClause.accept(this);
-		stack.push(builder.Initializer_equalsInitializer(stack.pop()));
+		stack.push(builder.Expression_equalsInitializer(stack.pop()));
 		return PROCESS_ABORT;
 	}
 
@@ -593,7 +596,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			it.accept(this);
 			clauses.append(stack.pop());
 		});
-		stack.push(builder.Initializer_initializerList(clauses.done()));
+		stack.push(builder.Expression_initializerList(clauses.done()));
 		return PROCESS_ABORT;
 	}
 
@@ -609,7 +612,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IConstructor memberInitializerId = stack.pop();
 		_memberInitializer.accept(this);
 		IConstructor memberInitializer = stack.pop();
-		stack.push(builder.Initializer_constructorChainInitializer(memberInitializerId, memberInitializer));
+		stack.push(builder.Expression_constructorChainInitializer(memberInitializerId, memberInitializer));
 		return PROCESS_ABORT;
 	}
 
@@ -620,7 +623,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			it.accept(this);
 			arguments.append(stack.pop());
 		});
-		stack.push(builder.Initializer_constructorInitializer(arguments.done()));
+		stack.push(builder.Expression_constructorInitializer(arguments.done()));
 		return PROCESS_ABORT;
 	}
 
@@ -2374,7 +2377,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			_declSpecifier.accept(this);
 			IConstructor declSpecifier = stack.pop();
 			_abstractDeclarator.accept(this);
-			stack.push(builder.Type_typeId(declSpecifier, stack.pop()));
+			stack.push(builder.Expression_typeId(declSpecifier, stack.pop()));
 		}
 		return PROCESS_ABORT;
 	}
