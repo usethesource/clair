@@ -300,8 +300,10 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		});
 		_lastName.accept(this);
 		IConstructor lastName = stack.pop();
-		if (fullyQualified || conversionOrOperator)
-			err("WARNING: ICPPASTQualifiedName has unimplemented field set");
+		if (fullyQualified)
+			err("WARNING: ICPPASTQualifiedName has fullyQualified=true");
+		if (conversionOrOperator)
+			err("WARNING: ICPPASTQualifiedName has conversionOrOperator=true");
 		stack.push(builder.Expression_qualifiedName(qualifier.done(), lastName));
 		return PROCESS_ABORT;
 	}
@@ -823,7 +825,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 				pointerOperators.append(stack.pop());
 			});
 			if (_nestedDeclarator != null)
-				err("WARNING: ICPPASTDeclarator has nestedDeclarator");
+				err("WARNING: ICPPASTDeclarator has nestedDeclarator " + _nestedDeclarator.getRawSignature());
 			_name.accept(this);
 			IConstructor name = stack.pop();
 			IConstructor initializer = null;
