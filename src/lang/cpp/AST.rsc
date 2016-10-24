@@ -82,6 +82,8 @@ data Declaration
     | \usingDeclaration(Expression nname)
     | \namespaceAlias(Expression \alias, Expression mapping)
     
+    | \linkageSpecification(str literal, list[Declaration] declarations)
+    
     ;
 
 
@@ -190,6 +192,9 @@ data Expression
     | \empty()    
     | \nyi(str raw)
     
+    | \lambda(Modifier captureDefault, Declarator declarator, Statement body)
+    
+    // TypeId below
     | \typeId(DeclSpecifier declSpecifier)
     | \typeId(DeclSpecifier declSpecifier, Declarator abstractDeclarator)
     
@@ -199,7 +204,8 @@ data Expression
     | \constructorChainInitializer(Expression nname, Expression initializer)
     | \constructorInitializer(list[Expression] arguments)
     ;                       
-  
+ 
+
 data Statement              
     = \compoundStatement(list[Statement] statements)
     | \declarationStatement(Declaration declaration)
@@ -294,6 +300,10 @@ data Modifier
     | \threadLocal()
     | \pureVirtual()
     
+    
+    | \captUnspecified()
+    | \captByCopy()
+    | \captByReference()
     ;
     
 @javaClass{lang.cpp.internal.Parser}  

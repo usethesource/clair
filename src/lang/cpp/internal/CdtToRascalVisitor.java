@@ -126,6 +126,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression.CaptureDefault;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
@@ -214,11 +215,11 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	private void out(String msg) {
-		ctx.getStdOut().println(spaces() + msg.replace("\n", "\n"+spaces()));
+		ctx.getStdOut().println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
 
 	private void err(String msg) {
-		ctx.getStdErr().println(spaces() + msg.replace("\n", "\n"+spaces()));
+		ctx.getStdErr().println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
 
 	@Override
@@ -428,8 +429,17 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTLinkageSpecification declaration) {
-		out("LinkageSpecification: " + declaration.getRawSignature());
-		throw new RuntimeException("NYI");
+		String literal = declaration.getLiteral();
+		IASTDeclaration[] _declarations = declaration.getDeclarations();
+
+		IListWriter declarations = vf.listWriter();
+		Stream.of(_declarations).forEach(it -> {
+			it.accept(this);
+			declarations.append(stack.pop());
+		});
+
+		stack.push(builder.Declaration_linkageSpecification(literal, declarations.done()));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTExplicitTemplateInstantiation declaration) {
@@ -444,10 +454,10 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(IASTProblemDeclaration declaration) {
 		err("ProblemDeclaration: ");
-		prefix+=4;
+		prefix += 4;
 		err(declaration.getProblem().getMessageWithLocation());
 		err(declaration.getRawSignature());
-		prefix-=4;
+		prefix -= 4;
 		throw new RuntimeException("ERROR");
 	}
 
@@ -868,8 +878,12 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			err("WARNING: ICPPASTFunctionDeclarator has noexceptExpression " + noexceptExpression.getRawSignature());
 		if (trailingReturnType != null)
 			err("WARNING: ICPPASTFunctionDeclarator has trailingReturnType " + trailingReturnType.getRawSignature());
-		_name.accept(this);
-		IConstructor name = stack.pop();
+		IConstructor name = builder.Expression_name("");// TODO: fix when name
+														// == null
+		if (_name != null) {
+			_name.accept(this);
+			name = stack.pop();
+		}
 		IListWriter parameters = vf.listWriter();
 		Stream.of(_parameters).forEach(it -> {
 			it.accept(this);
@@ -906,7 +920,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			stack.push(builder.Declarator_functionDeclaratorWithES(pointerOperators.done(), modifiers.done(), name,
 					parameters.done(), virtSpecifiers.done()));
 		else {
-			err("WARNING: Unfinished: e.what() fails");
 			IListWriter exceptionSpecification = vf.listWriter();
 			Stream.of(_exceptionSpecification).forEach(it -> {
 				it.accept(this);
@@ -1508,8 +1521,42 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTLambdaExpression expression) {
-		out("CPPLambdaExpression: " + expression.getRawSignature());
-		throw new RuntimeException("NYI");
+		CaptureDefault captureDefault = expression.getCaptureDefault();
+		ICPPASTCapture[] _captures = expression.getCaptures();
+		IASTImplicitName _closureTypeName = expression.getClosureTypeName();
+		ICPPASTFunctionDeclarator _declarator = expression.getDeclarator();
+		IASTImplicitName _functionCallOperatorName = expression.getFunctionCallOperatorName();
+		IASTCompoundStatement _body = expression.getBody();
+
+		if (_captures.length > 0)
+			err("ICPPASTLambdaExpression has captures, not implemented");
+		if (!_closureTypeName.getRawSignature().equals("["))
+			err("ICPPASTLambdaExpression has closureTypeName " + _closureTypeName.getRawSignature()
+					+ ", not implemented");
+		if (!_functionCallOperatorName.getRawSignature().equals("{"))
+			err("ICPPASTLambdaExpression has functionCallOperatorName " + _functionCallOperatorName.getRawSignature()
+					+ ", not implemented");
+
+		_declarator.accept(this);
+		IConstructor declarator = stack.pop();
+		_body.accept(this);
+		IConstructor body = stack.pop();
+
+		switch (captureDefault) {
+		case BY_COPY:
+			stack.push(builder.Expression_lambda(builder.Modifier_captByCopy(), declarator, body));
+			break;
+		case BY_REFERENCE:
+			stack.push(builder.Expression_lambda(builder.Modifier_captByReference(), declarator, body));
+			break;
+		case UNSPECIFIED:
+			stack.push(builder.Expression_lambda(builder.Modifier_captUnspecified(), declarator, body));
+			break;
+		default:
+			throw new RuntimeException("Unknown default capture type " + captureDefault + " encountered, exiting");
+		}
+
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTFunctionCallExpression expression) {

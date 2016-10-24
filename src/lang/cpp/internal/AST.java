@@ -86,6 +86,8 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"class",_Expression,"nname",tf.listType(_Declaration),"members");
   private static final Type _Declaration_sttTypename_1 
     = tf.constructor(typestore,_Declaration,"sttTypename",_Expression,"nname");
+  private static final Type _Declaration_linkageSpecification_2 
+    = tf.constructor(typestore,_Declaration,"linkageSpecification",tf.stringType(),"literal",tf.listType(_Declaration),"declarations");
   private static final Type _Declaration_namespaceDefinition_3 
     = tf.constructor(typestore,_Declaration,"namespaceDefinition",_Expression,"nname",tf.listType(_Declaration),"declarations",tf.boolType(),"isInline");
   private static final Type _Declaration_struct_2 
@@ -282,6 +284,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"binaryXorAssign",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_prefixDecr_1 
     = tf.constructor(typestore,_Expression,"prefixDecr",_Expression,"expression");
+  private static final Type _Expression_lambda_3 
+    = tf.constructor(typestore,_Expression,"lambda",_Modifier,"captureDefault",_Declarator,"declarator",_Statement,"body");
   private static final Type _Expression_shiftRightAssign_2 
     = tf.constructor(typestore,_Expression,"shiftRightAssign",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_fieldReference_3 
@@ -428,6 +432,8 @@ public class AST {
     = tf.constructor(typestore,_Modifier,"auto");
   private static final Type _Modifier_override_0 
     = tf.constructor(typestore,_Modifier,"override");
+  private static final Type _Modifier_captByReference_0 
+    = tf.constructor(typestore,_Modifier,"captByReference");
   private static final Type _Modifier_pureVirtual_0 
     = tf.constructor(typestore,_Modifier,"pureVirtual");
   private static final Type _Modifier_complex_0 
@@ -436,8 +442,6 @@ public class AST {
     = tf.constructor(typestore,_Modifier,"final");
   private static final Type _Modifier_explicit_0 
     = tf.constructor(typestore,_Modifier,"explicit");
-  private static final Type _Modifier_unsigned_0 
-    = tf.constructor(typestore,_Modifier,"unsigned");
   private static final Type _Modifier_longlong_0 
     = tf.constructor(typestore,_Modifier,"longlong");
   private static final Type _Modifier_friend_0 
@@ -452,10 +456,16 @@ public class AST {
     = tf.constructor(typestore,_Modifier,"typedef");
   private static final Type _Modifier_virtual_0 
     = tf.constructor(typestore,_Modifier,"virtual");
+  private static final Type _Modifier_captByCopy_0 
+    = tf.constructor(typestore,_Modifier,"captByCopy");
   private static final Type _Modifier_static_0 
     = tf.constructor(typestore,_Modifier,"static");
   private static final Type _Modifier_protected_0 
     = tf.constructor(typestore,_Modifier,"protected");
+  private static final Type _Modifier_unsigned_0 
+    = tf.constructor(typestore,_Modifier,"unsigned");
+  private static final Type _Modifier_captUnspecified_0 
+    = tf.constructor(typestore,_Modifier,"captUnspecified");
   private static final Type _Modifier_imaginary_0 
     = tf.constructor(typestore,_Modifier,"imaginary");
   private static final Type _Modifier_inline_0 
@@ -893,6 +903,19 @@ public class AST {
     }
     
     return vf.constructor(_Declaration_sttTypename_1 , $nname);
+  }
+  
+  public IConstructor Declaration_linkageSpecification( String $literal, IList $declarations) {
+      
+    if (!vf.string($literal).getType().isSubtypeOf(tf.stringType())) {
+      throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($literal).getType() + " for vf.string($literal):" + vf.string($literal));
+    }
+      
+    if (!$declarations.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $declarations.getType() + " for $declarations:" + $declarations);
+    }
+    
+    return vf.constructor(_Declaration_linkageSpecification_2 , vf.string($literal), $declarations);
   }
   
   public IConstructor Declaration_namespaceDefinition( IConstructor $nname, IList $declarations, IValue $isInline) {
@@ -2009,6 +2032,23 @@ public class AST {
     return vf.constructor(_Expression_prefixDecr_1 , $expression);
   }
   
+  public IConstructor Expression_lambda( IConstructor $captureDefault, IConstructor $declarator, IConstructor $body) {
+      
+    if (!$captureDefault.getType().isSubtypeOf(_Modifier)) {
+      throw new IllegalArgumentException("Expected " + _Modifier + " but got " + $captureDefault.getType() + " for $captureDefault:" + $captureDefault);
+    }
+      
+    if (!$declarator.getType().isSubtypeOf(_Declarator)) {
+      throw new IllegalArgumentException("Expected " + _Declarator + " but got " + $declarator.getType() + " for $declarator:" + $declarator);
+    }
+      
+    if (!$body.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
+    }
+    
+    return vf.constructor(_Expression_lambda_3 , $captureDefault, $declarator, $body);
+  }
+  
   public IConstructor Expression_shiftRightAssign( IConstructor $lhs, IConstructor $rhs) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
@@ -2630,6 +2670,11 @@ public class AST {
     return vf.constructor(_Modifier_override_0 );
   }
   
+  public IConstructor Modifier_captByReference() {
+    
+    return vf.constructor(_Modifier_captByReference_0 );
+  }
+  
   public IConstructor Modifier_pureVirtual() {
     
     return vf.constructor(_Modifier_pureVirtual_0 );
@@ -2648,11 +2693,6 @@ public class AST {
   public IConstructor Modifier_explicit() {
     
     return vf.constructor(_Modifier_explicit_0 );
-  }
-  
-  public IConstructor Modifier_unsigned() {
-    
-    return vf.constructor(_Modifier_unsigned_0 );
   }
   
   public IConstructor Modifier_longlong() {
@@ -2690,6 +2730,11 @@ public class AST {
     return vf.constructor(_Modifier_virtual_0 );
   }
   
+  public IConstructor Modifier_captByCopy() {
+    
+    return vf.constructor(_Modifier_captByCopy_0 );
+  }
+  
   public IConstructor Modifier_static() {
     
     return vf.constructor(_Modifier_static_0 );
@@ -2698,6 +2743,16 @@ public class AST {
   public IConstructor Modifier_protected() {
     
     return vf.constructor(_Modifier_protected_0 );
+  }
+  
+  public IConstructor Modifier_unsigned() {
+    
+    return vf.constructor(_Modifier_unsigned_0 );
+  }
+  
+  public IConstructor Modifier_captUnspecified() {
+    
+    return vf.constructor(_Modifier_captUnspecified_0 );
   }
   
   public IConstructor Modifier_imaginary() {
