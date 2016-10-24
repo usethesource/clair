@@ -144,16 +144,16 @@ data Expression
     | \noexcept(Expression expression)      //noexcept (exp), c++ only
     | \labelReference(Expression expression)//&&label, gcc only?
     
-    | \cast(Type \type, Expression expression)
-    | \dynamicCast(Type \type, Expression expression)
-    | \staticCast(Type \type, Expression expression)
-    | \reinterpretCast(Type \type, Expression expression)
-    | \constCast(Type \type, Expression expression)
+    | \cast(Expression typeId, Expression expression)
+    | \dynamicCast(Expression typeId, Expression expression)
+    | \staticCast(Expression typeId, Expression expression)
+    | \reinterpretCast(Expression typeId, Expression expression)
+    | \constCast(Expression typeId, Expression expression)
     
     | \name(str name)
     | \qualifiedName(list[Expression] qualifiers, Expression lastName)
     | \operatorName(str vvalue)
-    | \conversionName(str vvalue, Type \type)
+    | \conversionName(str vvalue, Expression typeId)
     | \idExpression(Expression nname)
     | \integerLiteral(int number)
     | \conditional(Expression condition, Expression positive, Expression negative)
@@ -173,10 +173,10 @@ data Expression
     
     | \fieldReference(Expression fieldOwner, Expression nname, Type fieldType)
     //| \constructorInitializer(list[Expression] arguments)
-    | \new(Type \type)
-    | \new(Type \type, Expression initializer)
-    | \newWithArgs(list[Expression] arguments, Type \type)
-    | \newWithArgs(list[Expression] arguments, Type \type, Expression initializer)
+    | \new(Expression typeId)
+    | \new(Expression typeId, Expression initializer)
+    | \newWithArgs(list[Expression] arguments, Expression typeId)
+    | \newWithArgs(list[Expression] arguments, Expression typeId, Expression initializer)
     | \delete(bool isVectored, Expression expression)
     
     | \arraySubscriptExpression(Expression array, Expression argument)
