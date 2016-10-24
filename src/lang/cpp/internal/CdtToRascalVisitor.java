@@ -192,6 +192,8 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	private IEvaluatorContext ctx;
 	private Stack<IConstructor> stack = new Stack<IConstructor>();
 
+	boolean doTypeLogging = false;
+
 	public CdtToRascalVisitor(IValueFactory vf) {
 		super(true);
 		this.vf = vf;
@@ -1768,9 +1770,11 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			boolean isVolatile = ((IPointerType) cdtType).isVolatile();
 			boolean isRestruct = ((IPointerType) cdtType).isRestrict();
 		} else if (cdtType instanceof IProblemBinding) {
-			err("ERROR: IProblemBinding: " + ((IProblemBinding) cdtType).getMessage() + ", returning unspecified");
+			if (doTypeLogging)
+				err("ERROR: IProblemBinding: " + ((IProblemBinding) cdtType).getMessage() + ", returning unspecified");
 		} else if (cdtType instanceof IProblemType) {
-			err("ERROR: IProblemType: " + ((IProblemType) cdtType).getMessage() + ", returning unspecified");
+			if (doTypeLogging)
+				err("ERROR: IProblemType: " + ((IProblemType) cdtType).getMessage() + ", returning unspecified");
 		} else if (cdtType instanceof IQualifierType) {
 			boolean isConst = ((IQualifierType) cdtType).isConst();
 			boolean isVolatile = ((IQualifierType) cdtType).isVolatile();
@@ -1782,8 +1786,10 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		} else { // unsubinterfaced classes
 
 		}
-		err("WARNING: Type unresolved, returning unspecified");
-		err("Input was " + cdtType);
+		if (doTypeLogging)
+			err("WARNING: Type unresolved, returning unspecified");
+		if (doTypeLogging)
+			err("Input was " + cdtType);
 		return builder.Type_unspecified();
 
 		// throw new RuntimeException("NYI");
@@ -1803,7 +1809,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			_fieldName.accept(this);
 			IConstructor fieldName = stack.pop();
 
-			if (_fieldOwnerType instanceof IProblemType) {
+			if (_fieldOwnerType instanceof IProblemType && doTypeLogging) {
 				out("IASTFieldReference " + expression.getClass().getName() + ": " + expression.getRawSignature());
 				prefix += 4;
 				out("reference=" + reference.getRawSignature());
