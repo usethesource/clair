@@ -2279,7 +2279,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IConstructor body = stack.pop();
 		_condition.accept(this);
 		IConstructor condition = stack.pop();
-		stack.push(builder.Statement_do(condition, body));
+		stack.push(builder.Statement_do(body, condition));
 
 		return PROCESS_ABORT;
 	}
