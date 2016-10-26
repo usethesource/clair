@@ -2335,8 +2335,12 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	public int visit(IASTProblemStatement statement) {
 		err("IASTProblemStatement:");
+		prefix += 4;
 		err(statement.getProblem().getMessageWithLocation());
 		err(statement.getRawSignature());
+		IASTNode parent = statement.getParent();
+		out("Parent " + parent.getClass().getSimpleName() + ": " + parent.getRawSignature());
+		prefix -= 4;
 		throw new RuntimeException("ERROR");
 	}
 
