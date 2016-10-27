@@ -138,6 +138,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"sizeofParameterPack",_Expression,"expression");
   private static final Type _Expression_postfixIncr_1 
     = tf.constructor(typestore,_Expression,"postfixIncr",_Expression,"expression");
+  private static final Type _Expression_newWithArgs_3 
+    = tf.constructor(typestore,_Expression,"newWithArgs",tf.listType(_Expression),"arguments",_Expression,"typeId",_Expression,"initializer");
   private static final Type _Expression_staticCast_2 
     = tf.constructor(typestore,_Expression,"staticCast",_Expression,"typeId",_Expression,"expression");
   private static final Type _Expression_newWithArgs_2 
@@ -200,6 +202,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"initializerList",tf.listType(_Expression),"clauses");
   private static final Type _Expression_not_1 
     = tf.constructor(typestore,_Expression,"not",_Expression,"expression");
+  private static final Type _Expression_templateId_2 
+    = tf.constructor(typestore,_Expression,"templateId",_Expression,"nname",tf.listType(_Expression),"argumentTypes");
   private static final Type _Expression_typeId_2 
     = tf.constructor(typestore,_Expression,"typeId",_DeclSpecifier,"declSpecifier",_Declarator,"abstractDeclarator");
   private static final Type _Expression_integerConstant_1 
@@ -258,10 +262,6 @@ public class AST {
     = tf.constructor(typestore,_Expression,"arrayModifier");
   private static final Type _Expression_charConstant_1 
     = tf.constructor(typestore,_Expression,"charConstant",tf.stringType(),"vvalue");
-  private static final Type _Expression_templateId_2 
-    = tf.constructor(typestore,_Expression,"templateId",_Expression,"nname",tf.listType(_Type),"argumentTypes");
-  private static final Type _Expression_newWithArgs_3 
-    = tf.constructor(typestore,_Expression,"newWithArgs",tf.listType(_Expression),"arguments",_Expression,"typeId",_Expression,"initializer");
   private static final Type _Expression_conversionName_2 
     = tf.constructor(typestore,_Expression,"conversionName",tf.stringType(),"vvalue",_Expression,"typeId");
   private static final Type _Expression_multiply_2 
@@ -378,8 +378,6 @@ public class AST {
     = tf.constructor(typestore,_Statement,"break");
   private static final Type _Statement_switch_2 
     = tf.constructor(typestore,_Statement,"switch",_Expression,"controller",_Statement,"body");
-  private static final Type _Statement_rangeBasedFor_3 
-    = tf.constructor(typestore,_Statement,"rangeBasedFor",_Declaration,"declaration",_Statement,"initializer",_Statement,"body");
   private static final Type _Statement_goto_1 
     = tf.constructor(typestore,_Statement,"goto",_Expression,"nname");
   private static final Type _Statement_defaultCase_0 
@@ -395,7 +393,7 @@ public class AST {
   private static final Type _Statement_continue_0 
     = tf.constructor(typestore,_Statement,"continue");
   private static final Type _Statement_for_4 
-    = tf.constructor(typestore,_Statement,"for",_Statement,"initializer",_Expression,"condition",_Expression,"iteration",_Statement,"body");
+    = tf.constructor(typestore,_Statement,"for",_Statement,"sInitializer",_Expression,"condition",_Expression,"iteration",_Statement,"body");
   private static final Type _Statement_label_2 
     = tf.constructor(typestore,_Statement,"label",_Expression,"nname",_Statement,"nestedStatement");
   private static final Type _Statement_catch_2 
@@ -416,6 +414,8 @@ public class AST {
     = tf.constructor(typestore,_Statement,"declarationStatement",_Declaration,"declaration");
   private static final Type _Statement_case_1 
     = tf.constructor(typestore,_Statement,"case",_Expression,"expression");
+  private static final Type _Statement_rangeBasedFor_3 
+    = tf.constructor(typestore,_Statement,"rangeBasedFor",_Declaration,"declaration",_Expression,"initializer",_Statement,"body");
   private static final Type _Statement_return_1 
     = tf.constructor(typestore,_Statement,"return",_Expression,"expression");
   
@@ -1227,6 +1227,23 @@ public class AST {
     return vf.constructor(_Expression_postfixIncr_1 , $expression);
   }
   
+  public IConstructor Expression_newWithArgs( IList $arguments, IConstructor $typeId, IConstructor $initializer) {
+      
+    if (!$arguments.getType().isSubtypeOf(tf.listType(_Expression))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $arguments.getType() + " for $arguments:" + $arguments);
+    }
+      
+    if (!$typeId.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $typeId.getType() + " for $typeId:" + $typeId);
+    }
+      
+    if (!$initializer.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
+    }
+    
+    return vf.constructor(_Expression_newWithArgs_3 , $arguments, $typeId, $initializer);
+  }
+  
   public IConstructor Expression_staticCast( IConstructor $typeId, IConstructor $expression) {
       
     if (!$typeId.getType().isSubtypeOf(_Expression)) {
@@ -1558,6 +1575,19 @@ public class AST {
     return vf.constructor(_Expression_not_1 , $expression);
   }
   
+  public IConstructor Expression_templateId( IConstructor $nname, IList $argumentTypes) {
+      
+    if (!$nname.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $nname.getType() + " for $nname:" + $nname);
+    }
+      
+    if (!$argumentTypes.getType().isSubtypeOf(tf.listType(_Expression))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $argumentTypes.getType() + " for $argumentTypes:" + $argumentTypes);
+    }
+    
+    return vf.constructor(_Expression_templateId_2 , $nname, $argumentTypes);
+  }
+  
   public IConstructor Expression_typeId( IConstructor $declSpecifier, IConstructor $abstractDeclarator) {
       
     if (!$declSpecifier.getType().isSubtypeOf(_DeclSpecifier)) {
@@ -1865,36 +1895,6 @@ public class AST {
     }
     
     return vf.constructor(_Expression_charConstant_1 , vf.string($vvalue));
-  }
-  
-  public IConstructor Expression_templateId( IConstructor $nname, IList $argumentTypes) {
-      
-    if (!$nname.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $nname.getType() + " for $nname:" + $nname);
-    }
-      
-    if (!$argumentTypes.getType().isSubtypeOf(tf.listType(_Type))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Type) + " but got " + $argumentTypes.getType() + " for $argumentTypes:" + $argumentTypes);
-    }
-    
-    return vf.constructor(_Expression_templateId_2 , $nname, $argumentTypes);
-  }
-  
-  public IConstructor Expression_newWithArgs( IList $arguments, IConstructor $typeId, IConstructor $initializer) {
-      
-    if (!$arguments.getType().isSubtypeOf(tf.listType(_Expression))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $arguments.getType() + " for $arguments:" + $arguments);
-    }
-      
-    if (!$typeId.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $typeId.getType() + " for $typeId:" + $typeId);
-    }
-      
-    if (!$initializer.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
-    }
-    
-    return vf.constructor(_Expression_newWithArgs_3 , $arguments, $typeId, $initializer);
   }
   
   public IConstructor Expression_conversionName( String $vvalue, IConstructor $typeId) {
@@ -2423,23 +2423,6 @@ public class AST {
     return vf.constructor(_Statement_switch_2 , $controller, $body);
   }
   
-  public IConstructor Statement_rangeBasedFor( IConstructor $declaration, IConstructor $initializer, IConstructor $body) {
-      
-    if (!$declaration.getType().isSubtypeOf(_Declaration)) {
-      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $declaration.getType() + " for $declaration:" + $declaration);
-    }
-      
-    if (!$initializer.getType().isSubtypeOf(_Statement)) {
-      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
-    }
-      
-    if (!$body.getType().isSubtypeOf(_Statement)) {
-      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
-    }
-    
-    return vf.constructor(_Statement_rangeBasedFor_3 , $declaration, $initializer, $body);
-  }
-  
   public IConstructor Statement_goto( IConstructor $nname) {
       
     if (!$nname.getType().isSubtypeOf(_Expression)) {
@@ -2487,10 +2470,10 @@ public class AST {
     return vf.constructor(_Statement_continue_0 );
   }
   
-  public IConstructor Statement_for( IConstructor $initializer, IConstructor $condition, IConstructor $iteration, IConstructor $body) {
+  public IConstructor Statement_for( IConstructor $sInitializer, IConstructor $condition, IConstructor $iteration, IConstructor $body) {
       
-    if (!$initializer.getType().isSubtypeOf(_Statement)) {
-      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
+    if (!$sInitializer.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $sInitializer.getType() + " for $sInitializer:" + $sInitializer);
     }
       
     if (!$condition.getType().isSubtypeOf(_Expression)) {
@@ -2505,7 +2488,7 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
     }
     
-    return vf.constructor(_Statement_for_4 , $initializer, $condition, $iteration, $body);
+    return vf.constructor(_Statement_for_4 , $sInitializer, $condition, $iteration, $body);
   }
   
   public IConstructor Statement_label( IConstructor $nname, IConstructor $nestedStatement) {
@@ -2628,6 +2611,23 @@ public class AST {
     }
     
     return vf.constructor(_Statement_case_1 , $expression);
+  }
+  
+  public IConstructor Statement_rangeBasedFor( IConstructor $declaration, IConstructor $initializer, IConstructor $body) {
+      
+    if (!$declaration.getType().isSubtypeOf(_Declaration)) {
+      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $declaration.getType() + " for $declaration:" + $declaration);
+    }
+      
+    if (!$initializer.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
+    }
+      
+    if (!$body.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
+    }
+    
+    return vf.constructor(_Statement_rangeBasedFor_3 , $declaration, $initializer, $body);
   }
   
   public IConstructor Statement_return( IConstructor $expression) {

@@ -120,6 +120,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
@@ -2349,6 +2350,13 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		IASTExpression _condition = statement.getConditionExpression();
 		IASTExpression _iteration = statement.getIterationExpression();
 		IASTStatement _body = statement.getBody();
+
+		if (statement instanceof ICPPASTForStatement) {
+			IASTDeclaration _conditionDeclaration = ((ICPPASTForStatement) statement).getConditionDeclaration();
+			if (_conditionDeclaration != null)
+				err("WARNING: ICPPASTForStatement has ConditionDeclaration: "
+						+ _conditionDeclaration.getRawSignature());
+		}
 
 		IConstructor initializer;
 		if (_initializer == null)
