@@ -187,7 +187,7 @@ data Expression
     
     | \expressionList(list[Expression] expressions)
     
-    | \templateId(Expression nname, list[Type] argumentTypes)
+    | \templateId(Expression nname, list[Expression] argumentTypes)
 
     | \empty()    
     | \nyi(str raw)
@@ -212,8 +212,8 @@ data Statement
     | \expressionStatement(Expression expression)
     | \if(Expression condition, Statement thenClause)
     | \if(Expression condition, Statement thenClause, Statement elseClause)
-    | \for(Statement initializer, Expression condition, Expression iteration, Statement body)
-    | \rangeBasedFor(Declaration declaration, Statement initializer, Statement body)
+    | \for(Statement sInitializer, Expression condition, Expression iteration, Statement body)
+    | \rangeBasedFor(Declaration declaration, Expression initializer, Statement body)
     | \switch(Expression controller, Statement body)
     | \case(Expression expression)
     | \defaultCase()
