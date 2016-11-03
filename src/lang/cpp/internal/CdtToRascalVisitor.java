@@ -153,6 +153,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeTransformationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
@@ -453,8 +454,14 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTAliasDeclaration declaration) {
-		out("CPPAliasDeclaration: " + declaration.getRawSignature());
-		throw new RuntimeException("NYI");
+		IASTName _alias = declaration.getAlias();
+		ICPPASTTypeId _mappingTypeId = declaration.getMappingTypeId();
+		_alias.accept(this);
+		IConstructor alias = stack.pop();
+		_mappingTypeId.accept(this);
+		IConstructor mappingTypeId = stack.pop();
+		stack.push(builder.Declaration_alias(alias, mappingTypeId));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTProblemDeclaration declaration) {

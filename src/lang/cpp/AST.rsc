@@ -84,6 +84,7 @@ data Declaration
     | \namespaceAlias(Expression \alias, Expression mapping)
     
     | \linkageSpecification(str literal, list[Declaration] declarations)
+    | \alias(Expression \alias, Expression mappingTypeId)
     
     ;
 
