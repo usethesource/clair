@@ -20,18 +20,20 @@ data Declarator
 data DeclSpecifier
     = \declSpecifier(list[Modifier] modifiers, Type \type)
     | \declSpecifier(list[Modifier] modifiers, Type \type, Expression expression) //decltype and type_of
-    | \etsEnum(Expression nname)
-    | \etsStruct(Expression nname) //ElaboratedTypeSpecifier
-    | \etsUnion(Expression nname)
-    | \etsClass(Expression nname)
-    | \namedTypeSpecifier(list[Modifier] modifiers, Expression nname)
+    | \etsEnum(Expression name)
+    | \etsStruct(Expression name) //ElaboratedTypeSpecifier
+    | \etsUnion(Expression name)
+    | \etsClass(Expression name)
+    | \namedTypeSpecifier(list[Modifier] modifiers, Expression name)
     
-    | \struct(Expression nname, list[Declaration] members)  //c
-    | \union(Expression nname, list[Declaration] members)   //c
-    | \class(Expression nname, list[Declaration] members)   //c
-    | \struct(Expression nname,  list[Declaration] baseSpecifiers,list[Declaration] members)
-    | \union(Expression nname, list[Declaration] baseSpecifiers, list[Declaration] members)
-    | \class(Expression nname, list[Declaration] baseSpecifiers, list[Declaration] members)
+    | \struct(Expression name, list[Declaration] members)  //c
+    | \union(Expression name, list[Declaration] members)   //c
+    | \class(Expression name, list[Declaration] members)   //c
+    | \struct(Expression name,  list[Declaration] baseSpecifiers,list[Declaration] members)
+    | \union(Expression name, list[Declaration] baseSpecifiers, list[Declaration] members)
+    | \class(Expression name, list[Declaration] baseSpecifiers, list[Declaration] members)
+    
+    | \enum(Expression name, list[Declaration] enumerators)
     ;
     
 data Declaration
@@ -45,9 +47,8 @@ data Declaration
     
     | \asmDeclaration(str assembly)
     
-    | \enumerator(str name, Expression evalue)
-    | \enumerator(str name)//?
-    | \enum(str name, list[Expression] enumerators)
+    | \enumerator(str name, Expression \value)
+    | \enumerator(str name)
     
     | \usingDirective(Expression qualifiedName)
     | \visibilityLabel(Modifier visibility)

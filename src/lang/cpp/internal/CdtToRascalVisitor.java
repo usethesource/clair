@@ -1084,19 +1084,10 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(IASTEnumerationSpecifier declSpec) {
-		IASTName _name = declSpec.getName();
-		IASTEnumerator[] _enumerators = declSpec.getEnumerators();
-
-		_name.accept(this);
-		IConstructor name = stack.pop();
-		IListWriter enumerators = vf.listWriter();
-		Stream.of(_enumerators).forEach(it -> {
-			it.accept(this);
-			enumerators.append(stack.pop());
-		});
-
-		stack.push(builder.Declaration_enum(name.getName(), enumerators.done()));
-
+		if (declSpec instanceof ICPPASTEnumerationSpecifier)
+			visit((ICPPASTEnumerationSpecifier) declSpec);
+		else
+			throw new RuntimeException("NYI");
 		return PROCESS_ABORT;
 	}
 
@@ -1295,7 +1286,25 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTEnumerationSpecifier declSpec) {
-		out("CPPEnumerationSpecifier: " + declSpec.getRawSignature());
+		IASTName _name = declSpec.getName();
+		IASTEnumerator[] _enumerators = declSpec.getEnumerators();
+
+		if (declSpec.isScoped())
+			err("WARNING: ICPPASTEnumerationSpecifier has isScoped=true");
+		if (declSpec.isOpaque())
+			err("WARNING: ICPPASTEnumerationSpecifier has isOpaque=true");
+		if (declSpec.getBaseType() != null)
+			err("WARNING: ICPPASTEnumerationSpecifier has baseType");
+
+		_name.accept(this);
+		IConstructor name = stack.pop();
+		IListWriter enumerators = vf.listWriter();
+		Stream.of(_enumerators).forEach(it -> {
+			it.accept(this);
+			enumerators.append(stack.pop());
+		});
+
+		stack.push(builder.DeclSpecifier_enum(name, enumerators.done()));
 		return PROCESS_ABORT;
 	}
 
