@@ -9,10 +9,10 @@ data Declarator
     | \declarator(list[Declaration] pointerOperators, Expression nname, Expression initializer)
     | \functionDeclarator(list[Declaration] pointerOperators, Expression name, list[Declaration] parameters)  //superfluous?
     | \functionDeclarator(list[Declaration] pointerOperators, list[Modifier] modifiers, Expression name, list[Declaration] parameters, list[Declaration] virtSpecifiers)
-    | \functionDeclaratorNested(list[Declaration] pointerOperators, list[Modifier] modifiers, Declarator declarator, list[Expression] arguments, list[Declaration] virtSpecifiers)
-    | \functionDeclaratorNested(list[Declaration] pointerOperators, list[Modifier] modifiers, Declarator declarator, list[Expression] arguments, list[Declaration] virtSpecifiers, Expression initializer)
-    | \functionDeclaratorWithES(list[Declaration] pointerOperators, list[Modifier] modifiers, Expression name, list[Expression] arguments, list[Declaration] virtSpecifiers) //empty exception specification
-    | \functionDeclaratorWithES(list[Declaration] pointerOperators, list[Modifier] modifiers, Expression name, list[Expression] arguments, list[Declaration] virtSpecifiers, list[Type] exceptionSpecification)
+    | \functionDeclaratorNested(list[Declaration] pointerOperators, list[Modifier] modifiers, Declarator declarator, list[Declaration] arguments, list[Declaration] virtSpecifiers)
+    | \functionDeclaratorNested(list[Declaration] pointerOperators, list[Modifier] modifiers, Declarator declarator, list[Declaration] arguments, list[Declaration] virtSpecifiers, Expression initializer)
+    | \functionDeclaratorWithES(list[Declaration] pointerOperators, list[Modifier] modifiers, Expression name, list[Declaration] arguments, list[Declaration] virtSpecifiers) //empty exception specification
+    | \functionDeclaratorWithES(list[Declaration] pointerOperators, list[Modifier] modifiers, Expression name, list[Declaration] arguments, list[Declaration] virtSpecifiers, list[Type] exceptionSpecification)
     | \arrayDeclarator(Expression name, list[Expression] arrayModifier)
     | \arrayDeclarator(Expression name, list[Expression] arrayModifier, Expression initializer)
     ;
@@ -25,6 +25,13 @@ data DeclSpecifier
     | \etsUnion(Expression nname)
     | \etsClass(Expression nname)
     | \namedTypeSpecifier(list[Modifier] modifiers, Expression nname)
+    
+    | \struct(Expression nname, list[Declaration] members)  //c
+    | \union(Expression nname, list[Declaration] members)   //c
+    | \class(Expression nname, list[Declaration] members)   //c
+    | \struct(Expression nname,  list[Declaration] baseSpecifiers,list[Declaration] members)
+    | \union(Expression nname, list[Declaration] baseSpecifiers, list[Declaration] members)
+    | \class(Expression nname, list[Declaration] baseSpecifiers, list[Declaration] members)
     ;
     
 data Declaration
@@ -44,12 +51,6 @@ data Declaration
     
     | \usingDirective(Expression qualifiedName)
     | \visibilityLabel(Modifier visibility)
-    | \struct(Expression nname, list[Declaration] members)  //c
-    | \union(Expression nname, list[Declaration] members)   //c
-    | \class(Expression nname, list[Declaration] members)   //c
-    | \struct(Expression nname,  list[Declaration] baseSpecifiers,list[Declaration] members)
-    | \union(Expression nname, list[Declaration] baseSpecifiers, list[Declaration] members)
-    | \class(Expression nname, list[Declaration] baseSpecifiers, list[Declaration] members)
     
     //| \etsEnum(Expression nname)
     //| \etsStruct(Expression nname) //ElaboratedTypeSpecifier
@@ -69,7 +70,7 @@ data Declaration
     
     //| \declarationEqualsInitializer(str name, Expression initializer) //weg //Que?
     
-    | \template(list[Expression] parameters,Declaration declaration)
+    | \template(list[Declaration] parameters, Declaration declaration)
     | \sttClass(Expression nname) //simpleTypeTemplateParameter    
     | \sttTypename(Expression nname) //simpleTypeTemplateParameter
     

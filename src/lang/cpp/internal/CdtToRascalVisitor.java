@@ -992,10 +992,10 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 		switch (key) {
 		case IASTCompositeTypeSpecifier.k_struct:
-			stack.push(builder.Declaration_struct(name, members.done()));
+			stack.push(builder.DeclSpecifier_struct(name, members.done()));
 			break;
 		case IASTCompositeTypeSpecifier.k_union:
-			stack.push(builder.Declaration_union(name, members.done()));
+			stack.push(builder.DeclSpecifier_union(name, members.done()));
 			break;
 		default:
 			throw new RuntimeException("Unknown IASTCompositeTypeSpecifier code " + key + ". Exiting");
@@ -1031,13 +1031,13 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 		switch (key) {
 		case ICPPASTCompositeTypeSpecifier.k_struct:
-			stack.push(builder.Declaration_struct(name, baseSpecifiers.done(), members.done()));
+			stack.push(builder.DeclSpecifier_struct(name, baseSpecifiers.done(), members.done()));
 			break;
 		case ICPPASTCompositeTypeSpecifier.k_union:
-			stack.push(builder.Declaration_union(name, baseSpecifiers.done(), members.done()));
+			stack.push(builder.DeclSpecifier_union(name, baseSpecifiers.done(), members.done()));
 			break;
 		case ICPPASTCompositeTypeSpecifier.k_class:
-			stack.push(builder.Declaration_class(name, baseSpecifiers.done(), members.done()));
+			stack.push(builder.DeclSpecifier_class(name, baseSpecifiers.done(), members.done()));
 			break;
 		default:
 			throw new RuntimeException("Unknown IASTCompositeTypeSpecifier code " + key + ". Exiting");
