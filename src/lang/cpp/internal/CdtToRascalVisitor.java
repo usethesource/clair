@@ -1175,6 +1175,10 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			modifiers.append(builder.Modifier_const());
 		if (declSpec.isVolatile())
 			modifiers.append(builder.Modifier_volatile());
+		if (declSpec.isRestrict())
+			modifiers.append(builder.Modifier_restrict());
+		if (declSpec.isInline())
+			modifiers.append(builder.Modifier_inline());
 
 		switch (declSpec.getStorageClass()) {
 		case IASTDeclSpecifier.sc_typedef:
@@ -2026,6 +2030,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	public int visit(IASTLiteralExpression expression) {
 		int kind = expression.getKind();
 		String value = expression.toString();
+		out("LiteralExpression value=" + new String(expression.getValue()));
 		switch (kind) {
 		case IASTLiteralExpression.lk_integer_constant:
 			stack.push(builder.Expression_integerConstant(value));
