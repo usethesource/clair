@@ -34,6 +34,9 @@ data DeclSpecifier
     | \class(Expression name, list[Declaration] baseSpecifiers, list[Declaration] members)
     
     | \enum(Expression name, list[Declaration] enumerators)
+    | \enum(DeclSpecifier baseType, Expression name, list[Declaration] enumerators)
+    | \enumScoped(Expression name, list[Declaration] enumerators)
+    | \enumScoped(DeclSpecifier baseType, Expression name, list[Declaration] enumerators)
     ;
     
 data Declaration
