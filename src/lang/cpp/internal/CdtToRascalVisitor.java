@@ -2030,7 +2030,6 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	public int visit(IASTLiteralExpression expression) {
 		int kind = expression.getKind();
 		String value = expression.toString();
-		out("LiteralExpression value=" + new String(expression.getValue()));
 		switch (kind) {
 		case IASTLiteralExpression.lk_integer_constant:
 			stack.push(builder.Expression_integerConstant(value));
