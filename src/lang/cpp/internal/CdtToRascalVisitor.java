@@ -371,13 +371,13 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		int visibility = declaration.getVisibility();
 		switch (visibility) {
 		case ICPPASTVisibilityLabel.v_public:
-			stack.push(builder.Modifier_public());
+			stack.push(builder.Declaration_visibilityLabel(builder.Modifier_public()));
 			break;
 		case ICPPASTVisibilityLabel.v_protected:
-			stack.push(builder.Modifier_protected());
+			stack.push(builder.Declaration_visibilityLabel(builder.Modifier_protected()));
 			break;
 		case ICPPASTVisibilityLabel.v_private:
-			stack.push(builder.Modifier_private());
+			stack.push(builder.Declaration_visibilityLabel(builder.Modifier_private()));
 			break;
 		default:
 			throw new RuntimeException("Unknown CPPVisibilityLabel code " + visibility + ". Exiting");
