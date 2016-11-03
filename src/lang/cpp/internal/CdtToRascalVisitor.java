@@ -1288,13 +1288,20 @@ public class CdtToRascalVisitor extends ASTVisitor {
 	public int visit(ICPPASTEnumerationSpecifier declSpec) {
 		IASTName _name = declSpec.getName();
 		IASTEnumerator[] _enumerators = declSpec.getEnumerators();
+		IASTDeclSpecifier _baseType = declSpec.getBaseType();
 
-		if (declSpec.isScoped())
-			err("WARNING: ICPPASTEnumerationSpecifier has isScoped=true");
 		if (declSpec.isOpaque())
 			err("WARNING: ICPPASTEnumerationSpecifier has isOpaque=true");
-		if (declSpec.getBaseType() != null)
-			err("WARNING: ICPPASTEnumerationSpecifier has baseType");
+		if (declSpec.isFriend())
+			err("WARNING: ICPPASTEnumerationSpecifier has isFriend=true");
+		if (declSpec.isVirtual())
+			err("WARNING: ICPPASTEnumerationSpecifier has isVirtual=true");
+		if (declSpec.isExplicit())
+			err("WARNING: ICPPASTEnumerationSpecifier has isExplicit=true");
+		if (declSpec.isConstexpr())
+			err("WARNING: ICPPASTEnumerationSpecifier has isConstexpr=true");
+		if (declSpec.isThreadLocal())
+			err("WARNING: ICPPASTEnumerationSpecifier has isThreadLocal=true");
 
 		_name.accept(this);
 		IConstructor name = stack.pop();
@@ -1304,7 +1311,19 @@ public class CdtToRascalVisitor extends ASTVisitor {
 			enumerators.append(stack.pop());
 		});
 
-		stack.push(builder.DeclSpecifier_enum(name, enumerators.done()));
+		if (_baseType == null) {
+			if (declSpec.isScoped())
+				stack.push(builder.DeclSpecifier_enumScoped(name, enumerators.done()));
+			else
+				stack.push(builder.DeclSpecifier_enum(name, enumerators.done()));
+		} else {
+			_baseType.accept(this);
+			IConstructor baseType = stack.pop();
+			if (declSpec.isScoped())
+				stack.push(builder.DeclSpecifier_enumScoped(baseType, name, enumerators.done()));
+			else
+				stack.push(builder.DeclSpecifier_enum(baseType, name, enumerators.done()));
+		}
 		return PROCESS_ABORT;
 	}
 
