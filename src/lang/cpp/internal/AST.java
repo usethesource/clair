@@ -48,46 +48,46 @@ public class AST {
     = tf.constructor(typestore,_Declarator,"functionDeclarator",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Expression,"name",tf.listType(_Declaration),"parameters",tf.listType(_Declaration),"virtSpecifiers");
   
   
+  private static final Type _DeclSpecifier_struct_3 
+    = tf.constructor(typestore,_DeclSpecifier,"struct",_Expression,"name",tf.listType(_Declaration),"baseSpecifiers",tf.listType(_Declaration),"members");
+  private static final Type _DeclSpecifier_struct_2 
+    = tf.constructor(typestore,_DeclSpecifier,"struct",_Expression,"name",tf.listType(_Declaration),"members");
+  private static final Type _DeclSpecifier_namedTypeSpecifier_2 
+    = tf.constructor(typestore,_DeclSpecifier,"namedTypeSpecifier",tf.listType(_Modifier),"modifiers",_Expression,"name");
   private static final Type _DeclSpecifier_etsEnum_1 
-    = tf.constructor(typestore,_DeclSpecifier,"etsEnum",_Expression,"nname");
+    = tf.constructor(typestore,_DeclSpecifier,"etsEnum",_Expression,"name");
   private static final Type _DeclSpecifier_class_3 
-    = tf.constructor(typestore,_DeclSpecifier,"class",_Expression,"nname",tf.listType(_Declaration),"baseSpecifiers",tf.listType(_Declaration),"members");
+    = tf.constructor(typestore,_DeclSpecifier,"class",_Expression,"name",tf.listType(_Declaration),"baseSpecifiers",tf.listType(_Declaration),"members");
+  private static final Type _DeclSpecifier_enum_2 
+    = tf.constructor(typestore,_DeclSpecifier,"enum",_Expression,"name",tf.listType(_Declaration),"enumerators");
+  private static final Type _DeclSpecifier_etsStruct_1 
+    = tf.constructor(typestore,_DeclSpecifier,"etsStruct",_Expression,"name");
+  private static final Type _DeclSpecifier_union_2 
+    = tf.constructor(typestore,_DeclSpecifier,"union",_Expression,"name",tf.listType(_Declaration),"members");
+  private static final Type _DeclSpecifier_etsClass_1 
+    = tf.constructor(typestore,_DeclSpecifier,"etsClass",_Expression,"name");
+  private static final Type _DeclSpecifier_union_3 
+    = tf.constructor(typestore,_DeclSpecifier,"union",_Expression,"name",tf.listType(_Declaration),"baseSpecifiers",tf.listType(_Declaration),"members");
   private static final Type _DeclSpecifier_declSpecifier_3 
     = tf.constructor(typestore,_DeclSpecifier,"declSpecifier",tf.listType(_Modifier),"modifiers",_Type,"type",_Expression,"expression");
-  private static final Type _DeclSpecifier_namedTypeSpecifier_2 
-    = tf.constructor(typestore,_DeclSpecifier,"namedTypeSpecifier",tf.listType(_Modifier),"modifiers",_Expression,"nname");
-  private static final Type _DeclSpecifier_struct_3 
-    = tf.constructor(typestore,_DeclSpecifier,"struct",_Expression,"nname",tf.listType(_Declaration),"baseSpecifiers",tf.listType(_Declaration),"members");
-  private static final Type _DeclSpecifier_etsClass_1 
-    = tf.constructor(typestore,_DeclSpecifier,"etsClass",_Expression,"nname");
-  private static final Type _DeclSpecifier_struct_2 
-    = tf.constructor(typestore,_DeclSpecifier,"struct",_Expression,"nname",tf.listType(_Declaration),"members");
-  private static final Type _DeclSpecifier_union_3 
-    = tf.constructor(typestore,_DeclSpecifier,"union",_Expression,"nname",tf.listType(_Declaration),"baseSpecifiers",tf.listType(_Declaration),"members");
-  private static final Type _DeclSpecifier_class_2 
-    = tf.constructor(typestore,_DeclSpecifier,"class",_Expression,"nname",tf.listType(_Declaration),"members");
-  private static final Type _DeclSpecifier_etsStruct_1 
-    = tf.constructor(typestore,_DeclSpecifier,"etsStruct",_Expression,"nname");
+  private static final Type _DeclSpecifier_etsUnion_1 
+    = tf.constructor(typestore,_DeclSpecifier,"etsUnion",_Expression,"name");
   private static final Type _DeclSpecifier_declSpecifier_2 
     = tf.constructor(typestore,_DeclSpecifier,"declSpecifier",tf.listType(_Modifier),"modifiers",_Type,"type");
-  private static final Type _DeclSpecifier_union_2 
-    = tf.constructor(typestore,_DeclSpecifier,"union",_Expression,"nname",tf.listType(_Declaration),"members");
-  private static final Type _DeclSpecifier_etsUnion_1 
-    = tf.constructor(typestore,_DeclSpecifier,"etsUnion",_Expression,"nname");
+  private static final Type _DeclSpecifier_class_2 
+    = tf.constructor(typestore,_DeclSpecifier,"class",_Expression,"name",tf.listType(_Declaration),"members");
   
   
   private static final Type _Declaration_functionDefinition_3 
     = tf.constructor(typestore,_Declaration,"functionDefinition",_Expression,"returnSpec",_Declarator,"declarator",_Statement,"body");
-  private static final Type _Declaration_enum_2 
-    = tf.constructor(typestore,_Declaration,"enum",tf.stringType(),"name",tf.listType(_Expression),"enumerators");
   private static final Type _Declaration_deletedFunctionDefinition_3 
     = tf.constructor(typestore,_Declaration,"deletedFunctionDefinition",_DeclSpecifier,"declSpecifier",tf.listType(_Expression),"memberInitializer",_Declarator,"declarator");
+  private static final Type _Declaration_pointer_1 
+    = tf.constructor(typestore,_Declaration,"pointer",tf.listType(_Modifier),"modifiers");
   private static final Type _Declaration_parameter_2 
     = tf.constructor(typestore,_Declaration,"parameter",_DeclSpecifier,"declSpecifier",_Declarator,"declarator");
   private static final Type _Declaration_translationUnit_1 
     = tf.constructor(typestore,_Declaration,"translationUnit",tf.listType(_Declaration),"declarations");
-  private static final Type _Declaration_baseSpecifier_1 
-    = tf.constructor(typestore,_Declaration,"baseSpecifier",_Modifier,"modifier");
   private static final Type _Declaration_sttClass_1 
     = tf.constructor(typestore,_Declaration,"sttClass",_Expression,"nname");
   private static final Type _Declaration_functionDefinition_4 
@@ -104,14 +104,14 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"template",tf.listType(_Declaration),"parameters",_Declaration,"declaration");
   private static final Type _Declaration_namespaceDefinition_3 
     = tf.constructor(typestore,_Declaration,"namespaceDefinition",_Expression,"nname",tf.listType(_Declaration),"declarations",tf.boolType(),"isInline");
-  private static final Type _Declaration_enumerator_2 
-    = tf.constructor(typestore,_Declaration,"enumerator",tf.stringType(),"name",_Expression,"evalue");
-  private static final Type _Declaration_pointer_1 
-    = tf.constructor(typestore,_Declaration,"pointer",tf.listType(_Modifier),"modifiers");
   private static final Type _Declaration_visibilityLabel_1 
     = tf.constructor(typestore,_Declaration,"visibilityLabel",_Modifier,"visibility");
   private static final Type _Declaration_functionWithTryBlockDefinition_5 
     = tf.constructor(typestore,_Declaration,"functionWithTryBlockDefinition",_DeclSpecifier,"declSpecifier",_Declarator,"declarator",tf.listType(_Expression),"memberInitializers",_Statement,"sbody",tf.listType(_Statement),"catchHandlers");
+  private static final Type _Declaration_enumerator_2 
+    = tf.constructor(typestore,_Declaration,"enumerator",tf.stringType(),"name",_Expression,"value");
+  private static final Type _Declaration_baseSpecifier_1 
+    = tf.constructor(typestore,_Declaration,"baseSpecifier",_Modifier,"modifier");
   private static final Type _Declaration_virtSpecifier_1 
     = tf.constructor(typestore,_Declaration,"virtSpecifier",_Modifier,"modifier");
   private static final Type _Declaration_defaultedFunctionDefinition_3 
@@ -696,19 +696,10 @@ public class AST {
   }
     
   
-  public IConstructor DeclSpecifier_etsEnum( IConstructor $nname) {
+  public IConstructor DeclSpecifier_struct( IConstructor $name, IList $baseSpecifiers, IList $members) {
       
-    if (!$nname.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $nname.getType() + " for $nname:" + $nname);
-    }
-    
-    return vf.constructor(_DeclSpecifier_etsEnum_1 , $nname);
-  }
-  
-  public IConstructor DeclSpecifier_class( IConstructor $nname, IList $baseSpecifiers, IList $members) {
-      
-    if (!$nname.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $nname.getType() + " for $nname:" + $nname);
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
       
     if (!$baseSpecifiers.getType().isSubtypeOf(tf.listType(_Declaration))) {
@@ -719,7 +710,120 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
     }
     
-    return vf.constructor(_DeclSpecifier_class_3 , $nname, $baseSpecifiers, $members);
+    return vf.constructor(_DeclSpecifier_struct_3 , $name, $baseSpecifiers, $members);
+  }
+  
+  public IConstructor DeclSpecifier_struct( IConstructor $name, IList $members) {
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$members.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
+    }
+    
+    return vf.constructor(_DeclSpecifier_struct_2 , $name, $members);
+  }
+  
+  public IConstructor DeclSpecifier_namedTypeSpecifier( IList $modifiers, IConstructor $name) {
+      
+    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
+    }
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+    
+    return vf.constructor(_DeclSpecifier_namedTypeSpecifier_2 , $modifiers, $name);
+  }
+  
+  public IConstructor DeclSpecifier_etsEnum( IConstructor $name) {
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+    
+    return vf.constructor(_DeclSpecifier_etsEnum_1 , $name);
+  }
+  
+  public IConstructor DeclSpecifier_class( IConstructor $name, IList $baseSpecifiers, IList $members) {
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$baseSpecifiers.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $baseSpecifiers.getType() + " for $baseSpecifiers:" + $baseSpecifiers);
+    }
+      
+    if (!$members.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
+    }
+    
+    return vf.constructor(_DeclSpecifier_class_3 , $name, $baseSpecifiers, $members);
+  }
+  
+  public IConstructor DeclSpecifier_enum( IConstructor $name, IList $enumerators) {
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$enumerators.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $enumerators.getType() + " for $enumerators:" + $enumerators);
+    }
+    
+    return vf.constructor(_DeclSpecifier_enum_2 , $name, $enumerators);
+  }
+  
+  public IConstructor DeclSpecifier_etsStruct( IConstructor $name) {
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+    
+    return vf.constructor(_DeclSpecifier_etsStruct_1 , $name);
+  }
+  
+  public IConstructor DeclSpecifier_union( IConstructor $name, IList $members) {
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$members.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
+    }
+    
+    return vf.constructor(_DeclSpecifier_union_2 , $name, $members);
+  }
+  
+  public IConstructor DeclSpecifier_etsClass( IConstructor $name) {
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+    
+    return vf.constructor(_DeclSpecifier_etsClass_1 , $name);
+  }
+  
+  public IConstructor DeclSpecifier_union( IConstructor $name, IList $baseSpecifiers, IList $members) {
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$baseSpecifiers.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $baseSpecifiers.getType() + " for $baseSpecifiers:" + $baseSpecifiers);
+    }
+      
+    if (!$members.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
+    }
+    
+    return vf.constructor(_DeclSpecifier_union_3 , $name, $baseSpecifiers, $members);
   }
   
   public IConstructor DeclSpecifier_declSpecifier( IList $modifiers, IConstructor $type, IConstructor $expression) {
@@ -739,95 +843,13 @@ public class AST {
     return vf.constructor(_DeclSpecifier_declSpecifier_3 , $modifiers, $type, $expression);
   }
   
-  public IConstructor DeclSpecifier_namedTypeSpecifier( IList $modifiers, IConstructor $nname) {
+  public IConstructor DeclSpecifier_etsUnion( IConstructor $name) {
       
-    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
-    }
-      
-    if (!$nname.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $nname.getType() + " for $nname:" + $nname);
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
     
-    return vf.constructor(_DeclSpecifier_namedTypeSpecifier_2 , $modifiers, $nname);
-  }
-  
-  public IConstructor DeclSpecifier_struct( IConstructor $nname, IList $baseSpecifiers, IList $members) {
-      
-    if (!$nname.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $nname.getType() + " for $nname:" + $nname);
-    }
-      
-    if (!$baseSpecifiers.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $baseSpecifiers.getType() + " for $baseSpecifiers:" + $baseSpecifiers);
-    }
-      
-    if (!$members.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
-    }
-    
-    return vf.constructor(_DeclSpecifier_struct_3 , $nname, $baseSpecifiers, $members);
-  }
-  
-  public IConstructor DeclSpecifier_etsClass( IConstructor $nname) {
-      
-    if (!$nname.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $nname.getType() + " for $nname:" + $nname);
-    }
-    
-    return vf.constructor(_DeclSpecifier_etsClass_1 , $nname);
-  }
-  
-  public IConstructor DeclSpecifier_struct( IConstructor $nname, IList $members) {
-      
-    if (!$nname.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $nname.getType() + " for $nname:" + $nname);
-    }
-      
-    if (!$members.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
-    }
-    
-    return vf.constructor(_DeclSpecifier_struct_2 , $nname, $members);
-  }
-  
-  public IConstructor DeclSpecifier_union( IConstructor $nname, IList $baseSpecifiers, IList $members) {
-      
-    if (!$nname.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $nname.getType() + " for $nname:" + $nname);
-    }
-      
-    if (!$baseSpecifiers.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $baseSpecifiers.getType() + " for $baseSpecifiers:" + $baseSpecifiers);
-    }
-      
-    if (!$members.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
-    }
-    
-    return vf.constructor(_DeclSpecifier_union_3 , $nname, $baseSpecifiers, $members);
-  }
-  
-  public IConstructor DeclSpecifier_class( IConstructor $nname, IList $members) {
-      
-    if (!$nname.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $nname.getType() + " for $nname:" + $nname);
-    }
-      
-    if (!$members.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
-    }
-    
-    return vf.constructor(_DeclSpecifier_class_2 , $nname, $members);
-  }
-  
-  public IConstructor DeclSpecifier_etsStruct( IConstructor $nname) {
-      
-    if (!$nname.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $nname.getType() + " for $nname:" + $nname);
-    }
-    
-    return vf.constructor(_DeclSpecifier_etsStruct_1 , $nname);
+    return vf.constructor(_DeclSpecifier_etsUnion_1 , $name);
   }
   
   public IConstructor DeclSpecifier_declSpecifier( IList $modifiers, IConstructor $type) {
@@ -843,26 +865,17 @@ public class AST {
     return vf.constructor(_DeclSpecifier_declSpecifier_2 , $modifiers, $type);
   }
   
-  public IConstructor DeclSpecifier_union( IConstructor $nname, IList $members) {
+  public IConstructor DeclSpecifier_class( IConstructor $name, IList $members) {
       
-    if (!$nname.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $nname.getType() + " for $nname:" + $nname);
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
       
     if (!$members.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
     }
     
-    return vf.constructor(_DeclSpecifier_union_2 , $nname, $members);
-  }
-  
-  public IConstructor DeclSpecifier_etsUnion( IConstructor $nname) {
-      
-    if (!$nname.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $nname.getType() + " for $nname:" + $nname);
-    }
-    
-    return vf.constructor(_DeclSpecifier_etsUnion_1 , $nname);
+    return vf.constructor(_DeclSpecifier_class_2 , $name, $members);
   }
     
   
@@ -883,19 +896,6 @@ public class AST {
     return vf.constructor(_Declaration_functionDefinition_3 , $returnSpec, $declarator, $body);
   }
   
-  public IConstructor Declaration_enum( String $name, IList $enumerators) {
-      
-    if (!vf.string($name).getType().isSubtypeOf(tf.stringType())) {
-      throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($name).getType() + " for vf.string($name):" + vf.string($name));
-    }
-      
-    if (!$enumerators.getType().isSubtypeOf(tf.listType(_Expression))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $enumerators.getType() + " for $enumerators:" + $enumerators);
-    }
-    
-    return vf.constructor(_Declaration_enum_2 , vf.string($name), $enumerators);
-  }
-  
   public IConstructor Declaration_deletedFunctionDefinition( IConstructor $declSpecifier, IList $memberInitializer, IConstructor $declarator) {
       
     if (!$declSpecifier.getType().isSubtypeOf(_DeclSpecifier)) {
@@ -911,6 +911,15 @@ public class AST {
     }
     
     return vf.constructor(_Declaration_deletedFunctionDefinition_3 , $declSpecifier, $memberInitializer, $declarator);
+  }
+  
+  public IConstructor Declaration_pointer( IList $modifiers) {
+      
+    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
+    }
+    
+    return vf.constructor(_Declaration_pointer_1 , $modifiers);
   }
   
   public IConstructor Declaration_parameter( IConstructor $declSpecifier, IConstructor $declarator) {
@@ -933,15 +942,6 @@ public class AST {
     }
     
     return vf.constructor(_Declaration_translationUnit_1 , $declarations);
-  }
-  
-  public IConstructor Declaration_baseSpecifier( IConstructor $modifier) {
-      
-    if (!$modifier.getType().isSubtypeOf(_Modifier)) {
-      throw new IllegalArgumentException("Expected " + _Modifier + " but got " + $modifier.getType() + " for $modifier:" + $modifier);
-    }
-    
-    return vf.constructor(_Declaration_baseSpecifier_1 , $modifier);
   }
   
   public IConstructor Declaration_sttClass( IConstructor $nname) {
@@ -1044,28 +1044,6 @@ public class AST {
     return vf.constructor(_Declaration_namespaceDefinition_3 , $nname, $declarations, $isInline);
   }
   
-  public IConstructor Declaration_enumerator( String $name, IConstructor $evalue) {
-      
-    if (!vf.string($name).getType().isSubtypeOf(tf.stringType())) {
-      throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($name).getType() + " for vf.string($name):" + vf.string($name));
-    }
-      
-    if (!$evalue.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $evalue.getType() + " for $evalue:" + $evalue);
-    }
-    
-    return vf.constructor(_Declaration_enumerator_2 , vf.string($name), $evalue);
-  }
-  
-  public IConstructor Declaration_pointer( IList $modifiers) {
-      
-    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
-    }
-    
-    return vf.constructor(_Declaration_pointer_1 , $modifiers);
-  }
-  
   public IConstructor Declaration_visibilityLabel( IConstructor $visibility) {
       
     if (!$visibility.getType().isSubtypeOf(_Modifier)) {
@@ -1098,6 +1076,28 @@ public class AST {
     }
     
     return vf.constructor(_Declaration_functionWithTryBlockDefinition_5 , $declSpecifier, $declarator, $memberInitializers, $sbody, $catchHandlers);
+  }
+  
+  public IConstructor Declaration_enumerator( String $name, IConstructor $value) {
+      
+    if (!vf.string($name).getType().isSubtypeOf(tf.stringType())) {
+      throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($name).getType() + " for vf.string($name):" + vf.string($name));
+    }
+      
+    if (!$value.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $value.getType() + " for $value:" + $value);
+    }
+    
+    return vf.constructor(_Declaration_enumerator_2 , vf.string($name), $value);
+  }
+  
+  public IConstructor Declaration_baseSpecifier( IConstructor $modifier) {
+      
+    if (!$modifier.getType().isSubtypeOf(_Modifier)) {
+      throw new IllegalArgumentException("Expected " + _Modifier + " but got " + $modifier.getType() + " for $modifier:" + $modifier);
+    }
+    
+    return vf.constructor(_Declaration_baseSpecifier_1 , $modifier);
   }
   
   public IConstructor Declaration_virtSpecifier( IConstructor $modifier) {
