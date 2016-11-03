@@ -484,7 +484,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		return StringUtils.repeat(" ", prefix);
 	}
 
-	public synchronized int visit(IASTSimpleDeclaration declaration) {
+	public int visit(IASTSimpleDeclaration declaration) {
 		IASTDeclSpecifier _declSpecifier = declaration.getDeclSpecifier();
 		IASTDeclarator[] _declarators = declaration.getDeclarators();
 
@@ -1060,21 +1060,38 @@ public class CdtToRascalVisitor extends ASTVisitor {
 		} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier) {
 			int kind = declSpec.getKind();
 			IASTName _name = declSpec.getName();
-			if (declSpec.isConst() || declSpec.isVolatile() || declSpec.isRestrict() || declSpec.isInline())
-				err("WARNING: IASTElaboratedTypeSpecifier encountered unimplemented flag");
+			IListWriter modifiers = vf.listWriter();
+			if (declSpec.isConst())
+				modifiers.append(builder.Modifier_const());
+			if (declSpec.isVolatile())
+				modifiers.append(builder.Modifier_volatile());
+			if (declSpec.isRestrict())
+				modifiers.append(builder.Modifier_restrict());
+			if (declSpec.isInline())
+				modifiers.append(builder.Modifier_inline());
+			if (((ICPPASTElaboratedTypeSpecifier) declSpec).isFriend())
+				modifiers.append(builder.Modifier_friend());
+			if (((ICPPASTElaboratedTypeSpecifier) declSpec).isVirtual())
+				modifiers.append(builder.Modifier_virtual());
+			if (((ICPPASTElaboratedTypeSpecifier) declSpec).isExplicit())
+				modifiers.append(builder.Modifier_explicit());
+			if (((ICPPASTElaboratedTypeSpecifier) declSpec).isConstexpr())
+				modifiers.append(builder.Modifier_const());
+			if (((ICPPASTElaboratedTypeSpecifier) declSpec).isThreadLocal())
+				modifiers.append(builder.Modifier_threadLocal());
 			_name.accept(this);
 			switch (kind) {
 			case ICPPASTElaboratedTypeSpecifier.k_enum:
-				stack.push(builder.DeclSpecifier_etsEnum(stack.pop()));
+				stack.push(builder.DeclSpecifier_etsEnum(modifiers.done(), stack.pop()));
 				break;
 			case ICPPASTElaboratedTypeSpecifier.k_struct:
-				stack.push(builder.DeclSpecifier_etsStruct(stack.pop()));
+				stack.push(builder.DeclSpecifier_etsStruct(modifiers.done(), stack.pop()));
 				break;
 			case ICPPASTElaboratedTypeSpecifier.k_union:
-				stack.push(builder.DeclSpecifier_etsUnion(stack.pop()));
+				stack.push(builder.DeclSpecifier_etsUnion(modifiers.done(), stack.pop()));
 				break;
 			case ICPPASTElaboratedTypeSpecifier.k_class:
-				stack.push(builder.DeclSpecifier_etsClass(stack.pop()));
+				stack.push(builder.DeclSpecifier_etsClass(modifiers.done(), stack.pop()));
 				break;
 			default:
 				throw new RuntimeException("IASTElaboratedTypeSpecifier encountered unknown kind " + kind);
