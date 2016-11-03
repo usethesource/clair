@@ -130,6 +130,8 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"usingDeclaration",_Expression,"nname");
   private static final Type _Declaration_namespaceAlias_2 
     = tf.constructor(typestore,_Declaration,"namespaceAlias",_Expression,"alias",_Expression,"mapping");
+  private static final Type _Declaration_alias_2 
+    = tf.constructor(typestore,_Declaration,"alias",_Expression,"alias",_Expression,"mappingTypeId");
   
   
   private static final Type _Expression_cast_2 
@@ -1193,6 +1195,19 @@ public class AST {
     }
     
     return vf.constructor(_Declaration_namespaceAlias_2 , $alias, $mapping);
+  }
+  
+  public IConstructor Declaration_alias( IConstructor $alias, IConstructor $mappingTypeId) {
+      
+    if (!$alias.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $alias.getType() + " for $alias:" + $alias);
+    }
+      
+    if (!$mappingTypeId.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $mappingTypeId.getType() + " for $mappingTypeId:" + $mappingTypeId);
+    }
+    
+    return vf.constructor(_Declaration_alias_2 , $alias, $mappingTypeId);
   }
     
   
