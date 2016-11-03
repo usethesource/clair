@@ -20,10 +20,10 @@ data Declarator
 data DeclSpecifier
     = \declSpecifier(list[Modifier] modifiers, Type \type)
     | \declSpecifier(list[Modifier] modifiers, Type \type, Expression expression) //decltype and type_of
-    | \etsEnum(Expression name)
-    | \etsStruct(Expression name) //ElaboratedTypeSpecifier
-    | \etsUnion(Expression name)
-    | \etsClass(Expression name)
+    | \etsEnum(list[Modifier], Expression name)
+    | \etsStruct(list[Modifier], Expression name) //ElaboratedTypeSpecifier
+    | \etsUnion(list[Modifier], Expression name)
+    | \etsClass(list[Modifier], Expression name)
     | \namedTypeSpecifier(list[Modifier] modifiers, Expression name)
     
     | \struct(Expression name, list[Declaration] members)  //c
