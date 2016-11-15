@@ -312,7 +312,7 @@ data Modifier
     | \captByReference()
     ;
     
-@javaClass{lang.cpp.internal.Parser}  
+@javaClass{lang.cpp.internal.CdtToRascalVisitor}  
 @reflect{need access to streams}   
 java Declaration parseCpp(loc file);
 
