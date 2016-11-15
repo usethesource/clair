@@ -202,7 +202,7 @@ import org.rascalmpl.value.IString;
 import org.rascalmpl.value.IValue;
 import org.rascalmpl.value.IValueFactory;
 
-public class CdtToRascalVisitor extends ASTVisitor {
+public class Parser extends ASTVisitor {
 	private IValueFactory vf;
 	private AST builder;
 	private IEvaluatorContext ctx;
@@ -210,7 +210,7 @@ public class CdtToRascalVisitor extends ASTVisitor {
 
 	boolean doTypeLogging = false;
 
-	public CdtToRascalVisitor(IValueFactory vf) {
+	public Parser(IValueFactory vf) {
 		super(true);
 		this.vf = vf;
 		this.builder = new AST(vf);
