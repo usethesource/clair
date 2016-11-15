@@ -4,7 +4,7 @@ import IO;
 
 extend analysis::m3::AST;
 
-data Declarator
+data Declarator(loc src = |unknown:///|)
     = \declarator(list[Declaration] pointerOperators, Expression nname)
     | \declarator(list[Declaration] pointerOperators, Expression nname, Expression initializer)
     | \functionDeclarator(list[Declaration] pointerOperators, Expression name, list[Declaration] parameters)  //superfluous?
@@ -17,7 +17,7 @@ data Declarator
     | \arrayDeclarator(Expression name, list[Expression] arrayModifier, Expression initializer)
     ;
     
-data DeclSpecifier
+data DeclSpecifier(loc src = |unknown:///|)
     = \declSpecifier(list[Modifier] modifiers, Type \type)
     | \declSpecifier(list[Modifier] modifiers, Type \type, Expression expression) //decltype and type_of
     | \etsEnum(list[Modifier], Expression name)
@@ -39,7 +39,7 @@ data DeclSpecifier
     | \enumScoped(DeclSpecifier baseType, Expression name, list[Declaration] enumerators)
     ;
     
-data Declaration
+data Declaration(loc src=|unknown:///|)
     = \translationUnit(list[Declaration] declarations)
     | \simpleDeclaration(DeclSpecifier declSpecifier, list[Declarator] declarators)//?
     | \functionDefinition(Expression returnSpec, Declarator declarator, Statement body)//?
@@ -93,7 +93,7 @@ data Declaration
     ;
 
 
-data Expression
+data Expression(loc src = |unknown:///|)
     = \multiply(Expression lhs, Expression rhs)
     | \divide(Expression lhs, Expression rhs)
     | \modulo(Expression lhs, Expression rhs)
@@ -212,7 +212,7 @@ data Expression
     ;                       
  
 
-data Statement              
+data Statement(loc src = |unknown:///|)
     = \compoundStatement(list[Statement] statements)
     | \declarationStatement(Declaration declaration)
     | \expressionStatement(Expression expression)
@@ -240,7 +240,7 @@ data Statement
     
     ;           
   
-data Type 
+data Type(loc src = |unknown:///|)
     = \unspecified()
     | \void()
     | \char()
@@ -271,7 +271,7 @@ data Type
 
     ;
   
-data Modifier
+data Modifier(loc src = |unknown:///|)
     = typedef()
     | \extern()
     | \static()
