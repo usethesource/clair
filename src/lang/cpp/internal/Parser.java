@@ -1,7 +1,5 @@
 package lang.cpp.internal;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +39,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -211,7 +210,7 @@ public class Parser extends ASTVisitor {
 	private Stack<IConstructor> stack = new Stack<IConstructor>();
 
 	boolean doTypeLogging = false;
-	ISourceLocation loc;
+	ISourceLocation sourceLoc;
 
 	public Parser(IValueFactory vf) {
 		super(true);
@@ -226,7 +225,7 @@ public class Parser extends ASTVisitor {
 			setIEvaluatorContext(ctx);
 		}
 		try {
-			loc = file;
+			sourceLoc = file;
 			String input = ((IString) new Prelude(vf).readFile(file)).getValue();
 			IValue result = parse(file.getPath(), input.toCharArray());
 
@@ -270,6 +269,11 @@ public class Parser extends ASTVisitor {
 		return ast;
 	}
 
+	public ISourceLocation getSourceLocation(IASTNode node) {
+		IASTFileLocation astFileLocation = node.getFileLocation();
+		return vf.sourceLocation(sourceLoc, astFileLocation.getNodeOffset(), astFileLocation.getNodeLength());
+	}
+
 	private void out(String msg) {
 		ctx.getStdOut().println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
@@ -280,6 +284,7 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(IASTTranslationUnit tu) {
+		ISourceLocation loc = getSourceLocation(tu);
 		IListWriter declarations = vf.listWriter();
 		Stream.of(tu.getDeclarations()).forEach(it -> {
 			it.accept(this);
@@ -287,12 +292,7 @@ public class Parser extends ASTVisitor {
 		});
 
 		IConstructor translationUnit = builder.Declaration_translationUnit(declarations.done(), loc);
-		URI loc = null;
-		try {
-			loc = new URI("project://clair/src/test/test.cpp");
-		} catch (URISyntaxException e) {
-		}
-		stack.push(translationUnit.asWithKeywordParameters().setParameter("src", vf.sourceLocation(loc)));
+		stack.push(translationUnit);
 
 		return PROCESS_ABORT;
 	}
@@ -320,6 +320,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTName name) {
+		ISourceLocation loc = getSourceLocation(name);
 		if (name instanceof ICPPASTConversionName)
 			visit((ICPPASTConversionName) name);
 		else if (name instanceof ICPPASTOperatorName)
@@ -335,6 +336,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTConversionName name) {
+		ISourceLocation loc = getSourceLocation(name);
 		// TODO: check
 		name.getTypeId().accept(this);
 		stack.push(builder.Expression_conversionName(name.toString(), stack.pop(), loc));
@@ -342,12 +344,14 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTOperatorName name) {
+		ISourceLocation loc = getSourceLocation(name);
 		// TODO: check
 		stack.push(builder.Expression_operatorName(name.toString(), loc));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTQualifiedName name) {
+		ISourceLocation loc = getSourceLocation(name);
 		ICPPASTNameSpecifier[] _qualifier = name.getQualifier();
 		IASTName _lastName = name.getLastName();
 		boolean fullyQualified = name.isFullyQualified();
@@ -369,6 +373,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTTemplateId name) {
+		ISourceLocation loc = getSourceLocation(name);
 		IASTName _templateName = name.getTemplateName();
 		IASTNode[] _templateArguments = name.getTemplateArguments();
 
@@ -426,6 +431,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTVisibilityLabel declaration) {
+		ISourceLocation loc = getSourceLocation(declaration);
 		int visibility = declaration.getVisibility();
 		switch (visibility) {
 		case ICPPASTVisibilityLabel.v_public:
@@ -444,6 +450,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTUsingDirective declaration) {
+		ISourceLocation loc = getSourceLocation(declaration);
 		IASTName qualifiedName = declaration.getQualifiedName();
 		qualifiedName.accept(this);
 		stack.push(builder.Declaration_usingDirective(stack.pop(), loc));
@@ -451,6 +458,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTUsingDeclaration declaration) {
+		ISourceLocation loc = getSourceLocation(declaration);
 		if (declaration.isTypename())
 			err("WARNING: ICPPASTUsingDeclaration has isTypename=true");
 
@@ -465,6 +473,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTTemplateDeclaration declaration) {
+		ISourceLocation loc = getSourceLocation(declaration);
 		boolean isExported = declaration.isExported();
 		IASTDeclaration _declaration = declaration.getDeclaration();
 		ICPPASTTemplateParameter[] _templateParameters = declaration.getTemplateParameters();
@@ -484,6 +493,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTNamespaceAlias declaration) {
+		ISourceLocation loc = getSourceLocation(declaration);
 		declaration.getAlias().accept(this);
 		IConstructor alias = stack.pop();
 		declaration.getMappingName().accept(this);
@@ -493,6 +503,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTLinkageSpecification declaration) {
+		ISourceLocation loc = getSourceLocation(declaration);
 		String literal = declaration.getLiteral();
 		IASTDeclaration[] _declarations = declaration.getDeclarations();
 
@@ -512,6 +523,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTAliasDeclaration declaration) {
+		ISourceLocation loc = getSourceLocation(declaration);
 		IASTName _alias = declaration.getAlias();
 		ICPPASTTypeId _mappingTypeId = declaration.getMappingTypeId();
 		_alias.accept(this);
@@ -532,6 +544,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTASMDeclaration declaration) {
+		ISourceLocation loc = getSourceLocation(declaration);
 		stack.push(builder.Declaration_asmDeclaration(declaration.getAssembly(), loc));
 		throw new RuntimeException("NYI");
 	}
@@ -543,6 +556,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTSimpleDeclaration declaration) {
+		ISourceLocation loc = getSourceLocation(declaration);
 		IASTDeclSpecifier _declSpecifier = declaration.getDeclSpecifier();
 		IASTDeclarator[] _declarators = declaration.getDeclarators();
 
@@ -558,6 +572,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTFunctionDefinition definition) {
+		ISourceLocation loc = getSourceLocation(definition);
 		if (definition instanceof ICPPASTFunctionDefinition) {
 			IASTDeclSpecifier _declSpecifier = definition.getDeclSpecifier();
 			IASTFunctionDeclarator _declarator = definition.getDeclarator();
@@ -643,6 +658,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTEqualsInitializer initializer) {
+		ISourceLocation loc = getSourceLocation(initializer);
 		IASTInitializerClause initializerClause = initializer.getInitializerClause();
 		initializerClause.accept(this);
 		stack.push(builder.Expression_equalsInitializer(stack.pop(), loc));
@@ -670,6 +686,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTInitializerList initializer) {
+		ISourceLocation loc = getSourceLocation(initializer);
 		IASTInitializerClause[] _clauses = initializer.getClauses();
 		IListWriter clauses = vf.listWriter();
 		Stream.of(_clauses).forEach(it -> {
@@ -686,6 +703,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTConstructorChainInitializer initializer) {
+		ISourceLocation loc = getSourceLocation(initializer);
 		IASTName _memberInitializerId = initializer.getMemberInitializerId();
 		IASTInitializer _memberInitializer = initializer.getInitializer();
 		_memberInitializerId.accept(this);
@@ -697,6 +715,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTConstructorInitializer initializer) {
+		ISourceLocation loc = getSourceLocation(initializer);
 		IASTInitializerClause[] _arguments = initializer.getArguments();
 		IListWriter arguments = vf.listWriter();
 		Stream.of(_arguments).forEach(it -> {
@@ -714,6 +733,7 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(IASTParameterDeclaration parameterDeclaration) {
+		ISourceLocation loc = getSourceLocation(parameterDeclaration);
 		if (parameterDeclaration instanceof ICPPASTParameterDeclaration) {
 			ICPPASTParameterDeclaration declaration = (ICPPASTParameterDeclaration) parameterDeclaration;
 			IASTDeclSpecifier _declSpecifier = declaration.getDeclSpecifier();
@@ -785,6 +805,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTArrayDeclarator declarator) {
+		ISourceLocation loc = getSourceLocation(declarator);
 		IASTArrayModifier[] _arrayModifiers = declarator.getArrayModifiers();
 		IASTPointerOperator[] _pointerOperators = declarator.getPointerOperators();
 		IASTDeclarator _nestedDeclarator = declarator.getNestedDeclarator();
@@ -837,6 +858,7 @@ public class Parser extends ASTVisitor {
 		if (declarator instanceof ICPPASTFunctionDeclarator)
 			visit((ICPPASTFunctionDeclarator) declarator);
 		else {
+			ISourceLocation loc = getSourceLocation(declarator);
 			IASTName _name = declarator.getName();
 			IASTParameterDeclaration[] _parameters = declarator.getParameters();
 			if (declarator.takesVarArgs())
@@ -880,6 +902,7 @@ public class Parser extends ASTVisitor {
 		else if (declarator instanceof ICPPASTFunctionDeclarator)
 			visit((ICPPASTFunctionDeclarator) declarator);
 		else {
+			ISourceLocation loc = getSourceLocation(declarator);
 			IASTPointerOperator[] _pointerOperators = declarator.getPointerOperators();
 			IASTDeclarator _nestedDeclarator = declarator.getNestedDeclarator();
 			IASTName _name = declarator.getName();
@@ -917,6 +940,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTFunctionDeclarator declarator) {
+		ISourceLocation loc = getSourceLocation(declarator);
 		IASTName _name = declarator.getName();
 		IASTParameterDeclaration[] _parameters = declarator.getParameters();
 		IASTTypeId[] _exceptionSpecification = declarator.getExceptionSpecification();
@@ -948,9 +972,8 @@ public class Parser extends ASTVisitor {
 			err("WARNING: ICPPASTFunctionDeclarator has noexceptExpression " + noexceptExpression.getRawSignature());
 		if (trailingReturnType != null)
 			err("WARNING: ICPPASTFunctionDeclarator has trailingReturnType " + trailingReturnType.getRawSignature());
-		IConstructor name = builder.Expression_name("", loc);// TODO: fix when
-																// name
-		// == null
+		IConstructor name = builder.Expression_name("", loc);
+		// TODO: fix when name == null
 		if (_name != null) {
 			_name.accept(this);
 			name = stack.pop();
@@ -1042,6 +1065,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICASTCompositeTypeSpecifier declSpec) {
+		ISourceLocation loc = getSourceLocation(declSpec);
 		int key = declSpec.getKey();
 		IASTName _name = declSpec.getName();
 		IASTDeclaration[] _members = declSpec.getMembers();
@@ -1071,6 +1095,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTCompositeTypeSpecifier declSpec) {
+		ISourceLocation loc = getSourceLocation(declSpec);
 		ICPPASTBaseSpecifier[] _baseSpecifiers = declSpec.getBaseSpecifiers();
 		int key = declSpec.getKey();
 		IASTName _name = declSpec.getName();
@@ -1113,6 +1138,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTElaboratedTypeSpecifier declSpec) {
+		ISourceLocation loc = getSourceLocation(declSpec);
 		if (declSpec instanceof ICASTElaboratedTypeSpecifier) {
 			out("ElaboratedTypeSpecifier: " + declSpec.getRawSignature());
 			throw new RuntimeException("NYI");
@@ -1168,6 +1194,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTNamedTypeSpecifier declSpec) {
+		ISourceLocation loc = getSourceLocation(declSpec);
 		IListWriter modifiers = vf.listWriter();
 		if (declSpec.isConst())
 			modifiers.append(builder.Modifier_const(loc));
@@ -1215,6 +1242,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTSimpleDeclSpecifier declSpec) {
+		ISourceLocation loc = getSourceLocation(declSpec);
 		IListWriter modifiers = vf.listWriter();
 		if (declSpec.isSigned())
 			modifiers.append(builder.Modifier_signed(loc));
@@ -1368,6 +1396,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTEnumerationSpecifier declSpec) {
+		ISourceLocation loc = getSourceLocation(declSpec);
 		IASTName _name = declSpec.getName();
 		IASTEnumerator[] _enumerators = declSpec.getEnumerators();
 		IASTDeclSpecifier _baseType = declSpec.getBaseType();
@@ -1426,6 +1455,7 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(IASTArrayModifier arrayModifier) {
+		ISourceLocation loc = getSourceLocation(arrayModifier);
 		if (arrayModifier instanceof ICASTArrayModifier) {
 			throw new RuntimeException("NYI");
 		} else {
@@ -1458,6 +1488,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTPointer pointer) {
+		ISourceLocation loc = getSourceLocation(pointer);
 		IListWriter modifiers = vf.listWriter();
 		if (pointer.isConst())
 			modifiers.append(builder.Modifier_const(loc));
@@ -1470,6 +1501,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTReferenceOperator referenceOperator) {
+		ISourceLocation loc = getSourceLocation(referenceOperator);
 		boolean isRValueReference = referenceOperator.isRValueReference();
 		if (isRValueReference)
 			err("WARNING: ICPPASTReferenceOperator has isRValueReference=true ignored");
@@ -1578,6 +1610,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTSimpleTypeConstructorExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
 		ICPPASTDeclSpecifier _declSpecifier = expression.getDeclSpecifier();
 		IASTInitializer _initializer = expression.getInitializer();
 		_declSpecifier.accept(this);
@@ -1594,6 +1627,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTNewExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
 		if (expression.isGlobal())
 			err("WARNING: ICPPASTNewExpression has isGlobal=true");
 		if (expression.isArrayAllocation())
@@ -1643,6 +1677,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTLambdaExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
 		CaptureDefault captureDefault = expression.getCaptureDefault();
 		ICPPASTCapture[] _captures = expression.getCaptures();
 		IASTImplicitName _closureTypeName = expression.getClosureTypeName();
@@ -1697,6 +1732,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTDeleteExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
 		if (expression.isGlobal())
 			err("WARNING: ICPPASTDeleteExpression has isGlobal=true");
 		IASTExpression operand = expression.getOperand();
@@ -1711,6 +1747,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTArraySubscriptExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
 		ICPPASTExpression _arrayExpression = expression.getArrayExpression();
 		ICPPASTInitializerClause _argument = expression.getArgument();
 
@@ -1730,6 +1767,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTTypeIdExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
 		int operator = expression.getOperator();
 		expression.getTypeId().accept(this);
 		switch (operator) {
@@ -1752,6 +1790,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTFunctionCallExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
 		IASTExpression _functionName = expression.getFunctionNameExpression();
 		IASTInitializerClause[] _arguments = expression.getArguments();
 
@@ -1767,6 +1806,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public IConstructor convertType(IType cdtType) {
+		ISourceLocation loc = vf.sourceLocation("TODO");
 		if (cdtType instanceof IArrayType) {
 			IType _type = ((IArrayType) cdtType).getType();
 			org.eclipse.cdt.core.dom.ast.IValue _size = ((IArrayType) cdtType).getSize();
@@ -1916,6 +1956,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTFieldReference expression) {
+		ISourceLocation loc = getSourceLocation(expression);
 		if (expression instanceof ICPPASTFieldReference) {
 			ICPPASTFieldReference reference = (ICPPASTFieldReference) expression;
 			IASTExpression _fieldOwner = reference.getFieldOwner();
@@ -1950,6 +1991,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTExpressionList expression) {
+		ISourceLocation loc = getSourceLocation(expression);
 		IListWriter expressions = vf.listWriter();
 		Stream.of(expression.getExpressions()).forEach(it -> {
 			it.accept(this);
@@ -1965,6 +2007,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTConditionalExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
 		IASTExpression _condition = expression.getLogicalConditionExpression();
 		IASTExpression _positive = expression.getPositiveResultExpression();
 		IASTExpression _negative = expression.getNegativeResultExpression();
@@ -1982,6 +2025,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTCastExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
 		int operator = expression.getOperator();
 		IASTExpression _operand = expression.getOperand();
 		IASTTypeId typeId = expression.getTypeId();
@@ -2013,6 +2057,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTUnaryExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
 		int operator = expression.getOperator();
 		IASTExpression _operand = expression.getOperand();
 
@@ -2089,6 +2134,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTLiteralExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
 		int kind = expression.getKind();
 		String value = expression.toString();
 		switch (kind) {
@@ -2123,12 +2169,14 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTIdExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
 		expression.getName().accept(this);
 		stack.push(builder.Expression_idExpression(stack.pop(), loc));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTBinaryExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
 		IASTExpression _lhs = expression.getOperand1();
 		_lhs.accept(this);
 		IConstructor lhs = stack.pop();
@@ -2306,6 +2354,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTTryBlockStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
 		IASTStatement _tryBody = statement.getTryBody();
 		ICPPASTCatchHandler[] _catchHandlers = statement.getCatchHandlers();
 		_tryBody.accept(this);
@@ -2320,6 +2369,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTRangeBasedForStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
 		IASTDeclaration _declaration = statement.getDeclaration();
 		IASTInitializerClause _initializerClause = statement.getInitializerClause();
 		IASTStatement _body = statement.getBody();
@@ -2336,6 +2386,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTCatchHandler statement) {
+		ISourceLocation loc = getSourceLocation(statement);
 		IASTStatement _catchBody = statement.getCatchBody();
 		IASTDeclaration _declaration = statement.getDeclaration();
 
@@ -2352,6 +2403,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTReturnStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
 		IASTExpression returnValue = statement.getReturnValue();
 		IASTInitializerClause returnArgument = statement.getReturnArgument();
 		// TODO: returnArgument?
@@ -2365,11 +2417,13 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTNullStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
 		stack.push(builder.Statement_nullStatement(loc));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTLabelStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
 		IASTName _name = statement.getName();
 		IASTStatement _nestedStatement = statement.getNestedStatement();
 
@@ -2383,6 +2437,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTGotoStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
 		IASTName _name = statement.getName();
 		_name.accept(this);
 		stack.push(builder.Statement_goto(stack.pop(), loc));
@@ -2390,6 +2445,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTDoStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
 		IASTStatement _body = statement.getBody();
 		IASTExpression _condition = statement.getCondition();
 
@@ -2403,11 +2459,13 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTContinueStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
 		stack.push(builder.Statement_continue(loc));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTWhileStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
 		IASTExpression _condition = statement.getCondition();
 		IASTStatement _body = statement.getBody();
 
@@ -2420,16 +2478,19 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTDefaultStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
 		stack.push(builder.Statement_defaultCase(loc));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTBreakStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
 		stack.push(builder.Statement_break(loc));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTCaseStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
 		IASTExpression _expression = statement.getExpression();
 		_expression.accept(this);
 		IConstructor expression = stack.pop();
@@ -2438,6 +2499,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTSwitchStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
 		IASTExpression _controller = statement.getControllerExpression();
 		IASTStatement _body = statement.getBody();
 
@@ -2463,6 +2525,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTForStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
 		IASTStatement _initializer = statement.getInitializerStatement();
 		IASTExpression _condition = statement.getConditionExpression();
 		IASTExpression _iteration = statement.getIterationExpression();
@@ -2504,8 +2567,9 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(IASTCompoundStatement compoundStatement) {
-		IASTStatement[] _statements = compoundStatement.getStatements();
+	public int visit(IASTCompoundStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
+		IASTStatement[] _statements = statement.getStatements();
 		IListWriter statements = vf.listWriter();
 		Stream.of(_statements).forEach(it -> {
 			it.accept(this);
@@ -2516,6 +2580,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTDeclarationStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
 		IASTDeclaration _declaration = statement.getDeclaration();
 		_declaration.accept(this);
 		stack.push(builder.Statement_declarationStatement(stack.pop(), loc));
@@ -2523,6 +2588,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTExpressionStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
 		IASTExpression _expression = statement.getExpression();
 		_expression.accept(this);
 		stack.push(builder.Statement_expressionStatement(stack.pop(), loc));
@@ -2530,6 +2596,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTIfStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
 		IASTExpression _condition = statement.getConditionExpression();
 		IASTStatement _thenClause = statement.getThenClause();
 		IASTStatement _elseClause = statement.getElseClause();
@@ -2551,6 +2618,7 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(IASTTypeId typeId) {
+		ISourceLocation loc = getSourceLocation(typeId);
 		if (typeId instanceof IASTProblemTypeId) {
 			throw new RuntimeException("IASTProblemTypeId encountered! "
 					+ ((IASTProblemTypeId) typeId).getProblem().getMessageWithLocation());
@@ -2568,6 +2636,7 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(IASTEnumerator enumerator) {
+		ISourceLocation loc = getSourceLocation(enumerator);
 		IASTName _name = enumerator.getName();
 		IASTExpression _value = enumerator.getValue();
 
@@ -2590,6 +2659,7 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(ICPPASTBaseSpecifier baseSpecifier) {
+		ISourceLocation loc = getSourceLocation(baseSpecifier);
 		boolean isVirtual = baseSpecifier.isVirtual();
 		if (isVirtual)
 			err("WARNING: ICPPASTBaseSpecifier has isVirtual set, not implemented");
@@ -2630,6 +2700,7 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(ICPPASTNamespaceDefinition namespaceDefinition) {
+		ISourceLocation loc = getSourceLocation(namespaceDefinition);
 		IASTName _name = namespaceDefinition.getName();
 		boolean isInline = namespaceDefinition.isInline();
 		IASTDeclaration[] _declarations = namespaceDefinition.getDeclarations();
@@ -2647,6 +2718,7 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(ICPPASTTemplateParameter templateParameter) {
+		ISourceLocation loc = getSourceLocation(templateParameter);
 		boolean isParameterPack = templateParameter.isParameterPack();
 		if (isParameterPack)
 			err("WARNING: ICPPASTTemplateParameter has isParameterPack=true, unimplemented");
@@ -2709,6 +2781,7 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(ICPPASTVirtSpecifier virtSpecifier) {
+		ISourceLocation loc = getSourceLocation(virtSpecifier);
 		SpecifierKind kind = virtSpecifier.getKind();
 		switch (kind) {
 		case Final:
