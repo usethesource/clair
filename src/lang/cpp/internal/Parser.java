@@ -244,6 +244,8 @@ public class Parser extends ASTVisitor {
 	public IValue parseExpression(IString expression, IEvaluatorContext ctx) throws CoreException, IOException {
 		this.ctx = ctx;
 		this.sourceLoc = vf.sourceLocation(URIUtil.assumeCorrect("unknown://", "", ""));
+		if (!expression.getValue().endsWith(";"))
+			expression.concat(vf.string(";"));
 		String expr = "void main() {\n\t" + expression.getValue() + "\n}";
 		FileContent fc = FileContent.create("", expr.toCharArray());
 		Map<String, String> macroDefinitions = new HashMap<String, String>();
