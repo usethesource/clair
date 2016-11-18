@@ -1,6 +1,7 @@
 module lang::cpp::AST
 
 import IO;
+import Node;
 
 extend analysis::m3::AST;
 
@@ -316,3 +317,8 @@ data Modifier(loc src = |unknown:///|)
 @reflect{need access to streams}   
 java Declaration parseCpp(loc file);
 
+@javaClass{lang.cpp.internal.Parser}  
+@reflect{need access to streams}   
+java Expression parseExpression(str expression);
+
+Expression parseExpr(str expression) = unsetRec(parseExpression(expression));
