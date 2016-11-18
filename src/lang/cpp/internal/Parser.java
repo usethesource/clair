@@ -1,5 +1,6 @@
 package lang.cpp.internal;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -196,6 +197,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.rascalmpl.interpreter.IEvaluatorContext;
 import org.rascalmpl.interpreter.utils.RuntimeExceptionFactory;
 import org.rascalmpl.library.Prelude;
+import org.rascalmpl.uri.URIUtil;
 import org.rascalmpl.value.IConstructor;
 import org.rascalmpl.value.IListWriter;
 import org.rascalmpl.value.ISourceLocation;
@@ -237,6 +239,27 @@ public class Parser extends ASTVisitor {
 		} catch (CoreException e) {
 			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
 		}
+	}
+
+	public IValue parseExpression(IString expression, IEvaluatorContext ctx) throws CoreException, IOException {
+		this.ctx = ctx;
+		this.sourceLoc = vf.sourceLocation(URIUtil.assumeCorrect("unknown://", "", ""));
+		String expr = "void main() {\n\t" + expression.getValue() + "\n}";
+		FileContent fc = FileContent.create("", expr.toCharArray());
+		Map<String, String> macroDefinitions = new HashMap<String, String>();
+		String[] includeSearchPaths = new String[0];
+		IScannerInfo si = new ScannerInfo(macroDefinitions, includeSearchPaths);
+		IncludeFileContentProvider ifcp = IncludeFileContentProvider.getEmptyFilesProvider();
+		IIndex idx = null;
+		int options = ILanguage.OPTION_IS_SOURCE_UNIT | ILanguage.OPTION_PARSE_INACTIVE_CODE;
+		IParserLogService log = new DefaultLogService();
+		IASTTranslationUnit tu = GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, idx, options, log);
+
+		IASTFunctionDefinition main = (IASTFunctionDefinition) tu.getDeclarations()[0];
+		IASTCompoundStatement body = (IASTCompoundStatement) main.getBody();
+		IASTExpression ex = ((IASTExpressionStatement) body.getStatements()[0]).getExpression();
+		ex.accept(this);
+		return stack.pop();
 	}
 
 	private IValue parse(String path, char[] code) throws CoreException {
