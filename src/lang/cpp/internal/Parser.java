@@ -1189,7 +1189,7 @@ public class Parser extends ASTVisitor {
 			if (((ICPPASTElaboratedTypeSpecifier) declSpec).isExplicit())
 				modifiers.append(builder.Modifier_explicit(loc));
 			if (((ICPPASTElaboratedTypeSpecifier) declSpec).isConstexpr())
-				modifiers.append(builder.Modifier_const(loc));
+				modifiers.append(builder.Modifier_constexpr(loc));
 			if (((ICPPASTElaboratedTypeSpecifier) declSpec).isThreadLocal())
 				modifiers.append(builder.Modifier_threadLocal(loc));
 			_name.accept(this);
@@ -1240,7 +1240,7 @@ public class Parser extends ASTVisitor {
 			if (((ICPPASTNamedTypeSpecifier) declSpec).isExplicit())
 				modifiers.append(builder.Modifier_explicit(loc));
 			if (((ICPPASTNamedTypeSpecifier) declSpec).isConstexpr())
-				err("IASTNamedTypeSpecifier encountered isConstexpr==true");
+				modifiers.append(builder.Modifier_constexpr(loc));
 			if (((ICPPASTNamedTypeSpecifier) declSpec).isThreadLocal())
 				modifiers.append(builder.Modifier_threadLocal(loc));
 		}
@@ -1324,7 +1324,7 @@ public class Parser extends ASTVisitor {
 			if (((ICPPASTDeclSpecifier) declSpec).isExplicit())
 				modifiers.append(builder.Modifier_explicit(loc));
 			if (((ICPPASTDeclSpecifier) declSpec).isConstexpr())
-				modifiers.append(builder.Modifier_const(loc));
+				modifiers.append(builder.Modifier_constexpr(loc));
 			if (((ICPPASTDeclSpecifier) declSpec).isThreadLocal())
 				modifiers.append(builder.Modifier_threadLocal(loc));
 		}

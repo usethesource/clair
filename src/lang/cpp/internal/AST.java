@@ -442,8 +442,6 @@ public class AST {
     = tf.constructor(typestore,_Modifier,"extern");
   private static final Type _Modifier_friend_0 
     = tf.constructor(typestore,_Modifier,"friend");
-  private static final Type _Modifier_longlong_0 
-    = tf.constructor(typestore,_Modifier,"longlong");
   private static final Type _Modifier_explicit_0 
     = tf.constructor(typestore,_Modifier,"explicit");
   private static final Type _Modifier_final_0 
@@ -484,6 +482,10 @@ public class AST {
     = tf.constructor(typestore,_Modifier,"inline");
   private static final Type _Modifier_imaginary_0 
     = tf.constructor(typestore,_Modifier,"imaginary");
+  private static final Type _Modifier_constexpr_0 
+    = tf.constructor(typestore,_Modifier,"constexpr");
+  private static final Type _Modifier_longlong_0 
+    = tf.constructor(typestore,_Modifier,"longlong");
   private static final Type _Modifier_captUnspecified_0 
     = tf.constructor(typestore,_Modifier,"captUnspecified");
   private static final Type _Modifier_unsigned_0 
@@ -2759,11 +2761,6 @@ public class AST {
     return vf.constructor(_Modifier_friend_0 ).asWithKeywordParameters().setParameter("src", $loc);
   }
   
-  public IConstructor Modifier_longlong(ISourceLocation $loc) {
-    
-    return vf.constructor(_Modifier_longlong_0 ).asWithKeywordParameters().setParameter("src", $loc);
-  }
-  
   public IConstructor Modifier_explicit(ISourceLocation $loc) {
     
     return vf.constructor(_Modifier_explicit_0 ).asWithKeywordParameters().setParameter("src", $loc);
@@ -2862,6 +2859,16 @@ public class AST {
   public IConstructor Modifier_imaginary(ISourceLocation $loc) {
     
     return vf.constructor(_Modifier_imaginary_0 ).asWithKeywordParameters().setParameter("src", $loc);
+  }
+  
+  public IConstructor Modifier_constexpr(ISourceLocation $loc) {
+    
+    return vf.constructor(_Modifier_constexpr_0 ).asWithKeywordParameters().setParameter("src", $loc);
+  }
+  
+  public IConstructor Modifier_longlong(ISourceLocation $loc) {
+    
+    return vf.constructor(_Modifier_longlong_0 ).asWithKeywordParameters().setParameter("src", $loc);
   }
   
   public IConstructor Modifier_captUnspecified(ISourceLocation $loc) {
