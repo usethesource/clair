@@ -303,7 +303,7 @@ data Modifier(loc src = |unknown:///|)
     | \friend()
     | \virtual()
     | \explicit()
-    //| \constexpr()
+    | \constexpr()
     | \threadLocal()
     | \pureVirtual()
     
