@@ -296,7 +296,10 @@ public class Parser extends ASTVisitor {
 
 	public ISourceLocation getSourceLocation(IASTNode node) {
 		IASTFileLocation astFileLocation = node.getFileLocation();
-		return vf.sourceLocation(sourceLoc, astFileLocation.getNodeOffset(), astFileLocation.getNodeLength());
+		if (astFileLocation != null)
+			return vf.sourceLocation(sourceLoc, astFileLocation.getNodeOffset(), astFileLocation.getNodeLength());
+		else
+			return vf.sourceLocation(URIUtil.assumeCorrect("unknown:///", "", ""));
 	}
 
 	private void out(String msg) {
