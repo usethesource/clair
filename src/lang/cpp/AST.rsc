@@ -16,6 +16,9 @@ data Declarator(loc src = |unknown:///|)
     | \functionDeclaratorWithES(list[Declaration] pointerOperators, list[Modifier] modifiers, Expression name, list[Declaration] arguments, list[Declaration] virtSpecifiers, list[Expression] exceptionSpecification)
     | \arrayDeclarator(Expression name, list[Expression] arrayModifier)
     | \arrayDeclarator(Expression name, list[Expression] arrayModifier, Expression initializer)
+    
+    //quick fix
+    | \missingDeclarator()
     ;
     
 data DeclSpecifier(loc src = |unknown:///|)
@@ -91,6 +94,7 @@ data Declaration(loc src=|unknown:///|)
     | \linkageSpecification(str literal, list[Declaration] declarations)
     | \alias(Expression \alias, Expression mappingTypeId)
     
+    | \problemDeclaration()
     ;
 
 
@@ -244,6 +248,7 @@ data Statement(loc src = |unknown:///|)
     | \catch(Declaration declaration, Statement body)
     | \catchAll(Statement body)    
     
+    | \problem(str raw)
     ;           
   
 data Type(loc src = |unknown:///|)

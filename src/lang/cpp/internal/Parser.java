@@ -677,7 +677,8 @@ public class Parser extends ASTVisitor {
 		err(declaration.getProblem().getMessageWithLocation());
 		err(declaration.getRawSignature());
 		prefix -= 4;
-		throw new RuntimeException("ERROR");
+		stack.push(builder.Declaration_problemDeclaration(getSourceLocation(declaration)));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTASMDeclaration declaration) {
@@ -1701,8 +1702,13 @@ public class Parser extends ASTVisitor {
 			err("ICPPASTLambdaExpression has functionCallOperatorName " + _functionCallOperatorName.getRawSignature()
 					+ ", not implemented");
 
-		_declarator.accept(this);
-		IConstructor declarator = stack.pop();
+		IConstructor declarator;
+		if (_declarator == null)
+			declarator = builder.Declarator_missingDeclarator(loc);
+		else {
+			_declarator.accept(this);
+			declarator = stack.pop();
+		}
 		_body.accept(this);
 		IConstructor body = stack.pop();
 
@@ -1891,7 +1897,7 @@ public class Parser extends ASTVisitor {
 			} else if (cdtType instanceof ICPPClassTemplate) {
 				throw new RuntimeException("NYI");
 			} else {// TODO: check
-				return builder.Type_classType(((ICompositeType) cdtType).getName(), loc);
+				return builder.Type_classType(builder.Expression_nyi((((ICompositeType) cdtType).getName()), loc), loc);
 			}
 		} else if (cdtType instanceof ICPPAliasTemplate) {
 			org.eclipse.cdt.core.dom.ast.IType _type = ((ICPPAliasTemplate) cdtType).getType();
@@ -2549,7 +2555,8 @@ public class Parser extends ASTVisitor {
 		IASTNode parent = statement.getParent();
 		out("Parent " + parent.getClass().getSimpleName() + ": " + parent.getRawSignature());
 		prefix -= 4;
-		throw new RuntimeException("ERROR");
+		stack.push(builder.Statement_problem(statement.getRawSignature(), getSourceLocation(statement)));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTForStatement statement) {
@@ -2671,10 +2678,10 @@ public class Parser extends ASTVisitor {
 		_name.accept(this);
 		IConstructor name = stack.pop();
 		if (_value == null)
-			stack.push(builder.Declaration_enumerator(name.toString(), loc));
+			stack.push(builder.Declaration_enumerator(builder.Expression_name(name.getName(), loc), loc));
 		else {
 			_value.accept(this);
-			stack.push(builder.Declaration_enumerator(name.toString(), stack.pop(), loc));
+			stack.push(builder.Declaration_enumerator(builder.Expression_name(name.getName(), loc), stack.pop(), loc));
 		}
 		return PROCESS_ABORT;
 	}
