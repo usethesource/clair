@@ -199,7 +199,7 @@ data Expression(loc src = |unknown:///|)
     | \empty()    
     | \nyi(str raw)
     
-    | \lambda(Modifier captureDefault, Declarator declarator, Statement body)
+    | \lambda(Modifier captureDefault, list[Expression] captures, Declarator declarator, Statement body)
     
     // TypeId below
     | \typeId(DeclSpecifier declSpecifier)
@@ -210,6 +210,11 @@ data Expression(loc src = |unknown:///|)
     | \initializerList(list[Expression] clauses) //initializerClause?
     | \constructorChainInitializer(Expression nname, Expression initializer)
     | \constructorInitializer(list[Expression] arguments)
+    
+    // Captures
+    | \capture(Expression nname)
+    | \captureByRef(Expression nname)
+    | \captureThisPtr()
     ;                       
  
 
@@ -308,9 +313,9 @@ data Modifier(loc src = |unknown:///|)
     | \pureVirtual()
     
     
-    | \captUnspecified()
-    | \captByCopy()
-    | \captByReference()
+    | \captDefUnspecified()
+    | \captDefByCopy()
+    | \captDefByReference()
     ;
     
 @javaClass{lang.cpp.internal.Parser}  
