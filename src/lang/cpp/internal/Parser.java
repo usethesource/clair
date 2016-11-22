@@ -1688,8 +1688,12 @@ public class Parser extends ASTVisitor {
 		IASTImplicitName _functionCallOperatorName = expression.getFunctionCallOperatorName();
 		IASTCompoundStatement _body = expression.getBody();
 
-		if (_captures.length > 0)
-			err("ICPPASTLambdaExpression has captures, not implemented");
+		IListWriter captures = vf.listWriter();
+		Stream.of(_captures).forEach(it -> {
+			it.accept(this);
+			captures.append(stack.pop());
+		});
+
 		if (!_closureTypeName.getRawSignature().equals("["))
 			err("ICPPASTLambdaExpression has closureTypeName " + _closureTypeName.getRawSignature()
 					+ ", not implemented");
@@ -1704,13 +1708,16 @@ public class Parser extends ASTVisitor {
 
 		switch (captureDefault) {
 		case BY_COPY:
-			stack.push(builder.Expression_lambda(builder.Modifier_captByCopy(loc), declarator, body, loc));
+			stack.push(builder.Expression_lambda(builder.Modifier_captDefByCopy(loc), captures.done(), declarator, body,
+					loc));
 			break;
 		case BY_REFERENCE:
-			stack.push(builder.Expression_lambda(builder.Modifier_captByReference(loc), declarator, body, loc));
+			stack.push(builder.Expression_lambda(builder.Modifier_captDefByReference(loc), captures.done(), declarator,
+					body, loc));
 			break;
 		case UNSPECIFIED:
-			stack.push(builder.Expression_lambda(builder.Modifier_captUnspecified(loc), declarator, body, loc));
+			stack.push(builder.Expression_lambda(builder.Modifier_captDefUnspecified(loc), captures.done(), declarator,
+					body, loc));
 			break;
 		default:
 			throw new RuntimeException("Unknown default capture type " + captureDefault + " encountered, exiting");
@@ -2784,8 +2791,17 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(ICPPASTCapture capture) {
-		err("Capture: " + capture.getRawSignature());
-		throw new RuntimeException("NYI");
+		ISourceLocation loc = getSourceLocation(capture);
+		if (capture.capturesThisPointer())
+			stack.push(builder.Expression_captureThisPtr(loc));
+		else {
+			capture.getIdentifier().accept(this);
+			if (capture.isByReference())
+				stack.push(builder.Expression_captureByRef(stack.pop(), loc));
+			else
+				stack.push(builder.Expression_capture(stack.pop(), loc));
+		}
+		return PROCESS_ABORT;
 	}
 
 	@Override
