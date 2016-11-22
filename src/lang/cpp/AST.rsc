@@ -6,8 +6,8 @@ import Node;
 extend analysis::m3::AST;
 
 data Declarator(loc src = |unknown:///|)
-    = \declarator(list[Declaration] pointerOperators, Expression nname)
-    | \declarator(list[Declaration] pointerOperators, Expression nname, Expression initializer)
+    = \declarator(list[Declaration] pointerOperators, Expression name)
+    | \declarator(list[Declaration] pointerOperators, Expression name, Expression initializer)
     | \functionDeclarator(list[Declaration] pointerOperators, Expression name, list[Declaration] parameters)  //superfluous?
     | \functionDeclarator(list[Declaration] pointerOperators, list[Modifier] modifiers, Expression name, list[Declaration] parameters, list[Declaration] virtSpecifiers)
     | \functionDeclaratorNested(list[Declaration] pointerOperators, list[Modifier] modifiers, Declarator declarator, list[Declaration] arguments, list[Declaration] virtSpecifiers)
@@ -51,16 +51,16 @@ data Declaration(loc src=|unknown:///|)
     
     | \asmDeclaration(str assembly)
     
-    | \enumerator(str name, Expression \value)
-    | \enumerator(str name)
+    | \enumerator(Expression name, Expression \value)
+    | \enumerator(Expression name)
     
     | \usingDirective(Expression qualifiedName)
     | \visibilityLabel(Modifier visibility)
     
-    //| \etsEnum(Expression nname)
-    //| \etsStruct(Expression nname) //ElaboratedTypeSpecifier
-    //| \etsUnion(Expression nname)
-    //| \etsClass(Expression nname)
+    //| \etsEnum(Expression name)
+    //| \etsStruct(Expression name) //ElaboratedTypeSpecifier
+    //| \etsUnion(Expression name)
+    //| \etsClass(Expression name)
     
     | \pointer(list[Modifier] modifiers)    // *
     | \reference()  // &
@@ -76,16 +76,16 @@ data Declaration(loc src=|unknown:///|)
     //| \declarationEqualsInitializer(str name, Expression initializer) //weg //Que?
     
     | \template(list[Declaration] parameters, Declaration declaration)
-    | \sttClass(Expression nname) //simpleTypeTemplateParameter    
-    | \sttTypename(Expression nname) //simpleTypeTemplateParameter
+    | \sttClass(Expression name) //simpleTypeTemplateParameter    
+    | \sttTypename(Expression name) //simpleTypeTemplateParameter
     
     | \baseSpecifier(Modifier modifier)
-    | \baseSpecifier(Modifier modifier, Expression nname)
+    | \baseSpecifier(Modifier modifier, Expression name)
     
     | \virtSpecifier(Modifier modifier)
     
-    | \namespaceDefinition(Expression nname, list[Declaration] declarations, bool isInline)
-    | \usingDeclaration(Expression nname)
+    | \namespaceDefinition(Expression name, list[Declaration] declarations, bool isInline)
+    | \usingDeclaration(Expression name)
     | \namespaceAlias(Expression \alias, Expression mapping)
     
     | \linkageSpecification(str literal, list[Declaration] declarations)
@@ -157,28 +157,28 @@ data Expression(loc src = |unknown:///|)
     | \reinterpretCast(Expression typeId, Expression expression)
     | \constCast(Expression typeId, Expression expression)
     
-    | \name(str name)
+    | \name(str \value)
     | \qualifiedName(list[Expression] qualifiers, Expression lastName)
-    | \operatorName(str vvalue)
-    | \conversionName(str vvalue, Expression typeId)
-    | \idExpression(Expression nname)
+    | \operatorName(str \value)
+    | \conversionName(str \value, Expression typeId)
+    | \idExpression(Expression name)
     | \integerLiteral(int number)
     | \conditional(Expression condition, Expression positive, Expression negative)
     
-    | \integerConstant(str vvalue)
-    | \floatConstant(str vvalue)
-    | \charConstant(str vvalue)
-    | \stringLiteral(str vvalue)
+    | \integerConstant(str \value)
+    | \floatConstant(str \value)
+    | \charConstant(str \value)
+    | \stringLiteral(str \value)
     | \this()
     | \true()
     | \false()
     | \nullptr()
     
-    //| \namedTypeSpecifier(list[Modifier] modifiers, Expression nname)
+    //| \namedTypeSpecifier(list[Modifier] modifiers, Expression name)
     
     | \functionCall(Expression functionName, list[Expression] arguments)
     
-    | \fieldReference(Expression fieldOwner, Expression nname, Type fieldType)
+    | \fieldReference(Expression fieldOwner, Expression name, Type fieldType)
     //| \constructorInitializer(list[Expression] arguments)
     | \new(Expression typeId)
     | \new(Expression typeId, Expression initializer)
@@ -194,7 +194,7 @@ data Expression(loc src = |unknown:///|)
     
     | \expressionList(list[Expression] expressions)
     
-    | \templateId(Expression nname, list[Expression] argumentTypes)
+    | \templateId(Expression name, list[Expression] argumentTypes)
 
     | \empty()    
     | \nyi(str raw)
@@ -208,12 +208,12 @@ data Expression(loc src = |unknown:///|)
     // Initializers below
     | \equalsInitializer(Expression initializer)
     | \initializerList(list[Expression] clauses) //initializerClause?
-    | \constructorChainInitializer(Expression nname, Expression initializer)
+    | \constructorChainInitializer(Expression name, Expression initializer)
     | \constructorInitializer(list[Expression] arguments)
     
     // Captures
-    | \capture(Expression nname)
-    | \captureByRef(Expression nname)
+    | \capture(Expression name)
+    | \captureByRef(Expression name)
     | \captureThisPtr()
     ;                       
  
@@ -237,8 +237,8 @@ data Statement(loc src = |unknown:///|)
     | \return(Expression expression)
     | \return()
     | \nullStatement()
-    | \label(Expression nname, Statement nestedStatement)
-    | \goto(Expression nname)
+    | \label(Expression name, Statement nestedStatement)
+    | \goto(Expression name)
     
     | \tryBlock(Statement tryBody, list[Statement] catchHandlers)
     | \catch(Declaration declaration, Statement body)
@@ -271,9 +271,9 @@ data Type(loc src = |unknown:///|)
     | \basicType(Type \type, list[Modifier] modifiers)
     | \nullptr()
     
-    | \structType(Expression nname)
-    | \unionType(Expression nname)
-    | \classType(str name)
+    | \structType(Expression name)
+    | \unionType(Expression name)
+    | \classType(Expression name)
 
     ;
   
