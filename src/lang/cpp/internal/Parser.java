@@ -190,6 +190,7 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.index.IIndexType;
@@ -2300,7 +2301,9 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTStatement statement) {
 		// err("Statement: " + statement.getRawSignature() +
 		// ", " + statement.getClass().getName());
-		if (statement instanceof IASTBreakStatement)
+		if (statement instanceof IASTAmbiguousStatement)
+			visit((IASTAmbiguousStatement) statement);
+		else if (statement instanceof IASTBreakStatement)
 			visit((IASTBreakStatement) statement);
 		else if (statement instanceof IASTCaseStatement)
 			visit((IASTCaseStatement) statement);
@@ -2347,6 +2350,22 @@ public class Parser extends ASTVisitor {
 			throw new RuntimeException(
 					"Statement: encountered non-implemented subtype " + statement.getClass().getName());
 		}
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTAmbiguousStatement statement) {
+		out("visit(IASTAmbiguousStatement)");
+		out(statement.getRawSignature());
+		ISourceLocation loc = getSourceLocation(statement);
+		IASTStatement[] _statements = statement.getStatements();
+		IListWriter statements = vf.listWriter();
+		prefix += 4;
+		Stream.of(_statements).forEach(it -> {
+			out("Statement " + it.getClass().getSimpleName() + ": " + it.getRawSignature());
+			it.accept(this);
+			statements.append(stack.pop());
+		});
+		prefix -= 4;
 		return PROCESS_ABORT;
 	}
 
