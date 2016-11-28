@@ -2678,10 +2678,11 @@ public class Parser extends ASTVisitor {
 		_name.accept(this);
 		IConstructor name = stack.pop();
 		if (_value == null)
-			stack.push(builder.Declaration_enumerator(builder.Expression_name(name.getName(), loc), loc));
+			stack.push(builder.Declaration_enumerator(builder.Expression_name(name.get("value").toString(), loc), loc));
 		else {
 			_value.accept(this);
-			stack.push(builder.Declaration_enumerator(builder.Expression_name(name.getName(), loc), stack.pop(), loc));
+			stack.push(builder.Declaration_enumerator(builder.Expression_name(name.get("value").toString(), loc),
+					stack.pop(), loc));
 		}
 		return PROCESS_ABORT;
 	}
