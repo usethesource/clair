@@ -212,6 +212,7 @@ public class Parser extends ASTVisitor {
 	private AST builder;
 	private IEvaluatorContext ctx;
 	private Stack<IConstructor> stack = new Stack<IConstructor>();
+	private BindingsResolver br = new BindingsResolver();
 
 	boolean doTypeLogging = false;
 	ISourceLocation sourceLoc;
@@ -282,6 +283,7 @@ public class Parser extends ASTVisitor {
 
 	public void setIEvaluatorContext(IEvaluatorContext ctx) {
 		this.ctx = ctx;
+		br.setIEvaluatorContext(ctx);
 	}
 
 	public synchronized IValue convertCdtToRascal(IASTTranslationUnit translationUnit) throws CoreException {
