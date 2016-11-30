@@ -231,6 +231,7 @@ public class Parser extends ASTVisitor {
 		}
 		try {
 			sourceLoc = file;
+			br.setSourceLocation(file);
 			String input = ((IString) new Prelude(vf).readFile(file)).getValue();
 			IValue result = parse(file.getPath(), input.toCharArray());
 
@@ -946,6 +947,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(IASTArrayDeclarator declarator) {
 		ISourceLocation loc = getSourceLocation(declarator);
+		ISourceLocation decl = br.resolveBinding(declarator);
 		IASTArrayModifier[] _arrayModifiers = declarator.getArrayModifiers();
 		IASTPointerOperator[] _pointerOperators = declarator.getPointerOperators();
 		IASTDeclarator _nestedDeclarator = declarator.getNestedDeclarator();
@@ -970,10 +972,10 @@ public class Parser extends ASTVisitor {
 		if (_pointerOperators.length > 0 || _nestedDeclarator != null)
 			err("WARNING: IASTArrayDeclarator encountered unimplemented field");
 		if (_initializer == null)
-			stack.push(builder.Declarator_arrayDeclarator(name, arrayModifiers.done(), loc));
+			stack.push(builder.Declarator_arrayDeclarator(name, arrayModifiers.done(), loc, decl));
 		else {
 			_initializer.accept(this);
-			stack.push(builder.Declarator_arrayDeclarator(name, arrayModifiers.done(), stack.pop(), loc));
+			stack.push(builder.Declarator_arrayDeclarator(name, arrayModifiers.done(), stack.pop(), loc, decl));
 		}
 		return PROCESS_ABORT;
 	}
@@ -999,6 +1001,7 @@ public class Parser extends ASTVisitor {
 			visit((ICPPASTFunctionDeclarator) declarator);
 		else {
 			ISourceLocation loc = getSourceLocation(declarator);
+			ISourceLocation decl = br.resolveBinding(declarator);
 			IASTName _name = declarator.getName();
 			IASTParameterDeclaration[] _parameters = declarator.getParameters();
 			if (declarator.takesVarArgs())
@@ -1018,7 +1021,8 @@ public class Parser extends ASTVisitor {
 				it.accept(this);
 				parameters.append(stack.pop());
 			});
-			stack.push(builder.Declarator_functionDeclarator(pointerOperators.done(), name, parameters.done(), loc));
+			stack.push(
+					builder.Declarator_functionDeclarator(pointerOperators.done(), name, parameters.done(), loc, decl));
 		}
 		return PROCESS_ABORT;
 	}
@@ -1043,6 +1047,7 @@ public class Parser extends ASTVisitor {
 			visit((ICPPASTFunctionDeclarator) declarator);
 		else {
 			ISourceLocation loc = getSourceLocation(declarator);
+			ISourceLocation decl = br.resolveBinding(declarator);
 			IASTPointerOperator[] _pointerOperators = declarator.getPointerOperators();
 			IASTDeclarator _nestedDeclarator = declarator.getNestedDeclarator();
 			IASTName _name = declarator.getName();
@@ -1059,11 +1064,11 @@ public class Parser extends ASTVisitor {
 			IConstructor name = stack.pop();
 			IConstructor initializer = null;
 			if (_initializer == null) {
-				stack.push(builder.Declarator_declarator(pointerOperators.done(), name, loc));
+				stack.push(builder.Declarator_declarator(pointerOperators.done(), name, loc, decl));
 			} else {
 				_initializer.accept(this);
 				initializer = stack.pop();
-				stack.push(builder.Declarator_declarator(pointerOperators.done(), name, initializer, loc));
+				stack.push(builder.Declarator_declarator(pointerOperators.done(), name, initializer, loc, decl));
 			}
 		}
 		return PROCESS_ABORT;
@@ -1081,6 +1086,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICPPASTFunctionDeclarator declarator) {
 		ISourceLocation loc = getSourceLocation(declarator);
+		ISourceLocation decl = br.resolveBinding(declarator);
 		IASTName _name = declarator.getName();
 		IASTParameterDeclaration[] _parameters = declarator.getParameters();
 		IASTTypeId[] _exceptionSpecification = declarator.getExceptionSpecification();
@@ -1127,20 +1133,20 @@ public class Parser extends ASTVisitor {
 			IConstructor nestedDeclarator = stack.pop();
 			if (_initializer == null)
 				stack.push(builder.Declarator_functionDeclaratorNested(pointerOperators.done(), modifiers,
-						nestedDeclarator, parameters.done(), virtSpecifiers.done(), loc));
+						nestedDeclarator, parameters.done(), virtSpecifiers.done(), loc, decl));
 			else {
 				_initializer.accept(this);
 				stack.push(builder.Declarator_functionDeclaratorNested(pointerOperators.done(), modifiers,
-						nestedDeclarator, parameters.done(), virtSpecifiers.done(), stack.pop(), loc));
+						nestedDeclarator, parameters.done(), virtSpecifiers.done(), stack.pop(), loc, decl));
 			}
 			if (!(_exceptionSpecification.equals(ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION)))
 				err("WARNING: ICPPASTFunctionDeclaration had nestedDeclarator and also exceptionSpecification");
 		} else if (_exceptionSpecification.equals(ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION))
 			stack.push(builder.Declarator_functionDeclarator(pointerOperators.done(), modifiers, name,
-					parameters.done(), virtSpecifiers.done(), loc));
+					parameters.done(), virtSpecifiers.done(), loc, decl));
 		else if (_exceptionSpecification.equals(IASTTypeId.EMPTY_TYPEID_ARRAY))
 			stack.push(builder.Declarator_functionDeclaratorWithES(pointerOperators.done(), modifiers, name,
-					parameters.done(), virtSpecifiers.done(), loc));
+					parameters.done(), virtSpecifiers.done(), loc, decl));
 		else {
 			IListWriter exceptionSpecification = vf.listWriter();
 			Stream.of(_exceptionSpecification).forEach(it -> {
@@ -1148,7 +1154,7 @@ public class Parser extends ASTVisitor {
 				exceptionSpecification.append(stack.pop());
 			});
 			stack.push(builder.Declarator_functionDeclaratorWithES(pointerOperators.done(), modifiers, name,
-					parameters.done(), virtSpecifiers.done(), exceptionSpecification.done(), loc));
+					parameters.done(), virtSpecifiers.done(), exceptionSpecification.done(), loc, decl));
 		}
 
 		return PROCESS_ABORT;
@@ -1305,6 +1311,8 @@ public class Parser extends ASTVisitor {
 
 	public int visit(IASTNamedTypeSpecifier declSpec) {
 		ISourceLocation loc = getSourceLocation(declSpec);
+		ISourceLocation decl = br.resolveBinding(declSpec);
+		out("IASTNamedTypeSpecifier with decl=" + decl);
 		IList modifiers = getModifiers(declSpec);
 		declSpec.getName().accept(this);
 		stack.push(builder.DeclSpecifier_namedTypeSpecifier(modifiers, stack.pop(), loc));
@@ -1684,6 +1692,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICPPASTLambdaExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
+		ISourceLocation decl = br.UNKNOWN;
 		CaptureDefault captureDefault = expression.getCaptureDefault();
 		ICPPASTCapture[] _captures = expression.getCaptures();
 		IASTImplicitName _closureTypeName = expression.getClosureTypeName();
@@ -1706,7 +1715,7 @@ public class Parser extends ASTVisitor {
 
 		IConstructor declarator;
 		if (_declarator == null)
-			declarator = builder.Declarator_missingDeclarator(loc);
+			declarator = builder.Declarator_missingDeclarator(loc, decl);
 		else {
 			_declarator.accept(this);
 			declarator = stack.pop();

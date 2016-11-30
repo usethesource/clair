@@ -5,6 +5,8 @@ import org.rascalmpl.value.type.Type;
 import org.rascalmpl.value.type.TypeFactory;
 import org.rascalmpl.value.type.TypeStore;
 import org.rascalmpl.value.*;
+import java.util.Map;
+import java.util.HashMap;
 
 @SuppressWarnings("deprecation")
 public class AST {
@@ -26,28 +28,28 @@ public class AST {
    
   
   
-  private static final Type _Declarator_functionDeclarator_3 
-    = tf.constructor(typestore,_Declarator,"functionDeclarator",tf.listType(_Declaration),"pointerOperators",_Expression,"name",tf.listType(_Declaration),"parameters");
-  private static final Type _Declarator_functionDeclaratorWithES_5 
-    = tf.constructor(typestore,_Declarator,"functionDeclaratorWithES",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Expression,"name",tf.listType(_Declaration),"arguments",tf.listType(_Declaration),"virtSpecifiers");
   private static final Type _Declarator_functionDeclaratorWithES_6 
     = tf.constructor(typestore,_Declarator,"functionDeclaratorWithES",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Expression,"name",tf.listType(_Declaration),"arguments",tf.listType(_Declaration),"virtSpecifiers",tf.listType(_Expression),"exceptionSpecification");
-  private static final Type _Declarator_arrayDeclarator_3 
-    = tf.constructor(typestore,_Declarator,"arrayDeclarator",_Expression,"name",tf.listType(_Expression),"arrayModifier",_Expression,"initializer");
-  private static final Type _Declarator_functionDeclaratorNested_6 
-    = tf.constructor(typestore,_Declarator,"functionDeclaratorNested",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Declarator,"declarator",tf.listType(_Declaration),"arguments",tf.listType(_Declaration),"virtSpecifiers",_Expression,"initializer");
-  private static final Type _Declarator_declarator_2 
-    = tf.constructor(typestore,_Declarator,"declarator",tf.listType(_Declaration),"pointerOperators",_Expression,"name");
-  private static final Type _Declarator_functionDeclarator_5 
-    = tf.constructor(typestore,_Declarator,"functionDeclarator",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Expression,"name",tf.listType(_Declaration),"parameters",tf.listType(_Declaration),"virtSpecifiers");
-  private static final Type _Declarator_declarator_3 
-    = tf.constructor(typestore,_Declarator,"declarator",tf.listType(_Declaration),"pointerOperators",_Expression,"name",_Expression,"initializer");
-  private static final Type _Declarator_arrayDeclarator_2 
-    = tf.constructor(typestore,_Declarator,"arrayDeclarator",_Expression,"name",tf.listType(_Expression),"arrayModifier");
-  private static final Type _Declarator_functionDeclaratorNested_5 
-    = tf.constructor(typestore,_Declarator,"functionDeclaratorNested",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Declarator,"declarator",tf.listType(_Declaration),"arguments",tf.listType(_Declaration),"virtSpecifiers");
+  private static final Type _Declarator_functionDeclaratorWithES_5 
+    = tf.constructor(typestore,_Declarator,"functionDeclaratorWithES",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Expression,"name",tf.listType(_Declaration),"arguments",tf.listType(_Declaration),"virtSpecifiers");
+  private static final Type _Declarator_functionDeclarator_3 
+    = tf.constructor(typestore,_Declarator,"functionDeclarator",tf.listType(_Declaration),"pointerOperators",_Expression,"name",tf.listType(_Declaration),"parameters");
   private static final Type _Declarator_missingDeclarator_0 
     = tf.constructor(typestore,_Declarator,"missingDeclarator");
+  private static final Type _Declarator_functionDeclaratorNested_5 
+    = tf.constructor(typestore,_Declarator,"functionDeclaratorNested",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Declarator,"declarator",tf.listType(_Declaration),"arguments",tf.listType(_Declaration),"virtSpecifiers");
+  private static final Type _Declarator_arrayDeclarator_2 
+    = tf.constructor(typestore,_Declarator,"arrayDeclarator",_Expression,"name",tf.listType(_Expression),"arrayModifier");
+  private static final Type _Declarator_declarator_3 
+    = tf.constructor(typestore,_Declarator,"declarator",tf.listType(_Declaration),"pointerOperators",_Expression,"name",_Expression,"initializer");
+  private static final Type _Declarator_functionDeclarator_5 
+    = tf.constructor(typestore,_Declarator,"functionDeclarator",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Expression,"name",tf.listType(_Declaration),"parameters",tf.listType(_Declaration),"virtSpecifiers");
+  private static final Type _Declarator_declarator_2 
+    = tf.constructor(typestore,_Declarator,"declarator",tf.listType(_Declaration),"pointerOperators",_Expression,"name");
+  private static final Type _Declarator_functionDeclaratorNested_6 
+    = tf.constructor(typestore,_Declarator,"functionDeclaratorNested",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Declarator,"declarator",tf.listType(_Declaration),"arguments",tf.listType(_Declaration),"virtSpecifiers",_Expression,"initializer");
+  private static final Type _Declarator_arrayDeclarator_3 
+    = tf.constructor(typestore,_Declarator,"arrayDeclarator",_Expression,"name",tf.listType(_Expression),"arrayModifier",_Expression,"initializer");
   
   
   private static final Type _DeclSpecifier_class_3 
@@ -505,49 +507,7 @@ public class AST {
   
    
   
-  public IConstructor Declarator_functionDeclarator(IList $pointerOperators, IConstructor $name, IList $parameters, ISourceLocation $loc) {
-      
-    if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
-    }
-      
-    if (!$name.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
-    }
-      
-    if (!$parameters.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $parameters.getType() + " for $parameters:" + $parameters);
-    }
-    
-    return vf.constructor(_Declarator_functionDeclarator_3 , $pointerOperators, $name, $parameters).asWithKeywordParameters().setParameter("src", $loc);
-  }
-  
-  public IConstructor Declarator_functionDeclaratorWithES(IList $pointerOperators, IList $modifiers, IConstructor $name, IList $arguments, IList $virtSpecifiers, ISourceLocation $loc) {
-      
-    if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
-    }
-      
-    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
-    }
-      
-    if (!$name.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
-    }
-      
-    if (!$arguments.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $arguments.getType() + " for $arguments:" + $arguments);
-    }
-      
-    if (!$virtSpecifiers.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $virtSpecifiers.getType() + " for $virtSpecifiers:" + $virtSpecifiers);
-    }
-    
-    return vf.constructor(_Declarator_functionDeclaratorWithES_5 , $pointerOperators, $modifiers, $name, $arguments, $virtSpecifiers).asWithKeywordParameters().setParameter("src", $loc);
-  }
-  
-  public IConstructor Declarator_functionDeclaratorWithES(IList $pointerOperators, IList $modifiers, IConstructor $name, IList $arguments, IList $virtSpecifiers, IList $exceptionSpecification, ISourceLocation $loc) {
+  public IConstructor Declarator_functionDeclaratorWithES(IList $pointerOperators, IList $modifiers, IConstructor $name, IList $arguments, IList $virtSpecifiers, IList $exceptionSpecification, ISourceLocation $loc, ISourceLocation $decl) {
       
     if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
@@ -573,27 +533,69 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $exceptionSpecification.getType() + " for $exceptionSpecification:" + $exceptionSpecification);
     }
     
-    return vf.constructor(_Declarator_functionDeclaratorWithES_6 , $pointerOperators, $modifiers, $name, $arguments, $virtSpecifiers, $exceptionSpecification).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    return vf.constructor(_Declarator_functionDeclaratorWithES_6 , $pointerOperators, $modifiers, $name, $arguments, $virtSpecifiers, $exceptionSpecification).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_arrayDeclarator(IConstructor $name, IList $arrayModifier, IConstructor $initializer, ISourceLocation $loc) {
+  public IConstructor Declarator_functionDeclaratorWithES(IList $pointerOperators, IList $modifiers, IConstructor $name, IList $arguments, IList $virtSpecifiers, ISourceLocation $loc, ISourceLocation $decl) {
+      
+    if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
+    }
+      
+    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
+    }
       
     if (!$name.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
       
-    if (!$arrayModifier.getType().isSubtypeOf(tf.listType(_Expression))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $arrayModifier.getType() + " for $arrayModifier:" + $arrayModifier);
+    if (!$arguments.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $arguments.getType() + " for $arguments:" + $arguments);
     }
       
-    if (!$initializer.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
+    if (!$virtSpecifiers.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $virtSpecifiers.getType() + " for $virtSpecifiers:" + $virtSpecifiers);
     }
     
-    return vf.constructor(_Declarator_arrayDeclarator_3 , $name, $arrayModifier, $initializer).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    return vf.constructor(_Declarator_functionDeclaratorWithES_5 , $pointerOperators, $modifiers, $name, $arguments, $virtSpecifiers).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_functionDeclaratorNested(IList $pointerOperators, IList $modifiers, IConstructor $declarator, IList $arguments, IList $virtSpecifiers, IConstructor $initializer, ISourceLocation $loc) {
+  public IConstructor Declarator_functionDeclarator(IList $pointerOperators, IConstructor $name, IList $parameters, ISourceLocation $loc, ISourceLocation $decl) {
+      
+    if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
+    }
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$parameters.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $parameters.getType() + " for $parameters:" + $parameters);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    return vf.constructor(_Declarator_functionDeclarator_3 , $pointerOperators, $name, $parameters).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declarator_missingDeclarator(ISourceLocation $loc, ISourceLocation $decl) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    return vf.constructor(_Declarator_missingDeclarator_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declarator_functionDeclaratorNested(IList $pointerOperators, IList $modifiers, IConstructor $declarator, IList $arguments, IList $virtSpecifiers, ISourceLocation $loc, ISourceLocation $decl) {
       
     if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
@@ -614,15 +616,30 @@ public class AST {
     if (!$virtSpecifiers.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $virtSpecifiers.getType() + " for $virtSpecifiers:" + $virtSpecifiers);
     }
-      
-    if (!$initializer.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
-    }
     
-    return vf.constructor(_Declarator_functionDeclaratorNested_6 , $pointerOperators, $modifiers, $declarator, $arguments, $virtSpecifiers, $initializer).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    return vf.constructor(_Declarator_functionDeclaratorNested_5 , $pointerOperators, $modifiers, $declarator, $arguments, $virtSpecifiers).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_declarator(IList $pointerOperators, IConstructor $name, ISourceLocation $loc) {
+  public IConstructor Declarator_arrayDeclarator(IConstructor $name, IList $arrayModifier, ISourceLocation $loc, ISourceLocation $decl) {
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$arrayModifier.getType().isSubtypeOf(tf.listType(_Expression))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $arrayModifier.getType() + " for $arrayModifier:" + $arrayModifier);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    return vf.constructor(_Declarator_arrayDeclarator_2 , $name, $arrayModifier).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declarator_declarator(IList $pointerOperators, IConstructor $name, IConstructor $initializer, ISourceLocation $loc, ISourceLocation $decl) {
       
     if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
@@ -631,11 +648,18 @@ public class AST {
     if (!$name.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
+      
+    if (!$initializer.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
+    }
     
-    return vf.constructor(_Declarator_declarator_2 , $pointerOperators, $name).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    return vf.constructor(_Declarator_declarator_3 , $pointerOperators, $name, $initializer).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_functionDeclarator(IList $pointerOperators, IList $modifiers, IConstructor $name, IList $parameters, IList $virtSpecifiers, ISourceLocation $loc) {
+  public IConstructor Declarator_functionDeclarator(IList $pointerOperators, IList $modifiers, IConstructor $name, IList $parameters, IList $virtSpecifiers, ISourceLocation $loc, ISourceLocation $decl) {
       
     if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
@@ -657,10 +681,13 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $virtSpecifiers.getType() + " for $virtSpecifiers:" + $virtSpecifiers);
     }
     
-    return vf.constructor(_Declarator_functionDeclarator_5 , $pointerOperators, $modifiers, $name, $parameters, $virtSpecifiers).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    return vf.constructor(_Declarator_functionDeclarator_5 , $pointerOperators, $modifiers, $name, $parameters, $virtSpecifiers).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_declarator(IList $pointerOperators, IConstructor $name, IConstructor $initializer, ISourceLocation $loc) {
+  public IConstructor Declarator_declarator(IList $pointerOperators, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
       
     if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
@@ -669,28 +696,14 @@ public class AST {
     if (!$name.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
-      
-    if (!$initializer.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
-    }
     
-    return vf.constructor(_Declarator_declarator_3 , $pointerOperators, $name, $initializer).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    return vf.constructor(_Declarator_declarator_2 , $pointerOperators, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_arrayDeclarator(IConstructor $name, IList $arrayModifier, ISourceLocation $loc) {
-      
-    if (!$name.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
-    }
-      
-    if (!$arrayModifier.getType().isSubtypeOf(tf.listType(_Expression))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $arrayModifier.getType() + " for $arrayModifier:" + $arrayModifier);
-    }
-    
-    return vf.constructor(_Declarator_arrayDeclarator_2 , $name, $arrayModifier).asWithKeywordParameters().setParameter("src", $loc);
-  }
-  
-  public IConstructor Declarator_functionDeclaratorNested(IList $pointerOperators, IList $modifiers, IConstructor $declarator, IList $arguments, IList $virtSpecifiers, ISourceLocation $loc) {
+  public IConstructor Declarator_functionDeclaratorNested(IList $pointerOperators, IList $modifiers, IConstructor $declarator, IList $arguments, IList $virtSpecifiers, IConstructor $initializer, ISourceLocation $loc, ISourceLocation $decl) {
       
     if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
@@ -711,13 +724,35 @@ public class AST {
     if (!$virtSpecifiers.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $virtSpecifiers.getType() + " for $virtSpecifiers:" + $virtSpecifiers);
     }
+      
+    if (!$initializer.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
+    }
     
-    return vf.constructor(_Declarator_functionDeclaratorNested_5 , $pointerOperators, $modifiers, $declarator, $arguments, $virtSpecifiers).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    return vf.constructor(_Declarator_functionDeclaratorNested_6 , $pointerOperators, $modifiers, $declarator, $arguments, $virtSpecifiers, $initializer).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_missingDeclarator(ISourceLocation $loc) {
+  public IConstructor Declarator_arrayDeclarator(IConstructor $name, IList $arrayModifier, IConstructor $initializer, ISourceLocation $loc, ISourceLocation $decl) {
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$arrayModifier.getType().isSubtypeOf(tf.listType(_Expression))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $arrayModifier.getType() + " for $arrayModifier:" + $arrayModifier);
+    }
+      
+    if (!$initializer.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
+    }
     
-    return vf.constructor(_Declarator_missingDeclarator_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    return vf.constructor(_Declarator_arrayDeclarator_3 , $name, $arrayModifier, $initializer).asWithKeywordParameters().setParameters(kwParams);
   }
     
   
@@ -735,7 +770,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
     }
     
-    return vf.constructor(_DeclSpecifier_class_3 , $name, $baseSpecifiers, $members).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_DeclSpecifier_class_3 , $name, $baseSpecifiers, $members).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor DeclSpecifier_etsUnion(IList $arg0, IConstructor $name, ISourceLocation $loc) {
@@ -748,7 +786,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
     
-    return vf.constructor(_DeclSpecifier_etsUnion_2 , $arg0, $name).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_DeclSpecifier_etsUnion_2 , $arg0, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor DeclSpecifier_enumScoped(IConstructor $name, IList $enumerators, ISourceLocation $loc) {
@@ -761,7 +802,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $enumerators.getType() + " for $enumerators:" + $enumerators);
     }
     
-    return vf.constructor(_DeclSpecifier_enumScoped_2 , $name, $enumerators).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_DeclSpecifier_enumScoped_2 , $name, $enumerators).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor DeclSpecifier_declSpecifier(IList $modifiers, IConstructor $type, IConstructor $expression, ISourceLocation $loc) {
@@ -778,7 +822,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_DeclSpecifier_declSpecifier_3 , $modifiers, $type, $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_DeclSpecifier_declSpecifier_3 , $modifiers, $type, $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor DeclSpecifier_struct(IConstructor $name, IList $baseSpecifiers, IList $members, ISourceLocation $loc) {
@@ -795,7 +842,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
     }
     
-    return vf.constructor(_DeclSpecifier_struct_3 , $name, $baseSpecifiers, $members).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_DeclSpecifier_struct_3 , $name, $baseSpecifiers, $members).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor DeclSpecifier_union(IConstructor $name, IList $members, ISourceLocation $loc) {
@@ -808,7 +858,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
     }
     
-    return vf.constructor(_DeclSpecifier_union_2 , $name, $members).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_DeclSpecifier_union_2 , $name, $members).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor DeclSpecifier_enumScoped(IConstructor $baseType, IConstructor $name, IList $enumerators, ISourceLocation $loc) {
@@ -825,7 +878,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $enumerators.getType() + " for $enumerators:" + $enumerators);
     }
     
-    return vf.constructor(_DeclSpecifier_enumScoped_3 , $baseType, $name, $enumerators).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_DeclSpecifier_enumScoped_3 , $baseType, $name, $enumerators).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor DeclSpecifier_class(IConstructor $name, IList $members, ISourceLocation $loc) {
@@ -838,7 +894,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
     }
     
-    return vf.constructor(_DeclSpecifier_class_2 , $name, $members).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_DeclSpecifier_class_2 , $name, $members).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor DeclSpecifier_declSpecifier(IList $modifiers, IConstructor $type, ISourceLocation $loc) {
@@ -851,7 +910,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Type + " but got " + $type.getType() + " for $type:" + $type);
     }
     
-    return vf.constructor(_DeclSpecifier_declSpecifier_2 , $modifiers, $type).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_DeclSpecifier_declSpecifier_2 , $modifiers, $type).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor DeclSpecifier_etsEnum(IList $arg0, IConstructor $name, ISourceLocation $loc) {
@@ -864,7 +926,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
     
-    return vf.constructor(_DeclSpecifier_etsEnum_2 , $arg0, $name).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_DeclSpecifier_etsEnum_2 , $arg0, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor DeclSpecifier_namedTypeSpecifier(IList $modifiers, IConstructor $name, ISourceLocation $loc) {
@@ -877,7 +942,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
     
-    return vf.constructor(_DeclSpecifier_namedTypeSpecifier_2 , $modifiers, $name).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_DeclSpecifier_namedTypeSpecifier_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor DeclSpecifier_struct(IConstructor $name, IList $members, ISourceLocation $loc) {
@@ -890,7 +958,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
     }
     
-    return vf.constructor(_DeclSpecifier_struct_2 , $name, $members).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_DeclSpecifier_struct_2 , $name, $members).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor DeclSpecifier_enum(IConstructor $baseType, IConstructor $name, IList $enumerators, ISourceLocation $loc) {
@@ -907,7 +978,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $enumerators.getType() + " for $enumerators:" + $enumerators);
     }
     
-    return vf.constructor(_DeclSpecifier_enum_3 , $baseType, $name, $enumerators).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_DeclSpecifier_enum_3 , $baseType, $name, $enumerators).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor DeclSpecifier_etsStruct(IList $arg0, IConstructor $name, ISourceLocation $loc) {
@@ -920,7 +994,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
     
-    return vf.constructor(_DeclSpecifier_etsStruct_2 , $arg0, $name).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_DeclSpecifier_etsStruct_2 , $arg0, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor DeclSpecifier_union(IConstructor $name, IList $baseSpecifiers, IList $members, ISourceLocation $loc) {
@@ -937,7 +1014,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
     }
     
-    return vf.constructor(_DeclSpecifier_union_3 , $name, $baseSpecifiers, $members).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_DeclSpecifier_union_3 , $name, $baseSpecifiers, $members).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor DeclSpecifier_enum(IConstructor $name, IList $enumerators, ISourceLocation $loc) {
@@ -950,7 +1030,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $enumerators.getType() + " for $enumerators:" + $enumerators);
     }
     
-    return vf.constructor(_DeclSpecifier_enum_2 , $name, $enumerators).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_DeclSpecifier_enum_2 , $name, $enumerators).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor DeclSpecifier_etsClass(IList $arg0, IConstructor $name, ISourceLocation $loc) {
@@ -963,7 +1046,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
     
-    return vf.constructor(_DeclSpecifier_etsClass_2 , $arg0, $name).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_DeclSpecifier_etsClass_2 , $arg0, $name).asWithKeywordParameters().setParameters(kwParams);
   }
     
   
@@ -973,7 +1059,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _DeclSpecifier + " but got " + $declSpecifier.getType() + " for $declSpecifier:" + $declSpecifier);
     }
     
-    return vf.constructor(_Declaration_parameter_1 , $declSpecifier).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_parameter_1 , $declSpecifier).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_functionDefinition(IConstructor $declSpecifier, IConstructor $declarator, IList $memberInitializer, IConstructor $body, ISourceLocation $loc) {
@@ -994,7 +1083,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
     }
     
-    return vf.constructor(_Declaration_functionDefinition_4 , $declSpecifier, $declarator, $memberInitializer, $body).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_functionDefinition_4 , $declSpecifier, $declarator, $memberInitializer, $body).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_baseSpecifier(IConstructor $modifier, ISourceLocation $loc) {
@@ -1003,7 +1095,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Modifier + " but got " + $modifier.getType() + " for $modifier:" + $modifier);
     }
     
-    return vf.constructor(_Declaration_baseSpecifier_1 , $modifier).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_baseSpecifier_1 , $modifier).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_translationUnit(IList $declarations, ISourceLocation $loc) {
@@ -1012,7 +1107,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $declarations.getType() + " for $declarations:" + $declarations);
     }
     
-    return vf.constructor(_Declaration_translationUnit_1 , $declarations).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_translationUnit_1 , $declarations).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_parameter(IConstructor $declSpecifier, IConstructor $declarator, ISourceLocation $loc) {
@@ -1025,12 +1123,18 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Declarator + " but got " + $declarator.getType() + " for $declarator:" + $declarator);
     }
     
-    return vf.constructor(_Declaration_parameter_2 , $declSpecifier, $declarator).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_parameter_2 , $declSpecifier, $declarator).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_problemDeclaration(ISourceLocation $loc) {
     
-    return vf.constructor(_Declaration_problemDeclaration_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_problemDeclaration_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_pointer(IList $modifiers, ISourceLocation $loc) {
@@ -1039,7 +1143,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
     }
     
-    return vf.constructor(_Declaration_pointer_1 , $modifiers).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_pointer_1 , $modifiers).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_deletedFunctionDefinition(IConstructor $declSpecifier, IList $memberInitializer, IConstructor $declarator, ISourceLocation $loc) {
@@ -1056,7 +1163,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Declarator + " but got " + $declarator.getType() + " for $declarator:" + $declarator);
     }
     
-    return vf.constructor(_Declaration_deletedFunctionDefinition_3 , $declSpecifier, $memberInitializer, $declarator).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_deletedFunctionDefinition_3 , $declSpecifier, $memberInitializer, $declarator).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_sttClass(IConstructor $name, ISourceLocation $loc) {
@@ -1065,7 +1175,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
     
-    return vf.constructor(_Declaration_sttClass_1 , $name).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_sttClass_1 , $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_baseSpecifier(IConstructor $modifier, IConstructor $name, ISourceLocation $loc) {
@@ -1078,7 +1191,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
     
-    return vf.constructor(_Declaration_baseSpecifier_2 , $modifier, $name).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_baseSpecifier_2 , $modifier, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_sttTypename(IConstructor $name, ISourceLocation $loc) {
@@ -1087,7 +1203,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
     
-    return vf.constructor(_Declaration_sttTypename_1 , $name).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_sttTypename_1 , $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_template(IList $parameters, IConstructor $declaration, ISourceLocation $loc) {
@@ -1100,7 +1219,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $declaration.getType() + " for $declaration:" + $declaration);
     }
     
-    return vf.constructor(_Declaration_template_2 , $parameters, $declaration).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_template_2 , $parameters, $declaration).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_linkageSpecification(String $literal, IList $declarations, ISourceLocation $loc) {
@@ -1113,12 +1235,18 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $declarations.getType() + " for $declarations:" + $declarations);
     }
     
-    return vf.constructor(_Declaration_linkageSpecification_2 , vf.string($literal), $declarations).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_linkageSpecification_2 , vf.string($literal), $declarations).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_reference(ISourceLocation $loc) {
     
-    return vf.constructor(_Declaration_reference_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_reference_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_usingDirective(IConstructor $qualifiedName, ISourceLocation $loc) {
@@ -1127,7 +1255,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $qualifiedName.getType() + " for $qualifiedName:" + $qualifiedName);
     }
     
-    return vf.constructor(_Declaration_usingDirective_1 , $qualifiedName).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_usingDirective_1 , $qualifiedName).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_asmDeclaration(String $assembly, ISourceLocation $loc) {
@@ -1136,7 +1267,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($assembly).getType() + " for vf.string($assembly):" + vf.string($assembly));
     }
     
-    return vf.constructor(_Declaration_asmDeclaration_1 , vf.string($assembly)).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_asmDeclaration_1 , vf.string($assembly)).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_defaultedFunctionDefinition(IConstructor $declSpecifier, IList $memberInitializer, IConstructor $declarator, ISourceLocation $loc) {
@@ -1153,7 +1287,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Declarator + " but got " + $declarator.getType() + " for $declarator:" + $declarator);
     }
     
-    return vf.constructor(_Declaration_defaultedFunctionDefinition_3 , $declSpecifier, $memberInitializer, $declarator).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_defaultedFunctionDefinition_3 , $declSpecifier, $memberInitializer, $declarator).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_virtSpecifier(IConstructor $modifier, ISourceLocation $loc) {
@@ -1162,7 +1299,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Modifier + " but got " + $modifier.getType() + " for $modifier:" + $modifier);
     }
     
-    return vf.constructor(_Declaration_virtSpecifier_1 , $modifier).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_virtSpecifier_1 , $modifier).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_enumerator(IConstructor $name, IConstructor $value, ISourceLocation $loc) {
@@ -1175,7 +1315,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $value.getType() + " for $value:" + $value);
     }
     
-    return vf.constructor(_Declaration_enumerator_2 , $name, $value).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_enumerator_2 , $name, $value).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_functionWithTryBlockDefinition(IConstructor $declSpecifier, IConstructor $declarator, IList $memberInitializers, IConstructor $sbody, IList $catchHandlers, ISourceLocation $loc) {
@@ -1200,7 +1343,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Statement) + " but got " + $catchHandlers.getType() + " for $catchHandlers:" + $catchHandlers);
     }
     
-    return vf.constructor(_Declaration_functionWithTryBlockDefinition_5 , $declSpecifier, $declarator, $memberInitializers, $sbody, $catchHandlers).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_functionWithTryBlockDefinition_5 , $declSpecifier, $declarator, $memberInitializers, $sbody, $catchHandlers).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_visibilityLabel(IConstructor $visibility, ISourceLocation $loc) {
@@ -1209,7 +1355,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Modifier + " but got " + $visibility.getType() + " for $visibility:" + $visibility);
     }
     
-    return vf.constructor(_Declaration_visibilityLabel_1 , $visibility).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_visibilityLabel_1 , $visibility).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_functionDefinition(IConstructor $returnSpec, IConstructor $declarator, IConstructor $body, ISourceLocation $loc) {
@@ -1226,7 +1375,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
     }
     
-    return vf.constructor(_Declaration_functionDefinition_3 , $returnSpec, $declarator, $body).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_functionDefinition_3 , $returnSpec, $declarator, $body).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_enumerator(IConstructor $name, ISourceLocation $loc) {
@@ -1235,7 +1387,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
     
-    return vf.constructor(_Declaration_enumerator_1 , $name).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_enumerator_1 , $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_simpleDeclaration(IConstructor $declSpecifier, IList $declarators, ISourceLocation $loc) {
@@ -1248,7 +1403,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declarator) + " but got " + $declarators.getType() + " for $declarators:" + $declarators);
     }
     
-    return vf.constructor(_Declaration_simpleDeclaration_2 , $declSpecifier, $declarators).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_simpleDeclaration_2 , $declSpecifier, $declarators).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_alias(IConstructor $alias, IConstructor $mappingTypeId, ISourceLocation $loc) {
@@ -1261,7 +1419,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $mappingTypeId.getType() + " for $mappingTypeId:" + $mappingTypeId);
     }
     
-    return vf.constructor(_Declaration_alias_2 , $alias, $mappingTypeId).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_alias_2 , $alias, $mappingTypeId).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_namespaceAlias(IConstructor $alias, IConstructor $mapping, ISourceLocation $loc) {
@@ -1274,7 +1435,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $mapping.getType() + " for $mapping:" + $mapping);
     }
     
-    return vf.constructor(_Declaration_namespaceAlias_2 , $alias, $mapping).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_namespaceAlias_2 , $alias, $mapping).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_usingDeclaration(IConstructor $name, ISourceLocation $loc) {
@@ -1283,7 +1447,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
     
-    return vf.constructor(_Declaration_usingDeclaration_1 , $name).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_usingDeclaration_1 , $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_namespaceDefinition(IConstructor $name, IList $declarations, IValue $isInline, ISourceLocation $loc) {
@@ -1300,7 +1467,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.boolType() + " but got " + $isInline.getType() + " for $isInline:" + $isInline);
     }
     
-    return vf.constructor(_Declaration_namespaceDefinition_3 , $name, $declarations, $isInline).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_namespaceDefinition_3 , $name, $declarations, $isInline).asWithKeywordParameters().setParameters(kwParams);
   }
     
   
@@ -1314,7 +1484,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_cast_2 , $typeId, $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_cast_2 , $typeId, $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_newWithArgs(IList $arguments, IConstructor $typeId, ISourceLocation $loc) {
@@ -1327,7 +1500,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $typeId.getType() + " for $typeId:" + $typeId);
     }
     
-    return vf.constructor(_Expression_newWithArgs_2 , $arguments, $typeId).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_newWithArgs_2 , $arguments, $typeId).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_newWithArgs(IList $arguments, IConstructor $typeId, IConstructor $initializer, ISourceLocation $loc) {
@@ -1344,7 +1520,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
     }
     
-    return vf.constructor(_Expression_newWithArgs_3 , $arguments, $typeId, $initializer).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_newWithArgs_3 , $arguments, $typeId, $initializer).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_postfixIncr(IConstructor $expression, ISourceLocation $loc) {
@@ -1353,7 +1532,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_postfixIncr_1 , $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_postfixIncr_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_sizeofParameterPack(IConstructor $expression, ISourceLocation $loc) {
@@ -1362,7 +1544,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_sizeofParameterPack_1 , $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_sizeofParameterPack_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_minusAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -1375,7 +1560,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_minusAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_minusAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_equals(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -1388,7 +1576,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_equals_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_equals_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_charConstant(String $value, ISourceLocation $loc) {
@@ -1397,7 +1588,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($value).getType() + " for vf.string($value):" + vf.string($value));
     }
     
-    return vf.constructor(_Expression_charConstant_1 , vf.string($value)).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_charConstant_1 , vf.string($value)).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_typeid(IConstructor $expression, ISourceLocation $loc) {
@@ -1406,12 +1600,18 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_typeid_1 , $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_typeid_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_true(ISourceLocation $loc) {
     
-    return vf.constructor(_Expression_true_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_true_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_arrayModifier(IConstructor $constExpression, ISourceLocation $loc) {
@@ -1420,7 +1620,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $constExpression.getType() + " for $constExpression:" + $constExpression);
     }
     
-    return vf.constructor(_Expression_arrayModifier_1 , $constExpression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_arrayModifier_1 , $constExpression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_fieldReference(IConstructor $fieldOwner, IConstructor $name, IConstructor $fieldType, ISourceLocation $loc) {
@@ -1437,7 +1640,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Type + " but got " + $fieldType.getType() + " for $fieldType:" + $fieldType);
     }
     
-    return vf.constructor(_Expression_fieldReference_3 , $fieldOwner, $name, $fieldType).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_fieldReference_3 , $fieldOwner, $name, $fieldType).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_captureByRef(IConstructor $name, ISourceLocation $loc) {
@@ -1446,12 +1652,18 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
     
-    return vf.constructor(_Expression_captureByRef_1 , $name).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_captureByRef_1 , $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_empty(ISourceLocation $loc) {
     
-    return vf.constructor(_Expression_empty_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_empty_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_labelReference(IConstructor $expression, ISourceLocation $loc) {
@@ -1460,7 +1672,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_labelReference_1 , $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_labelReference_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_typeId(IConstructor $declSpecifier, ISourceLocation $loc) {
@@ -1469,7 +1684,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _DeclSpecifier + " but got " + $declSpecifier.getType() + " for $declSpecifier:" + $declSpecifier);
     }
     
-    return vf.constructor(_Expression_typeId_1 , $declSpecifier).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_typeId_1 , $declSpecifier).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_minus(IConstructor $expression, ISourceLocation $loc) {
@@ -1478,7 +1696,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_minus_1 , $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_minus_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_greaterThan(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -1491,7 +1712,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_greaterThan_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_greaterThan_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_lessEqual(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -1504,7 +1728,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_lessEqual_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_lessEqual_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_qualifiedName(IList $qualifiers, IConstructor $lastName, ISourceLocation $loc) {
@@ -1517,7 +1744,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lastName.getType() + " for $lastName:" + $lastName);
     }
     
-    return vf.constructor(_Expression_qualifiedName_2 , $qualifiers, $lastName).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_qualifiedName_2 , $qualifiers, $lastName).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_functionCall(IConstructor $functionName, IList $arguments, ISourceLocation $loc) {
@@ -1530,7 +1760,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $arguments.getType() + " for $arguments:" + $arguments);
     }
     
-    return vf.constructor(_Expression_functionCall_2 , $functionName, $arguments).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_functionCall_2 , $functionName, $arguments).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_binaryXor(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -1543,7 +1776,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_binaryXor_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_binaryXor_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_amper(IConstructor $expression, ISourceLocation $loc) {
@@ -1552,7 +1788,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_amper_1 , $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_amper_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_plus(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -1565,7 +1804,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_plus_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_plus_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_stringLiteral(String $value, ISourceLocation $loc) {
@@ -1574,7 +1816,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($value).getType() + " for vf.string($value):" + vf.string($value));
     }
     
-    return vf.constructor(_Expression_stringLiteral_1 , vf.string($value)).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_stringLiteral_1 , vf.string($value)).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_shiftRight(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -1587,12 +1832,18 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_shiftRight_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_shiftRight_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_captureThisPtr(ISourceLocation $loc) {
     
-    return vf.constructor(_Expression_captureThisPtr_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_captureThisPtr_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_greaterEqual(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -1605,7 +1856,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_greaterEqual_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_greaterEqual_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_lessThan(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -1618,7 +1872,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_lessThan_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_lessThan_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_arraySubscriptExpression(IConstructor $array, IConstructor $argument, ISourceLocation $loc) {
@@ -1631,7 +1888,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $argument.getType() + " for $argument:" + $argument);
     }
     
-    return vf.constructor(_Expression_arraySubscriptExpression_2 , $array, $argument).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_arraySubscriptExpression_2 , $array, $argument).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_divide(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -1644,7 +1904,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_divide_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_divide_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_star(IConstructor $expression, ISourceLocation $loc) {
@@ -1653,7 +1916,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_star_1 , $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_star_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_conversionName(String $value, IConstructor $typeId, ISourceLocation $loc) {
@@ -1666,7 +1932,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $typeId.getType() + " for $typeId:" + $typeId);
     }
     
-    return vf.constructor(_Expression_conversionName_2 , vf.string($value), $typeId).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_conversionName_2 , vf.string($value), $typeId).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_typeId(IConstructor $declSpecifier, IConstructor $abstractDeclarator, ISourceLocation $loc) {
@@ -1679,7 +1948,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Declarator + " but got " + $abstractDeclarator.getType() + " for $abstractDeclarator:" + $abstractDeclarator);
     }
     
-    return vf.constructor(_Expression_typeId_2 , $declSpecifier, $abstractDeclarator).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_typeId_2 , $declSpecifier, $abstractDeclarator).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_not(IConstructor $expression, ISourceLocation $loc) {
@@ -1688,7 +1960,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_not_1 , $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_not_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_idExpression(IConstructor $name, ISourceLocation $loc) {
@@ -1697,7 +1972,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
     
-    return vf.constructor(_Expression_idExpression_1 , $name).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_idExpression_1 , $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_shiftLeftAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -1710,7 +1988,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_shiftLeftAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_shiftLeftAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_initializerList(IList $clauses, ISourceLocation $loc) {
@@ -1719,7 +2000,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $clauses.getType() + " for $clauses:" + $clauses);
     }
     
-    return vf.constructor(_Expression_initializerList_1 , $clauses).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_initializerList_1 , $clauses).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_alignOf(IConstructor $expression, ISourceLocation $loc) {
@@ -1728,17 +2012,26 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_alignOf_1 , $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_alignOf_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_nullptr(ISourceLocation $loc) {
     
-    return vf.constructor(_Expression_nullptr_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_nullptr_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_throw(ISourceLocation $loc) {
     
-    return vf.constructor(_Expression_throw_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_throw_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_modulo(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -1751,7 +2044,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_modulo_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_modulo_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_binaryAnd(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -1764,7 +2060,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_binaryAnd_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_binaryAnd_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_dynamicCast(IConstructor $typeId, IConstructor $expression, ISourceLocation $loc) {
@@ -1777,7 +2076,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_dynamicCast_2 , $typeId, $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_dynamicCast_2 , $typeId, $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_ellipses(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -1790,7 +2092,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_ellipses_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_ellipses_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_simpleTypeConstructor(IConstructor $declSpecifier, IConstructor $initializer, ISourceLocation $loc) {
@@ -1803,7 +2108,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
     }
     
-    return vf.constructor(_Expression_simpleTypeConstructor_2 , $declSpecifier, $initializer).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_simpleTypeConstructor_2 , $declSpecifier, $initializer).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_multiplyAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -1816,7 +2124,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_multiplyAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_multiplyAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_sizeof(IConstructor $expression, ISourceLocation $loc) {
@@ -1825,12 +2136,18 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_sizeof_1 , $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_sizeof_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_false(ISourceLocation $loc) {
     
-    return vf.constructor(_Expression_false_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_false_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_tilde(IConstructor $expression, ISourceLocation $loc) {
@@ -1839,7 +2156,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_tilde_1 , $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_tilde_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_binaryOrAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -1852,7 +2172,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_binaryOrAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_binaryOrAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_notEquals(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -1865,7 +2188,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_notEquals_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_notEquals_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_min(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -1878,7 +2204,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_min_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_min_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_reinterpretCast(IConstructor $typeId, IConstructor $expression, ISourceLocation $loc) {
@@ -1891,7 +2220,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_reinterpretCast_2 , $typeId, $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_reinterpretCast_2 , $typeId, $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_constructorInitializer(IList $arguments, ISourceLocation $loc) {
@@ -1900,7 +2232,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $arguments.getType() + " for $arguments:" + $arguments);
     }
     
-    return vf.constructor(_Expression_constructorInitializer_1 , $arguments).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_constructorInitializer_1 , $arguments).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_plus(IConstructor $expression, ISourceLocation $loc) {
@@ -1909,7 +2244,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_plus_1 , $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_plus_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_noexcept(IConstructor $expression, ISourceLocation $loc) {
@@ -1918,7 +2256,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_noexcept_1 , $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_noexcept_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_minus(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -1931,7 +2272,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_minus_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_minus_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_new(IConstructor $typeId, ISourceLocation $loc) {
@@ -1940,7 +2284,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $typeId.getType() + " for $typeId:" + $typeId);
     }
     
-    return vf.constructor(_Expression_new_1 , $typeId).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_new_1 , $typeId).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_nyi(String $raw, ISourceLocation $loc) {
@@ -1949,7 +2296,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($raw).getType() + " for vf.string($raw):" + vf.string($raw));
     }
     
-    return vf.constructor(_Expression_nyi_1 , vf.string($raw)).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_nyi_1 , vf.string($raw)).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_templateId(IConstructor $name, IList $argumentTypes, ISourceLocation $loc) {
@@ -1962,7 +2312,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $argumentTypes.getType() + " for $argumentTypes:" + $argumentTypes);
     }
     
-    return vf.constructor(_Expression_templateId_2 , $name, $argumentTypes).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_templateId_2 , $name, $argumentTypes).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_assign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -1975,7 +2328,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_assign_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_assign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_delete(IValue $isVectored, IConstructor $expression, ISourceLocation $loc) {
@@ -1988,7 +2344,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_delete_2 , $isVectored, $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_delete_2 , $isVectored, $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_name(String $value, ISourceLocation $loc) {
@@ -1997,7 +2356,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($value).getType() + " for vf.string($value):" + vf.string($value));
     }
     
-    return vf.constructor(_Expression_name_1 , vf.string($value)).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_name_1 , vf.string($value)).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_postfixDecr(IConstructor $expression, ISourceLocation $loc) {
@@ -2006,12 +2368,18 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_postfixDecr_1 , $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_postfixDecr_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_this(ISourceLocation $loc) {
     
-    return vf.constructor(_Expression_this_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_this_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_logicalAnd(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -2024,7 +2392,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_logicalAnd_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_logicalAnd_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_capture(IConstructor $name, ISourceLocation $loc) {
@@ -2033,7 +2404,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
     
-    return vf.constructor(_Expression_capture_1 , $name).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_capture_1 , $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_throw(IConstructor $expression, ISourceLocation $loc) {
@@ -2042,7 +2416,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_throw_1 , $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_throw_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_prefixIncr(IConstructor $expression, ISourceLocation $loc) {
@@ -2051,7 +2428,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_prefixIncr_1 , $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_prefixIncr_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_pmArrow(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -2064,7 +2444,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_pmArrow_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_pmArrow_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_pmDot(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -2077,7 +2460,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_pmDot_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_pmDot_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_bracketed(IConstructor $expression, ISourceLocation $loc) {
@@ -2086,7 +2472,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_bracketed_1 , $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_bracketed_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_logicalOr(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -2099,7 +2488,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_logicalOr_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_logicalOr_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_equalsInitializer(IConstructor $initializer, ISourceLocation $loc) {
@@ -2108,7 +2500,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
     }
     
-    return vf.constructor(_Expression_equalsInitializer_1 , $initializer).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_equalsInitializer_1 , $initializer).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_integerLiteral(int $number, ISourceLocation $loc) {
@@ -2117,7 +2512,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.integerType() + " but got " + vf.integer($number).getType() + " for vf.integer($number):" + vf.integer($number));
     }
     
-    return vf.constructor(_Expression_integerLiteral_1 , vf.integer($number)).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_integerLiteral_1 , vf.integer($number)).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_operatorName(String $value, ISourceLocation $loc) {
@@ -2126,7 +2524,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($value).getType() + " for vf.string($value):" + vf.string($value));
     }
     
-    return vf.constructor(_Expression_operatorName_1 , vf.string($value)).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_operatorName_1 , vf.string($value)).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_shiftRightAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -2139,7 +2540,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_shiftRightAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_shiftRightAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_constCast(IConstructor $typeId, IConstructor $expression, ISourceLocation $loc) {
@@ -2152,7 +2556,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_constCast_2 , $typeId, $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_constCast_2 , $typeId, $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_binaryXorAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -2165,7 +2572,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_binaryXorAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_binaryXorAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_prefixDecr(IConstructor $expression, ISourceLocation $loc) {
@@ -2174,7 +2584,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_prefixDecr_1 , $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_prefixDecr_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_plusAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -2187,7 +2600,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_plusAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_plusAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_lambda(IConstructor $captureDefault, IList $captures, IConstructor $declarator, IConstructor $body, ISourceLocation $loc) {
@@ -2208,7 +2624,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
     }
     
-    return vf.constructor(_Expression_lambda_4 , $captureDefault, $captures, $declarator, $body).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_lambda_4 , $captureDefault, $captures, $declarator, $body).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_shiftLeft(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -2221,7 +2640,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_shiftLeft_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_shiftLeft_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_new(IConstructor $typeId, IConstructor $initializer, ISourceLocation $loc) {
@@ -2234,7 +2656,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
     }
     
-    return vf.constructor(_Expression_new_2 , $typeId, $initializer).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_new_2 , $typeId, $initializer).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_divideAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -2247,7 +2672,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_divideAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_divideAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_integerConstant(String $value, ISourceLocation $loc) {
@@ -2256,7 +2684,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($value).getType() + " for vf.string($value):" + vf.string($value));
     }
     
-    return vf.constructor(_Expression_integerConstant_1 , vf.string($value)).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_integerConstant_1 , vf.string($value)).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_staticCast(IConstructor $typeId, IConstructor $expression, ISourceLocation $loc) {
@@ -2269,7 +2700,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Expression_staticCast_2 , $typeId, $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_staticCast_2 , $typeId, $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_binaryAndAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -2282,7 +2716,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_binaryAndAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_binaryAndAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_conditional(IConstructor $condition, IConstructor $positive, IConstructor $negative, ISourceLocation $loc) {
@@ -2299,7 +2736,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $negative.getType() + " for $negative:" + $negative);
     }
     
-    return vf.constructor(_Expression_conditional_3 , $condition, $positive, $negative).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_conditional_3 , $condition, $positive, $negative).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_moduloAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -2312,7 +2752,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_moduloAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_moduloAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_constructorChainInitializer(IConstructor $name, IConstructor $initializer, ISourceLocation $loc) {
@@ -2325,7 +2768,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
     }
     
-    return vf.constructor(_Expression_constructorChainInitializer_2 , $name, $initializer).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_constructorChainInitializer_2 , $name, $initializer).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_max(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -2338,7 +2784,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_max_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_max_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_binaryOr(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -2351,7 +2800,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_binaryOr_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_binaryOr_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_multiply(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
@@ -2364,7 +2816,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
     }
     
-    return vf.constructor(_Expression_multiply_2 , $lhs, $rhs).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_multiply_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_floatConstant(String $value, ISourceLocation $loc) {
@@ -2373,7 +2828,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($value).getType() + " for vf.string($value):" + vf.string($value));
     }
     
-    return vf.constructor(_Expression_floatConstant_1 , vf.string($value)).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_floatConstant_1 , vf.string($value)).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_expressionList(IList $expressions, ISourceLocation $loc) {
@@ -2382,38 +2840,59 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $expressions.getType() + " for $expressions:" + $expressions);
     }
     
-    return vf.constructor(_Expression_expressionList_1 , $expressions).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_expressionList_1 , $expressions).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_arrayModifier(ISourceLocation $loc) {
     
-    return vf.constructor(_Expression_arrayModifier_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_arrayModifier_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
     
   
   public IConstructor Type_wchar_t(ISourceLocation $loc) {
     
-    return vf.constructor(_Type_wchar_t_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_wchar_t_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_decltype(ISourceLocation $loc) {
     
-    return vf.constructor(_Type_decltype_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_decltype_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_decimal128(ISourceLocation $loc) {
     
-    return vf.constructor(_Type_decimal128_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_decimal128_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_nullptr(ISourceLocation $loc) {
     
-    return vf.constructor(_Type_nullptr_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_nullptr_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_int128(ISourceLocation $loc) {
     
-    return vf.constructor(_Type_int128_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_int128_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_classType(IConstructor $name, ISourceLocation $loc) {
@@ -2422,7 +2901,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
     
-    return vf.constructor(_Type_classType_1 , $name).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_classType_1 , $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_unionType(IConstructor $name, ISourceLocation $loc) {
@@ -2431,7 +2913,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
     
-    return vf.constructor(_Type_unionType_1 , $name).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_unionType_1 , $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_basicType(IConstructor $type, IList $modifiers, ISourceLocation $loc) {
@@ -2444,17 +2929,26 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
     }
     
-    return vf.constructor(_Type_basicType_2 , $type, $modifiers).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_basicType_2 , $type, $modifiers).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_char(ISourceLocation $loc) {
     
-    return vf.constructor(_Type_char_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_char_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_unspecified(ISourceLocation $loc) {
     
-    return vf.constructor(_Type_unspecified_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_unspecified_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_arrayType(IConstructor $type, int $size, ISourceLocation $loc) {
@@ -2467,62 +2961,98 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.integerType() + " but got " + vf.integer($size).getType() + " for vf.integer($size):" + vf.integer($size));
     }
     
-    return vf.constructor(_Type_arrayType_2 , $type, vf.integer($size)).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_arrayType_2 , $type, vf.integer($size)).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_float128(ISourceLocation $loc) {
     
-    return vf.constructor(_Type_float128_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_float128_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_float(ISourceLocation $loc) {
     
-    return vf.constructor(_Type_float_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_float_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_integer(ISourceLocation $loc) {
     
-    return vf.constructor(_Type_integer_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_integer_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_char32_t(ISourceLocation $loc) {
     
-    return vf.constructor(_Type_char32_t_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_char32_t_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_bool(ISourceLocation $loc) {
     
-    return vf.constructor(_Type_bool_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_bool_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_decimal64(ISourceLocation $loc) {
     
-    return vf.constructor(_Type_decimal64_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_decimal64_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_auto(ISourceLocation $loc) {
     
-    return vf.constructor(_Type_auto_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_auto_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_decimal32(ISourceLocation $loc) {
     
-    return vf.constructor(_Type_decimal32_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_decimal32_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_char16_t(ISourceLocation $loc) {
     
-    return vf.constructor(_Type_char16_t_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_char16_t_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_typeof(ISourceLocation $loc) {
     
-    return vf.constructor(_Type_typeof_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_typeof_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_double(ISourceLocation $loc) {
     
-    return vf.constructor(_Type_double_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_double_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_structType(IConstructor $name, ISourceLocation $loc) {
@@ -2531,23 +3061,35 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
     
-    return vf.constructor(_Type_structType_1 , $name).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_structType_1 , $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_void(ISourceLocation $loc) {
     
-    return vf.constructor(_Type_void_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Type_void_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
     
   
   public IConstructor Statement_return(ISourceLocation $loc) {
     
-    return vf.constructor(_Statement_return_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_return_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_defaultCase(ISourceLocation $loc) {
     
-    return vf.constructor(_Statement_defaultCase_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_defaultCase_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_goto(IConstructor $name, ISourceLocation $loc) {
@@ -2556,7 +3098,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
     
-    return vf.constructor(_Statement_goto_1 , $name).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_goto_1 , $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_switch(IConstructor $controller, IConstructor $body, ISourceLocation $loc) {
@@ -2569,12 +3114,18 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
     }
     
-    return vf.constructor(_Statement_switch_2 , $controller, $body).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_switch_2 , $controller, $body).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_break(ISourceLocation $loc) {
     
-    return vf.constructor(_Statement_break_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_break_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_for(IConstructor $sInitializer, IConstructor $condition, IConstructor $iteration, IConstructor $body, ISourceLocation $loc) {
@@ -2595,17 +3146,26 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
     }
     
-    return vf.constructor(_Statement_for_4 , $sInitializer, $condition, $iteration, $body).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_for_4 , $sInitializer, $condition, $iteration, $body).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_continue(ISourceLocation $loc) {
     
-    return vf.constructor(_Statement_continue_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_continue_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_nullStatement(ISourceLocation $loc) {
     
-    return vf.constructor(_Statement_nullStatement_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_nullStatement_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_compoundStatement(IList $statements, ISourceLocation $loc) {
@@ -2614,7 +3174,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Statement) + " but got " + $statements.getType() + " for $statements:" + $statements);
     }
     
-    return vf.constructor(_Statement_compoundStatement_1 , $statements).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_compoundStatement_1 , $statements).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_expressionStatement(IConstructor $expression, ISourceLocation $loc) {
@@ -2623,7 +3186,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Statement_expressionStatement_1 , $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_expressionStatement_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_label(IConstructor $name, IConstructor $nestedStatement, ISourceLocation $loc) {
@@ -2636,7 +3202,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Statement + " but got " + $nestedStatement.getType() + " for $nestedStatement:" + $nestedStatement);
     }
     
-    return vf.constructor(_Statement_label_2 , $name, $nestedStatement).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_label_2 , $name, $nestedStatement).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_if(IConstructor $condition, IConstructor $thenClause, IConstructor $elseClause, ISourceLocation $loc) {
@@ -2653,7 +3222,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Statement + " but got " + $elseClause.getType() + " for $elseClause:" + $elseClause);
     }
     
-    return vf.constructor(_Statement_if_3 , $condition, $thenClause, $elseClause).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_if_3 , $condition, $thenClause, $elseClause).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_while(IConstructor $condition, IConstructor $body, ISourceLocation $loc) {
@@ -2666,7 +3238,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
     }
     
-    return vf.constructor(_Statement_while_2 , $condition, $body).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_while_2 , $condition, $body).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_do(IConstructor $body, IConstructor $condition, ISourceLocation $loc) {
@@ -2679,7 +3254,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $condition.getType() + " for $condition:" + $condition);
     }
     
-    return vf.constructor(_Statement_do_2 , $body, $condition).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_do_2 , $body, $condition).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_tryBlock(IConstructor $tryBody, IList $catchHandlers, ISourceLocation $loc) {
@@ -2692,7 +3270,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Statement) + " but got " + $catchHandlers.getType() + " for $catchHandlers:" + $catchHandlers);
     }
     
-    return vf.constructor(_Statement_tryBlock_2 , $tryBody, $catchHandlers).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_tryBlock_2 , $tryBody, $catchHandlers).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_if(IConstructor $condition, IConstructor $thenClause, ISourceLocation $loc) {
@@ -2705,7 +3286,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Statement + " but got " + $thenClause.getType() + " for $thenClause:" + $thenClause);
     }
     
-    return vf.constructor(_Statement_if_2 , $condition, $thenClause).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_if_2 , $condition, $thenClause).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_catch(IConstructor $declaration, IConstructor $body, ISourceLocation $loc) {
@@ -2718,7 +3302,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
     }
     
-    return vf.constructor(_Statement_catch_2 , $declaration, $body).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_catch_2 , $declaration, $body).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_problem(String $raw, ISourceLocation $loc) {
@@ -2727,7 +3314,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($raw).getType() + " for vf.string($raw):" + vf.string($raw));
     }
     
-    return vf.constructor(_Statement_problem_1 , vf.string($raw)).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_problem_1 , vf.string($raw)).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_return(IConstructor $expression, ISourceLocation $loc) {
@@ -2736,7 +3326,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Statement_return_1 , $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_return_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_rangeBasedFor(IConstructor $declaration, IConstructor $initializer, IConstructor $body, ISourceLocation $loc) {
@@ -2753,7 +3346,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
     }
     
-    return vf.constructor(_Statement_rangeBasedFor_3 , $declaration, $initializer, $body).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_rangeBasedFor_3 , $declaration, $initializer, $body).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_case(IConstructor $expression, ISourceLocation $loc) {
@@ -2762,7 +3358,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
     }
     
-    return vf.constructor(_Statement_case_1 , $expression).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_case_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_declarationStatement(IConstructor $declaration, ISourceLocation $loc) {
@@ -2771,7 +3370,10 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $declaration.getType() + " for $declaration:" + $declaration);
     }
     
-    return vf.constructor(_Statement_declarationStatement_1 , $declaration).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_declarationStatement_1 , $declaration).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_catchAll(IConstructor $body, ISourceLocation $loc) {
@@ -2780,163 +3382,259 @@ public class AST {
       throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
     }
     
-    return vf.constructor(_Statement_catchAll_1 , $body).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_catchAll_1 , $body).asWithKeywordParameters().setParameters(kwParams);
   }
     
   
   public IConstructor Modifier_override(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_override_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_override_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_public(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_public_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_public_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_mutable(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_mutable_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_mutable_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_threadLocal(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_threadLocal_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_threadLocal_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_extern(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_extern_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_extern_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_friend(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_friend_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_friend_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_unsigned(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_unsigned_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_unsigned_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_final(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_final_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_final_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_captDefByReference(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_captDefByReference_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_captDefByReference_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_complex(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_complex_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_complex_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_pureVirtual(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_pureVirtual_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_pureVirtual_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_auto(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_auto_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_auto_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_captDefByCopy(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_captDefByCopy_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_captDefByCopy_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_protected(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_protected_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_protected_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_static(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_static_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_static_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_virtual(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_virtual_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_virtual_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_typedef(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_typedef_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_typedef_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_const(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_const_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_const_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_register(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_register_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_register_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_private(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_private_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_private_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_signed(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_signed_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_signed_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_restrict(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_restrict_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_restrict_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_long(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_long_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_long_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_volatile(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_volatile_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_volatile_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_short(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_short_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_short_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_inline(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_inline_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_inline_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_imaginary(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_imaginary_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_imaginary_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_constexpr(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_constexpr_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_constexpr_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_longlong(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_longlong_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_longlong_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_explicit(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_explicit_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_explicit_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_captDefUnspecified(ISourceLocation $loc) {
     
-    return vf.constructor(_Modifier_captDefUnspecified_0 ).asWithKeywordParameters().setParameter("src", $loc);
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_captDefUnspecified_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
    
   
