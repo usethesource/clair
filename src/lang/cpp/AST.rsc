@@ -5,7 +5,7 @@ import Node;
 
 extend analysis::m3::AST;
 
-data Declarator(loc src = |unknown:///|)
+data Declarator(loc src = |unknown:///|, loc decl = |unknown:///|)
     = \declarator(list[Declaration] pointerOperators, Expression name)
     | \declarator(list[Declaration] pointerOperators, Expression name, Expression initializer)
     | \functionDeclarator(list[Declaration] pointerOperators, Expression name, list[Declaration] parameters)  //superfluous?
