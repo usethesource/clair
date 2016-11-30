@@ -28,6 +28,8 @@ public str generate(str apiName, list[type[value]] types) {
            'import org.rascalmpl.value.type.TypeFactory;
            'import org.rascalmpl.value.type.TypeStore;
            'import org.rascalmpl.value.*;
+           'import java.util.Map;
+           'import java.util.HashMap;
            '
            '@SuppressWarnings(\"deprecation\")
            'public class <apiName> {
@@ -117,13 +119,16 @@ str type2FactoryCall(Symbol t){
        '<}>";
   
   str declareMaker(Production::cons(label(str cname, Symbol typ:adt(str typeName, list[Symbol] ps)), list[Symbol] args, list[Symbol] kwTypes,set[Attr] _)) 
-     = "public <typeToJavaType(typ)> <typeName>_<cname>(<(declareConsArgs(args)+", ISourceLocation $loc")[2..]>) {
+     = "public <typeToJavaType(typ)> <typeName>_<cname>(<(declareConsArgs(args)+", ISourceLocation $loc"+(typeName=="Declaration"?", ISourceLocation $decl":""))[2..]>) {
        '  <for (label(str l, Symbol t) <- args) { str argName = argToSimpleJavaArg(l, t); str argType = type2FactoryCall(t);>  
        '  if (!<argName>.getType().isSubtypeOf(<argType>)) {
        '    throw new IllegalArgumentException(\"Expected \" + <argType> + \" but got \" + <argName>.getType() + \" for <argName>:\" + <argName>);
        '  }
        '  <}>
-       '  return vf.constructor(_<typeName>_<cname>_<size(args)> <callConsArgs(args)>).asWithKeywordParameters().setParameter(\"src\", $loc);
+       '  Map\<String, IValue\> kwParams = new HashMap\<String, IValue\>();
+       '  kwParams.put(\"src\", $loc);
+       '  <(typeName=="Declaration"?"kwParams.put(\"decl\", $decl);":"")>
+       '  return vf.constructor(_<typeName>_<cname>_<size(args)> <callConsArgs(args)>).asWithKeywordParameters().setParameters(kwParams);
        '}";
   
   str declareConsArgs(list[Symbol] args) = "<for (label(str l, Symbol t) <- args) {>, <typeToSimpleJavaType(t)> $<l><}>";
