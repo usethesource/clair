@@ -24,23 +24,23 @@ data Declarator(loc src = |unknown:///|, loc decl = |unknown:///|)
 data DeclSpecifier(loc src = |unknown:///|)
     = \declSpecifier(list[Modifier] modifiers, Type \type)
     | \declSpecifier(list[Modifier] modifiers, Type \type, Expression expression) //decltype and type_of
-    | \etsEnum(list[Modifier], Expression name)
-    | \etsStruct(list[Modifier], Expression name) //ElaboratedTypeSpecifier
-    | \etsUnion(list[Modifier], Expression name)
-    | \etsClass(list[Modifier], Expression name)
-    | \namedTypeSpecifier(list[Modifier] modifiers, Expression name)
+    | \etsEnum(list[Modifier], Expression name, loc decl = |unknown:///|)
+    | \etsStruct(list[Modifier], Expression name, loc decl = |unknown:///|) //ElaboratedTypeSpecifier
+    | \etsUnion(list[Modifier], Expression name, loc decl = |unknown:///|)
+    | \etsClass(list[Modifier], Expression name, loc decl = |unknown:///|)
+    | \namedTypeSpecifier(list[Modifier] modifiers, Expression name, loc decl = |unknown:///|)
     
-    | \struct(Expression name, list[Declaration] members)  //c
-    | \union(Expression name, list[Declaration] members)   //c
-    | \class(Expression name, list[Declaration] members)   //c
-    | \struct(Expression name,  list[Declaration] baseSpecifiers,list[Declaration] members)
-    | \union(Expression name, list[Declaration] baseSpecifiers, list[Declaration] members)
-    | \class(Expression name, list[Declaration] baseSpecifiers, list[Declaration] members)
+    | \struct(Expression name, list[Declaration] members, loc decl = |unknown:///|)  //c
+    | \union(Expression name, list[Declaration] members, loc decl = |unknown:///|)   //c
+    | \class(Expression name, list[Declaration] members, loc decl = |unknown:///|)   //c
+    | \struct(Expression name,  list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
+    | \union(Expression name, list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
+    | \class(Expression name, list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
     
-    | \enum(Expression name, list[Declaration] enumerators)
-    | \enum(DeclSpecifier baseType, Expression name, list[Declaration] enumerators)
-    | \enumScoped(Expression name, list[Declaration] enumerators)
-    | \enumScoped(DeclSpecifier baseType, Expression name, list[Declaration] enumerators)
+    | \enum(Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
+    | \enum(DeclSpecifier baseType, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
+    | \enumScoped(Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
+    | \enumScoped(DeclSpecifier baseType, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
     ;
     
 data Declaration(loc src=|unknown:///|)
@@ -54,10 +54,10 @@ data Declaration(loc src=|unknown:///|)
     
     | \asmDeclaration(str assembly)
     
-    | \enumerator(Expression name, Expression \value)
-    | \enumerator(Expression name)
+    | \enumerator(Expression name, Expression \value, loc decl = |unknown:///|)
+    | \enumerator(Expression name, loc decl = |unknown:///|)
     
-    | \usingDirective(Expression qualifiedName)
+    | \usingDirective(Expression qualifiedName, loc decl = |unknown:///|)
     | \visibilityLabel(Modifier visibility)
     
     //| \etsEnum(Expression name)
@@ -79,20 +79,20 @@ data Declaration(loc src=|unknown:///|)
     //| \declarationEqualsInitializer(str name, Expression initializer) //weg //Que?
     
     | \template(list[Declaration] parameters, Declaration declaration)
-    | \sttClass(Expression name) //simpleTypeTemplateParameter    
-    | \sttTypename(Expression name) //simpleTypeTemplateParameter
+    | \sttClass(Expression name, loc decl = |unknown:///|) //simpleTypeTemplateParameter    
+    | \sttTypename(Expression name, loc decl = |unknown:///|) //simpleTypeTemplateParameter
     
-    | \baseSpecifier(Modifier modifier)
-    | \baseSpecifier(Modifier modifier, Expression name)
+    | \baseSpecifier(Modifier modifier, loc decl = |unknown:///|)
+    | \baseSpecifier(Modifier modifier, Expression name, loc decl = |unknown:///|)
     
     | \virtSpecifier(Modifier modifier)
     
-    | \namespaceDefinition(Expression name, list[Declaration] declarations, bool isInline)
-    | \usingDeclaration(Expression name)
-    | \namespaceAlias(Expression \alias, Expression mapping)
+    | \namespaceDefinition(Expression name, list[Declaration] declarations, bool isInline, loc decl = |unknown:///|)
+    | \usingDeclaration(list[Modifier] modifiers, Expression name, loc decl = |unknown:///|)
+    | \namespaceAlias(Expression \alias, Expression mapping, loc decl = |unknown:///|)
     
     | \linkageSpecification(str literal, list[Declaration] declarations)
-    | \alias(Expression \alias, Expression mappingTypeId)
+    | \alias(Expression \alias, Expression mappingTypeId, loc decl = |unknown:///|)
     
     | \problemDeclaration()
     ;
@@ -128,8 +128,8 @@ data Expression(loc src = |unknown:///|)
     | \binaryOrAssign(Expression lhs, Expression rhs)
     | \equals(Expression lhs, Expression rhs)
     | \notEquals(Expression lhs, Expression rhs)
-    | \pmDot(Expression lhs, Expression rhs) //c++ only
-    | \pmArrow(Expression lhs, Expression rhs) //c++ only
+    | \pmDot(Expression lhs, Expression rhs) //c++ only //required decl?
+    | \pmArrow(Expression lhs, Expression rhs) //c++ only //requires decl?
     | \max(Expression lhs, Expression rhs) //g++ only
     | \min(Expression lhs, Expression rhs) //g++ only
     | \ellipses(Expression lhs, Expression rhs) //g++ only
@@ -162,10 +162,10 @@ data Expression(loc src = |unknown:///|)
     | \constCast(Expression typeId, Expression expression)
     
     | \name(str \value)
-    | \qualifiedName(list[Expression] qualifiers, Expression lastName)
+    | \qualifiedName(list[Expression] qualifiers, Expression lastName, loc decl = |unknown:///|)
     | \operatorName(str \value)
     | \conversionName(str \value, Expression typeId)
-    | \idExpression(Expression name)
+    | \idExpression(Expression name, loc decl = |unknown:///|)
     | \integerLiteral(int number)
     | \conditional(Expression condition, Expression positive, Expression negative)
     
@@ -182,7 +182,7 @@ data Expression(loc src = |unknown:///|)
     
     | \functionCall(Expression functionName, list[Expression] arguments)
     
-    | \fieldReference(Expression fieldOwner, Expression name, Type fieldType)
+    | \fieldReference(Expression fieldOwner, Expression name, Type fieldType, loc decl = |unknown:///|)
     //| \constructorInitializer(list[Expression] arguments)
     | \new(Expression typeId)
     | \new(Expression typeId, Expression initializer)
@@ -198,7 +198,7 @@ data Expression(loc src = |unknown:///|)
     
     | \expressionList(list[Expression] expressions)
     
-    | \templateId(Expression name, list[Expression] argumentTypes)
+    | \templateId(Expression name, list[Expression] argumentTypes, loc decl = |unknown:///|)
 
     | \empty()    
     | \nyi(str raw)
@@ -212,12 +212,12 @@ data Expression(loc src = |unknown:///|)
     // Initializers below
     | \equalsInitializer(Expression initializer)
     | \initializerList(list[Expression] clauses) //initializerClause?
-    | \constructorChainInitializer(Expression name, Expression initializer)
+    | \constructorChainInitializer(Expression name, Expression initializer, loc decl = |unknown:///|)
     | \constructorInitializer(list[Expression] arguments)
     
     // Captures
-    | \capture(Expression name)
-    | \captureByRef(Expression name)
+    | \capture(Expression name, loc decl = |unknown:///|)
+    | \captureByRef(Expression name, loc decl = |unknown:///|)
     | \captureThisPtr()
     ;                       
  
@@ -241,8 +241,8 @@ data Statement(loc src = |unknown:///|)
     | \return(Expression expression)
     | \return()
     | \nullStatement()
-    | \label(Expression name, Statement nestedStatement)
-    | \goto(Expression name)
+    | \label(Expression name, Statement nestedStatement, loc decl = |unknown:///|)
+    | \goto(Expression name, loc decl = |unknown:///|)
     
     | \tryBlock(Statement tryBody, list[Statement] catchHandlers)
     | \catch(Declaration declaration, Statement body)
@@ -317,6 +317,7 @@ data Modifier(loc src = |unknown:///|)
     | \threadLocal()
     | \pureVirtual()
     
+    | \typename()
     
     | \captDefUnspecified()
     | \captDefByCopy()
