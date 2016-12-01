@@ -145,7 +145,7 @@ public class BindingsResolver {
 
 	private ISourceLocation resolveIProblemBinding(IProblemBinding binding) {
 		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
-		throw new RuntimeException("NYI");
+		return NYI;
 	}
 
 	private ISourceLocation resolveIMacroBinding(IMacroBinding binding) {
@@ -318,6 +318,8 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation resolveICompositeType(ICompositeType binding) {
+		if (binding instanceof ICPPClassType)
+			return resolveICPPClassType((ICPPClassType) binding);
 		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
 		throw new RuntimeException("NYI");
 	}
@@ -352,7 +354,7 @@ public class BindingsResolver {
 				return resolveLabelStatement((IASTLabelStatement) node);
 			if (node instanceof IASTNamedTypeSpecifier)
 				return resolveNamedTypeSpecifier((IASTNamedTypeSpecifier) node);
-			if (node instanceof IASTPreprocessorMacroDefinition)
+			if (node instanceof IASTPreprocessorMacroDefinition)// TODO
 				return resolvePreprocessorMacroDefinition((IASTPreprocessorMacroDefinition) node);
 			if (node instanceof ICPPASTAliasDeclaration)
 				return resolveAliasDeclaration((ICPPASTAliasDeclaration) node);
@@ -366,17 +368,18 @@ public class BindingsResolver {
 				return resolveNamespaceAlias((ICPPASTNamespaceAlias) node);
 			if (node instanceof ICPPASTNamespaceDefinition)
 				return resolveNamespaceDefinition((ICPPASTNamespaceDefinition) node);
-			if (node instanceof ICPPASTPointerToMember)
+			if (node instanceof ICPPASTPointerToMember)// TODO
 				return resolvePointerToMember((ICPPASTPointerToMember) node);
 			if (node instanceof ICPPASTQualifiedName)
 				return resolveQualifiedName((ICPPASTQualifiedName) node);
 			if (node instanceof ICPPASTSimpleTypeTemplateParameter)
 				return resolveSimpleTypeTemplateParameter((ICPPASTSimpleTypeTemplateParameter) node);
-			if (node instanceof ICPPASTTemplatedTypeTemplateParameter)
+			if (node instanceof ICPPASTTemplatedTypeTemplateParameter)// TODO,
+																		// NYI
 				return resolveTemplatedTypeTemplateParameter((ICPPASTTemplatedTypeTemplateParameter) node);
 			if (node instanceof ICPPASTTemplateId)
 				return resolveTemplateId((ICPPASTTemplateId) node);
-			// Deprecated
+			// Deprecated // TODO?
 			// if (node instanceof ICPPASTTypenameExpression)
 			// return resolveTypenameExpression((ICPPASTTypenameExpression)
 			// node);
@@ -398,9 +401,8 @@ public class BindingsResolver {
 		throw new RuntimeException("NYI");
 	}
 
-	private ISourceLocation resolveUsingDirective(ICPPASTUsingDirective node) {
-		// TODO Auto-generated method stub
-		throw new RuntimeException("NYI");
+	private ISourceLocation resolveUsingDirective(ICPPASTUsingDirective node) throws URISyntaxException {
+		return resolveBinding(node.getQualifiedName().resolveBinding());
 	}
 
 	private ISourceLocation resolveTemplateId(ICPPASTTemplateId node) {
