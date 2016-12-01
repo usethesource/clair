@@ -118,8 +118,18 @@ str type2FactoryCall(Symbol t){
        '<declareMaker(c)>
        '<}>";
   
+  bool hasDecl("Declarator", str _) = true;
+  bool hasDecl("DeclSpecifier", "declSpecifier") = false;
+  bool hasDecl("DeclSpecifier", str _) = true;
+  bool hasDecl("Declaration", str cname)
+    = cname in {"enumerator", "usingDirective", "sttClass", "sttTypename", "baseSpecifier", "namespaceDefinition", "usingDeclaration", "namespaceAlias", "alias"};
+  bool hasDecl("Expression", str cname)
+    = cname in {"qualifiedName", "idExpression", "fieldReference", "templateId", "constructorChainInitializer", "capture", "captureByRef"};
+  bool hasDecl("Statement", str cname) = cname in {"label", "goto"};
+  bool hasDecl(str _, str _) = false;
+  
   str declareMaker(Production::cons(label(str cname, Symbol typ:adt(str typeName, list[Symbol] ps)), list[Symbol] args, list[Symbol] kwTypes,set[Attr] _)) 
-     = "public <typeToJavaType(typ)> <typeName>_<cname>(<(declareConsArgs(args)+", ISourceLocation $loc"+(typeName=="Declarator"?", ISourceLocation $decl":""))[2..]>) {
+     = "public <typeToJavaType(typ)> <typeName>_<cname>(<(declareConsArgs(args)+", ISourceLocation $loc"+(hasDecl(typeName, cname)?", ISourceLocation $decl":""))[2..]>) {
        '  <for (label(str l, Symbol t) <- args) { str argName = argToSimpleJavaArg(l, t); str argType = type2FactoryCall(t);>  
        '  if (!<argName>.getType().isSubtypeOf(<argType>)) {
        '    throw new IllegalArgumentException(\"Expected \" + <argType> + \" but got \" + <argName>.getType() + \" for <argName>:\" + <argName>);
@@ -127,7 +137,7 @@ str type2FactoryCall(Symbol t){
        '  <}>
        '  Map\<String, IValue\> kwParams = new HashMap\<String, IValue\>();
        '  kwParams.put(\"src\", $loc);
-       '  <(typeName=="Declarator"?"kwParams.put(\"decl\", $decl);":"")>
+       '  <(hasDecl(typeName, cname)?"kwParams.put(\"decl\", $decl);":"")>
        '  return vf.constructor(_<typeName>_<cname>_<size(args)> <callConsArgs(args)>).asWithKeywordParameters().setParameters(kwParams);
        '}";
   
