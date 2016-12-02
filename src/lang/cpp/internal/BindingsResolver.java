@@ -42,9 +42,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFieldTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -89,17 +92,16 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation resolveOwner(IBinding binding) throws URISyntaxException {
-		IBinding _owner = binding.getOwner();
-		ISourceLocation owner;
-		if (_owner == null)
-			owner = sourceLoc;
+		if (binding == null)
+			return sourceLoc;
+		IBinding owner = binding.getOwner();
+		if (owner == null)
+			return sourceLoc;
 		else
-			owner = resolveBinding(_owner);
-		return owner;
+			return resolveBinding(owner);
 	}
 
 	public ISourceLocation resolveBinding(IBinding binding) throws URISyntaxException {
-		out("ResolveBinding on " + binding.getClass().getSimpleName() + ": " + binding);
 		if (binding instanceof ICExternalBinding)
 			return resolveICExternalBinding((ICExternalBinding) binding);
 		if (binding instanceof ICompositeType)
@@ -230,12 +232,15 @@ public class BindingsResolver {
 			return resolveICPPVariableInstance((ICPPVariableInstance) binding);
 		if (binding instanceof ICPPVariableTemplate)
 			return resolveICPPVariableTemplate((ICPPVariableTemplate) binding);
-		ISourceLocation owner = resolveBinding(binding.getOwner());
+		ISourceLocation owner = resolveOwner(binding.getOwner());
 		return vf.sourceLocation("cpp+variable", owner.getAuthority(), owner.getPath() + "/" + binding.getName());
 	}
 
-	private ISourceLocation resolveICPPField(ICPPField binding) {
-		throw new RuntimeException("NYI");
+	private ISourceLocation resolveICPPField(ICPPField binding) throws URISyntaxException {
+		if (binding instanceof ICPPFieldTemplate)
+			throw new RuntimeException("NYI");
+		ISourceLocation owner = resolveOwner(binding);
+		return vf.sourceLocation("cpp+field", owner.getAuthority(), owner.getPath() + "/" + binding.getName());
 	}
 
 	private ISourceLocation resolveICPPParameter(ICPPParameter binding) {
@@ -307,8 +312,36 @@ public class BindingsResolver {
 		}
 	}
 
-	private ISourceLocation resolveICPPClassType(ICPPClassType binding) {
-		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
+	private ISourceLocation resolveICPPClassType(ICPPClassType binding) throws URISyntaxException {
+		if (binding instanceof ICPPClassSpecialization)
+			return resolveICPPClassSpecialization((ICPPClassSpecialization) binding);
+		if (binding instanceof ICPPClassTemplate)
+			return resolveICPPClassTemplate((ICPPClassTemplate) binding);
+		// Discouraged access
+		// if (binding instanceof ICPPDeferredClassInstance)
+		// return resolveICPPDeferredClassInstance((ICPPDeferredClassInstance)
+		// binding);
+		// Not visible
+		// if (binding instanceof ICPPInternalClassTypeMixinHost)
+		// return
+		// resolveICPPInternalClassTypeMixinHost((ICPPInternalClassTypeMixinHost)
+		// binding);
+		// Discouraged access
+		// if (binding instanceof ICPPUnknownMemberClass)
+		// return resolveICPPUnknownMemberClass((ICPPUnknownMemberClass)
+		// binding);
+		// Discouraged access
+		// if (binding instanceof IPDOMCPPClassType)
+		// return resolveIPDOMCPPClassType((IPDOMCPPClassType) binding);
+		ISourceLocation owner = resolveOwner(binding);
+		return vf.sourceLocation("cpp+class", owner.getAuthority(), owner.getPath() + "/" + binding.getName());
+	}
+
+	private ISourceLocation resolveICPPClassSpecialization(ICPPClassSpecialization binding) {
+		throw new RuntimeException("NYI");
+	}
+
+	private ISourceLocation resolveICPPClassTemplate(ICPPClassTemplate binding) {
 		throw new RuntimeException("NYI");
 	}
 
@@ -317,7 +350,7 @@ public class BindingsResolver {
 		throw new RuntimeException("NYI");
 	}
 
-	private ISourceLocation resolveICompositeType(ICompositeType binding) {
+	private ISourceLocation resolveICompositeType(ICompositeType binding) throws URISyntaxException {
 		if (binding instanceof ICPPClassType)
 			return resolveICPPClassType((ICPPClassType) binding);
 		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
@@ -420,9 +453,8 @@ public class BindingsResolver {
 		throw new RuntimeException("NYI");
 	}
 
-	private ISourceLocation resolveQualifiedName(ICPPASTQualifiedName node) {
-		// TODO Auto-generated method stub
-		throw new RuntimeException("NYI");
+	private ISourceLocation resolveQualifiedName(ICPPASTQualifiedName node) throws URISyntaxException {
+		return resolveBinding(node.resolveBinding());
 	}
 
 	private ISourceLocation resolvePointerToMember(ICPPASTPointerToMember node) {
@@ -475,9 +507,8 @@ public class BindingsResolver {
 		throw new RuntimeException("NYI");
 	}
 
-	private ISourceLocation resolveIdExpression(IASTIdExpression node) {
-		// TODO Auto-generated method stub
-		throw new RuntimeException("NYI");
+	private ISourceLocation resolveIdExpression(IASTIdExpression node) throws URISyntaxException {
+		return resolveBinding(node.getName().resolveBinding());
 	}
 
 	private ISourceLocation resolveGotoStatement(IASTGotoStatement node) {
@@ -508,9 +539,8 @@ public class BindingsResolver {
 		return resolveBinding(node.getName().resolveBinding());
 	}
 
-	private ISourceLocation resolveCompositeTypeSpecifier(IASTCompositeTypeSpecifier node) {
-		// TODO Auto-generated method stub
-		throw new RuntimeException("NYI");
+	private ISourceLocation resolveCompositeTypeSpecifier(IASTCompositeTypeSpecifier node) throws URISyntaxException {
+		return resolveBinding(node.getName().resolveBinding());
 	}
 
 	public ISourceLocation makeBinding(String scheme, String authority, String path) {
