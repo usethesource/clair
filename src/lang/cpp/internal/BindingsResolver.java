@@ -145,9 +145,9 @@ public class BindingsResolver {
 		throw new RuntimeException("NYI: IVariable");
 	}
 
-	private ISourceLocation resolveITypedef(ITypedef binding) {
-		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
-		throw new RuntimeException("NYI");
+	private ISourceLocation resolveITypedef(ITypedef binding) throws URISyntaxException {
+		ISourceLocation owner = resolveOwner(binding);
+		return vf.sourceLocation("cpp+typedef", owner.getAuthority(), owner.getPath() + "/" + binding.getName());
 	}
 
 	private ISourceLocation resolveIProblemBinding(IProblemBinding binding) {
@@ -349,12 +349,15 @@ public class BindingsResolver {
 		return vf.sourceLocation("cpp+class", owner.getAuthority(), owner.getPath() + "/" + binding.getName());
 	}
 
-	private ISourceLocation resolveICPPClassSpecialization(ICPPClassSpecialization binding) {
-		throw new RuntimeException("NYI");
+	private ISourceLocation resolveICPPClassSpecialization(ICPPClassSpecialization binding) throws URISyntaxException {
+		ISourceLocation owner = resolveOwner(binding);
+		return vf.sourceLocation("cpp+classSpecialization", owner.getAuthority(),
+				owner.getPath() + "/" + binding.getName());
 	}
 
-	private ISourceLocation resolveICPPClassTemplate(ICPPClassTemplate binding) {
-		throw new RuntimeException("NYI");
+	private ISourceLocation resolveICPPClassTemplate(ICPPClassTemplate binding) throws URISyntaxException {
+		ISourceLocation owner = resolveOwner(binding);
+		return vf.sourceLocation("cpp+classTemplate", owner.getAuthority(), owner.getPath() + "/" + binding.getName());
 	}
 
 	private ISourceLocation resolveICPPAliasTemplateInstance(ICPPAliasTemplateInstance binding) {
@@ -480,9 +483,9 @@ public class BindingsResolver {
 		return resolveBinding(node.getAlias().resolveBinding());
 	}
 
-	private ISourceLocation resolveConstructorChainInitializer(ICPPASTConstructorChainInitializer node) {
-		// TODO Auto-generated method stub
-		throw new RuntimeException("NYI");
+	private ISourceLocation resolveConstructorChainInitializer(ICPPASTConstructorChainInitializer node)
+			throws URISyntaxException {
+		return resolveBinding(node.getMemberInitializerId().resolveBinding());
 	}
 
 	private ISourceLocation resolveCapture(ICPPASTCapture node) {
@@ -490,14 +493,12 @@ public class BindingsResolver {
 		throw new RuntimeException("NYI");
 	}
 
-	private ISourceLocation resolveBaseSpecifier(ICPPASTBaseSpecifier node) {
-		// TODO Auto-generated method stub
-		throw new RuntimeException("NYI");
+	private ISourceLocation resolveBaseSpecifier(ICPPASTBaseSpecifier node) throws URISyntaxException {
+		return resolveBinding(node.getNameSpecifier().resolveBinding());
 	}
 
-	private ISourceLocation resolveAliasDeclaration(ICPPASTAliasDeclaration node) {
-		// TODO Auto-generated method stub
-		throw new RuntimeException("NYI");
+	private ISourceLocation resolveAliasDeclaration(ICPPASTAliasDeclaration node) throws URISyntaxException {
+		return resolveBinding(node.getAlias().resolveBinding());
 	}
 
 	private ISourceLocation resolvePreprocessorMacroDefinition(IASTPreprocessorMacroDefinition node) {
@@ -535,9 +536,8 @@ public class BindingsResolver {
 		return resolveBinding(node.getName().resolveBinding());
 	}
 
-	private ISourceLocation resolveElaboratedTypeSpecifier(IASTElaboratedTypeSpecifier node) {
-		// TODO Auto-generated method stub
-		throw new RuntimeException("NYI");
+	private ISourceLocation resolveElaboratedTypeSpecifier(IASTElaboratedTypeSpecifier node) throws URISyntaxException {
+		return resolveBinding(node.getName().resolveBinding());
 	}
 
 	private ISourceLocation resolveDeclarator(IASTDeclarator node) throws URISyntaxException {
