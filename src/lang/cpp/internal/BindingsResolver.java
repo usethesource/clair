@@ -1,7 +1,6 @@
 package lang.cpp.internal;
 
 import java.net.URISyntaxException;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -13,6 +12,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
@@ -306,13 +306,6 @@ public class BindingsResolver {
 		throw new RuntimeException("NYI");
 	}
 
-	private String flatten(String[] fqn) {
-		StringBuilder ret = new StringBuilder();
-		Stream.of(fqn).forEach(it -> ret.append(it));
-		ret.deleteCharAt(ret.length() - 1);
-		return ret.toString();
-	}
-
 	private ISourceLocation resolveICPPEnumeration(ICPPEnumeration binding) {
 		try {
 			ISourceLocation owner = resolveOwner(binding);
@@ -488,9 +481,13 @@ public class BindingsResolver {
 		return resolveBinding(node.getMemberInitializerId().resolveBinding());
 	}
 
-	private ISourceLocation resolveCapture(ICPPASTCapture node) {
-		// TODO Auto-generated method stub
-		throw new RuntimeException("NYI");
+	private ISourceLocation resolveCapture(ICPPASTCapture node) throws URISyntaxException {
+		IASTName name = node.getIdentifier();
+		if (name == null) {
+			out("Resolving this capture; returning dummy value");
+			return FIXME;
+		}
+		return resolveBinding(name.resolveBinding());
 	}
 
 	private ISourceLocation resolveBaseSpecifier(ICPPASTBaseSpecifier node) throws URISyntaxException {
@@ -541,6 +538,10 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation resolveDeclarator(IASTDeclarator node) throws URISyntaxException {
+		if (node.getName() == null) {
+			out("resolveDeclarator has null name. " + node.getClass().getSimpleName() + ": " + node.getRawSignature());
+			return FIXME;
+		}
 		return resolveBinding(node.getName().resolveBinding());
 	}
 
