@@ -1,6 +1,8 @@
 package lang.cpp.internal;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -194,6 +196,9 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.index.IIndexType;
+import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
+import org.eclipse.cdt.internal.core.parser.SavedFilesProvider;
+import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.core.runtime.CoreException;
 import org.rascalmpl.interpreter.IEvaluatorContext;
 import org.rascalmpl.interpreter.utils.RuntimeExceptionFactory;
@@ -224,7 +229,7 @@ public class Parser extends ASTVisitor {
 		this.includeInactiveNodes = true;
 	}
 
-	public IValue parseCpp(ISourceLocation file, IEvaluatorContext ctx) {
+	public IValue parseCpp(ISourceLocation file, IList includes, IEvaluatorContext ctx) {
 		if (ctx != null) {
 			this.ctx = ctx;
 			setIEvaluatorContext(ctx);
@@ -233,7 +238,7 @@ public class Parser extends ASTVisitor {
 			sourceLoc = file;
 			br.setSourceLocation(file);
 			String input = ((IString) new Prelude(vf).readFile(file)).getValue();
-			IValue result = parse(file.getPath(), input.toCharArray());
+			IValue result = parse(file.getPath(), input.toCharArray(), includes);
 
 			if (result == null) {
 				throw RuntimeExceptionFactory.parseError(file, null, null);
@@ -268,21 +273,59 @@ public class Parser extends ASTVisitor {
 		return stack.pop();
 	}
 
-	private IValue parse(String path, char[] code) throws CoreException {
+	private IValue parse(String path, char[] code, IList includes) throws CoreException {
 		FileContent fc = FileContent.create(path, code);
 		Map<String, String> macroDefinitions = new HashMap<String, String>();
-		String[] includeSearchPaths = new String[0];
-		IScannerInfo si = new ScannerInfo(macroDefinitions, includeSearchPaths);
-		IncludeFileContentProvider ifcp = IncludeFileContentProvider.getEmptyFilesProvider();
+		
+		
+		IScannerInfo si = new ScannerInfo(macroDefinitions, getIncludes(includes));
+		IncludeFileContentProvider ifcp = new SavedFilesProvider() {
+		    @Override
+		    public InternalFileContent getContentForInclusion(String path,
+		            IMacroDictionary macroDictionary) {
+		        List<String> lines;
+                try {
+                    lines = Files.readAllLines(new File(path).toPath());
+                    StringBuffer b = new StringBuffer();
+                    lines.stream().forEach(s -> b.append(s + "\n"));
+                    ctx.getStdOut().println(b);
+                    return (InternalFileContent) InternalFileContent.create(path, b.toString().toCharArray());
+                } catch (IOException e) {
+                    return null;
+                }
+		    }
+		};
 		IIndex idx = null;
 		int options = ILanguage.OPTION_IS_SOURCE_UNIT | ILanguage.OPTION_PARSE_INACTIVE_CODE;
-		IParserLogService log = new DefaultLogService();
+		IParserLogService log = new IParserLogService() {
+
+            @Override
+            public void traceLog(String message) {
+                ctx.getStdErr().print(message);
+            }
+
+            @Override
+            public boolean isTracing() {
+                return true;
+            }
+		    
+		};
 		IASTTranslationUnit tu = GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, idx, options, log);
 
 		return convertCdtToRascal(tu);
 	}
 
-	public void setIEvaluatorContext(IEvaluatorContext ctx) {
+	private String[] getIncludes(IList includes) {
+       ArrayList<String> result = new ArrayList<>(includes.length());
+       for (IValue elem : includes) {
+           assert "file".equals(((ISourceLocation) elem).getScheme());
+           result.add(((ISourceLocation) elem).getPath());
+       }
+       
+       return result.toArray(new String[result.size()]);
+    }
+
+    public void setIEvaluatorContext(IEvaluatorContext ctx) {
 		this.ctx = ctx;
 		br.setIEvaluatorContext(ctx);
 	}
