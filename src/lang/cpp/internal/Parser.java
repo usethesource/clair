@@ -1,9 +1,12 @@
 package lang.cpp.internal;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -203,6 +206,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.rascalmpl.interpreter.IEvaluatorContext;
 import org.rascalmpl.interpreter.utils.RuntimeExceptionFactory;
 import org.rascalmpl.library.Prelude;
+import org.rascalmpl.uri.URIResolverRegistry;
 import org.rascalmpl.uri.URIUtil;
 import org.rascalmpl.value.IConstructor;
 import org.rascalmpl.value.IList;
@@ -211,6 +215,10 @@ import org.rascalmpl.value.ISourceLocation;
 import org.rascalmpl.value.IString;
 import org.rascalmpl.value.IValue;
 import org.rascalmpl.value.IValueFactory;
+import org.rascalmpl.value.exceptions.FactTypeUseException;
+import org.rascalmpl.value.io.StandardTextReader;
+import org.rascalmpl.value.type.TypeFactory;
+import org.rascalmpl.value.type.TypeStore;
 
 public class Parser extends ASTVisitor {
 	private IValueFactory vf;
@@ -278,21 +286,20 @@ public class Parser extends ASTVisitor {
 		Map<String, String> macroDefinitions = new HashMap<String, String>();
 		
 		
-		IScannerInfo si = new ScannerInfo(macroDefinitions, getIncludes(includes));
+		String[] sIncludes = getIncludes(includes);
+        IScannerInfo si = new ScannerInfo(macroDefinitions, sIncludes);
+		
 		IncludeFileContentProvider ifcp = new SavedFilesProvider() {
 		    @Override
-		    public InternalFileContent getContentForInclusion(String path,
-		            IMacroDictionary macroDictionary) {
-		        List<String> lines;
-                try {
-                    lines = Files.readAllLines(new File(path).toPath());
-                    StringBuffer b = new StringBuffer();
-                    lines.stream().forEach(s -> b.append(s + "\n"));
-                    ctx.getStdOut().println(b);
-                    return (InternalFileContent) InternalFileContent.create(path, b.toString().toCharArray());
-                } catch (IOException e) {
-                    return null;
-                }
+		    public InternalFileContent getContentForInclusion(String path, IMacroDictionary macroDictionary) {
+		        ISourceLocation loc = vf.sourceLocation(URIUtil.assumeCorrect(path.substring(1) /* remove the artifical leading slash */));
+		        if (URIResolverRegistry.getInstance().exists(loc)) {
+		            ctx.getStdErr().println("Including " + loc);
+		            IString s = (IString) new Prelude(vf).readFile(loc);
+		            return (InternalFileContent) InternalFileContent.create(path, s.getValue().toCharArray());
+		        }
+		        
+		        return null;
 		    }
 		};
 		IIndex idx = null;
@@ -318,8 +325,9 @@ public class Parser extends ASTVisitor {
 	private String[] getIncludes(IList includes) {
        ArrayList<String> result = new ArrayList<>(includes.length());
        for (IValue elem : includes) {
-           assert "file".equals(((ISourceLocation) elem).getScheme());
-           result.add(((ISourceLocation) elem).getPath());
+           String uri = ((ISourceLocation) elem).getURI().toString();
+           // this slash is to trick the include resolver into thinking it is an absolute path
+           result.add("/" + uri);
        }
        
        return result.toArray(new String[result.size()]);
