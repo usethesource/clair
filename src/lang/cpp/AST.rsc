@@ -326,7 +326,7 @@ data Modifier(loc src = |unknown:///|)
     
 @javaClass{lang.cpp.internal.Parser}  
 @reflect{need access to streams}   
-java Declaration parseCpp(loc file);
+java Declaration parseCpp(loc file, list[loc] includes = [|file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include/c++/4.2.1|, |file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include|]);
 
 @javaClass{lang.cpp.internal.Parser}  
 @reflect{need access to streams}   
