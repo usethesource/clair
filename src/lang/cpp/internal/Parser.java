@@ -292,7 +292,7 @@ public class Parser extends ASTVisitor {
 		IncludeFileContentProvider ifcp = new SavedFilesProvider() {
 		    @Override
 		    public InternalFileContent getContentForInclusion(String path, IMacroDictionary macroDictionary) {
-		        ISourceLocation loc = vf.sourceLocation(URIUtil.assumeCorrect(isWindows() ? path.substring("C:\\".length()) : path.substring("/".length()) /* remove the artifical leading slash */));
+		        ISourceLocation loc = vf.sourceLocation(URIUtil.assumeCorrect(isWindows() ? path.substring(File.listRoots()[0].toString().length()) : path.substring("/".length()) /* remove the artifical leading slash */));
 		        if (URIResolverRegistry.getInstance().exists(loc)) {
 		            ctx.getStdErr().println("Including " + loc);
 		            IString s = (IString) new Prelude(vf).readFile(loc);
@@ -327,7 +327,8 @@ public class Parser extends ASTVisitor {
        for (IValue elem : includes) {
            String uri = ((ISourceLocation) elem).getURI().toString();
            // this slash is to trick the include resolver into thinking it is an absolute path
-           result.add((isWindows() ? "C:\\" : "/") + uri);
+          
+           result.add((isWindows() ?  File.listRoots()[0] : "/") + uri);
        }
        
        return result.toArray(new String[result.size()]);
