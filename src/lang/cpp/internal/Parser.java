@@ -292,7 +292,7 @@ public class Parser extends ASTVisitor {
 		IncludeFileContentProvider ifcp = new SavedFilesProvider() {
 		    @Override
 		    public InternalFileContent getContentForInclusion(String path, IMacroDictionary macroDictionary) {
-		        ISourceLocation loc = vf.sourceLocation(URIUtil.assumeCorrect(path.substring(1) /* remove the artifical leading slash */));
+		        ISourceLocation loc = vf.sourceLocation(URIUtil.assumeCorrect(isWindows() ? path.substring("C:\\".length()) : path.substring("/".length()) /* remove the artifical leading slash */));
 		        if (URIResolverRegistry.getInstance().exists(loc)) {
 		            ctx.getStdErr().println("Including " + loc);
 		            IString s = (IString) new Prelude(vf).readFile(loc);
@@ -327,10 +327,14 @@ public class Parser extends ASTVisitor {
        for (IValue elem : includes) {
            String uri = ((ISourceLocation) elem).getURI().toString();
            // this slash is to trick the include resolver into thinking it is an absolute path
-           result.add("/" + uri);
+           result.add((isWindows() ? "C:\\" : "/") + uri);
        }
        
        return result.toArray(new String[result.size()]);
+    }
+
+    private boolean isWindows() {
+        return System.getProperty("os.name").contains("win");
     }
 
     public void setIEvaluatorContext(IEvaluatorContext ctx) {
@@ -964,8 +968,8 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTDeclarator declarator) {
 		if (declarator instanceof IASTArrayDeclarator)
 			visit((IASTArrayDeclarator) declarator);
-		else if (declarator instanceof IASTFieldDeclarator)
-			visit((IASTFieldDeclarator) declarator);
+//		else if (declarator instanceof IASTFieldDeclarator)
+//			visit((IASTFieldDeclarator) declarator);
 		else if (declarator instanceof IASTFunctionDeclarator)
 			visit((IASTFunctionDeclarator) declarator);
 		else if (declarator instanceof ICPPASTDeclarator)
@@ -1097,8 +1101,8 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTDeclarator declarator) {
 		if (declarator instanceof ICPPASTArrayDeclarator)
 			visit((ICPPASTArrayDeclarator) declarator);
-		else if (declarator instanceof ICPPASTFieldDeclarator)
-			visit((ICPPASTFieldDeclarator) declarator);
+//		else if (declarator instanceof ICPPASTFieldDeclarator)
+//			visit((ICPPASTFieldDeclarator) declarator);
 		else if (declarator instanceof ICPPASTFunctionDeclarator)
 			visit((ICPPASTFunctionDeclarator) declarator);
 		else {
