@@ -99,6 +99,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArrayDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
@@ -122,6 +123,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
@@ -182,6 +184,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation.Operator;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTArrayRangeDesignator;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.DefaultLogService;
@@ -928,8 +931,19 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTDesignatedInitializer initializer) {
-		err("ICPPASTDesignatedInitializer: " + initializer.getRawSignature());
-		throw new RuntimeException("NYI");
+		ISourceLocation loc = getSourceLocation(initializer);
+		ICPPASTDesignator[] _designators = initializer.getDesignators();
+		ICPPASTInitializerClause _operand = initializer.getOperand();
+
+		IListWriter designators = vf.listWriter();
+		Stream.of(_designators).forEach(it -> {
+			it.accept(this);
+			designators.append(stack.pop());
+		});
+		_operand.accept(this);
+
+		stack.push(builder.Expression_designatedInitializer(designators.done(), stack.pop(), loc));
+		return PROCESS_ABORT;
 	}
 
 	@Override
@@ -2924,8 +2938,18 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(ICPPASTDesignator designator) {
-		err("DesignatorCPP: " + designator.getRawSignature());
-		throw new RuntimeException("NYI");
+		ISourceLocation loc = getSourceLocation(designator);
+		if (designator instanceof ICPPASTArrayDesignator) {
+			((ICPPASTArrayDesignator) designator).getSubscriptExpression().accept(this);
+			stack.push(builder.Expression_arrayDesignator(stack.pop(), loc));
+			return PROCESS_ABORT;
+		} else if (designator instanceof ICPPASTFieldDesignator) {
+			((ICPPASTFieldDesignator) designator).getName().accept(this);
+			stack.push(builder.Expression_fieldDesignator(stack.pop(), loc));
+			return PROCESS_ABORT;
+		} else if (designator instanceof IGPPASTArrayRangeDesignator)
+			throw new RuntimeException("ICPPASTDesignator encountered IGPPASTArrayRangeDesignator, not implemented");
+		throw new RuntimeException("ICPPASTDesignator encountered unknown subclass, exiting");
 	}
 
 	@Override
