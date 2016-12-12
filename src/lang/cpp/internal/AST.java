@@ -466,8 +466,6 @@ public class AST {
     = tf.constructor(typestore,_Modifier,"captDefByReference");
   private static final Type _Modifier_complex_0 
     = tf.constructor(typestore,_Modifier,"complex");
-  private static final Type _Modifier_pureVirtual_0 
-    = tf.constructor(typestore,_Modifier,"pureVirtual");
   private static final Type _Modifier_auto_0 
     = tf.constructor(typestore,_Modifier,"auto");
   private static final Type _Modifier_captDefByCopy_0 
@@ -508,6 +506,10 @@ public class AST {
     = tf.constructor(typestore,_Modifier,"explicit");
   private static final Type _Modifier_captDefUnspecified_0 
     = tf.constructor(typestore,_Modifier,"captDefUnspecified");
+  private static final Type _Modifier_unspecifiedInheritance_0 
+    = tf.constructor(typestore,_Modifier,"unspecifiedInheritance");
+  private static final Type _Modifier_pureVirtual_0 
+    = tf.constructor(typestore,_Modifier,"pureVirtual");
   
    
   
@@ -3497,14 +3499,6 @@ public class AST {
     return vf.constructor(_Modifier_complex_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_pureVirtual(ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    
-    return vf.constructor(_Modifier_pureVirtual_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
   public IConstructor Modifier_auto(ISourceLocation $loc) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
@@ -3663,6 +3657,22 @@ public class AST {
     kwParams.put("src", $loc);
     
     return vf.constructor(_Modifier_captDefUnspecified_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Modifier_unspecifiedInheritance(ISourceLocation $loc) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_unspecifiedInheritance_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Modifier_pureVirtual(ISourceLocation $loc) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Modifier_pureVirtual_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
    
   
