@@ -320,6 +320,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"integerConstant",tf.stringType(),"value");
   private static final Type _Expression_staticCast_2 
     = tf.constructor(typestore,_Expression,"staticCast",_Expression,"typeId",_Expression,"expression");
+  private static final Type _Expression_packExpansion_1 
+    = tf.constructor(typestore,_Expression,"packExpansion",_Expression,"pattern");
   private static final Type _Expression_binaryAndAssign_2 
     = tf.constructor(typestore,_Expression,"binaryAndAssign",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_conditional_3 
@@ -2702,6 +2704,18 @@ public class AST {
     kwParams.put("src", $loc);
     
     return vf.constructor(_Expression_staticCast_2 , $typeId, $expression).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Expression_packExpansion(IConstructor $pattern, ISourceLocation $loc) {
+      
+    if (!$pattern.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $pattern.getType() + " for $pattern:" + $pattern);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_packExpansion_1 , $pattern).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_binaryAndAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {
