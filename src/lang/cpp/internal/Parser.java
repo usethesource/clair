@@ -2882,8 +2882,18 @@ public class Parser extends ASTVisitor {
 			if (defaultType != null)
 				err("WARNING: ICPPASTTemplateParameter has defaultType, not implemented");
 		} else if (templateParameter instanceof ICPPASTTemplatedTypeTemplateParameter) {
-			// has decl keyword parameter
-			throw new RuntimeException("NYI");
+			ISourceLocation decl = br.resolveBinding((ICPPASTTemplatedTypeTemplateParameter) templateParameter);
+			ICPPASTTemplateParameter[] _templateParameters = ((ICPPASTTemplatedTypeTemplateParameter) templateParameter)
+					.getTemplateParameters();
+			IListWriter templateParameters = vf.listWriter();
+			Stream.of(_templateParameters).forEach(it -> {
+				it.accept(this);
+				templateParameters.append(stack.pop());
+			});
+			((ICPPASTTemplatedTypeTemplateParameter) templateParameter).getName().accept(this);
+			stack.push(builder.Declaration_tttParameter(templateParameters.done(), stack.pop(), loc, decl));
+			if (((ICPPASTTemplatedTypeTemplateParameter) templateParameter).getDefaultValue() != null)
+				err("ICPPASTTemplatedTypeTemplateParameter has defaultType, unimplemented");
 		} else
 			throw new RuntimeException("ICPPASTTemplateParameter encountered unknown subtype "
 					+ templateParameter.getClass().getName() + ". Exiting");

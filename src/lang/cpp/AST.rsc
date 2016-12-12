@@ -82,6 +82,8 @@ data Declaration(loc src=|unknown:///|)
     | \sttClass(Expression name, loc decl = |unknown:///|) //simpleTypeTemplateParameter    
     | \sttTypename(Expression name, loc decl = |unknown:///|) //simpleTypeTemplateParameter
     
+    | \tttParameter(list[Declaration] nestedParameters, Expression name, loc decl = |unknown:///|) //templatedTypeTemplateParameter
+    
     | \baseSpecifier(Modifier modifier, loc decl = |unknown:///|)
     | \baseSpecifier(Modifier modifier, Expression name, loc decl = |unknown:///|)
     
