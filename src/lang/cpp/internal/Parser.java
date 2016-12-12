@@ -1,12 +1,8 @@
 package lang.cpp.internal;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
-import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -215,10 +211,6 @@ import org.rascalmpl.value.ISourceLocation;
 import org.rascalmpl.value.IString;
 import org.rascalmpl.value.IValue;
 import org.rascalmpl.value.IValueFactory;
-import org.rascalmpl.value.exceptions.FactTypeUseException;
-import org.rascalmpl.value.io.StandardTextReader;
-import org.rascalmpl.value.type.TypeFactory;
-import org.rascalmpl.value.type.TypeStore;
 
 public class Parser extends ASTVisitor {
 	private IValueFactory vf;
@@ -284,38 +276,42 @@ public class Parser extends ASTVisitor {
 	private IValue parse(String path, char[] code, IList includes) throws CoreException {
 		FileContent fc = FileContent.create(path, code);
 		Map<String, String> macroDefinitions = new HashMap<String, String>();
-		
-		
+
 		String[] sIncludes = getIncludes(includes);
-        IScannerInfo si = new ScannerInfo(macroDefinitions, sIncludes);
-		
+		IScannerInfo si = new ScannerInfo(macroDefinitions, sIncludes);
+
 		IncludeFileContentProvider ifcp = new SavedFilesProvider() {
-		    @Override
-		    public InternalFileContent getContentForInclusion(String path, IMacroDictionary macroDictionary) {
-		        ISourceLocation loc = vf.sourceLocation(URIUtil.assumeCorrect(isWindows() ? path.substring(File.listRoots()[0].toString().length()) : path.substring("/".length()) /* remove the artifical leading slash */));
-		        if (URIResolverRegistry.getInstance().exists(loc)) {
-		            ctx.getStdErr().println("Including " + loc);
-		            IString s = (IString) new Prelude(vf).readFile(loc);
-		            return (InternalFileContent) InternalFileContent.create(path, s.getValue().toCharArray());
-		        }
-		        
-		        return null;
-		    }
+			@Override
+			public InternalFileContent getContentForInclusion(String path, IMacroDictionary macroDictionary) {
+				ISourceLocation loc = vf.sourceLocation(URIUtil.assumeCorrect(isWindows()
+						? path.substring(File.listRoots()[0].toString().length())
+						: path.substring("/"
+								.length()) /*
+											 * remove the artifical leading slash
+											 */));
+				if (URIResolverRegistry.getInstance().exists(loc)) {
+					ctx.getStdErr().println("Including " + loc);
+					IString s = (IString) new Prelude(vf).readFile(loc);
+					return (InternalFileContent) InternalFileContent.create(path, s.getValue().toCharArray());
+				}
+
+				return null;
+			}
 		};
 		IIndex idx = null;
 		int options = ILanguage.OPTION_IS_SOURCE_UNIT | ILanguage.OPTION_PARSE_INACTIVE_CODE;
 		IParserLogService log = new IParserLogService() {
 
-            @Override
-            public void traceLog(String message) {
-                ctx.getStdErr().print(message);
-            }
+			@Override
+			public void traceLog(String message) {
+				ctx.getStdErr().print(message);
+			}
 
-            @Override
-            public boolean isTracing() {
-                return true;
-            }
-		    
+			@Override
+			public boolean isTracing() {
+				return true;
+			}
+
 		};
 		IASTTranslationUnit tu = GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, idx, options, log);
 
@@ -323,22 +319,23 @@ public class Parser extends ASTVisitor {
 	}
 
 	private String[] getIncludes(IList includes) {
-       ArrayList<String> result = new ArrayList<>(includes.length());
-       for (IValue elem : includes) {
-           String uri = ((ISourceLocation) elem).getURI().toString();
-           // this slash is to trick the include resolver into thinking it is an absolute path
-          
-           result.add((isWindows() ?  File.listRoots()[0] : "/") + uri);
-       }
-       
-       return result.toArray(new String[result.size()]);
-    }
+		ArrayList<String> result = new ArrayList<>(includes.length());
+		for (IValue elem : includes) {
+			String uri = ((ISourceLocation) elem).getURI().toString();
+			// this slash is to trick the include resolver into thinking it is
+			// an absolute path
 
-    private boolean isWindows() {
-        return System.getProperty("os.name").contains("win");
-    }
+			result.add((isWindows() ? File.listRoots()[0] : "/") + uri);
+		}
 
-    public void setIEvaluatorContext(IEvaluatorContext ctx) {
+		return result.toArray(new String[result.size()]);
+	}
+
+	private boolean isWindows() {
+		return System.getProperty("os.name").contains("win");
+	}
+
+	public void setIEvaluatorContext(IEvaluatorContext ctx) {
 		this.ctx = ctx;
 		br.setIEvaluatorContext(ctx);
 	}
@@ -969,8 +966,8 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTDeclarator declarator) {
 		if (declarator instanceof IASTArrayDeclarator)
 			visit((IASTArrayDeclarator) declarator);
-//		else if (declarator instanceof IASTFieldDeclarator)
-//			visit((IASTFieldDeclarator) declarator);
+		// else if (declarator instanceof IASTFieldDeclarator)
+		// visit((IASTFieldDeclarator) declarator);
 		else if (declarator instanceof IASTFunctionDeclarator)
 			visit((IASTFunctionDeclarator) declarator);
 		else if (declarator instanceof ICPPASTDeclarator)
@@ -1102,8 +1099,8 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTDeclarator declarator) {
 		if (declarator instanceof ICPPASTArrayDeclarator)
 			visit((ICPPASTArrayDeclarator) declarator);
-//		else if (declarator instanceof ICPPASTFieldDeclarator)
-//			visit((ICPPASTFieldDeclarator) declarator);
+		// else if (declarator instanceof ICPPASTFieldDeclarator)
+		// visit((ICPPASTFieldDeclarator) declarator);
 		else if (declarator instanceof ICPPASTFunctionDeclarator)
 			visit((ICPPASTFunctionDeclarator) declarator);
 		else {
