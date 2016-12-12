@@ -227,6 +227,7 @@ data Expression(loc src = |unknown:///|)
     // Designators below
     | \arrayDesignator(Expression subscript)
     | \fieldDesignator(Expression fieldName)
+    | \arrayRangeDesignator(Expression rangeFloor, Expression rangeCeiling) //gcc-only
     
     // Captures
     | \capture(Expression name, loc decl = |unknown:///|)
