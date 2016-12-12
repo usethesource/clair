@@ -683,8 +683,10 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTStaticAssertDeclaration declaration) {
-		out("CPPStaticAssertDeclaration: " + declaration.getRawSignature());
-		throw new RuntimeException("NYI");
+		ISourceLocation loc = getSourceLocation(declaration);
+		declaration.getCondition().accept(this);
+		stack.push(builder.Declaration_staticAssert(stack.pop(), loc));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTNamespaceAlias declaration) {
