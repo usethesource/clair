@@ -1690,8 +1690,10 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTPackExpansionExpression expression) {
-		out("CPPPackExpansionExpression: " + expression.getRawSignature());
-		throw new RuntimeException("NYI");
+		ISourceLocation loc = getSourceLocation(expression);
+		expression.getPattern().accept(this);
+		stack.push(builder.Expression_packExpansion(stack.pop(), loc));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTNewExpression expression) {
