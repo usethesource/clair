@@ -452,9 +452,9 @@ public class BindingsResolver {
 		return resolveBinding(node.resolveBinding());
 	}
 
-	private ISourceLocation resolveTemplatedTypeTemplateParameter(ICPPASTTemplatedTypeTemplateParameter node) {
-		// TODO Auto-generated method stub
-		throw new RuntimeException("NYI");
+	private ISourceLocation resolveTemplatedTypeTemplateParameter(ICPPASTTemplatedTypeTemplateParameter node)
+			throws URISyntaxException {
+		return resolveBinding(node.getName().getBinding());
 	}
 
 	private ISourceLocation resolveSimpleTypeTemplateParameter(ICPPASTSimpleTypeTemplateParameter node)
