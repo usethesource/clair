@@ -281,9 +281,10 @@ public class BindingsResolver {
 				owner.getPath() + "/" + binding.getName());
 	}
 
-	private ISourceLocation resolveICPPTemplateDefinition(ICPPTemplateDefinition binding) {
-		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
-		throw new RuntimeException("NYI");
+	private ISourceLocation resolveICPPTemplateDefinition(ICPPTemplateDefinition binding) throws URISyntaxException {
+		ISourceLocation owner = resolveOwner(binding);
+		return vf.sourceLocation("cpp+templateDefinition", owner.getAuthority(),
+				owner.getPath() + "/" + binding.getName());
 	}
 
 	private ISourceLocation resolveICPPSpecialization(ICPPSpecialization binding) {
