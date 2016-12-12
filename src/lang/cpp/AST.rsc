@@ -207,6 +207,8 @@ data Expression(loc src = |unknown:///|)
     
     | \lambda(Modifier captureDefault, list[Expression] captures, Declarator declarator, Statement body)
     
+    | \packExpansion(Expression pattern)
+    
     // TypeId below
     | \typeId(DeclSpecifier declSpecifier)
     | \typeId(DeclSpecifier declSpecifier, Declarator abstractDeclarator)
