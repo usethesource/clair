@@ -2786,6 +2786,10 @@ public class Parser extends ASTVisitor {
 			case ICPPASTBaseSpecifier.v_private:
 				stack.push(builder.Declaration_baseSpecifier(builder.Modifier_private(loc), loc, decl));
 				break;
+			case 0: // unset
+				stack.push(builder.Declaration_baseSpecifier(builder.Modifier_unspecifiedInheritance(loc), stack.pop(),
+						loc, decl));
+				break;
 			default:
 				throw new RuntimeException("Unknown BaseSpecifier visibility code " + visibility + ". Exiting");
 			}
@@ -2800,6 +2804,10 @@ public class Parser extends ASTVisitor {
 				break;
 			case ICPPASTBaseSpecifier.v_private:
 				stack.push(builder.Declaration_baseSpecifier(builder.Modifier_private(loc), stack.pop(), loc, decl));
+				break;
+			case 0: // unset
+				stack.push(builder.Declaration_baseSpecifier(builder.Modifier_unspecifiedInheritance(loc), stack.pop(),
+						loc, decl));
 				break;
 			default:
 				throw new RuntimeException("Unknown BaseSpecifier visibility code " + visibility + ". Exiting");

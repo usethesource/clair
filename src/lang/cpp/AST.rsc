@@ -295,6 +295,7 @@ data Modifier(loc src = |unknown:///|)
     | \public()
     | \protected()
     | \private()
+    | \unspecifiedInheritance()
     
     | \signed()
     | \unsigned()
