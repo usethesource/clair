@@ -1858,6 +1858,9 @@ public class Parser extends ASTVisitor {
 		case IASTTypeIdExpression.op_typeid:
 			stack.push(builder.Expression_typeid(stack.pop(), loc));
 			break;
+		case IASTTypeIdExpression.op_alignof:
+			stack.push(builder.Expression_alignOf(stack.pop(), loc));
+			break;
 		default:
 			throw new RuntimeException(
 					"ERROR: IASTTypeIdExpression called with unimplemented/unknown operator " + operator);
