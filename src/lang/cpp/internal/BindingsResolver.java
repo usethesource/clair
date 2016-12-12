@@ -265,8 +265,10 @@ public class BindingsResolver {
 		throw new RuntimeException("NYI");
 	}
 
-	private ISourceLocation resolveICPPVariableTemplate(ICPPVariableTemplate binding) {
-		throw new RuntimeException("NYI");
+	private ISourceLocation resolveICPPVariableTemplate(ICPPVariableTemplate binding) throws URISyntaxException {
+		ISourceLocation owner = resolveOwner(binding);
+		return vf.sourceLocation("cpp+variableTemplate", owner.getAuthority(),
+				owner.getPath() + "/" + binding.getName());
 	}
 
 	private ISourceLocation resolveICPPUsingDeclaration(ICPPUsingDeclaration binding) throws URISyntaxException {
