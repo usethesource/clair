@@ -285,10 +285,10 @@ public class Parser extends ASTVisitor {
 			public InternalFileContent getContentForInclusion(String path, IMacroDictionary macroDictionary) {
 				ISourceLocation loc = vf.sourceLocation(URIUtil.assumeCorrect(isWindows()
 						? path.substring(File.listRoots()[0].toString().length())
-						: path.substring("/"
-								.length()) /*
-											 * remove the artifical leading slash
-											 */));
+						: path.substring("/".length()) /*
+														 * remove the artifical
+														 * leading slash
+														 */));
 				if (URIResolverRegistry.getInstance().exists(loc)) {
 					ctx.getStdErr().println("Including " + loc);
 					IString s = (IString) new Prelude(vf).readFile(loc);
@@ -332,7 +332,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	private boolean isWindows() {
-		return System.getProperty("os.name").contains("win");
+		return System.getProperty("os.name").contains("Win");
 	}
 
 	public void setIEvaluatorContext(IEvaluatorContext ctx) {
