@@ -221,6 +221,13 @@ data Expression(loc src = |unknown:///|)
     | \constructorChainInitializer(Expression name, Expression initializer, loc decl = |unknown:///|)
     | \constructorInitializer(list[Expression] arguments)
     
+    // DesignatedInitializers below
+    | \designatedInitializer(list[Expression] designators, Expression operand)
+    
+    // Designators below
+    | \arrayDesignator(Expression subscript)
+    | \fieldDesignator(Expression fieldName)
+    
     // Captures
     | \capture(Expression name, loc decl = |unknown:///|)
     | \captureByRef(Expression name, loc decl = |unknown:///|)
