@@ -248,6 +248,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"binaryOrAssign",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_notEquals_2 
     = tf.constructor(typestore,_Expression,"notEquals",_Expression,"lhs",_Expression,"rhs");
+  private static final Type _Expression_arrayRangeDesignator_2 
+    = tf.constructor(typestore,_Expression,"arrayRangeDesignator",_Expression,"rangeFloor",_Expression,"rangeCeiling");
   private static final Type _Expression_fieldReference_3 
     = tf.constructor(typestore,_Expression,"fieldReference",_Expression,"fieldOwner",_Expression,"name",_Type,"fieldType");
   private static final Type _Expression_min_2 
@@ -2192,6 +2194,22 @@ public class AST {
     kwParams.put("src", $loc);
     
     return vf.constructor(_Expression_notEquals_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Expression_arrayRangeDesignator(IConstructor $rangeFloor, IConstructor $rangeCeiling, ISourceLocation $loc) {
+      
+    if (!$rangeFloor.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rangeFloor.getType() + " for $rangeFloor:" + $rangeFloor);
+    }
+      
+    if (!$rangeCeiling.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rangeCeiling.getType() + " for $rangeCeiling:" + $rangeCeiling);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_arrayRangeDesignator_2 , $rangeFloor, $rangeCeiling).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_fieldReference(IConstructor $fieldOwner, IConstructor $name, IConstructor $fieldType, ISourceLocation $loc, ISourceLocation $decl) {

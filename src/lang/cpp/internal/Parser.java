@@ -2942,14 +2942,20 @@ public class Parser extends ASTVisitor {
 		if (designator instanceof ICPPASTArrayDesignator) {
 			((ICPPASTArrayDesignator) designator).getSubscriptExpression().accept(this);
 			stack.push(builder.Expression_arrayDesignator(stack.pop(), loc));
-			return PROCESS_ABORT;
 		} else if (designator instanceof ICPPASTFieldDesignator) {
 			((ICPPASTFieldDesignator) designator).getName().accept(this);
 			stack.push(builder.Expression_fieldDesignator(stack.pop(), loc));
-			return PROCESS_ABORT;
-		} else if (designator instanceof IGPPASTArrayRangeDesignator)
-			throw new RuntimeException("ICPPASTDesignator encountered IGPPASTArrayRangeDesignator, not implemented");
-		throw new RuntimeException("ICPPASTDesignator encountered unknown subclass, exiting");
+		} else if (designator instanceof IGPPASTArrayRangeDesignator) {
+			ICPPASTExpression _rangeFloor = ((IGPPASTArrayRangeDesignator) designator).getRangeFloor();
+			ICPPASTExpression _rangeCeiling = ((IGPPASTArrayRangeDesignator) designator).getRangeCeiling();
+			_rangeFloor.accept(this);
+			IConstructor rangeFloor = stack.pop();
+			_rangeCeiling.accept(this);
+			IConstructor rangeCeiling = stack.pop();
+			stack.push(builder.Expression_arrayRangeDesignator(rangeFloor, rangeCeiling, loc));
+		} else
+			throw new RuntimeException("ICPPASTDesignator encountered unknown subclass, exiting");
+		return PROCESS_ABORT;
 	}
 
 	@Override
