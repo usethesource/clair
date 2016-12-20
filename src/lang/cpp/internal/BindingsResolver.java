@@ -184,7 +184,7 @@ public class BindingsResolver {
 		return vf.sourceLocation("cpp+enumerator", null, ownerDecl.getPath() + "/" + binding.getName().toString());
 	}
 
-	private ISourceLocation resolveIEnumeration(IEnumeration binding) {
+	private ISourceLocation resolveIEnumeration(IEnumeration binding) throws URISyntaxException {
 		if (binding instanceof ICPPEnumeration)
 			return resolveICPPEnumeration((ICPPEnumeration) binding);
 		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
@@ -309,15 +309,9 @@ public class BindingsResolver {
 		throw new RuntimeException("NYI");
 	}
 
-	private ISourceLocation resolveICPPEnumeration(ICPPEnumeration binding) {
-		try {
-			ISourceLocation owner = resolveOwner(binding);
-			ISourceLocation loc = vf.sourceLocation("cpp+enum", owner.getAuthority(),
-					owner.getPath() + "/" + binding.getName());
-			return loc;
-		} catch (URISyntaxException e) {
-			return UNKNOWN;
-		}
+	private ISourceLocation resolveICPPEnumeration(ICPPEnumeration binding) throws URISyntaxException {
+		ISourceLocation owner = resolveOwner(binding);
+		return vf.sourceLocation("cpp+enum", owner.getAuthority(), owner.getPath() + "/" + binding.getName());
 	}
 
 	private ISourceLocation resolveICPPClassType(ICPPClassType binding) throws URISyntaxException {
@@ -467,7 +461,6 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation resolvePointerToMember(ICPPASTPointerToMember node) {
-		// TODO Auto-generated method stub
 		throw new RuntimeException("NYI");
 	}
 
@@ -502,7 +495,6 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation resolvePreprocessorMacroDefinition(IASTPreprocessorMacroDefinition node) {
-		// TODO Auto-generated method stub
 		throw new RuntimeException("NYI");
 	}
 
