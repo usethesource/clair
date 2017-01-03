@@ -307,7 +307,7 @@ public class Parser extends ASTVisitor {
 
 			@Override
 			public void traceLog(String message) {
-				ctx.getStdErr().print(message);
+				ctx.getStdErr().println(message);
 			}
 
 			@Override
