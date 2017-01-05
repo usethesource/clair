@@ -6,4 +6,5 @@ Bundle-Version: 1.0.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath:  
   ./lib/rascal-shell.jar
-Require-Bundle: org.eclipse.cdt.core;bundle-version="6.0.0"
+Require-Bundle: org.eclipse.cdt.core;bundle-version="6.0.0",
+ rascal_eclipse;bundle-version="0.8.3"

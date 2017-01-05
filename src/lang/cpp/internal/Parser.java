@@ -215,6 +215,7 @@ import org.rascalmpl.value.IString;
 import org.rascalmpl.value.IValue;
 import org.rascalmpl.value.IValueFactory;
 
+@SuppressWarnings("restriction")
 public class Parser extends ASTVisitor {
 	private IValueFactory vf;
 	private AST builder;
