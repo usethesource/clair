@@ -215,6 +215,7 @@ import org.rascalmpl.value.IString;
 import org.rascalmpl.value.IValue;
 import org.rascalmpl.value.IValueFactory;
 
+@SuppressWarnings("restriction")
 public class Parser extends ASTVisitor {
 	private IValueFactory vf;
 	private AST builder;
@@ -231,7 +232,7 @@ public class Parser extends ASTVisitor {
 		this.builder = new AST(vf);
 		this.includeInactiveNodes = true;
 	}
-
+ 
 	public IValue parseCpp(ISourceLocation file, IList includes, IEvaluatorContext ctx) {
 		if (ctx != null) {
 			this.ctx = ctx;
