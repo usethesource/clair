@@ -232,7 +232,7 @@ public class Parser extends ASTVisitor {
 		this.builder = new AST(vf);
 		this.includeInactiveNodes = true;
 	}
-
+ 
 	public IValue parseCpp(ISourceLocation file, IList includes, IEvaluatorContext ctx) {
 		if (ctx != null) {
 			this.ctx = ctx;
