@@ -288,7 +288,7 @@ public class Parser extends ASTVisitor {
 			@Override
 			public InternalFileContent getContentForInclusion(String path, IMacroDictionary macroDictionary) {
 				ISourceLocation loc = vf.sourceLocation(URIUtil.assumeCorrect(isWindows()
-						? "file:///" + path.substring(9).replace('\\', '/')
+						? "file:///" + path.substring("C:\\file:\\".length()).replace('\\', '/')
 						: path.substring("/".length()) /*
 														 * remove the artifical
 														 * leading slash
