@@ -24,16 +24,16 @@ data Declarator(loc src = |unknown:///|, loc decl = |unknown:///|)
 data DeclSpecifier(loc src = |unknown:///|)
     = \declSpecifier(list[Modifier] modifiers, Type \type)
     | \declSpecifier(list[Modifier] modifiers, Type \type, Expression expression) //decltype and type_of
-    | \etsEnum(list[Modifier], Expression name, loc decl = |unknown:///|)
-    | \etsStruct(list[Modifier], Expression name, loc decl = |unknown:///|) //ElaboratedTypeSpecifier
-    | \etsUnion(list[Modifier], Expression name, loc decl = |unknown:///|)
-    | \etsClass(list[Modifier], Expression name, loc decl = |unknown:///|)
+    | \etsEnum(list[Modifier] modifiers, Expression name, loc decl = |unknown:///|)
+    | \etsStruct(list[Modifier] modifiers, Expression name, loc decl = |unknown:///|) //ElaboratedTypeSpecifier
+    | \etsUnion(list[Modifier] modifiers, Expression name, loc decl = |unknown:///|)
+    | \etsClass(list[Modifier] modifiers, Expression name, loc decl = |unknown:///|)
     | \namedTypeSpecifier(list[Modifier] modifiers, Expression name, loc decl = |unknown:///|)
     
     | \struct(Expression name, list[Declaration] members, loc decl = |unknown:///|)  //c
     | \union(Expression name, list[Declaration] members, loc decl = |unknown:///|)   //c
     | \class(Expression name, list[Declaration] members, loc decl = |unknown:///|)   //c
-    | \struct(Expression name,  list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
+    | \struct(Expression name, list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
     | \union(Expression name, list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
     | \class(Expression name, list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
     
