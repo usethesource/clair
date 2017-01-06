@@ -232,8 +232,8 @@ public class Parser extends ASTVisitor {
 		this.builder = new AST(vf);
 		this.includeInactiveNodes = true;
 	}
- 
-	public IValue parseCpp(ISourceLocation file, IList includes, IEvaluatorContext ctx) {
+
+	public IValue parseCpp(ISourceLocation file, IList includePaths, IEvaluatorContext ctx) {
 		if (ctx != null) {
 			this.ctx = ctx;
 			setIEvaluatorContext(ctx);
@@ -242,7 +242,7 @@ public class Parser extends ASTVisitor {
 			sourceLoc = file;
 			br.setSourceLocation(file);
 			String input = ((IString) new Prelude(vf).readFile(file)).getValue();
-			IValue result = parse(file.getPath(), input.toCharArray(), includes);
+			IValue result = parse(file.getPath(), input.toCharArray(), includePaths);
 
 			if (result == null) {
 				throw RuntimeExceptionFactory.parseError(file, null, null);
@@ -277,11 +277,11 @@ public class Parser extends ASTVisitor {
 		return stack.pop();
 	}
 
-	private IValue parse(String path, char[] code, IList includes) throws CoreException {
+	private IValue parse(String path, char[] code, IList includePaths) throws CoreException {
 		FileContent fc = FileContent.create(path, code);
 		Map<String, String> macroDefinitions = new HashMap<String, String>();
 
-		String[] sIncludes = getIncludes(includes);
+		String[] sIncludes = getIncludes(includePaths);
 		IScannerInfo si = new ScannerInfo(macroDefinitions, sIncludes);
 
 		IncludeFileContentProvider ifcp = new SavedFilesProvider() {
