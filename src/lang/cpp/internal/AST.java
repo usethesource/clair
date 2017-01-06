@@ -54,8 +54,8 @@ public class AST {
   
   private static final Type _DeclSpecifier_enumScoped_2 
     = tf.constructor(typestore,_DeclSpecifier,"enumScoped",_Expression,"name",tf.listType(_Declaration),"enumerators");
-  private static final Type _DeclSpecifier_etsUnion_2 
-    = tf.constructor(typestore,_DeclSpecifier,"etsUnion",tf.listType(_Modifier),"arg0",_Expression,"name");
+  private static final Type _DeclSpecifier_etsEnum_2 
+    = tf.constructor(typestore,_DeclSpecifier,"etsEnum",tf.listType(_Modifier),"modifiers",_Expression,"name");
   private static final Type _DeclSpecifier_declSpecifier_3 
     = tf.constructor(typestore,_DeclSpecifier,"declSpecifier",tf.listType(_Modifier),"modifiers",_Type,"type",_Expression,"expression");
   private static final Type _DeclSpecifier_class_3 
@@ -64,8 +64,16 @@ public class AST {
     = tf.constructor(typestore,_DeclSpecifier,"class",_Expression,"name",tf.listType(_Declaration),"members");
   private static final Type _DeclSpecifier_enumScoped_3 
     = tf.constructor(typestore,_DeclSpecifier,"enumScoped",_DeclSpecifier,"baseType",_Expression,"name",tf.listType(_Declaration),"enumerators");
+  private static final Type _DeclSpecifier_etsStruct_2 
+    = tf.constructor(typestore,_DeclSpecifier,"etsStruct",tf.listType(_Modifier),"modifiers",_Expression,"name");
+  private static final Type _DeclSpecifier_enum_2 
+    = tf.constructor(typestore,_DeclSpecifier,"enum",_Expression,"name",tf.listType(_Declaration),"enumerators");
+  private static final Type _DeclSpecifier_etsClass_2 
+    = tf.constructor(typestore,_DeclSpecifier,"etsClass",tf.listType(_Modifier),"modifiers",_Expression,"name");
   private static final Type _DeclSpecifier_union_2 
     = tf.constructor(typestore,_DeclSpecifier,"union",_Expression,"name",tf.listType(_Declaration),"members");
+  private static final Type _DeclSpecifier_union_3 
+    = tf.constructor(typestore,_DeclSpecifier,"union",_Expression,"name",tf.listType(_Declaration),"baseSpecifiers",tf.listType(_Declaration),"members");
   private static final Type _DeclSpecifier_struct_3 
     = tf.constructor(typestore,_DeclSpecifier,"struct",_Expression,"name",tf.listType(_Declaration),"baseSpecifiers",tf.listType(_Declaration),"members");
   private static final Type _DeclSpecifier_declSpecifier_2 
@@ -74,18 +82,10 @@ public class AST {
     = tf.constructor(typestore,_DeclSpecifier,"enum",_DeclSpecifier,"baseType",_Expression,"name",tf.listType(_Declaration),"enumerators");
   private static final Type _DeclSpecifier_struct_2 
     = tf.constructor(typestore,_DeclSpecifier,"struct",_Expression,"name",tf.listType(_Declaration),"members");
-  private static final Type _DeclSpecifier_etsEnum_2 
-    = tf.constructor(typestore,_DeclSpecifier,"etsEnum",tf.listType(_Modifier),"arg0",_Expression,"name");
   private static final Type _DeclSpecifier_namedTypeSpecifier_2 
     = tf.constructor(typestore,_DeclSpecifier,"namedTypeSpecifier",tf.listType(_Modifier),"modifiers",_Expression,"name");
-  private static final Type _DeclSpecifier_enum_2 
-    = tf.constructor(typestore,_DeclSpecifier,"enum",_Expression,"name",tf.listType(_Declaration),"enumerators");
-  private static final Type _DeclSpecifier_etsClass_2 
-    = tf.constructor(typestore,_DeclSpecifier,"etsClass",tf.listType(_Modifier),"arg0",_Expression,"name");
-  private static final Type _DeclSpecifier_etsStruct_2 
-    = tf.constructor(typestore,_DeclSpecifier,"etsStruct",tf.listType(_Modifier),"arg0",_Expression,"name");
-  private static final Type _DeclSpecifier_union_3 
-    = tf.constructor(typestore,_DeclSpecifier,"union",_Expression,"name",tf.listType(_Declaration),"baseSpecifiers",tf.listType(_Declaration),"members");
+  private static final Type _DeclSpecifier_etsUnion_2 
+    = tf.constructor(typestore,_DeclSpecifier,"etsUnion",tf.listType(_Modifier),"modifiers",_Expression,"name");
   
   
   private static final Type _Declaration_sttClass_1 
@@ -790,10 +790,10 @@ public class AST {
     return vf.constructor(_DeclSpecifier_enumScoped_2 , $name, $enumerators).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor DeclSpecifier_etsUnion(IList $arg0, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor DeclSpecifier_etsEnum(IList $modifiers, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
       
-    if (!$arg0.getType().isSubtypeOf(tf.listType(_Modifier))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $arg0.getType() + " for $arg0:" + $arg0);
+    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
     }
       
     if (!$name.getType().isSubtypeOf(_Expression)) {
@@ -803,7 +803,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
-    return vf.constructor(_DeclSpecifier_etsUnion_2 , $arg0, $name).asWithKeywordParameters().setParameters(kwParams);
+    return vf.constructor(_DeclSpecifier_etsEnum_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor DeclSpecifier_declSpecifier(IList $modifiers, IConstructor $type, IConstructor $expression, ISourceLocation $loc) {
@@ -882,6 +882,54 @@ public class AST {
     return vf.constructor(_DeclSpecifier_enumScoped_3 , $baseType, $name, $enumerators).asWithKeywordParameters().setParameters(kwParams);
   }
   
+  public IConstructor DeclSpecifier_etsStruct(IList $modifiers, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
+      
+    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
+    }
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    return vf.constructor(_DeclSpecifier_etsStruct_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor DeclSpecifier_enum(IConstructor $name, IList $enumerators, ISourceLocation $loc, ISourceLocation $decl) {
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$enumerators.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $enumerators.getType() + " for $enumerators:" + $enumerators);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    return vf.constructor(_DeclSpecifier_enum_2 , $name, $enumerators).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor DeclSpecifier_etsClass(IList $modifiers, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
+      
+    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
+    }
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    return vf.constructor(_DeclSpecifier_etsClass_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
   public IConstructor DeclSpecifier_union(IConstructor $name, IList $members, ISourceLocation $loc, ISourceLocation $decl) {
       
     if (!$name.getType().isSubtypeOf(_Expression)) {
@@ -896,6 +944,26 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     return vf.constructor(_DeclSpecifier_union_2 , $name, $members).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor DeclSpecifier_union(IConstructor $name, IList $baseSpecifiers, IList $members, ISourceLocation $loc, ISourceLocation $decl) {
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$baseSpecifiers.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $baseSpecifiers.getType() + " for $baseSpecifiers:" + $baseSpecifiers);
+    }
+      
+    if (!$members.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    return vf.constructor(_DeclSpecifier_union_3 , $name, $baseSpecifiers, $members).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor DeclSpecifier_struct(IConstructor $name, IList $baseSpecifiers, IList $members, ISourceLocation $loc, ISourceLocation $decl) {
@@ -970,22 +1038,6 @@ public class AST {
     return vf.constructor(_DeclSpecifier_struct_2 , $name, $members).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor DeclSpecifier_etsEnum(IList $arg0, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$arg0.getType().isSubtypeOf(tf.listType(_Modifier))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $arg0.getType() + " for $arg0:" + $arg0);
-    }
-      
-    if (!$name.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    return vf.constructor(_DeclSpecifier_etsEnum_2 , $arg0, $name).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
   public IConstructor DeclSpecifier_namedTypeSpecifier(IList $modifiers, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
       
     if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
@@ -1002,26 +1054,10 @@ public class AST {
     return vf.constructor(_DeclSpecifier_namedTypeSpecifier_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor DeclSpecifier_enum(IConstructor $name, IList $enumerators, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor DeclSpecifier_etsUnion(IList $modifiers, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
       
-    if (!$name.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
-    }
-      
-    if (!$enumerators.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $enumerators.getType() + " for $enumerators:" + $enumerators);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    return vf.constructor(_DeclSpecifier_enum_2 , $name, $enumerators).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor DeclSpecifier_etsClass(IList $arg0, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$arg0.getType().isSubtypeOf(tf.listType(_Modifier))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $arg0.getType() + " for $arg0:" + $arg0);
+    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
     }
       
     if (!$name.getType().isSubtypeOf(_Expression)) {
@@ -1031,43 +1067,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
-    return vf.constructor(_DeclSpecifier_etsClass_2 , $arg0, $name).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor DeclSpecifier_etsStruct(IList $arg0, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$arg0.getType().isSubtypeOf(tf.listType(_Modifier))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $arg0.getType() + " for $arg0:" + $arg0);
-    }
-      
-    if (!$name.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    return vf.constructor(_DeclSpecifier_etsStruct_2 , $arg0, $name).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor DeclSpecifier_union(IConstructor $name, IList $baseSpecifiers, IList $members, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$name.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
-    }
-      
-    if (!$baseSpecifiers.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $baseSpecifiers.getType() + " for $baseSpecifiers:" + $baseSpecifiers);
-    }
-      
-    if (!$members.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    return vf.constructor(_DeclSpecifier_union_3 , $name, $baseSpecifiers, $members).asWithKeywordParameters().setParameters(kwParams);
+    return vf.constructor(_DeclSpecifier_etsUnion_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
   }
     
   
