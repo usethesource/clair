@@ -717,8 +717,27 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTExplicitTemplateInstantiation declaration) {
-		out("CPPExplicitTemplateInstantiation: " + declaration.getRawSignature());
-		throw new RuntimeException("NYI");
+		ISourceLocation loc = getSourceLocation(declaration);
+		IASTDeclaration _declaration = declaration.getDeclaration();
+		int _modifier = declaration.getModifier();
+		IConstructor modifier;
+		switch (_modifier) {
+		case ICPPASTExplicitTemplateInstantiation.STATIC:
+			modifier = builder.Modifier_static(loc);
+			break;
+		case ICPPASTExplicitTemplateInstantiation.INLINE:
+			modifier = builder.Modifier_inline(loc);
+			break;
+		case ICPPASTExplicitTemplateInstantiation.EXTERN:
+			modifier = builder.Modifier_extern(loc);
+			break;
+		default:
+			throw new RuntimeException(
+					"ICPPASTExplicitTemplateInstantiation encountered unknown modifier " + _modifier);
+		}
+		_declaration.accept(this);
+		stack.push(builder.Declaration_explicitTemplateInstantiation(modifier, stack.pop(), loc));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTAliasDeclaration declaration) {
