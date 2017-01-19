@@ -130,6 +130,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression.CaptureDefault;
@@ -2746,17 +2747,30 @@ public class Parser extends ASTVisitor {
 		IASTStatement _thenClause = statement.getThenClause();
 		IASTStatement _elseClause = statement.getElseClause();
 
-		_condition.accept(this);
-		IConstructor condition = stack.pop();
-		_thenClause.accept(this);
-		IConstructor thenClause = stack.pop();
-
-		if (_elseClause == null) {
-			stack.push(builder.Statement_if(condition, thenClause, loc));
+		if (_condition == null && statement instanceof ICPPASTIfStatement) {
+			((ICPPASTIfStatement) statement).getConditionDeclaration().accept(this);
+			IConstructor condition = stack.pop();
+			_thenClause.accept(this);
+			IConstructor thenClause = stack.pop();
+			if (_elseClause == null) {
+				stack.push(builder.Statement_ifWithDecl(condition, thenClause, loc));
+			} else {
+				_elseClause.accept(this);
+				IConstructor elseClause = stack.pop();
+				stack.push(builder.Statement_ifWithDecl(condition, thenClause, elseClause, loc));
+			}
 		} else {
-			_elseClause.accept(this);
-			IConstructor elseClause = stack.pop();
-			stack.push(builder.Statement_if(condition, thenClause, elseClause, loc));
+			_condition.accept(this);
+			IConstructor condition = stack.pop();
+			_thenClause.accept(this);
+			IConstructor thenClause = stack.pop();
+			if (_elseClause == null) {
+				stack.push(builder.Statement_if(condition, thenClause, loc));
+			} else {
+				_elseClause.accept(this);
+				IConstructor elseClause = stack.pop();
+				stack.push(builder.Statement_if(condition, thenClause, elseClause, loc));
+			}
 		}
 		return PROCESS_ABORT;
 	}
