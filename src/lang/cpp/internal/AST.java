@@ -88,8 +88,6 @@ public class AST {
     = tf.constructor(typestore,_DeclSpecifier,"etsUnion",tf.listType(_Modifier),"modifiers",_Expression,"name");
   
   
-  private static final Type _Declaration_sttClass_1 
-    = tf.constructor(typestore,_Declaration,"sttClass",_Expression,"name");
   private static final Type _Declaration_baseSpecifier_1 
     = tf.constructor(typestore,_Declaration,"baseSpecifier",_Modifier,"modifier");
   private static final Type _Declaration_parameter_2 
@@ -120,6 +118,10 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"enumerator",_Expression,"name");
   private static final Type _Declaration_parameter_1 
     = tf.constructor(typestore,_Declaration,"parameter",_DeclSpecifier,"declSpecifier");
+  private static final Type _Declaration_explicitTemplateInstantiation_2 
+    = tf.constructor(typestore,_Declaration,"explicitTemplateInstantiation",_Modifier,"modifier",_Declaration,"declaration");
+  private static final Type _Declaration_sttClass_1 
+    = tf.constructor(typestore,_Declaration,"sttClass",_Expression,"name");
   private static final Type _Declaration_defaultedFunctionDefinition_3 
     = tf.constructor(typestore,_Declaration,"defaultedFunctionDefinition",_DeclSpecifier,"declSpecifier",tf.listType(_Expression),"memberInitializer",_Declarator,"declarator");
   private static final Type _Declaration_virtSpecifier_1 
@@ -1071,18 +1073,6 @@ public class AST {
   }
     
   
-  public IConstructor Declaration_sttClass(IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$name.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    return vf.constructor(_Declaration_sttClass_1 , $name).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
   public IConstructor Declaration_baseSpecifier(IConstructor $modifier, ISourceLocation $loc, ISourceLocation $decl) {
       
     if (!$modifier.getType().isSubtypeOf(_Modifier)) {
@@ -1289,6 +1279,34 @@ public class AST {
     kwParams.put("src", $loc);
     
     return vf.constructor(_Declaration_parameter_1 , $declSpecifier).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_explicitTemplateInstantiation(IConstructor $modifier, IConstructor $declaration, ISourceLocation $loc) {
+      
+    if (!$modifier.getType().isSubtypeOf(_Modifier)) {
+      throw new IllegalArgumentException("Expected " + _Modifier + " but got " + $modifier.getType() + " for $modifier:" + $modifier);
+    }
+      
+    if (!$declaration.getType().isSubtypeOf(_Declaration)) {
+      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $declaration.getType() + " for $declaration:" + $declaration);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Declaration_explicitTemplateInstantiation_2 , $modifier, $declaration).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_sttClass(IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    return vf.constructor(_Declaration_sttClass_1 , $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_defaultedFunctionDefinition(IConstructor $declSpecifier, IList $memberInitializer, IConstructor $declarator, ISourceLocation $loc) {

@@ -98,6 +98,8 @@ data Declaration(loc src=|unknown:///|)
     
     | \staticAssert(Expression condition)
     
+    | \explicitTemplateInstantiation(Modifier modifier, Declaration declaration)
+    
     | \problemDeclaration()
     ;
 
