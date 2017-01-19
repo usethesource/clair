@@ -234,10 +234,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public IValue parseCpp(ISourceLocation file, IList includePaths, IEvaluatorContext ctx) {
-		if (ctx != null) {
-			this.ctx = ctx;
-			setIEvaluatorContext(ctx);
-		}
+		setIEvaluatorContext(ctx);
 		try {
 			sourceLoc = file;
 			br.setSourceLocation(file);
@@ -255,7 +252,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public IValue parseExpression(IString expression, IEvaluatorContext ctx) throws CoreException, IOException {
-		this.ctx = ctx;
+		setIEvaluatorContext(ctx);
 		this.sourceLoc = vf.sourceLocation(URIUtil.assumeCorrect("unknown://", "", ""));
 		if (!expression.getValue().endsWith(";"))
 			expression.concat(vf.string(";"));
