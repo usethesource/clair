@@ -414,12 +414,12 @@ public class AST {
     = tf.constructor(typestore,_Statement,"return");
   private static final Type _Statement_defaultCase_0 
     = tf.constructor(typestore,_Statement,"defaultCase");
+  private static final Type _Statement_ifWithDecl_2 
+    = tf.constructor(typestore,_Statement,"ifWithDecl",_Declaration,"declaration",_Statement,"thenClause");
   private static final Type _Statement_goto_1 
     = tf.constructor(typestore,_Statement,"goto",_Expression,"name");
   private static final Type _Statement_switch_2 
     = tf.constructor(typestore,_Statement,"switch",_Expression,"controller",_Statement,"body");
-  private static final Type _Statement_label_2 
-    = tf.constructor(typestore,_Statement,"label",_Expression,"name",_Statement,"nestedStatement");
   private static final Type _Statement_break_0 
     = tf.constructor(typestore,_Statement,"break");
   private static final Type _Statement_for_4 
@@ -442,6 +442,10 @@ public class AST {
     = tf.constructor(typestore,_Statement,"tryBlock",_Statement,"tryBody",tf.listType(_Statement),"catchHandlers");
   private static final Type _Statement_if_2 
     = tf.constructor(typestore,_Statement,"if",_Expression,"condition",_Statement,"thenClause");
+  private static final Type _Statement_ifWithDecl_3 
+    = tf.constructor(typestore,_Statement,"ifWithDecl",_Declaration,"declaration",_Statement,"thenClause",_Statement,"elseClause");
+  private static final Type _Statement_label_2 
+    = tf.constructor(typestore,_Statement,"label",_Expression,"name",_Statement,"nestedStatement");
   private static final Type _Statement_catch_2 
     = tf.constructor(typestore,_Statement,"catch",_Declaration,"declaration",_Statement,"body");
   private static final Type _Statement_problem_1 
@@ -3228,6 +3232,22 @@ public class AST {
     return vf.constructor(_Statement_defaultCase_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
+  public IConstructor Statement_ifWithDecl(IConstructor $declaration, IConstructor $thenClause, ISourceLocation $loc) {
+      
+    if (!$declaration.getType().isSubtypeOf(_Declaration)) {
+      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $declaration.getType() + " for $declaration:" + $declaration);
+    }
+      
+    if (!$thenClause.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $thenClause.getType() + " for $thenClause:" + $thenClause);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_ifWithDecl_2 , $declaration, $thenClause).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
   public IConstructor Statement_goto(IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
       
     if (!$name.getType().isSubtypeOf(_Expression)) {
@@ -3254,22 +3274,6 @@ public class AST {
     kwParams.put("src", $loc);
     
     return vf.constructor(_Statement_switch_2 , $controller, $body).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Statement_label(IConstructor $name, IConstructor $nestedStatement, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$name.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
-    }
-      
-    if (!$nestedStatement.getType().isSubtypeOf(_Statement)) {
-      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $nestedStatement.getType() + " for $nestedStatement:" + $nestedStatement);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    return vf.constructor(_Statement_label_2 , $name, $nestedStatement).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_break(ISourceLocation $loc) {
@@ -3426,6 +3430,42 @@ public class AST {
     kwParams.put("src", $loc);
     
     return vf.constructor(_Statement_if_2 , $condition, $thenClause).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Statement_ifWithDecl(IConstructor $declaration, IConstructor $thenClause, IConstructor $elseClause, ISourceLocation $loc) {
+      
+    if (!$declaration.getType().isSubtypeOf(_Declaration)) {
+      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $declaration.getType() + " for $declaration:" + $declaration);
+    }
+      
+    if (!$thenClause.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $thenClause.getType() + " for $thenClause:" + $thenClause);
+    }
+      
+    if (!$elseClause.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $elseClause.getType() + " for $elseClause:" + $elseClause);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Statement_ifWithDecl_3 , $declaration, $thenClause, $elseClause).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Statement_label(IConstructor $name, IConstructor $nestedStatement, ISourceLocation $loc, ISourceLocation $decl) {
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$nestedStatement.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $nestedStatement.getType() + " for $nestedStatement:" + $nestedStatement);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    return vf.constructor(_Statement_label_2 , $name, $nestedStatement).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_catch(IConstructor $declaration, IConstructor $body, ISourceLocation $loc) {
