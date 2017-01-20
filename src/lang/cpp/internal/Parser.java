@@ -2,6 +2,8 @@ package lang.cpp.internal;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -187,6 +189,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTArrayRangeDesignator;
 import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.DefaultLogService;
 import org.eclipse.cdt.core.parser.FileContent;
@@ -194,19 +197,20 @@ import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
-import org.eclipse.cdt.internal.core.parser.SavedFilesProvider;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
+import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.rascalmpl.interpreter.IEvaluatorContext;
 import org.rascalmpl.interpreter.utils.RuntimeExceptionFactory;
 import org.rascalmpl.library.Prelude;
-import org.rascalmpl.uri.URIResolverRegistry;
 import org.rascalmpl.uri.URIUtil;
 import org.rascalmpl.value.IConstructor;
 import org.rascalmpl.value.IList;
@@ -239,8 +243,14 @@ public class Parser extends ASTVisitor {
 		try {
 			sourceLoc = file;
 			br.setSourceLocation(file);
+			Path filePath;
+			if (file.getScheme().equals("project")) {
+				filePath = Paths.get(ResourcesPlugin.getWorkspace().getRoot().getLocation().toString() + "\\"
+						+ file.getAuthority() + file.getPath());
+			} else
+				filePath = Paths.get(file.getPath());// FIXME
 			String input = ((IString) new Prelude(vf).readFile(file)).getValue();
-			IValue result = parse(file.getPath(), input.toCharArray(), includePaths);
+			IValue result = parse(filePath.toString(), includePaths);
 
 			if (result == null) {
 				throw RuntimeExceptionFactory.parseError(file, null, null);
@@ -275,31 +285,45 @@ public class Parser extends ASTVisitor {
 		return stack.pop();
 	}
 
-	private IValue parse(String path, char[] code, IList includePaths) throws CoreException {
-		FileContent fc = FileContent.create(path, code);
+	private IValue parse(String path, IList includePath) throws CoreException {
+		FileContent fc = FileContent.createForExternalFileLocation(path);
 		Map<String, String> macroDefinitions = new HashMap<String, String>();
 
-		String[] sIncludes = getIncludes(includePaths);
+		String[] sIncludes = getIncludes(includePath);
 		IScannerInfo si = new ScannerInfo(macroDefinitions, sIncludes);
 
-		IncludeFileContentProvider ifcp = new SavedFilesProvider() {
+		InternalFileContentProvider ifcp = new InternalFileContentProvider() {
 			@Override
-			public InternalFileContent getContentForInclusion(String path, IMacroDictionary macroDictionary) {
-				ISourceLocation loc = vf.sourceLocation(URIUtil.assumeCorrect(isWindows()
-						? "file:///" + path.substring("C:\\file:\\".length()).replace('\\', '/')
-						: path.substring("/".length()) /*
-														 * remove the artifical
-														 * leading slash
-														 */));
-				if (URIResolverRegistry.getInstance().exists(loc)) {
-					ctx.getStdErr().println("Including " + loc);
-					IString s = (IString) new Prelude(vf).readFile(loc);
-					return (InternalFileContent) InternalFileContent.create(path, s.getValue().toCharArray());
-				}
+			public InternalFileContent getContentForInclusion(String filePath, IMacroDictionary macroDictionary) {
+				return (InternalFileContent) FileContent.createForExternalFileLocation(filePath);
+			}
 
+			@Override
+			public InternalFileContent getContentForInclusion(IIndexFileLocation ifl, String astPath) {
+				return (InternalFileContent) FileContent.create(ifl);
+			}
+
+		};
+
+		IIncludeFileResolutionHeuristics ifrh = new IIncludeFileResolutionHeuristics() {
+			String[] includePath = new String[] { "C:\\MinGW\\include", "C:\\MinGW\\lib\\gcc\\mingw32\\5.3.0\\include",
+					"C:\\MinGW\\lib\\gcc\\mingw32\\5.3.0\\include\\c++" };
+
+			@Override
+			public String findInclusion(String include, String currentFile) {
+				for (String path : includePath) {
+					File[] files = new File(path).listFiles();
+					if (files == null)
+						throw new IllegalArgumentException("IncludePath entry " + path + " is not a directory");
+					for (File f : files)
+						if (f.getName().equals(include))
+							return null;// return f.getPath();
+				}
 				return null;
 			}
 		};
+
+		ifcp.setIncludeResolutionHeuristics(ifrh);
 		IIndex idx = null;
 		int options = ILanguage.OPTION_IS_SOURCE_UNIT | ILanguage.OPTION_PARSE_INACTIVE_CODE;
 		IParserLogService log = new IParserLogService() {
