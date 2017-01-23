@@ -795,7 +795,7 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTASMDeclaration declaration) {
 		ISourceLocation loc = getSourceLocation(declaration);
 		stack.push(builder.Declaration_asmDeclaration(declaration.getAssembly(), loc));
-		throw new RuntimeException("NYI");
+		return PROCESS_ABORT;
 	}
 
 	static int prefix = 0;
