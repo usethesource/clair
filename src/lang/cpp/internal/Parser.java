@@ -306,8 +306,13 @@ public class Parser extends ASTVisitor {
 		};
 
 		IIncludeFileResolutionHeuristics ifrh = new IIncludeFileResolutionHeuristics() {
-			String[] includePath = new String[] { "C:\\MinGW\\include", "C:\\MinGW\\lib\\gcc\\mingw32\\5.3.0\\include",
-					"C:\\MinGW\\lib\\gcc\\mingw32\\5.3.0\\include\\c++" };
+			String[] includePath = new String[] { "C:\\MinGW\\include", "C:\\MinGW\\include\\sys",
+					"C:\\MinGW\\lib\\gcc\\mingw32\\5.3.0\\include", "C:\\MinGW\\lib\\gcc\\mingw32\\5.3.0\\include\\c++",
+					"C:\\MinGW\\lib\\gcc\\mingw32\\5.3.0\\include\\c++\\bits",
+					"C:\\MinGW\\lib\\gcc\\mingw32\\5.3.0\\include\\c++\\backward",
+					"C:\\MinGW\\lib\\gcc\\mingw32\\5.3.0\\include\\c++\\debug",
+					"C:\\MinGW\\lib\\gcc\\mingw32\\5.3.0\\include\\c++\\ext",
+					"C:\\MinGW\\lib\\gcc\\mingw32\\5.3.0\\include\\c++\\mingw32\\bits" };
 
 			@Override
 			public String findInclusion(String include, String currentFile) {
@@ -316,8 +321,8 @@ public class Parser extends ASTVisitor {
 					if (files == null)
 						throw new IllegalArgumentException("IncludePath entry " + path + " is not a directory");
 					for (File f : files)
-						if (f.getName().equals(include))
-							return null;// return f.getPath();
+						if (f.getName().equals(include.substring(include.lastIndexOf('/') + 1)))
+							return f.getPath();
 				}
 				return null;
 			}
@@ -340,7 +345,6 @@ public class Parser extends ASTVisitor {
 
 		};
 		IASTTranslationUnit tu = GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, idx, options, log);
-
 		return convertCdtToRascal(tu);
 	}
 
