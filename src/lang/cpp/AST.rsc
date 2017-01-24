@@ -188,7 +188,7 @@ data Expression(loc src = |unknown:///|)
     
     | \functionCall(Expression functionName, list[Expression] arguments)
     
-    | \fieldReference(Expression fieldOwner, Expression name, Type fieldType, loc decl = |unknown:///|)
+    | \fieldReference(Expression fieldOwner, Expression name, loc decl = |unknown:///|)
     //| \constructorInitializer(list[Expression] arguments)
     | \new(Expression typeId)
     | \new(Expression typeId, Expression initializer)
