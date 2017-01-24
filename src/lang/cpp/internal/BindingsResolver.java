@@ -151,7 +151,8 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation resolveIProblemBinding(IProblemBinding binding) {
-		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
+		// err("Trying to resolve " + binding.getClass().getSimpleName() + ": "
+		// + binding);
 		return NYI;
 	}
 
