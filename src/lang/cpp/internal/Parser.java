@@ -2,8 +2,6 @@ package lang.cpp.internal;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -206,7 +204,6 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.rascalmpl.interpreter.IEvaluatorContext;
 import org.rascalmpl.interpreter.utils.RuntimeExceptionFactory;
@@ -238,19 +235,14 @@ public class Parser extends ASTVisitor {
 		this.includeInactiveNodes = true;
 	}
 
-	public IValue parseCpp(ISourceLocation file, IList includePaths, IEvaluatorContext ctx) {
+	public IValue parseCpp(ISourceLocation file, IList includePath, IEvaluatorContext ctx) {
 		setIEvaluatorContext(ctx);
 		try {
 			sourceLoc = file;
 			br.setSourceLocation(file);
-			Path filePath;
-			if (file.getScheme().equals("project")) {
-				filePath = Paths.get(ResourcesPlugin.getWorkspace().getRoot().getLocation().toString() + "\\"
-						+ file.getAuthority() + file.getPath());
-			} else
-				filePath = Paths.get(file.getPath());// FIXME
+
 			String input = ((IString) new Prelude(vf).readFile(file)).getValue();
-			IValue result = parse(filePath.toString(), includePaths);
+			IValue result = parse(file, includePath);
 
 			if (result == null) {
 				throw RuntimeExceptionFactory.parseError(file, null, null);
@@ -285,8 +277,9 @@ public class Parser extends ASTVisitor {
 		return stack.pop();
 	}
 
-	private IValue parse(String path, IList includePath) throws CoreException {
-		FileContent fc = FileContent.createForExternalFileLocation(path);
+	private IValue parse(ISourceLocation file, IList includePath) throws CoreException {
+		FileContent fc = FileContent.create(file.getPath(),
+				((IString) new Prelude(vf).readFile(file)).getValue().toCharArray());
 		Map<String, String> macroDefinitions = new HashMap<String, String>();
 
 		String[] sIncludes = getIncludes(includePath);
@@ -306,23 +299,27 @@ public class Parser extends ASTVisitor {
 		};
 
 		IIncludeFileResolutionHeuristics ifrh = new IIncludeFileResolutionHeuristics() {
-			String[] includePath = new String[] { "C:\\MinGW\\include", "C:\\MinGW\\include\\sys",
-					"C:\\MinGW\\lib\\gcc\\mingw32\\5.3.0\\include", "C:\\MinGW\\lib\\gcc\\mingw32\\5.3.0\\include\\c++",
-					"C:\\MinGW\\lib\\gcc\\mingw32\\5.3.0\\include\\c++\\bits",
-					"C:\\MinGW\\lib\\gcc\\mingw32\\5.3.0\\include\\c++\\backward",
-					"C:\\MinGW\\lib\\gcc\\mingw32\\5.3.0\\include\\c++\\debug",
-					"C:\\MinGW\\lib\\gcc\\mingw32\\5.3.0\\include\\c++\\ext",
-					"C:\\MinGW\\lib\\gcc\\mingw32\\5.3.0\\include\\c++\\mingw32\\bits" };
+			List<String> path = new ArrayList<String>();
+			{
+				for (IValue include : includePath)
+					path.add(locToPath((ISourceLocation) include));
+			}
+
+			private String locToPath(ISourceLocation loc) {
+				if (!loc.getScheme().equals("file"))
+					throw new IllegalArgumentException("Will not convert non-file loc");
+				return loc.getAuthority() + loc.getPath();
+			}
 
 			@Override
 			public String findInclusion(String include, String currentFile) {
-				for (String path : includePath) {
+				for (String path : path) {
 					File[] files = new File(path).listFiles();
 					if (files == null)
 						throw new IllegalArgumentException("IncludePath entry " + path + " is not a directory");
 					for (File f : files)
 						if (f.getName().equals(include.substring(include.lastIndexOf('/') + 1)))
-							return f.getPath();
+							return f.getAbsolutePath();
 				}
 				return null;
 			}
