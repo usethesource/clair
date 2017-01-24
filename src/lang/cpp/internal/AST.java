@@ -216,6 +216,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"not",_Expression,"expression");
   private static final Type _Expression_idExpression_1 
     = tf.constructor(typestore,_Expression,"idExpression",_Expression,"name");
+  private static final Type _Expression_fieldReference_2 
+    = tf.constructor(typestore,_Expression,"fieldReference",_Expression,"fieldOwner",_Expression,"name");
   private static final Type _Expression_initializerList_1 
     = tf.constructor(typestore,_Expression,"initializerList",tf.listType(_Expression),"clauses");
   private static final Type _Expression_alignOf_1 
@@ -252,8 +254,6 @@ public class AST {
     = tf.constructor(typestore,_Expression,"notEquals",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_arrayRangeDesignator_2 
     = tf.constructor(typestore,_Expression,"arrayRangeDesignator",_Expression,"rangeFloor",_Expression,"rangeCeiling");
-  private static final Type _Expression_fieldReference_3 
-    = tf.constructor(typestore,_Expression,"fieldReference",_Expression,"fieldOwner",_Expression,"name",_Type,"fieldType");
   private static final Type _Expression_min_2 
     = tf.constructor(typestore,_Expression,"min",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_reinterpretCast_2 
@@ -1986,6 +1986,22 @@ public class AST {
     return vf.constructor(_Expression_idExpression_1 , $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
+  public IConstructor Expression_fieldReference(IConstructor $fieldOwner, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
+      
+    if (!$fieldOwner.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $fieldOwner.getType() + " for $fieldOwner:" + $fieldOwner);
+    }
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    return vf.constructor(_Expression_fieldReference_2 , $fieldOwner, $name).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
   public IConstructor Expression_initializerList(IList $clauses, ISourceLocation $loc) {
       
     if (!$clauses.getType().isSubtypeOf(tf.listType(_Expression))) {
@@ -2232,26 +2248,6 @@ public class AST {
     kwParams.put("src", $loc);
     
     return vf.constructor(_Expression_arrayRangeDesignator_2 , $rangeFloor, $rangeCeiling).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Expression_fieldReference(IConstructor $fieldOwner, IConstructor $name, IConstructor $fieldType, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$fieldOwner.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $fieldOwner.getType() + " for $fieldOwner:" + $fieldOwner);
-    }
-      
-    if (!$name.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
-    }
-      
-    if (!$fieldType.getType().isSubtypeOf(_Type)) {
-      throw new IllegalArgumentException("Expected " + _Type + " but got " + $fieldType.getType() + " for $fieldType:" + $fieldType);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    return vf.constructor(_Expression_fieldReference_3 , $fieldOwner, $name, $fieldType).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_min(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc) {

@@ -1927,34 +1927,16 @@ public class Parser extends ASTVisitor {
 		if (expression instanceof ICPPASTFieldReference) {
 			ICPPASTFieldReference reference = (ICPPASTFieldReference) expression;
 			IASTExpression _fieldOwner = reference.getFieldOwner();
-			IType _fieldOwnerType = reference.getFieldOwnerType();
 			IASTName _fieldName = reference.getFieldName();
 
 			_fieldOwner.accept(this);
 			IConstructor fieldOwner = stack.pop();
-			// _fieldOwnerType.accept(this);
-			// IConstructor fieldOwnerType = stack.pop();
 			_fieldName.accept(this);
 			IConstructor fieldName = stack.pop();
 
-			if (_fieldOwnerType instanceof IProblemType && doTypeLogging) {
-				out("IASTFieldReference " + expression.getClass().getName() + ": " + expression.getRawSignature());
-				prefix += 4;
-				out("reference=" + reference.getRawSignature());
-				out("fieldOwner=" + _fieldOwner.getRawSignature());
-				out("fieldOwnerType=" + _fieldOwnerType.toString());
-				out("fieldName=" + _fieldName.toString());
-				out("expressionType=" + _fieldOwner.getClass().getSimpleName());
-				prefix -= 4;
-			}
-			stack.push(
-					builder.Expression_fieldReference(fieldOwner, fieldName, convertType(_fieldOwnerType), loc, decl));
-		} else {
-			IASTExpression fieldOwner = expression.getFieldOwner();
-			IASTName fieldName = expression.getFieldName();
-			boolean isPointerDereference = expression.isPointerDereference();
-			throw new RuntimeException("NYI");
-		}
+			stack.push(builder.Expression_fieldReference(fieldOwner, fieldName, loc, decl));
+		} else
+			throw new RuntimeException("IASTFieldReference: NYI");
 		return PROCESS_ABORT;
 	}
 
