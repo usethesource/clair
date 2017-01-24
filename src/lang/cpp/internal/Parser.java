@@ -236,18 +236,77 @@ public class Parser extends ASTVisitor {
 	}
 
 	public IValue parseCpp(ISourceLocation file, IList includePath, IEvaluatorContext ctx) {
-		setIEvaluatorContext(ctx);
 		try {
+			setIEvaluatorContext(ctx);
 			sourceLoc = file;
 			br.setSourceLocation(file);
+			FileContent fc = FileContent.create(file.getPath(),
+					((IString) new Prelude(vf).readFile(file)).getValue().toCharArray());
+			IScannerInfo si = new ScannerInfo();
 
-			String input = ((IString) new Prelude(vf).readFile(file)).getValue();
-			IValue result = parse(file, includePath);
+			InternalFileContentProvider ifcp = new InternalFileContentProvider() {
+				@Override
+				public InternalFileContent getContentForInclusion(String filePath, IMacroDictionary macroDictionary) {
+					return (InternalFileContent) FileContent.createForExternalFileLocation(filePath);
+				}
 
+				@Override
+				public InternalFileContent getContentForInclusion(IIndexFileLocation ifl, String astPath) {
+					return (InternalFileContent) FileContent.create(ifl);
+				}
+
+			};
+
+			IIncludeFileResolutionHeuristics ifrh = new IIncludeFileResolutionHeuristics() {
+				List<String> path = new ArrayList<String>();
+				{
+					for (IValue include : includePath)
+						path.add(locToPath((ISourceLocation) include));
+				}
+
+				private String locToPath(ISourceLocation loc) {
+					if (!loc.getScheme().equals("file"))
+						throw new IllegalArgumentException("Will not convert non-file loc");
+					return loc.getAuthority() + loc.getPath();
+				}
+
+				@Override
+				public String findInclusion(String include, String currentFile) {
+					for (String path : path) {
+						File[] files = new File(path).listFiles();
+						if (files == null)
+							throw new IllegalArgumentException("IncludePath entry " + path + " is not a directory");
+						for (File f : files)
+							if (f.getName().equals(include.substring(include.lastIndexOf('/') + 1)))
+								return f.getAbsolutePath();
+					}
+					return null;
+				}
+			};
+
+			ifcp.setIncludeResolutionHeuristics(ifrh);
+			IIndex idx = null;
+			int options = ILanguage.OPTION_PARSE_INACTIVE_CODE;
+
+			IParserLogService log = new IParserLogService() {
+
+				@Override
+				public void traceLog(String message) {
+					ctx.getStdErr().println(message);
+				}
+
+				@Override
+				public boolean isTracing() {
+					return true;
+				}
+
+			};
+
+			IASTTranslationUnit tu = GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, idx, options, log);
+			IValue result = convertCdtToRascal(tu);
 			if (result == null) {
 				throw RuntimeExceptionFactory.parseError(file, null, null);
 			}
-
 			return result;
 		} catch (CoreException e) {
 			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
@@ -266,7 +325,7 @@ public class Parser extends ASTVisitor {
 		IScannerInfo si = new ScannerInfo(macroDefinitions, includeSearchPaths);
 		IncludeFileContentProvider ifcp = IncludeFileContentProvider.getEmptyFilesProvider();
 		IIndex idx = null;
-		int options = ILanguage.OPTION_IS_SOURCE_UNIT | ILanguage.OPTION_PARSE_INACTIVE_CODE;
+		int options = ILanguage.OPTION_PARSE_INACTIVE_CODE;
 		IParserLogService log = new DefaultLogService();
 		IASTTranslationUnit tu = GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, idx, options, log);
 
@@ -275,96 +334,6 @@ public class Parser extends ASTVisitor {
 		IASTExpression ex = ((IASTExpressionStatement) body.getStatements()[0]).getExpression();
 		ex.accept(this);
 		return stack.pop();
-	}
-
-	private IValue parse(ISourceLocation file, IList includePath) throws CoreException {
-		FileContent fc = FileContent.create(file.getPath(),
-				((IString) new Prelude(vf).readFile(file)).getValue().toCharArray());
-		Map<String, String> macroDefinitions = new HashMap<String, String>();
-
-		String[] sIncludes = getIncludes(includePath);
-		IScannerInfo si = new ScannerInfo(macroDefinitions, sIncludes);
-
-		InternalFileContentProvider ifcp = new InternalFileContentProvider() {
-			@Override
-			public InternalFileContent getContentForInclusion(String filePath, IMacroDictionary macroDictionary) {
-				return (InternalFileContent) FileContent.createForExternalFileLocation(filePath);
-			}
-
-			@Override
-			public InternalFileContent getContentForInclusion(IIndexFileLocation ifl, String astPath) {
-				return (InternalFileContent) FileContent.create(ifl);
-			}
-
-		};
-
-		IIncludeFileResolutionHeuristics ifrh = new IIncludeFileResolutionHeuristics() {
-			List<String> path = new ArrayList<String>();
-			{
-				for (IValue include : includePath)
-					path.add(locToPath((ISourceLocation) include));
-			}
-
-			private String locToPath(ISourceLocation loc) {
-				if (!loc.getScheme().equals("file"))
-					throw new IllegalArgumentException("Will not convert non-file loc");
-				return loc.getAuthority() + loc.getPath();
-			}
-
-			@Override
-			public String findInclusion(String include, String currentFile) {
-				for (String path : path) {
-					File[] files = new File(path).listFiles();
-					if (files == null)
-						throw new IllegalArgumentException("IncludePath entry " + path + " is not a directory");
-					for (File f : files)
-						if (f.getName().equals(include.substring(include.lastIndexOf('/') + 1)))
-							return f.getAbsolutePath();
-				}
-				return null;
-			}
-		};
-
-		ifcp.setIncludeResolutionHeuristics(ifrh);
-		IIndex idx = null;
-		int options = ILanguage.OPTION_IS_SOURCE_UNIT | ILanguage.OPTION_PARSE_INACTIVE_CODE;
-		IParserLogService log = new IParserLogService() {
-
-			@Override
-			public void traceLog(String message) {
-				ctx.getStdErr().println(message);
-			}
-
-			@Override
-			public boolean isTracing() {
-				return true;
-			}
-
-		};
-		IASTTranslationUnit tu = GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, idx, options, log);
-		return convertCdtToRascal(tu);
-	}
-
-	private String[] getIncludes(IList includes) {
-		ArrayList<String> result = new ArrayList<>(includes.length());
-		for (IValue elem : includes) {
-			String uri = ((ISourceLocation) elem).getURI().toString();
-			// this slash is to trick the include resolver into thinking it is
-			// an absolute path
-
-			result.add((isWindows() ? File.listRoots()[0] : "/") + uri);
-		}
-
-		return result.toArray(new String[result.size()]);
-	}
-
-	private boolean isWindows() {
-		return System.getProperty("os.name").contains("Win");
-	}
-
-	public void setIEvaluatorContext(IEvaluatorContext ctx) {
-		this.ctx = ctx;
-		br.setIEvaluatorContext(ctx);
 	}
 
 	public synchronized IValue convertCdtToRascal(IASTTranslationUnit translationUnit) throws CoreException {
@@ -379,12 +348,15 @@ public class Parser extends ASTVisitor {
 		return ast;
 	}
 
-	public ISourceLocation getSourceLocation(IASTNode node) {
-		IASTFileLocation astFileLocation = node.getFileLocation();
-		if (astFileLocation != null)
-			return vf.sourceLocation(sourceLoc, astFileLocation.getNodeOffset(), astFileLocation.getNodeLength());
-		else
-			return vf.sourceLocation(URIUtil.assumeCorrect("unknown:///", "", ""));
+	public void setIEvaluatorContext(IEvaluatorContext ctx) {
+		this.ctx = ctx;
+		br.setIEvaluatorContext(ctx);
+	}
+
+	private int prefix = 0;
+
+	private String spaces() {
+		return StringUtils.repeat(" ", prefix);
 	}
 
 	private void out(String msg) {
@@ -393,6 +365,14 @@ public class Parser extends ASTVisitor {
 
 	private void err(String msg) {
 		ctx.getStdErr().println(spaces() + msg.replace("\n", "\n" + spaces()));
+	}
+
+	public ISourceLocation getSourceLocation(IASTNode node) {
+		IASTFileLocation astFileLocation = node.getFileLocation();
+		if (astFileLocation != null)
+			return vf.sourceLocation(sourceLoc, astFileLocation.getNodeOffset(), astFileLocation.getNodeLength());
+		else
+			return vf.sourceLocation(URIUtil.assumeCorrect("unknown:///", "", ""));
 	}
 
 	IList getModifiers(IASTNode node) {
@@ -793,12 +773,6 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(declaration);
 		stack.push(builder.Declaration_asmDeclaration(declaration.getAssembly(), loc));
 		return PROCESS_ABORT;
-	}
-
-	static int prefix = 0;
-
-	static String spaces() {
-		return StringUtils.repeat(" ", prefix);
 	}
 
 	public int visit(IASTSimpleDeclaration declaration) {
@@ -1275,10 +1249,6 @@ public class Parser extends ASTVisitor {
 		}
 
 		return PROCESS_ABORT;
-	}
-
-	void info(String msg) {
-		out(msg);
 	}
 
 	@Override
@@ -1949,156 +1919,6 @@ public class Parser extends ASTVisitor {
 		});
 		stack.push(builder.Expression_functionCall(functionName, arguments.done(), loc));
 		return PROCESS_ABORT;
-	}
-
-	public IConstructor convertType(IType cdtType) {
-		ISourceLocation loc = vf.sourceLocation("TODO");
-		if (cdtType instanceof IArrayType) {
-			IType _type = ((IArrayType) cdtType).getType();
-			org.eclipse.cdt.core.dom.ast.IValue _size = ((IArrayType) cdtType).getSize();
-			stack.push(builder.Type_arrayType(convertType(_type), _size.numericalValue().intValue(), loc));
-		} else if (cdtType instanceof IBasicType) {
-			Kind kind = ((IBasicType) cdtType).getKind();
-			boolean isSigned = ((IBasicType) cdtType).isSigned();
-			boolean isUnsigned = ((IBasicType) cdtType).isUnsigned();
-			boolean isShort = ((IBasicType) cdtType).isShort();
-			boolean isLong = ((IBasicType) cdtType).isLong();
-			boolean isLongLong = ((IBasicType) cdtType).isLongLong();
-			boolean isComplex = ((IBasicType) cdtType).isComplex();
-			boolean isImaginary = ((IBasicType) cdtType).isImaginary();
-
-			IListWriter modifiers = vf.listWriter();
-			if (isSigned)
-				modifiers.append(builder.Modifier_signed(loc));
-			if (isUnsigned)
-				modifiers.append(builder.Modifier_unsigned(loc));
-			if (isShort)
-				modifiers.append(builder.Modifier_short(loc));
-			if (isLong)
-				modifiers.append(builder.Modifier_long(loc));
-			if (isLongLong)
-				modifiers.append(builder.Modifier_longlong(loc));
-			if (isComplex)
-				modifiers.append(builder.Modifier_complex(loc));
-			if (isImaginary)
-				modifiers.append(builder.Modifier_imaginary(loc));
-
-			switch (kind) {
-			case eBoolean:
-				return builder.Type_basicType(builder.Type_bool(loc), modifiers.done(), loc);
-			case eChar:
-				return builder.Type_basicType(builder.Type_char(loc), modifiers.done(), loc);
-			case eChar16:
-				return builder.Type_basicType(builder.Type_char16_t(loc), modifiers.done(), loc);
-			case eChar32:
-				return builder.Type_basicType(builder.Type_char32_t(loc), modifiers.done(), loc);
-			case eDecimal128:
-				return builder.Type_basicType(builder.Type_decimal128(loc), modifiers.done(), loc);
-			case eDecimal32:
-				return builder.Type_basicType(builder.Type_decimal32(loc), modifiers.done(), loc);
-			case eDecimal64:
-				return builder.Type_basicType(builder.Type_decimal64(loc), modifiers.done(), loc);
-			case eDouble:
-				return builder.Type_basicType(builder.Type_double(loc), modifiers.done(), loc);
-			case eFloat:
-				return builder.Type_basicType(builder.Type_float(loc), modifiers.done(), loc);
-			case eFloat128:
-				return builder.Type_basicType(builder.Type_float128(loc), modifiers.done(), loc);
-			case eInt:
-				return builder.Type_basicType(builder.Type_integer(loc), modifiers.done(), loc);
-			case eInt128:
-				return builder.Type_basicType(builder.Type_int128(loc), modifiers.done(), loc);
-			case eNullPtr:
-				return builder.Type_basicType(builder.Type_nullptr(loc), modifiers.done(), loc);
-			case eUnspecified:
-				return builder.Type_basicType(builder.Type_unspecified(loc), modifiers.done(), loc);
-			case eVoid:
-				return builder.Type_basicType(builder.Type_void(loc), modifiers.done(), loc);
-			case eWChar:
-				return builder.Type_basicType(builder.Type_wchar_t(loc), modifiers.done(), loc);
-			default:
-				throw new RuntimeException("Unknown basictype kind encountered: " + kind + ". Exiting");
-			}
-		} else if (cdtType instanceof ICompositeType) { // check subinterfaces
-			int key = ((ICompositeType) cdtType).getKey();
-			if (!(cdtType instanceof ICPPClassType))
-				throw new RuntimeException("ICompositeType has C-style type?");
-			if (cdtType instanceof ICPPClassSpecialization) {
-			} else if (cdtType instanceof ICPPClassTemplate) {
-				throw new RuntimeException("NYI");
-			} else {// TODO: check
-				return builder.Type_classType(builder.Expression_nyi((((ICompositeType) cdtType).getName()), loc), loc);
-			}
-		} else if (cdtType instanceof ICPPAliasTemplate) {
-			org.eclipse.cdt.core.dom.ast.IType _type = ((ICPPAliasTemplate) cdtType).getType();
-			ICPPTemplateParameter[] _parameters = ((ICPPAliasTemplate) cdtType).getTemplateParameters();
-		} else if (cdtType instanceof ICPPParameterPackType) {
-			// Not actually a type?
-			org.eclipse.cdt.core.dom.ast.IType _type = ((ICPPParameterPackType) cdtType).getType();
-		} else if (cdtType instanceof ICPPReferenceType) {
-			org.eclipse.cdt.core.dom.ast.IType _type = ((ICPPReferenceType) cdtType).getType();
-			boolean isRValueReference = ((ICPPReferenceType) cdtType).isRValueReference();
-		} else if (cdtType instanceof ICPPTemplateTypeParameter) {
-			try {
-				org.eclipse.cdt.core.dom.ast.IType _default = ((ICPPTemplateTypeParameter) cdtType).getDefault();
-				short parameterPosition = ((ICPPTemplateTypeParameter) cdtType).getParameterPosition();
-				short templateNestingLevel = ((ICPPTemplateTypeParameter) cdtType).getTemplateNestingLevel();
-				int parameterId = ((ICPPTemplateTypeParameter) cdtType).getParameterID();
-				ICPPTemplateArgument defaultValue = ((ICPPTemplateTypeParameter) cdtType).getDefaultValue();
-				boolean isParameterPack = ((ICPPTemplateTypeParameter) cdtType).isParameterPack();
-			} catch (DOMException e) {
-				e.printStackTrace(ctx.getStdErr());
-			}
-		} else if (cdtType instanceof ICPPTypeSpecialization) {
-			if (cdtType instanceof ICPPClassSpecialization) {
-
-			} else if (cdtType instanceof ICPPEnumerationSpecialization) {
-
-			} else
-				throw new RuntimeException(
-						"Unknown ICPPTypeSpecialization subclass " + cdtType.getClass().getName() + ". Exiting");
-		} else if (cdtType instanceof ICPPUnaryTypeTransformation) {
-			Operator _operator = ((ICPPUnaryTypeTransformation) cdtType).getOperator();
-			org.eclipse.cdt.core.dom.ast.IType _operand = ((ICPPUnaryTypeTransformation) cdtType).getOperand();
-		} else if (cdtType instanceof ICPPUnknownType) {
-			// Do not implement?
-		} else if (cdtType instanceof IEnumeration) {
-			if (cdtType instanceof ICPPEnumeration) {
-
-			} else {
-
-			}
-		} else if (cdtType instanceof IIndexType) {
-			// Do not implement?
-		} else if (cdtType instanceof IPointerType) {
-			org.eclipse.cdt.core.dom.ast.IType _type = ((IPointerType) cdtType).getType();
-			boolean isConst = ((IPointerType) cdtType).isConst();
-			boolean isVolatile = ((IPointerType) cdtType).isVolatile();
-			boolean isRestruct = ((IPointerType) cdtType).isRestrict();
-		} else if (cdtType instanceof IProblemBinding) {
-			if (doTypeLogging)
-				err("ERROR: IProblemBinding: " + ((IProblemBinding) cdtType).getMessage() + ", returning unspecified");
-		} else if (cdtType instanceof IProblemType) {
-			if (doTypeLogging)
-				err("ERROR: IProblemType: " + ((IProblemType) cdtType).getMessage() + ", returning unspecified");
-		} else if (cdtType instanceof IQualifierType) {
-			boolean isConst = ((IQualifierType) cdtType).isConst();
-			boolean isVolatile = ((IQualifierType) cdtType).isVolatile();
-			org.eclipse.cdt.core.dom.ast.IType _type = ((IQualifierType) cdtType).getType();
-		} else if (cdtType instanceof ITypeContainer) {
-			// Do not implement? CDT internal
-		} else if (cdtType instanceof ITypedef) {
-			org.eclipse.cdt.core.dom.ast.IType _type = ((ITypedef) cdtType).getType();
-		} else { // unsubinterfaced classes
-
-		}
-		if (doTypeLogging)
-			err("WARNING: Type unresolved, returning unspecified");
-		if (doTypeLogging)
-			err("Input was " + cdtType);
-		return builder.Type_unspecified(loc);
-
-		// throw new RuntimeException("NYI");
 	}
 
 	public int visit(IASTFieldReference expression) {
@@ -3047,5 +2867,155 @@ public class Parser extends ASTVisitor {
 	public int visit(ASTAmbiguousNode astAmbiguousNode) {
 		err("AstAmbiguousNode: " + astAmbiguousNode.getRawSignature());
 		throw new RuntimeException("NYI");
+	}
+
+	public IConstructor convertType(IType cdtType) {
+		ISourceLocation loc = vf.sourceLocation("TODO");
+		if (cdtType instanceof IArrayType) {
+			IType _type = ((IArrayType) cdtType).getType();
+			org.eclipse.cdt.core.dom.ast.IValue _size = ((IArrayType) cdtType).getSize();
+			stack.push(builder.Type_arrayType(convertType(_type), _size.numericalValue().intValue(), loc));
+		} else if (cdtType instanceof IBasicType) {
+			Kind kind = ((IBasicType) cdtType).getKind();
+			boolean isSigned = ((IBasicType) cdtType).isSigned();
+			boolean isUnsigned = ((IBasicType) cdtType).isUnsigned();
+			boolean isShort = ((IBasicType) cdtType).isShort();
+			boolean isLong = ((IBasicType) cdtType).isLong();
+			boolean isLongLong = ((IBasicType) cdtType).isLongLong();
+			boolean isComplex = ((IBasicType) cdtType).isComplex();
+			boolean isImaginary = ((IBasicType) cdtType).isImaginary();
+
+			IListWriter modifiers = vf.listWriter();
+			if (isSigned)
+				modifiers.append(builder.Modifier_signed(loc));
+			if (isUnsigned)
+				modifiers.append(builder.Modifier_unsigned(loc));
+			if (isShort)
+				modifiers.append(builder.Modifier_short(loc));
+			if (isLong)
+				modifiers.append(builder.Modifier_long(loc));
+			if (isLongLong)
+				modifiers.append(builder.Modifier_longlong(loc));
+			if (isComplex)
+				modifiers.append(builder.Modifier_complex(loc));
+			if (isImaginary)
+				modifiers.append(builder.Modifier_imaginary(loc));
+
+			switch (kind) {
+			case eBoolean:
+				return builder.Type_basicType(builder.Type_bool(loc), modifiers.done(), loc);
+			case eChar:
+				return builder.Type_basicType(builder.Type_char(loc), modifiers.done(), loc);
+			case eChar16:
+				return builder.Type_basicType(builder.Type_char16_t(loc), modifiers.done(), loc);
+			case eChar32:
+				return builder.Type_basicType(builder.Type_char32_t(loc), modifiers.done(), loc);
+			case eDecimal128:
+				return builder.Type_basicType(builder.Type_decimal128(loc), modifiers.done(), loc);
+			case eDecimal32:
+				return builder.Type_basicType(builder.Type_decimal32(loc), modifiers.done(), loc);
+			case eDecimal64:
+				return builder.Type_basicType(builder.Type_decimal64(loc), modifiers.done(), loc);
+			case eDouble:
+				return builder.Type_basicType(builder.Type_double(loc), modifiers.done(), loc);
+			case eFloat:
+				return builder.Type_basicType(builder.Type_float(loc), modifiers.done(), loc);
+			case eFloat128:
+				return builder.Type_basicType(builder.Type_float128(loc), modifiers.done(), loc);
+			case eInt:
+				return builder.Type_basicType(builder.Type_integer(loc), modifiers.done(), loc);
+			case eInt128:
+				return builder.Type_basicType(builder.Type_int128(loc), modifiers.done(), loc);
+			case eNullPtr:
+				return builder.Type_basicType(builder.Type_nullptr(loc), modifiers.done(), loc);
+			case eUnspecified:
+				return builder.Type_basicType(builder.Type_unspecified(loc), modifiers.done(), loc);
+			case eVoid:
+				return builder.Type_basicType(builder.Type_void(loc), modifiers.done(), loc);
+			case eWChar:
+				return builder.Type_basicType(builder.Type_wchar_t(loc), modifiers.done(), loc);
+			default:
+				throw new RuntimeException("Unknown basictype kind encountered: " + kind + ". Exiting");
+			}
+		} else if (cdtType instanceof ICompositeType) { // check subinterfaces
+			int key = ((ICompositeType) cdtType).getKey();
+			if (!(cdtType instanceof ICPPClassType))
+				throw new RuntimeException("ICompositeType has C-style type?");
+			if (cdtType instanceof ICPPClassSpecialization) {
+			} else if (cdtType instanceof ICPPClassTemplate) {
+				throw new RuntimeException("NYI");
+			} else {// TODO: check
+				return builder.Type_classType(builder.Expression_nyi((((ICompositeType) cdtType).getName()), loc), loc);
+			}
+		} else if (cdtType instanceof ICPPAliasTemplate) {
+			org.eclipse.cdt.core.dom.ast.IType _type = ((ICPPAliasTemplate) cdtType).getType();
+			ICPPTemplateParameter[] _parameters = ((ICPPAliasTemplate) cdtType).getTemplateParameters();
+		} else if (cdtType instanceof ICPPParameterPackType) {
+			// Not actually a type?
+			org.eclipse.cdt.core.dom.ast.IType _type = ((ICPPParameterPackType) cdtType).getType();
+		} else if (cdtType instanceof ICPPReferenceType) {
+			org.eclipse.cdt.core.dom.ast.IType _type = ((ICPPReferenceType) cdtType).getType();
+			boolean isRValueReference = ((ICPPReferenceType) cdtType).isRValueReference();
+		} else if (cdtType instanceof ICPPTemplateTypeParameter) {
+			try {
+				org.eclipse.cdt.core.dom.ast.IType _default = ((ICPPTemplateTypeParameter) cdtType).getDefault();
+				short parameterPosition = ((ICPPTemplateTypeParameter) cdtType).getParameterPosition();
+				short templateNestingLevel = ((ICPPTemplateTypeParameter) cdtType).getTemplateNestingLevel();
+				int parameterId = ((ICPPTemplateTypeParameter) cdtType).getParameterID();
+				ICPPTemplateArgument defaultValue = ((ICPPTemplateTypeParameter) cdtType).getDefaultValue();
+				boolean isParameterPack = ((ICPPTemplateTypeParameter) cdtType).isParameterPack();
+			} catch (DOMException e) {
+				e.printStackTrace(ctx.getStdErr());
+			}
+		} else if (cdtType instanceof ICPPTypeSpecialization) {
+			if (cdtType instanceof ICPPClassSpecialization) {
+
+			} else if (cdtType instanceof ICPPEnumerationSpecialization) {
+
+			} else
+				throw new RuntimeException(
+						"Unknown ICPPTypeSpecialization subclass " + cdtType.getClass().getName() + ". Exiting");
+		} else if (cdtType instanceof ICPPUnaryTypeTransformation) {
+			Operator _operator = ((ICPPUnaryTypeTransformation) cdtType).getOperator();
+			org.eclipse.cdt.core.dom.ast.IType _operand = ((ICPPUnaryTypeTransformation) cdtType).getOperand();
+		} else if (cdtType instanceof ICPPUnknownType) {
+			// Do not implement?
+		} else if (cdtType instanceof IEnumeration) {
+			if (cdtType instanceof ICPPEnumeration) {
+
+			} else {
+
+			}
+		} else if (cdtType instanceof IIndexType) {
+			// Do not implement?
+		} else if (cdtType instanceof IPointerType) {
+			org.eclipse.cdt.core.dom.ast.IType _type = ((IPointerType) cdtType).getType();
+			boolean isConst = ((IPointerType) cdtType).isConst();
+			boolean isVolatile = ((IPointerType) cdtType).isVolatile();
+			boolean isRestruct = ((IPointerType) cdtType).isRestrict();
+		} else if (cdtType instanceof IProblemBinding) {
+			if (doTypeLogging)
+				err("ERROR: IProblemBinding: " + ((IProblemBinding) cdtType).getMessage() + ", returning unspecified");
+		} else if (cdtType instanceof IProblemType) {
+			if (doTypeLogging)
+				err("ERROR: IProblemType: " + ((IProblemType) cdtType).getMessage() + ", returning unspecified");
+		} else if (cdtType instanceof IQualifierType) {
+			boolean isConst = ((IQualifierType) cdtType).isConst();
+			boolean isVolatile = ((IQualifierType) cdtType).isVolatile();
+			org.eclipse.cdt.core.dom.ast.IType _type = ((IQualifierType) cdtType).getType();
+		} else if (cdtType instanceof ITypeContainer) {
+			// Do not implement? CDT internal
+		} else if (cdtType instanceof ITypedef) {
+			org.eclipse.cdt.core.dom.ast.IType _type = ((ITypedef) cdtType).getType();
+		} else { // unsubinterfaced classes
+
+		}
+		if (doTypeLogging)
+			err("WARNING: Type unresolved, returning unspecified");
+		if (doTypeLogging)
+			err("Input was " + cdtType);
+		return builder.Type_unspecified(loc);
+
+		// throw new RuntimeException("NYI");
 	}
 }
