@@ -343,15 +343,16 @@ data Modifier(loc src = |unknown:///|)
     | \captDefByReference()
     ;
     
-loc c = |file://c:|;
-    
+map[str, list[loc]] classPaths =
+  ("vs14": [|file://c:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2014.0/VC/include/|],
+  "mingw": [|file://c:/MinGW/include|, |file://c:/MinGW/include/sys|, |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include|,
+    |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++|, |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/bits|,
+    |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/backward|, |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/debug|,
+    |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/ext|, |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/mingw32/bits|]);
+
 @javaClass{lang.cpp.internal.Parser}  
 @reflect{need access to streams}   
-java Declaration parseCpp(loc file,// list[loc] includes = [|file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include/c++/4.2.1|, |file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include|]);
- list[loc] includePaths = [|file://c:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2014.0/VC/include/|]);
- //list[loc] includes = [c+"MinGW/lib/gcc/mingw32/5.3.0/include", c+"MinGW/lib/gcc/mingw32/5.3.0/include/c++"]);
- //list[loc] includes = [c+"mingw/lib/gcc/mingw32/5.3.0/",c+"mingw/lib/gcc/",c+"mingw/mingw32/lib/",c+"mingw/lib/"]);
-//list[loc] includes = [c+"mingw\\bin\\..\\lib\\gcc\\mingw32\\5.3.0",c+"mingw\\bin\\..\\lib\\gcc",c+"mingw\\bin\\..\\lib\\gcc\\mingw32\\5.3.0..\\..\\..\\..\\mingw32\\lib",c+"mingw\\bin\\..\\lib\\gcc\\mingw32\\5.3.0\\..\\..\\.."]);
+java Declaration parseCpp(loc file, list[loc] includePaths = classPaths["mingw"]);
 
 @javaClass{lang.cpp.internal.Parser}  
 @reflect{need access to streams}   
