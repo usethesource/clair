@@ -41,6 +41,9 @@ data DeclSpecifier(loc src = |unknown:///|)
     | \enum(DeclSpecifier baseType, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
     | \enumScoped(Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
     | \enumScoped(DeclSpecifier baseType, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
+    
+     // Non-standard MSVC throw ellipsis
+    | \msThrowEllipsis()
     ;
     
 data Declaration(loc src=|unknown:///|)
@@ -345,14 +348,19 @@ data Modifier(loc src = |unknown:///|)
     
 map[str, list[loc]] classPaths =
   ("vs14": [|file://c:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2014.0/VC/include/|],
+  "vs12": [|file:///c:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2012.0/VC/include|,
+    |file:///c:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2012.0/VC/atlmfc/include|,
+    |file:///c:/Program%20Files%20(x86)/Windows%20Kits/8.0/Include/um|,
+    |file:///c:/Program%20Files%20(x86)/Windows%20Kits/8.0/Include/shared|],
   "mingw": [|file://c:/MinGW/include|, |file://c:/MinGW/include/sys|, |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include|,
     |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++|, |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/bits|,
     |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/backward|, |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/debug|,
     |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/ext|, |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/mingw32/bits|]);
 
+
 @javaClass{lang.cpp.internal.Parser}  
 @reflect{need access to streams}   
-java Declaration parseCpp(loc file, list[loc] includePaths = classPaths["mingw"]);
+java Declaration parseCpp(loc file, list[loc] includePaths = classPaths["vs12"]);
 
 @javaClass{lang.cpp.internal.Parser}  
 @reflect{need access to streams}   

@@ -2636,8 +2636,12 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTTypeId typeId) {
 		ISourceLocation loc = getSourceLocation(typeId);
 		if (typeId instanceof IASTProblemTypeId) {
-			throw new RuntimeException("IASTProblemTypeId encountered! "
-					+ ((IASTProblemTypeId) typeId).getProblem().getMessageWithLocation());
+			if (typeId.getRawSignature().equals("..."))
+				stack.push(builder.Expression_typeId(
+						builder.DeclSpecifier_msThrowEllipsis(loc, vf.sourceLocation("unknown:///")), loc));
+			else
+				throw new RuntimeException("IASTProblemTypeId encountered! "
+						+ ((IASTProblemTypeId) typeId).getProblem().getMessageWithLocation());
 		} else {
 			IASTDeclSpecifier _declSpecifier = typeId.getDeclSpecifier();
 			IASTDeclarator _abstractDeclarator = typeId.getAbstractDeclarator();
