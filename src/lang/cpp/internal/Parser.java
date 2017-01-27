@@ -3,6 +3,7 @@ package lang.cpp.internal;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -225,6 +226,8 @@ public class Parser extends ASTVisitor {
 	private Stack<IConstructor> stack = new Stack<IConstructor>();
 	private BindingsResolver br = new BindingsResolver();
 
+	boolean printOutMsgs = true;
+	boolean printErrMsgs = false;
 	boolean doTypeLogging = false;
 	ISourceLocation sourceLoc;
 
@@ -235,12 +238,18 @@ public class Parser extends ASTVisitor {
 		this.includeInactiveNodes = true;
 	}
 
+	Map<String, String> fileToInclude = new HashMap<String, String>();
+
+	public Map<String, String> getFileMap() {
+		return Collections.unmodifiableMap(fileToInclude);
+	}
+
 	public IValue parseCpp(ISourceLocation file, IList includePath, IEvaluatorContext ctx) {
 		try {
 			setIEvaluatorContext(ctx);
 			sourceLoc = file;
 			br.setSourceLocation(file);
-			FileContent fc = FileContent.create(file.getPath(),
+			FileContent fc = FileContent.create(file.getAuthority() + file.getPath(),
 					((IString) new Prelude(vf).readFile(file)).getValue().toCharArray());
 			IScannerInfo si = new ScannerInfo();
 
@@ -272,15 +281,28 @@ public class Parser extends ASTVisitor {
 
 				@Override
 				public String findInclusion(String include, String currentFile) {
+					String filePath = include.substring(0, include.lastIndexOf('/') + 1);
+					String fileName = include.substring(include.lastIndexOf('/') + 1);
 					for (String path : path) {
-						File[] files = new File(path).listFiles();
+						File[] files = new File(path + "/" + filePath).listFiles();
 						if (files == null)
-							throw new IllegalArgumentException("IncludePath entry " + path + " is not a directory");
+							continue;
 						for (File f : files)
-							if (f.getName().equals(include.substring(include.lastIndexOf('/') + 1)))
+							if (isRightFile(f.getName(), fileName)) {
+								String oldEntry = fileToInclude.put(f.getAbsolutePath(), include);
+								if (oldEntry != null && !oldEntry.equals(include))
+									err("FileToInclude: overwritten entry for " + f.getAbsolutePath() + ": was "
+											+ oldEntry + ", is " + fileToInclude.get(f.getAbsolutePath()));
 								return f.getAbsolutePath();
+							}
 					}
-					return null;
+					throw new RuntimeException("Include " + include + " for " + currentFile + " not found");
+				}
+
+				private boolean isRightFile(String include, String toMatch) {
+					if (System.getProperty("os.name").contains("Win"))
+						return include.equalsIgnoreCase(toMatch);
+					return include.equals(toMatch);
 				}
 			};
 
@@ -307,6 +329,10 @@ public class Parser extends ASTVisitor {
 			if (result == null) {
 				throw RuntimeExceptionFactory.parseError(file, null, null);
 			}
+			if (printErrMsgs)
+				ctx.getStdErr().print(errMsgs.toString());
+			if (printOutMsgs)
+				ctx.getStdOut().print(outMsgs.toString());
 			return result;
 		} catch (CoreException e) {
 			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
@@ -359,19 +385,23 @@ public class Parser extends ASTVisitor {
 		return StringUtils.repeat(" ", prefix);
 	}
 
+	StringBuilder outMsgs = new StringBuilder();
+	StringBuilder errMsgs = new StringBuilder();
+
 	private void out(String msg) {
-		ctx.getStdOut().println(spaces() + msg.replace("\n", "\n" + spaces()));
+		outMsgs.append(spaces() + msg.replace("\n", "\n" + spaces()) + "\n");
 	}
 
 	private void err(String msg) {
-		ctx.getStdErr().println(spaces() + msg.replace("\n", "\n" + spaces()));
+		errMsgs.append(spaces() + msg.replace("\n", "\n" + spaces()) + "\n");
 	}
 
 	public ISourceLocation getSourceLocation(IASTNode node) {
 		IASTFileLocation astFileLocation = node.getFileLocation();
-		if (astFileLocation != null)
-			return vf.sourceLocation(sourceLoc, astFileLocation.getNodeOffset(), astFileLocation.getNodeLength());
-		else
+		if (astFileLocation != null) {
+			return vf.sourceLocation(vf.sourceLocation(astFileLocation.getFileName()), astFileLocation.getNodeOffset(),
+					astFileLocation.getNodeLength());
+		} else
 			return vf.sourceLocation(URIUtil.assumeCorrect("unknown:///", "", ""));
 	}
 
