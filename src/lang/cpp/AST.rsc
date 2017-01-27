@@ -238,6 +238,9 @@ data Expression(loc src = |unknown:///|)
     | \capture(Expression name, loc decl = |unknown:///|)
     | \captureByRef(Expression name, loc decl = |unknown:///|)
     | \captureThisPtr()
+    
+    | \problemExpression()
+    
     ;                       
  
 
