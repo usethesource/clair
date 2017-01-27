@@ -58,6 +58,8 @@ public class AST {
     = tf.constructor(typestore,_DeclSpecifier,"etsEnum",tf.listType(_Modifier),"modifiers",_Expression,"name");
   private static final Type _DeclSpecifier_declSpecifier_3 
     = tf.constructor(typestore,_DeclSpecifier,"declSpecifier",tf.listType(_Modifier),"modifiers",_Type,"type",_Expression,"expression");
+  private static final Type _DeclSpecifier_msThrowEllipsis_0 
+    = tf.constructor(typestore,_DeclSpecifier,"msThrowEllipsis");
   private static final Type _DeclSpecifier_class_3 
     = tf.constructor(typestore,_DeclSpecifier,"class",_Expression,"name",tf.listType(_Declaration),"baseSpecifiers",tf.listType(_Declaration),"members");
   private static final Type _DeclSpecifier_class_2 
@@ -326,6 +328,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"newWithArgs",tf.listType(_Expression),"arguments",_Expression,"typeId");
   private static final Type _Expression_designatedInitializer_2 
     = tf.constructor(typestore,_Expression,"designatedInitializer",tf.listType(_Expression),"designators",_Expression,"operand");
+  private static final Type _Expression_problemExpression_0 
+    = tf.constructor(typestore,_Expression,"problemExpression");
   private static final Type _Expression_integerConstant_1 
     = tf.constructor(typestore,_Expression,"integerConstant",tf.stringType(),"value");
   private static final Type _Expression_staticCast_2 
@@ -830,6 +834,14 @@ public class AST {
     kwParams.put("src", $loc);
     
     return vf.constructor(_DeclSpecifier_declSpecifier_3 , $modifiers, $type, $expression).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor DeclSpecifier_msThrowEllipsis(ISourceLocation $loc, ISourceLocation $decl) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    return vf.constructor(_DeclSpecifier_msThrowEllipsis_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor DeclSpecifier_class(IConstructor $name, IList $baseSpecifiers, IList $members, ISourceLocation $loc, ISourceLocation $decl) {
@@ -2764,6 +2776,14 @@ public class AST {
     kwParams.put("src", $loc);
     
     return vf.constructor(_Expression_designatedInitializer_2 , $designators, $operand).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Expression_problemExpression(ISourceLocation $loc) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    return vf.constructor(_Expression_problemExpression_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_integerConstant(String $value, ISourceLocation $loc) {
