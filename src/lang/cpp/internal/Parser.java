@@ -1931,8 +1931,11 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTProblemExpression expression) {
-		out("ProblemExpression: " + expression.getRawSignature());
-		throw new RuntimeException("NYI");
+		ISourceLocation loc = getSourceLocation(expression);
+		IASTProblem problem = expression.getProblem();
+		err("ProblemExpression " + expression.getRawSignature() + ":" + problem.getMessageWithLocation());
+		stack.push(builder.Expression_problemExpression(loc));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTFunctionCallExpression expression) {
