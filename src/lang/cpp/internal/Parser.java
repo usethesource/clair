@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Stack;
 import java.util.stream.Stream;
 
@@ -213,6 +215,7 @@ import org.rascalmpl.uri.URIUtil;
 import org.rascalmpl.value.IConstructor;
 import org.rascalmpl.value.IList;
 import org.rascalmpl.value.IListWriter;
+import org.rascalmpl.value.IMap;
 import org.rascalmpl.value.ISourceLocation;
 import org.rascalmpl.value.IString;
 import org.rascalmpl.value.IValue;
@@ -244,14 +247,22 @@ public class Parser extends ASTVisitor {
 		return Collections.unmodifiableMap(fileToInclude);
 	}
 
-	public IValue parseCpp(ISourceLocation file, IList includePath, IEvaluatorContext ctx) {
+	public IValue parseCpp(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
 		try {
 			setIEvaluatorContext(ctx);
 			sourceLoc = file;
 			br.setSourceLocation(file);
 			FileContent fc = FileContent.create(file.getAuthority() + file.getPath(),
 					((IString) new Prelude(vf).readFile(file)).getValue().toCharArray());
-			IScannerInfo si = new ScannerInfo();
+
+			Map<String, String> macros = new HashMap<String, String>();
+			Iterator<Entry<IValue, IValue>> it = additionalMacros.entryIterator();
+			while (it.hasNext()) {
+				Entry<IValue, IValue> entry = (Entry<IValue, IValue>) it.next();
+				macros.put(entry.getKey().toString().replace("\"", ""), entry.getValue().toString().replace("\"", ""));
+			}
+
+			IScannerInfo si = new ScannerInfo(macros, null);
 
 			InternalFileContentProvider ifcp = new InternalFileContentProvider() {
 				@Override
@@ -2523,8 +2534,6 @@ public class Parser extends ASTVisitor {
 		prefix += 4;
 		err(statement.getProblem().getMessageWithLocation());
 		err(statement.getRawSignature());
-		IASTNode parent = statement.getParent();
-		out("Parent " + parent.getClass().getSimpleName() + ": " + parent.getRawSignature());
 		prefix -= 4;
 		stack.push(builder.Statement_problem(statement.getRawSignature(), getSourceLocation(statement)));
 		return PROCESS_ABORT;

@@ -360,10 +360,11 @@ map[str, list[loc]] classPaths =
     |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/backward|, |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/debug|,
     |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/ext|, |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/mingw32/bits|]);
 
+map[str,str] macros = ("_MSC_VER": "1700");
 
 @javaClass{lang.cpp.internal.Parser}  
 @reflect{need access to streams}   
-java Declaration parseCpp(loc file, list[loc] includePaths = classPaths["vs12"]);
+java Declaration parseCpp(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = macros);
 
 @javaClass{lang.cpp.internal.Parser}  
 @reflect{need access to streams}   
