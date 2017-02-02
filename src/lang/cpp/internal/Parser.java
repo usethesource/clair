@@ -296,7 +296,7 @@ public class Parser extends ASTVisitor {
 					String filePath = include.substring(0, include.lastIndexOf('/') + 1);
 					String fileName = include.substring(include.lastIndexOf('/') + 1);
 					for (String path : path) {
-						File[] files = new File(path + "/" + filePath).listFiles();
+						File[] files = new File(path, filePath).listFiles();
 						if (files == null)
 							continue;
 						for (File f : files)
