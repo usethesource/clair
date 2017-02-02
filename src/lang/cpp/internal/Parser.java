@@ -292,6 +292,7 @@ public class Parser extends ASTVisitor {
 
 				@Override
 				public String findInclusion(String include, String currentFile) {
+					include = include.replace("\\", "/");
 					String filePath = include.substring(0, include.lastIndexOf('/') + 1);
 					String fileName = include.substring(include.lastIndexOf('/') + 1);
 					for (String path : path) {
@@ -325,7 +326,7 @@ public class Parser extends ASTVisitor {
 
 				@Override
 				public void traceLog(String message) {
-					ctx.getStdErr().println(message);
+					// ctx.getStdErr().println(message);
 				}
 
 				@Override
