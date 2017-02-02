@@ -62,15 +62,16 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableTemplate;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.rascalmpl.interpreter.IEvaluatorContext;
+import org.rascalmpl.uri.URIUtil;
 import org.rascalmpl.value.ISourceLocation;
 import org.rascalmpl.value.IValueFactory;
 import org.rascalmpl.values.ValueFactoryFactory;
 
 public class BindingsResolver {
 	private final IValueFactory vf = ValueFactoryFactory.getValueFactory();
-	public final ISourceLocation UNKNOWN = makeBinding("unknown", null, null);
-	public final ISourceLocation NYI = makeBinding("nyi", null, null);
-	public final ISourceLocation FIXME = makeBinding("todo", null, null);
+	public final ISourceLocation UNKNOWN = makeBinding("UNKNOWN", null, null);
+	public final ISourceLocation NYI = makeBinding("NYI", null, null);
+	public final ISourceLocation FIXME = makeBinding("FIXME", null, null);
 	private IEvaluatorContext ctx;
 
 	static int prefix = 0;
@@ -94,14 +95,14 @@ public class BindingsResolver {
 
 	private ISourceLocation resolveOwner(IBinding binding) throws URISyntaxException {
 		if (binding == null)
-			return sourceLoc;
+			return URIUtil.rootLocation("cpp");
 		IBinding owner = binding.getOwner();
 		if (binding.equals(owner)) {
-			err("Binding " + binding + " has itself as owner??");
+			// err("Binding " + binding + " has itself as owner??");
 			return FIXME;
 		}
 		if (owner == null)
-			return sourceLoc;
+			return URIUtil.rootLocation("cpp");
 		else
 			return resolveBinding(owner);
 	}
@@ -153,7 +154,7 @@ public class BindingsResolver {
 	private ISourceLocation resolveIProblemBinding(IProblemBinding binding) {
 		// err("Trying to resolve " + binding.getClass().getSimpleName() + ": "
 		// + binding);
-		return NYI;
+		return UNKNOWN;
 	}
 
 	private ISourceLocation resolveIMacroBinding(IMacroBinding binding) {
@@ -274,6 +275,8 @@ public class BindingsResolver {
 
 	private ISourceLocation resolveICPPUsingDeclaration(ICPPUsingDeclaration binding) throws URISyntaxException {
 		ISourceLocation owner = resolveOwner(binding);
+		// URIUtil.changeScheme(URIUtil.getChildLocation(owner,
+		// binding.getName()), "cpp+usingDeclaration");
 		return vf.sourceLocation("cpp+usingDeclaration", owner.getAuthority(),
 				owner.getPath() + "/" + binding.getName());
 	}
