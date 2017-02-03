@@ -215,6 +215,7 @@ import org.rascalmpl.value.IConstructor;
 import org.rascalmpl.value.IList;
 import org.rascalmpl.value.IListWriter;
 import org.rascalmpl.value.IMap;
+import org.rascalmpl.value.IMapWriter;
 import org.rascalmpl.value.ISourceLocation;
 import org.rascalmpl.value.IString;
 import org.rascalmpl.value.IValue;
@@ -236,6 +237,23 @@ public class Parser extends ASTVisitor {
 		this.vf = vf;
 		this.builder = new AST(vf);
 		this.includeInactiveNodes = true;
+	}
+
+	public IMap parseFiles(IList files, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
+		setIEvaluatorContext(ctx);
+		IMapWriter map = vf.mapWriter();
+		out("Converting " + files.length() + " files");
+		int c = 0;
+		for (IValue _file : files) {
+			if (c++ > 5) // FIXME
+				continue;
+			ISourceLocation file = (ISourceLocation) _file;
+			out("Converting " + file.toString());
+			IValue ast = new Parser(vf).parseCpp(file, includePath, additionalMacros, ctx);
+			map.put(file, ast);
+		}
+		out("Done converting!");
+		return map.done();
 	}
 
 	public IValue parseCpp(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
