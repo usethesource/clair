@@ -356,18 +356,23 @@ map[str, list[loc]] classPaths =
     |file:///c:/Program%20Files%20(x86)/Windows%20Kits/8.0/Include/um|,
     |file:///c:/Program%20Files%20(x86)/Windows%20Kits/8.0/Include/shared|],
   "mingw": [|file://c:/MinGW/include|, |file://c:/MinGW/include/sys|, |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include|,
-    |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++|, |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/bits|,
-    |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/backward|, |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/debug|,
-    |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/ext|, |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/mingw32/bits|]);
+    |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++|, |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/mingw32|]);
 
 map[str,str] macros = ("_MSC_VER": "1700");
 
 @javaClass{lang.cpp.internal.Parser}  
 @reflect{need access to streams}   
-java Declaration parseCpp(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = macros);
+java Declaration parseCpp(loc file, list[loc] includePaths = classPaths["mingw"], map[str,str] additionalMacros = macros);
 
 @javaClass{lang.cpp.internal.Parser}  
 @reflect{need access to streams}   
 java Expression parseExpression(str expression);
 
 Expression parseExpr(str expression) = unsetRec(parseExpression(expression));
+
+map[loc,Declaration] parseDir(loc dir, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = macros)
+  = parseDir([dir + file|file <- listEntries(dir)], includePaths = includePaths, additionalMacros = additionalMacros);
+
+@javaClass{lang.cpp.internal.Parser}
+@reflect{need access to streams}
+java map[loc,Declaration] parseFiles(list[loc] files, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = macros);
