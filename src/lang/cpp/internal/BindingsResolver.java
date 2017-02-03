@@ -74,14 +74,9 @@ public class BindingsResolver {
 	public final ISourceLocation FIXME = makeBinding("FIXME", null, null);
 	private IEvaluatorContext ctx;
 
-	static int prefix = 0;
-	ISourceLocation sourceLoc = UNKNOWN;
+	private int prefix = 0;
 
-	public void setSourceLocation(ISourceLocation loc) {
-		sourceLoc = loc;
-	}
-
-	static String spaces() {
+	private String spaces() {
 		return StringUtils.repeat(" ", prefix);
 	}
 

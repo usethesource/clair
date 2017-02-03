@@ -3,7 +3,6 @@ package lang.cpp.internal;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -229,8 +228,6 @@ public class Parser extends ASTVisitor {
 	private Stack<IConstructor> stack = new Stack<IConstructor>();
 	private BindingsResolver br = new BindingsResolver();
 
-	boolean printOutMsgs = true;
-	boolean printErrMsgs = false;
 	boolean doTypeLogging = false;
 	ISourceLocation sourceLoc;
 
@@ -241,17 +238,10 @@ public class Parser extends ASTVisitor {
 		this.includeInactiveNodes = true;
 	}
 
-	Map<String, String> fileToInclude = new HashMap<String, String>();
-
-	public Map<String, String> getFileMap() {
-		return Collections.unmodifiableMap(fileToInclude);
-	}
-
 	public IValue parseCpp(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
 		try {
 			setIEvaluatorContext(ctx);
 			sourceLoc = file;
-			br.setSourceLocation(file);
 			FileContent fc = FileContent.create(file.getAuthority() + file.getPath(),
 					((IString) new Prelude(vf).readFile(file)).getValue().toCharArray());
 
@@ -300,13 +290,8 @@ public class Parser extends ASTVisitor {
 						if (files == null)
 							continue;
 						for (File f : files)
-							if (isRightFile(f.getName(), fileName)) {
-								String oldEntry = fileToInclude.put(f.getAbsolutePath(), include);
-								if (oldEntry != null && !oldEntry.equals(include))
-									err("FileToInclude: overwritten entry for " + f.getAbsolutePath() + ": was "
-											+ oldEntry + ", is " + fileToInclude.get(f.getAbsolutePath()));
+							if (isRightFile(f.getName(), fileName))
 								return f.getAbsolutePath();
-							}
 					}
 					throw new RuntimeException("Include " + include + " for " + currentFile + " not found");
 				}
@@ -341,10 +326,6 @@ public class Parser extends ASTVisitor {
 			if (result == null) {
 				throw RuntimeExceptionFactory.parseError(file, null, null);
 			}
-			if (printErrMsgs)
-				ctx.getStdErr().print(errMsgs.toString());
-			if (printOutMsgs)
-				ctx.getStdOut().print(outMsgs.toString());
 			return result;
 		} catch (CoreException e) {
 			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
@@ -397,15 +378,12 @@ public class Parser extends ASTVisitor {
 		return StringUtils.repeat(" ", prefix);
 	}
 
-	StringBuilder outMsgs = new StringBuilder();
-	StringBuilder errMsgs = new StringBuilder();
-
 	private void out(String msg) {
-		outMsgs.append(spaces() + msg.replace("\n", "\n" + spaces()) + "\n");
+		ctx.getStdOut().println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
 
 	private void err(String msg) {
-		errMsgs.append(spaces() + msg.replace("\n", "\n" + spaces()) + "\n");
+		ctx.getStdErr().println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
 
 	public ISourceLocation getSourceLocation(IASTNode node) {
