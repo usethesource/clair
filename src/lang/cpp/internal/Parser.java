@@ -13,7 +13,6 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -82,17 +81,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
-import org.eclipse.cdt.core.dom.ast.IArrayType;
-import org.eclipse.cdt.core.dom.ast.IBasicType;
-import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
-import org.eclipse.cdt.core.dom.ast.ICompositeType;
-import org.eclipse.cdt.core.dom.ast.IEnumeration;
-import org.eclipse.cdt.core.dom.ast.IPointerType;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.dom.ast.IProblemType;
-import org.eclipse.cdt.core.dom.ast.IQualifierType;
-import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
@@ -170,20 +158,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier.SpecifierKind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumerationSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation.Operator;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
@@ -200,9 +174,6 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
-import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
-import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
@@ -2894,153 +2865,4 @@ public class Parser extends ASTVisitor {
 		throw new RuntimeException("NYI");
 	}
 
-	public IConstructor convertType(IType cdtType) {
-		ISourceLocation loc = vf.sourceLocation("TODO");
-		if (cdtType instanceof IArrayType) {
-			IType _type = ((IArrayType) cdtType).getType();
-			org.eclipse.cdt.core.dom.ast.IValue _size = ((IArrayType) cdtType).getSize();
-			stack.push(builder.Type_arrayType(convertType(_type), _size.numericalValue().intValue(), loc));
-		} else if (cdtType instanceof IBasicType) {
-			Kind kind = ((IBasicType) cdtType).getKind();
-			boolean isSigned = ((IBasicType) cdtType).isSigned();
-			boolean isUnsigned = ((IBasicType) cdtType).isUnsigned();
-			boolean isShort = ((IBasicType) cdtType).isShort();
-			boolean isLong = ((IBasicType) cdtType).isLong();
-			boolean isLongLong = ((IBasicType) cdtType).isLongLong();
-			boolean isComplex = ((IBasicType) cdtType).isComplex();
-			boolean isImaginary = ((IBasicType) cdtType).isImaginary();
-
-			IListWriter modifiers = vf.listWriter();
-			if (isSigned)
-				modifiers.append(builder.Modifier_signed(loc));
-			if (isUnsigned)
-				modifiers.append(builder.Modifier_unsigned(loc));
-			if (isShort)
-				modifiers.append(builder.Modifier_short(loc));
-			if (isLong)
-				modifiers.append(builder.Modifier_long(loc));
-			if (isLongLong)
-				modifiers.append(builder.Modifier_longlong(loc));
-			if (isComplex)
-				modifiers.append(builder.Modifier_complex(loc));
-			if (isImaginary)
-				modifiers.append(builder.Modifier_imaginary(loc));
-
-			switch (kind) {
-			case eBoolean:
-				return builder.Type_basicType(builder.Type_bool(loc), modifiers.done(), loc);
-			case eChar:
-				return builder.Type_basicType(builder.Type_char(loc), modifiers.done(), loc);
-			case eChar16:
-				return builder.Type_basicType(builder.Type_char16_t(loc), modifiers.done(), loc);
-			case eChar32:
-				return builder.Type_basicType(builder.Type_char32_t(loc), modifiers.done(), loc);
-			case eDecimal128:
-				return builder.Type_basicType(builder.Type_decimal128(loc), modifiers.done(), loc);
-			case eDecimal32:
-				return builder.Type_basicType(builder.Type_decimal32(loc), modifiers.done(), loc);
-			case eDecimal64:
-				return builder.Type_basicType(builder.Type_decimal64(loc), modifiers.done(), loc);
-			case eDouble:
-				return builder.Type_basicType(builder.Type_double(loc), modifiers.done(), loc);
-			case eFloat:
-				return builder.Type_basicType(builder.Type_float(loc), modifiers.done(), loc);
-			case eFloat128:
-				return builder.Type_basicType(builder.Type_float128(loc), modifiers.done(), loc);
-			case eInt:
-				return builder.Type_basicType(builder.Type_integer(loc), modifiers.done(), loc);
-			case eInt128:
-				return builder.Type_basicType(builder.Type_int128(loc), modifiers.done(), loc);
-			case eNullPtr:
-				return builder.Type_basicType(builder.Type_nullptr(loc), modifiers.done(), loc);
-			case eUnspecified:
-				return builder.Type_basicType(builder.Type_unspecified(loc), modifiers.done(), loc);
-			case eVoid:
-				return builder.Type_basicType(builder.Type_void(loc), modifiers.done(), loc);
-			case eWChar:
-				return builder.Type_basicType(builder.Type_wchar_t(loc), modifiers.done(), loc);
-			default:
-				throw new RuntimeException("Unknown basictype kind encountered: " + kind + ". Exiting");
-			}
-		} else if (cdtType instanceof ICompositeType) { // check subinterfaces
-			int key = ((ICompositeType) cdtType).getKey();
-			if (!(cdtType instanceof ICPPClassType))
-				throw new RuntimeException("ICompositeType has C-style type?");
-			if (cdtType instanceof ICPPClassSpecialization) {
-			} else if (cdtType instanceof ICPPClassTemplate) {
-				throw new RuntimeException("NYI");
-			} else {// TODO: check
-				return builder.Type_classType(builder.Expression_nyi((((ICompositeType) cdtType).getName()), loc), loc);
-			}
-		} else if (cdtType instanceof ICPPAliasTemplate) {
-			org.eclipse.cdt.core.dom.ast.IType _type = ((ICPPAliasTemplate) cdtType).getType();
-			ICPPTemplateParameter[] _parameters = ((ICPPAliasTemplate) cdtType).getTemplateParameters();
-		} else if (cdtType instanceof ICPPParameterPackType) {
-			// Not actually a type?
-			org.eclipse.cdt.core.dom.ast.IType _type = ((ICPPParameterPackType) cdtType).getType();
-		} else if (cdtType instanceof ICPPReferenceType) {
-			org.eclipse.cdt.core.dom.ast.IType _type = ((ICPPReferenceType) cdtType).getType();
-			boolean isRValueReference = ((ICPPReferenceType) cdtType).isRValueReference();
-		} else if (cdtType instanceof ICPPTemplateTypeParameter) {
-			try {
-				org.eclipse.cdt.core.dom.ast.IType _default = ((ICPPTemplateTypeParameter) cdtType).getDefault();
-				short parameterPosition = ((ICPPTemplateTypeParameter) cdtType).getParameterPosition();
-				short templateNestingLevel = ((ICPPTemplateTypeParameter) cdtType).getTemplateNestingLevel();
-				int parameterId = ((ICPPTemplateTypeParameter) cdtType).getParameterID();
-				ICPPTemplateArgument defaultValue = ((ICPPTemplateTypeParameter) cdtType).getDefaultValue();
-				boolean isParameterPack = ((ICPPTemplateTypeParameter) cdtType).isParameterPack();
-			} catch (DOMException e) {
-				e.printStackTrace(ctx.getStdErr());
-			}
-		} else if (cdtType instanceof ICPPTypeSpecialization) {
-			if (cdtType instanceof ICPPClassSpecialization) {
-
-			} else if (cdtType instanceof ICPPEnumerationSpecialization) {
-
-			} else
-				throw new RuntimeException(
-						"Unknown ICPPTypeSpecialization subclass " + cdtType.getClass().getName() + ". Exiting");
-		} else if (cdtType instanceof ICPPUnaryTypeTransformation) {
-			Operator _operator = ((ICPPUnaryTypeTransformation) cdtType).getOperator();
-			org.eclipse.cdt.core.dom.ast.IType _operand = ((ICPPUnaryTypeTransformation) cdtType).getOperand();
-		} else if (cdtType instanceof ICPPUnknownType) {
-			// Do not implement?
-		} else if (cdtType instanceof IEnumeration) {
-			if (cdtType instanceof ICPPEnumeration) {
-
-			} else {
-
-			}
-		} else if (cdtType instanceof IIndexType) {
-			// Do not implement?
-		} else if (cdtType instanceof IPointerType) {
-			org.eclipse.cdt.core.dom.ast.IType _type = ((IPointerType) cdtType).getType();
-			boolean isConst = ((IPointerType) cdtType).isConst();
-			boolean isVolatile = ((IPointerType) cdtType).isVolatile();
-			boolean isRestruct = ((IPointerType) cdtType).isRestrict();
-		} else if (cdtType instanceof IProblemBinding) {
-			if (doTypeLogging)
-				err("ERROR: IProblemBinding: " + ((IProblemBinding) cdtType).getMessage() + ", returning unspecified");
-		} else if (cdtType instanceof IProblemType) {
-			if (doTypeLogging)
-				err("ERROR: IProblemType: " + ((IProblemType) cdtType).getMessage() + ", returning unspecified");
-		} else if (cdtType instanceof IQualifierType) {
-			boolean isConst = ((IQualifierType) cdtType).isConst();
-			boolean isVolatile = ((IQualifierType) cdtType).isVolatile();
-			org.eclipse.cdt.core.dom.ast.IType _type = ((IQualifierType) cdtType).getType();
-		} else if (cdtType instanceof ITypeContainer) {
-			// Do not implement? CDT internal
-		} else if (cdtType instanceof ITypedef) {
-			org.eclipse.cdt.core.dom.ast.IType _type = ((ITypedef) cdtType).getType();
-		} else { // unsubinterfaced classes
-
-		}
-		if (doTypeLogging)
-			err("WARNING: Type unresolved, returning unspecified");
-		if (doTypeLogging)
-			err("Input was " + cdtType);
-		return builder.Type_unspecified(loc);
-
-		// throw new RuntimeException("NYI");
-	}
 }
