@@ -25,6 +25,7 @@ import org.rascalmpl.interpreter.IEvaluatorContext;
 import org.rascalmpl.value.IConstructor;
 import org.rascalmpl.value.IValueFactory;
 
+@SuppressWarnings("restriction")
 public class TypeResolver {
 	private AST builder;
 	private final IValueFactory vf;
