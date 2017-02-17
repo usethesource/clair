@@ -2,6 +2,7 @@ module lang::cpp::AST
 
 import IO;
 import Node;
+import lang::cpp::TypeSymbol;
 
 extend analysis::m3::AST;
 
@@ -107,7 +108,7 @@ data Declaration(loc src=|unknown:///|)
     ;
 
 
-data Expression(loc src = |unknown:///|)
+data Expression(loc src = |unknown:///|, TypeSymbol typ = \unknown())
     = \multiply(Expression lhs, Expression rhs)
     | \divide(Expression lhs, Expression rhs)
     | \modulo(Expression lhs, Expression rhs)
@@ -349,9 +350,13 @@ data Modifier(loc src = |unknown:///|)
     | \captDefByReference()
     ;
     
-map[str, list[loc]] classPaths =
+public map[str, list[loc]] classPaths =
   ("vs14": [|file://c:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2014.0/VC/include/|],
-  "vs12": [|file:///c:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2012.0/VC/include|,
+  "vs12": [|file://c:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2011.0/VC/include|,
+    |file://c:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2011.0/VC/atlmfc/include|,
+    |file://c:/Program%20Files%20(x86)/Windows%20Kits/8.0/Include/um|,
+    |file://c:/Program%20Files%20(x86)/Windows%20Kits/8.0/Include/shared|],
+  "vs13": [|file:///c:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2012.0/VC/include|,
     |file:///c:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2012.0/VC/atlmfc/include|,
     |file:///c:/Program%20Files%20(x86)/Windows%20Kits/8.0/Include/um|,
     |file:///c:/Program%20Files%20(x86)/Windows%20Kits/8.0/Include/shared|],

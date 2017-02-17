@@ -522,6 +522,7 @@ public class BindingsResolver {
 			out("resolveDeclarator has null name. " + node.getClass().getSimpleName() + ": " + node.getRawSignature());
 			return FIXME;
 		}
+
 		return resolveBinding(node.getName().resolveBinding());
 	}
 

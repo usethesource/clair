@@ -199,6 +199,7 @@ public class Parser extends ASTVisitor {
 	private IEvaluatorContext ctx;
 	private Stack<IConstructor> stack = new Stack<IConstructor>();
 	private BindingsResolver br = new BindingsResolver();
+	private TypeResolver tr;
 
 	boolean doTypeLogging = false;
 	ISourceLocation sourceLoc;
@@ -208,6 +209,7 @@ public class Parser extends ASTVisitor {
 		this.vf = vf;
 		this.builder = new AST(vf);
 		this.includeInactiveNodes = true;
+		this.tr = new TypeResolver(builder, vf);
 	}
 
 	public IMap parseFiles(IList files, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
@@ -359,6 +361,7 @@ public class Parser extends ASTVisitor {
 	public void setIEvaluatorContext(IEvaluatorContext ctx) {
 		this.ctx = ctx;
 		br.setIEvaluatorContext(ctx);
+		tr.setIEvaluatorContext(ctx);
 	}
 
 	private int prefix = 0;
