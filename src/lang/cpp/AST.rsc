@@ -371,7 +371,7 @@ java Expression parseExpression(str expression);
 Expression parseExpr(str expression) = unsetRec(parseExpression(expression));
 
 map[loc,Declaration] parseDir(loc dir, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = macros)
-  = parseDir([dir + file|file <- listEntries(dir)], includePaths = includePaths, additionalMacros = additionalMacros);
+  = parseFiles([dir + file|file <- listEntries(dir)], includePaths = includePaths, additionalMacros = additionalMacros);
 
 @javaClass{lang.cpp.internal.Parser}
 @reflect{need access to streams}
