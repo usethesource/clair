@@ -1,6 +1,7 @@
 module lang::cpp::ASTgen
 
-import lang::cpp::AST;  
+import lang::cpp::AST;
+import lang::cpp::TypeSymbol;
 import Type; 
 import List;
 import String;
@@ -13,7 +14,7 @@ public str apiGen(str apiName,list[type[value]] ts) {
 }
 
 public void generate()  {
-  code = generate("AST", [#Declarator, #DeclSpecifier, #Declaration, #Expression, #Type, #Statement, #Modifier]);
+  code = generate("AST", [#Declarator, #DeclSpecifier, #Declaration, #Expression, #Type, #Statement, #Modifier, #TypeSymbol]);
   
   writeFile(|project://clair/src/lang/cpp/internal/AST.java|, code);
 }
@@ -143,14 +144,14 @@ str type2FactoryCall(Symbol t){
   default bool hasTyp(str _, str _) = false;
   
   str declareMaker(Production::cons(label(str cname, Symbol typ:adt(str typeName, list[Symbol] ps)), list[Symbol] args, list[Symbol] kwTypes,set[Attr] _)) 
-     = "public <typeToJavaType(typ)> <typeName>_<cname>(<(declareConsArgs(args)+", ISourceLocation $loc"+(hasDecl(typeName, cname)?", ISourceLocation $decl":"")+(hasTyp(typeName, cname)?", IConstructor $typ":""))[2..]>) {
+     = "public <typeToJavaType(typ)> <typeName>_<cname>(<(declareConsArgs(args)+(typeName=="TypeSymbol"?"":", ISourceLocation $loc"+(hasDecl(typeName, cname)?", ISourceLocation $decl":"")+(hasTyp(typeName, cname)?", IConstructor $typ":"")))[2..]>) {
        '  <for (label(str l, Symbol t) <- args) { str argName = argToSimpleJavaArg(l, t); str argType = type2FactoryCall(t);>  
        '  if (!<argName>.getType().isSubtypeOf(<argType>)) {
        '    throw new IllegalArgumentException(\"Expected \" + <argType> + \" but got \" + <argName>.getType() + \" for <argName>:\" + <argName>);
        '  }
        '  <}>
        '  Map\<String, IValue\> kwParams = new HashMap\<String, IValue\>();
-       '  kwParams.put(\"src\", $loc);
+       '  <(typeName=="TypeSymbol"?"":"kwParams.put(\"src\", $loc);")>
        '  <(hasDecl(typeName, cname)?"kwParams.put(\"decl\", $decl);":"")>
        '  <(hasTyp(typeName, cname)?"kwParams.put(\"typ\", $typ);":"")>
        '  return vf.constructor(_<typeName>_<cname>_<size(args)> <callConsArgs(args)>).asWithKeywordParameters().setParameters(kwParams);
