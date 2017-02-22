@@ -31,6 +31,7 @@ public data TypeSymbol
   | \qualifierType(list[Modifier] modifiers, TypeSymbol \type)
   | \pointerType(list[Modifier] modifiers, TypeSymbol \type)
   | \functionType(TypeSymbol returnType, list[TypeSymbol] parameterTypes, bool takesVarArgs)
+  | \typeContainer(TypeSymbol \type)
   
   
   

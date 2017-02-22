@@ -355,8 +355,7 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveITypeContainer(ITypeContainer type, ISourceLocation src) {
-		IType _type = type.getType();
-		throw new RuntimeException("NYI: resolveITypeContainer");
+		return builder.TypeSymbol_typeContainer(resolveType(type.getType(), src));
 	}
 
 	private IConstructor resolveITypedef(ITypedef type, ISourceLocation src) {
