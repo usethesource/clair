@@ -539,6 +539,8 @@ public class AST {
     = tf.constructor(typestore,_TypeSymbol,"problemType");
   private static final Type _TypeSymbol_float_0 
     = tf.constructor(typestore,_TypeSymbol,"float");
+  private static final Type _TypeSymbol_typeOfDependentExpression_1 
+    = tf.constructor(typestore,_TypeSymbol,"typeOfDependentExpression",tf.sourceLocationType(),"src");
   private static final Type _TypeSymbol_double_0 
     = tf.constructor(typestore,_TypeSymbol,"double");
   private static final Type _TypeSymbol_decimal32_0 
@@ -4169,6 +4171,19 @@ public class AST {
     
     
     return vf.constructor(_TypeSymbol_float_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeSymbol_typeOfDependentExpression(ISourceLocation $src) {
+      
+    if (!$src.getType().isSubtypeOf(tf.sourceLocationType())) {
+      throw new IllegalArgumentException("Expected " + tf.sourceLocationType() + " but got " + $src.getType() + " for $src:" + $src);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeSymbol_typeOfDependentExpression_1 , $src).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeSymbol_double() {
