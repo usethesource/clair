@@ -297,7 +297,8 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveICPPUnknownType(ICPPUnknownType type, ISourceLocation src) {
-		TypeOfDependentExpression foo = (TypeOfDependentExpression) type;
+		if (type instanceof TypeOfDependentExpression)
+			return builder.TypeSymbol_typeOfDependentExpression(src);
 		throw new RuntimeException("NYI: resolveICPPUnknownType (" + type.getClass().getSimpleName() + ")");
 	}
 

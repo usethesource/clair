@@ -34,7 +34,7 @@ public data TypeSymbol
   | \typeContainer(TypeSymbol \type)
   
   
-  
+  | \typeOfDependentExpression(loc src)
   | \problemBinding()
   | \problemType()
   | \noType()
