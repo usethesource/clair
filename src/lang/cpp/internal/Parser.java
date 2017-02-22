@@ -1576,7 +1576,6 @@ public class Parser extends ASTVisitor {
 
 			if (_attributeSpecifiers != null && _attributeSpecifiers.length > 0)
 				err("WARNING: IASTArrayModifier has unimplemented field set");
-
 			if (_constantExpression == null)
 				stack.push(builder.Expression_arrayModifier(loc));
 			else {
@@ -1870,6 +1869,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICPPASTArraySubscriptExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
+		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
 		ICPPASTExpression _arrayExpression = expression.getArrayExpression();
 		ICPPASTInitializerClause _argument = expression.getArgument();
 
@@ -1878,7 +1878,7 @@ public class Parser extends ASTVisitor {
 		_argument.accept(this);
 		IConstructor argument = stack.pop();
 
-		stack.push(builder.Expression_arraySubscriptExpression(arrayExpression, argument, loc));
+		stack.push(builder.Expression_arraySubscriptExpression(arrayExpression, argument, loc, typ));
 
 		return PROCESS_ABORT;
 	}
@@ -1891,19 +1891,20 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTTypeIdExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		int operator = expression.getOperator();
+		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
 		expression.getTypeId().accept(this);
 		switch (operator) {
 		case IASTTypeIdExpression.op_sizeof:
-			stack.push(builder.Expression_sizeof(stack.pop(), loc));
+			stack.push(builder.Expression_sizeof(stack.pop(), loc, typ));
 			break;
 		case IASTTypeIdExpression.op_typeid:
-			stack.push(builder.Expression_typeid(stack.pop(), loc));
+			stack.push(builder.Expression_typeid(stack.pop(), loc, typ));
 			break;
 		case IASTTypeIdExpression.op_alignof: // gnu-only?
-			stack.push(builder.Expression_alignOf(stack.pop(), loc));
+			stack.push(builder.Expression_alignOf(stack.pop(), loc, typ));
 			break;
 		case IASTTypeIdExpression.op_sizeofParameterPack:
-			stack.push(builder.Expression_sizeofParameterPack(stack.pop(), loc));
+			stack.push(builder.Expression_sizeofParameterPack(stack.pop(), loc, typ));
 			break;
 		default:
 			throw new RuntimeException(
@@ -1922,6 +1923,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(IASTFunctionCallExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
+		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
 		IASTExpression _functionName = expression.getFunctionNameExpression();
 		IASTInitializerClause[] _arguments = expression.getArguments();
 
@@ -1932,13 +1934,14 @@ public class Parser extends ASTVisitor {
 			it.accept(this);
 			arguments.append(stack.pop());
 		});
-		stack.push(builder.Expression_functionCall(functionName, arguments.done(), loc));
+		stack.push(builder.Expression_functionCall(functionName, arguments.done(), loc, typ));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTFieldReference expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		ISourceLocation decl = br.resolveBinding(expression);
+		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
 		if (expression instanceof ICPPASTFieldReference) {
 			ICPPASTFieldReference reference = (ICPPASTFieldReference) expression;
 			IASTExpression _fieldOwner = reference.getFieldOwner();
@@ -1949,7 +1952,7 @@ public class Parser extends ASTVisitor {
 			_fieldName.accept(this);
 			IConstructor fieldName = stack.pop();
 
-			stack.push(builder.Expression_fieldReference(fieldOwner, fieldName, loc, decl));
+			stack.push(builder.Expression_fieldReference(fieldOwner, fieldName, loc, decl, typ));
 		} else
 			throw new RuntimeException("IASTFieldReference: NYI");
 		return PROCESS_ABORT;
@@ -1957,22 +1960,25 @@ public class Parser extends ASTVisitor {
 
 	public int visit(IASTExpressionList expression) {
 		ISourceLocation loc = getSourceLocation(expression);
+		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
 		IListWriter expressions = vf.listWriter();
 		Stream.of(expression.getExpressions()).forEach(it -> {
 			it.accept(this);
 			expressions.append(stack.pop());
 		});
-		stack.push(builder.Expression_expressionList(expressions.done(), loc));
+		stack.push(builder.Expression_expressionList(expressions.done(), loc, typ));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTBinaryTypeIdExpression expression) {
+		// has typ
 		out("BinaryTypeIdExpression: " + expression.getRawSignature());
 		throw new RuntimeException("NYI");
 	}
 
 	public int visit(IASTConditionalExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
+		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
 		IASTExpression _condition = expression.getLogicalConditionExpression();
 		IASTExpression _positive = expression.getPositiveResultExpression();
 		IASTExpression _negative = expression.getNegativeResultExpression();
@@ -1984,13 +1990,14 @@ public class Parser extends ASTVisitor {
 		_negative.accept(this);
 		IConstructor negative = stack.pop();
 
-		stack.push(builder.Expression_conditional(condition, positive, negative, loc));
+		stack.push(builder.Expression_conditional(condition, positive, negative, loc, typ));
 
 		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTCastExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
+		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
 		int operator = expression.getOperator();
 		IASTExpression _operand = expression.getOperand();
 		IASTTypeId typeId = expression.getTypeId();
@@ -2001,19 +2008,19 @@ public class Parser extends ASTVisitor {
 
 		switch (operator) {
 		case ICPPASTCastExpression.op_cast:
-			stack.push(builder.Expression_cast(type, operand, loc));
+			stack.push(builder.Expression_cast(type, operand, loc, typ));
 			break;
 		case ICPPASTCastExpression.op_dynamic_cast:
-			stack.push(builder.Expression_dynamicCast(type, operand, loc));
+			stack.push(builder.Expression_dynamicCast(type, operand, loc, typ));
 			break;
 		case ICPPASTCastExpression.op_static_cast:
-			stack.push(builder.Expression_staticCast(type, operand, loc));
+			stack.push(builder.Expression_staticCast(type, operand, loc, typ));
 			break;
 		case ICPPASTCastExpression.op_reinterpret_cast:
-			stack.push(builder.Expression_reinterpretCast(type, operand, loc));
+			stack.push(builder.Expression_reinterpretCast(type, operand, loc, typ));
 			break;
 		case ICPPASTCastExpression.op_const_cast:
-			stack.push(builder.Expression_constCast(type, operand, loc));
+			stack.push(builder.Expression_constCast(type, operand, loc, typ));
 			break;
 		default:
 			throw new RuntimeException("Unknown cast type " + operator);
@@ -2023,6 +2030,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(IASTUnaryExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
+		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
 		int operator = expression.getOperator();
 		IASTExpression _operand = expression.getOperand();
 
@@ -2034,62 +2042,62 @@ public class Parser extends ASTVisitor {
 
 		switch (operator) {
 		case IASTUnaryExpression.op_prefixIncr:
-			stack.push(builder.Expression_prefixIncr(operand, loc));
+			stack.push(builder.Expression_prefixIncr(operand, loc, typ));
 			break;
 		case IASTUnaryExpression.op_prefixDecr:
-			stack.push(builder.Expression_prefixDecr(operand, loc));
+			stack.push(builder.Expression_prefixDecr(operand, loc, typ));
 			break;
 		case IASTUnaryExpression.op_plus:
-			stack.push(builder.Expression_plus(operand, loc));
+			stack.push(builder.Expression_plus(operand, loc, typ));
 			break;
 		case IASTUnaryExpression.op_minus:
-			stack.push(builder.Expression_minus(operand, loc));
+			stack.push(builder.Expression_minus(operand, loc, typ));
 			break;
 		case IASTUnaryExpression.op_star:
-			stack.push(builder.Expression_star(operand, loc));
+			stack.push(builder.Expression_star(operand, loc, typ));
 			break;
 		case IASTUnaryExpression.op_amper:
-			stack.push(builder.Expression_amper(operand, loc));
+			stack.push(builder.Expression_amper(operand, loc, typ));
 			break;
 		case IASTUnaryExpression.op_tilde:
-			stack.push(builder.Expression_tilde(operand, loc));
+			stack.push(builder.Expression_tilde(operand, loc, typ));
 			break;
 		case IASTUnaryExpression.op_not:
-			stack.push(builder.Expression_not(operand, loc));
+			stack.push(builder.Expression_not(operand, loc, typ));
 			break;
 		case IASTUnaryExpression.op_sizeof:
-			stack.push(builder.Expression_sizeof(operand, loc));
+			stack.push(builder.Expression_sizeof(operand, loc, typ));
 			break;
 		case IASTUnaryExpression.op_postFixIncr:
-			stack.push(builder.Expression_postfixIncr(operand, loc));
+			stack.push(builder.Expression_postfixIncr(operand, loc, typ));
 			break;
 		case IASTUnaryExpression.op_postFixDecr:
-			stack.push(builder.Expression_postfixDecr(operand, loc));
+			stack.push(builder.Expression_postfixDecr(operand, loc, typ));
 			break;
 		case IASTUnaryExpression.op_bracketedPrimary:
-			stack.push(builder.Expression_bracketed(operand, loc));
+			stack.push(builder.Expression_bracketed(operand, loc, typ));
 			break;
 		case IASTUnaryExpression.op_throw:
 			if (operand == null)
-				stack.push(builder.Expression_throw(loc));
+				stack.push(builder.Expression_throw(loc, typ));
 			else
-				stack.push(builder.Expression_throw(operand, loc));
+				stack.push(builder.Expression_throw(operand, loc, typ));
 			break;
 		case IASTUnaryExpression.op_typeid:
-			stack.push(builder.Expression_typeid(operand, loc));
+			stack.push(builder.Expression_typeid(operand, loc, typ));
 			break;
 		// case IASTUnaryExpression.op_typeof: (14) typeOf is deprecated
 		case IASTUnaryExpression.op_alignOf:
-			stack.push(builder.Expression_alignOf(operand, loc));
+			stack.push(builder.Expression_alignOf(operand, loc, typ));
 			break;
 		case IASTUnaryExpression.op_sizeofParameterPack:
-			stack.push(builder.Expression_sizeofParameterPack(operand, loc));
+			stack.push(builder.Expression_sizeofParameterPack(operand, loc, typ));
 			break;
 		case IASTUnaryExpression.op_noexcept:
-			stack.push(builder.Expression_noexcept(operand, loc));
+			stack.push(builder.Expression_noexcept(operand, loc, typ));
 			break;
 		case IASTUnaryExpression.op_labelReference:
-			stack.push(builder.Expression_labelReference(operand, loc));
+			stack.push(builder.Expression_labelReference(operand, loc, typ));
 			break;
 		default:
 			throw new RuntimeException("Unknown unary operator " + operator + ". Exiting");
@@ -2136,13 +2144,15 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTIdExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		ISourceLocation decl = br.resolveBinding(expression);
+		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
 		expression.getName().accept(this);
-		stack.push(builder.Expression_idExpression(stack.pop(), loc, decl));
+		stack.push(builder.Expression_idExpression(stack.pop(), loc, decl, typ));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTBinaryExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
+		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
 		IASTExpression _lhs = expression.getOperand1();
 		_lhs.accept(this);
 		IConstructor lhs = stack.pop();
@@ -2153,106 +2163,106 @@ public class Parser extends ASTVisitor {
 
 		switch (op) {
 		case IASTBinaryExpression.op_multiply:
-			stack.push(builder.Expression_multiply(lhs, rhs, loc));
+			stack.push(builder.Expression_multiply(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_divide:
-			stack.push(builder.Expression_divide(lhs, rhs, loc));
+			stack.push(builder.Expression_divide(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_modulo:
-			stack.push(builder.Expression_modulo(lhs, rhs, loc));
+			stack.push(builder.Expression_modulo(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_plus:
-			stack.push(builder.Expression_plus(lhs, rhs, loc));
+			stack.push(builder.Expression_plus(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_minus:
-			stack.push(builder.Expression_minus(lhs, rhs, loc));
+			stack.push(builder.Expression_minus(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_shiftLeft:
-			stack.push(builder.Expression_shiftLeft(lhs, rhs, loc));
+			stack.push(builder.Expression_shiftLeft(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_shiftRight:
-			stack.push(builder.Expression_shiftRight(lhs, rhs, loc));
+			stack.push(builder.Expression_shiftRight(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_lessThan:
-			stack.push(builder.Expression_lessThan(lhs, rhs, loc));
+			stack.push(builder.Expression_lessThan(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_greaterThan:
-			stack.push(builder.Expression_greaterThan(lhs, rhs, loc));
+			stack.push(builder.Expression_greaterThan(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_lessEqual:
-			stack.push(builder.Expression_lessEqual(lhs, rhs, loc));
+			stack.push(builder.Expression_lessEqual(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_greaterEqual:
-			stack.push(builder.Expression_greaterEqual(lhs, rhs, loc));
+			stack.push(builder.Expression_greaterEqual(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_binaryAnd:
-			stack.push(builder.Expression_binaryAnd(lhs, rhs, loc));
+			stack.push(builder.Expression_binaryAnd(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_binaryXor:
-			stack.push(builder.Expression_binaryXor(lhs, rhs, loc));
+			stack.push(builder.Expression_binaryXor(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_binaryOr:
-			stack.push(builder.Expression_binaryOr(lhs, rhs, loc));
+			stack.push(builder.Expression_binaryOr(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_logicalAnd:
-			stack.push(builder.Expression_logicalAnd(lhs, rhs, loc));
+			stack.push(builder.Expression_logicalAnd(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_logicalOr:
-			stack.push(builder.Expression_logicalOr(lhs, rhs, loc));
+			stack.push(builder.Expression_logicalOr(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_assign:
-			stack.push(builder.Expression_assign(lhs, rhs, loc));
+			stack.push(builder.Expression_assign(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_multiplyAssign:
-			stack.push(builder.Expression_multiplyAssign(lhs, rhs, loc));
+			stack.push(builder.Expression_multiplyAssign(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_divideAssign:
-			stack.push(builder.Expression_divideAssign(lhs, rhs, loc));
+			stack.push(builder.Expression_divideAssign(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_moduloAssign:
-			stack.push(builder.Expression_moduloAssign(lhs, rhs, loc));
+			stack.push(builder.Expression_moduloAssign(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_plusAssign:
-			stack.push(builder.Expression_plusAssign(lhs, rhs, loc));
+			stack.push(builder.Expression_plusAssign(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_minusAssign:
-			stack.push(builder.Expression_minusAssign(lhs, rhs, loc));
+			stack.push(builder.Expression_minusAssign(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_shiftLeftAssign:
-			stack.push(builder.Expression_shiftLeftAssign(lhs, rhs, loc));
+			stack.push(builder.Expression_shiftLeftAssign(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_shiftRightAssign:
-			stack.push(builder.Expression_shiftRightAssign(lhs, rhs, loc));
+			stack.push(builder.Expression_shiftRightAssign(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_binaryAndAssign:
-			stack.push(builder.Expression_binaryAndAssign(lhs, rhs, loc));
+			stack.push(builder.Expression_binaryAndAssign(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_binaryXorAssign:
-			stack.push(builder.Expression_binaryXorAssign(lhs, rhs, loc));
+			stack.push(builder.Expression_binaryXorAssign(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_binaryOrAssign:
-			stack.push(builder.Expression_binaryOrAssign(lhs, rhs, loc));
+			stack.push(builder.Expression_binaryOrAssign(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_equals:
-			stack.push(builder.Expression_equals(lhs, rhs, loc));
+			stack.push(builder.Expression_equals(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_notequals:
-			stack.push(builder.Expression_notEquals(lhs, rhs, loc));
+			stack.push(builder.Expression_notEquals(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_pmdot:
-			stack.push(builder.Expression_pmDot(lhs, rhs, loc));
+			stack.push(builder.Expression_pmDot(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_pmarrow:
-			stack.push(builder.Expression_pmArrow(lhs, rhs, loc));
+			stack.push(builder.Expression_pmArrow(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_max:
-			stack.push(builder.Expression_max(lhs, rhs, loc));
+			stack.push(builder.Expression_max(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_min:
-			stack.push(builder.Expression_min(lhs, rhs, loc));
+			stack.push(builder.Expression_min(lhs, rhs, loc, typ));
 			break;
 		case IASTBinaryExpression.op_ellipses:
-			stack.push(builder.Expression_ellipses(lhs, rhs, loc));
+			stack.push(builder.Expression_ellipses(lhs, rhs, loc, typ));
 			break;
 		default:
 			throw new RuntimeException("Operator " + op + " unknown, exiting");
