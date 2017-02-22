@@ -191,14 +191,12 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveICompositeType(ICompositeType type, ISourceLocation src) {
-		out("resolveICompositeType " + type);
 		if (type instanceof ICPPClassType)
 			return resolveICPPClassType((ICPPClassType) type, src);
 		throw new RuntimeException("NYI: resolveICompositeType");
 	}
 
 	private IConstructor resolveICPPClassType(ICPPClassType type, ISourceLocation src) {
-		out("resolveICPPClassType " + type);
 		if (type instanceof ICPPClassSpecialization)
 			return resolveICPPClassSpecialization((ICPPClassSpecialization) type, src);
 		if (type instanceof ICPPClassTemplate)
@@ -213,20 +211,21 @@ public class TypeResolver {
 		if (type instanceof IPDOMCPPClassType)
 			;
 
-		ICPPBase[] _bases = type.getBases();
-		IListWriter baseClassTypes = vf.listWriter();
-		Stream.of(_bases).forEach(it -> baseClassTypes.append(resolveType(it.getBaseClassType(), src)));
+		IListWriter baseTypes = vf.listWriter();
+		IListWriter fieldTypes = vf.listWriter();
+		Stream.of(type.getBases()).forEach(it -> baseTypes.append(resolveType(it.getBaseClassType(), src)));
+		Stream.of(type.getFields()).forEach(it -> fieldTypes.append(resolveType(it.getType(), src)));
+
 		switch (type.getKey()) {
-		case ICPPClassTemplate.k_struct:
-			IListWriter fieldTypes = vf.listWriter();
-			Stream.of(type.getFields()).forEach(it -> fieldTypes.append(resolveType(it.getType(), src)));
+		case ICPPClassType.k_struct:
 			return builder.TypeSymbol_struct(fieldTypes.done());
-		case ICPPClassTemplate.k_union:
+		case ICPPClassType.k_union:
 			out("ICPPClassTemplate union");
 			break;
-		case ICPPClassTemplate.k_class:
-			out("ICPPClassTemplate class");
-			break;
+		case ICPPClassType.k_class:
+			if (type.isFinal())
+				err("Warning: ICPPClassType has isFinal==true");
+			return builder.TypeSymbol_class(baseTypes.done());
 		default:
 			throw new RuntimeException("Unknown ICompositeType key " + type.getKey());
 		}
@@ -321,11 +320,14 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveIPointerType(IPointerType type, ISourceLocation src) {
-		IType _type = type.getType();
-		boolean isConst = type.isConst();
-		boolean isVolatile = type.isVolatile();
-		boolean isRestrict = type.isRestrict();
-		throw new RuntimeException("NYI: resolveIPointerType");
+		IListWriter modifiers = vf.listWriter();
+		if (type.isConst())
+			modifiers.append(builder.Modifier_const(src));
+		if (type.isVolatile())
+			modifiers.append(builder.Modifier_volatile(src));
+		if (type.isRestrict())
+			modifiers.append(builder.Modifier_restrict(src));
+		return builder.TypeSymbol_pointerType(modifiers.done(), resolveType(type.getType(), src));
 	}
 
 	private IConstructor resolveIProblemBinding(IProblemBinding type, ISourceLocation src) {
@@ -337,7 +339,6 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveIQualifierType(IQualifierType type, ISourceLocation src) {
-		out("IQualifierType " + type.getClass().getSimpleName() + ": " + type);
 		IConstructor baseType = resolveType(type.getType(), src);
 		IListWriter modifiers = vf.listWriter();
 		if (type.isConst())
