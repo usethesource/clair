@@ -331,11 +331,17 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveIProblemBinding(IProblemBinding type, ISourceLocation src) {
-		throw new RuntimeException("NYI: resolveIProblemBinding");
+		err("Encountered IProblemBinding " + type.getClass().getSimpleName() + ": ");
+		err("\t" + type.getID() + ": " + type.getMessage());
+		err("\t" + src);
+		return builder.TypeSymbol_problemBinding();
 	}
 
 	private IConstructor resolveIProblemType(IProblemType type, ISourceLocation src) {
-		throw new RuntimeException("NYI: resolveIProblemType");
+		err("Encountered IProblemType " + type.getClass().getSimpleName() + ": ");
+		err("\t" + type.getID() + ": " + type.getMessage());
+		err("\t" + src);
+		return builder.TypeSymbol_problemType();
 	}
 
 	private IConstructor resolveIQualifierType(IQualifierType type, ISourceLocation src) {
