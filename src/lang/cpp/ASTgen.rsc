@@ -128,8 +128,22 @@ str type2FactoryCall(Symbol t){
   bool hasDecl("Statement", str cname) = cname in {"label", "goto"};
   bool hasDecl(str _, str _) = false;
   
+  bool hasTyp("Expression", str cname) = cname in
+    {"arraySubscriptExpression", "multiply", "divide", "modulo", "plus", "minus", "shiftLeft",
+    "shiftRight", "lessThan", "greaterThan", "lessEqual", "greaterEqual", "binaryAnd",
+    "binaryXor", "binaryOr", "logicalAnd", "logicalOr", "assign", "multiplyAssign",
+    "divideAssign", "moduloAssign", "plusAssign", "minusAssign", "shiftLeftAssign",
+    "shiftRightAssign", "binaryAndAssign", "binaryXorAssign", "binaryOrAssign", "equals",
+    "notEquals", "pmDot", "pmArrow", "max", "min", "ellipses",
+    "prefixIncr", "prefixDecr", "plus", "minus", "star", "amper", "tilde", "not", "sizeof", "postfixIncr",
+    "postfixDecr", "bracketed", "throw", "typeid", "alignOf", "sizeofParameterPack", "noexcept", "labelReference",
+    "functionCall", "fieldReference", "expressionList", "conditional",
+    "cast", "dynamicCast", "staticCast", "reinterpretCast", "constCast", "idExpression"
+    };
+  default bool hasTyp(str _, str _) = false;
+  
   str declareMaker(Production::cons(label(str cname, Symbol typ:adt(str typeName, list[Symbol] ps)), list[Symbol] args, list[Symbol] kwTypes,set[Attr] _)) 
-     = "public <typeToJavaType(typ)> <typeName>_<cname>(<(declareConsArgs(args)+", ISourceLocation $loc"+(hasDecl(typeName, cname)?", ISourceLocation $decl":"")+(typeName == "Expression"?", IConstructor $typ":""))[2..]>) {
+     = "public <typeToJavaType(typ)> <typeName>_<cname>(<(declareConsArgs(args)+", ISourceLocation $loc"+(hasDecl(typeName, cname)?", ISourceLocation $decl":"")+(hasTyp(typeName, cname)?", IConstructor $typ":""))[2..]>) {
        '  <for (label(str l, Symbol t) <- args) { str argName = argToSimpleJavaArg(l, t); str argType = type2FactoryCall(t);>  
        '  if (!<argName>.getType().isSubtypeOf(<argType>)) {
        '    throw new IllegalArgumentException(\"Expected \" + <argType> + \" but got \" + <argName>.getType() + \" for <argName>:\" + <argName>);
@@ -138,7 +152,7 @@ str type2FactoryCall(Symbol t){
        '  Map\<String, IValue\> kwParams = new HashMap\<String, IValue\>();
        '  kwParams.put(\"src\", $loc);
        '  <(hasDecl(typeName, cname)?"kwParams.put(\"decl\", $decl);":"")>
-       '  <(typeName == "Expression"?"kwParams.put(\"typ\", $typ);":"")>
+       '  <(hasTyp(typeName, cname)?"kwParams.put(\"typ\", $typ);":"")>
        '  return vf.constructor(_<typeName>_<cname>_<size(args)> <callConsArgs(args)>).asWithKeywordParameters().setParameters(kwParams);
        '}";
   
