@@ -108,7 +108,7 @@ data Declaration(loc src=|unknown:///|)
     ;
 
 
-data Expression(loc src = |unknown:///|, TypeSymbol typ = \unknown())
+data Expression(loc src = |unknown:///|, TypeSymbol typ = \noType())
     = \multiply(Expression lhs, Expression rhs)
     | \divide(Expression lhs, Expression rhs)
     | \modulo(Expression lhs, Expression rhs)

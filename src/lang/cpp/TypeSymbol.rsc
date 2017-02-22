@@ -33,5 +33,6 @@ public data TypeSymbol
   
   
   | \unknown()
+  | \noType()
   
   ;
