@@ -555,8 +555,6 @@ public class AST {
     = tf.constructor(typestore,_TypeSymbol,"class",tf.listType(_TypeSymbol),"bases");
   private static final Type _TypeSymbol_struct_1 
     = tf.constructor(typestore,_TypeSymbol,"struct",tf.listType(_TypeSymbol),"fields");
-  private static final Type _TypeSymbol_decimal128_0 
-    = tf.constructor(typestore,_TypeSymbol,"decimal128");
   private static final Type _TypeSymbol_noType_0 
     = tf.constructor(typestore,_TypeSymbol,"noType");
   private static final Type _TypeSymbol_float128_0 
@@ -583,6 +581,10 @@ public class AST {
     = tf.constructor(typestore,_TypeSymbol,"array",_TypeSymbol,"baseType",tf.integerType(),"size");
   private static final Type _TypeSymbol_nullPtr_0 
     = tf.constructor(typestore,_TypeSymbol,"nullPtr");
+  private static final Type _TypeSymbol_decimal128_0 
+    = tf.constructor(typestore,_TypeSymbol,"decimal128");
+  private static final Type _TypeSymbol_pointerType_2 
+    = tf.constructor(typestore,_TypeSymbol,"pointerType",tf.listType(_Modifier),"modifiers",_TypeSymbol,"type");
   
    
   
@@ -4241,15 +4243,6 @@ public class AST {
     return vf.constructor(_TypeSymbol_struct_1 , $fields).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor TypeSymbol_decimal128() {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    
-    
-    return vf.constructor(_TypeSymbol_decimal128_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
   public IConstructor TypeSymbol_noType() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
@@ -4389,6 +4382,32 @@ public class AST {
     
     
     return vf.constructor(_TypeSymbol_nullPtr_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeSymbol_decimal128() {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeSymbol_decimal128_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeSymbol_pointerType(IList $modifiers, IConstructor $type) {
+      
+    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
+    }
+      
+    if (!$type.getType().isSubtypeOf(_TypeSymbol)) {
+      throw new IllegalArgumentException("Expected " + _TypeSymbol + " but got " + $type.getType() + " for $type:" + $type);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeSymbol_pointerType_2 , $modifiers, $type).asWithKeywordParameters().setParameters(kwParams);
   }
    
   

@@ -29,6 +29,7 @@ public data TypeSymbol
   | \class(list[TypeSymbol] bases)
   | \struct(list[TypeSymbol] fields)
   | \qualifierType(list[Modifier] modifiers, TypeSymbol \type)
+  | \pointerType(list[Modifier] modifiers, TypeSymbol \type)
   
   
   
