@@ -30,6 +30,7 @@ public data TypeSymbol
   | \struct(list[TypeSymbol] fields)
   | \qualifierType(list[Modifier] modifiers, TypeSymbol \type)
   | \pointerType(list[Modifier] modifiers, TypeSymbol \type)
+  | \functionType(TypeSymbol returnType, list[TypeSymbol] parameterTypes, bool takesVarArgs)
   
   
   

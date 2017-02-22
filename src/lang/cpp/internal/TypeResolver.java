@@ -309,10 +309,10 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveIFunctionType(IFunctionType type, ISourceLocation src) {
-		IType _returnType = type.getReturnType();
-		IType[] _parameterTypes = type.getParameterTypes();
-		boolean takesVarArgs = type.takesVarArgs();
-		throw new RuntimeException("NYI: resolveIFunctionType");
+		IConstructor returnType = resolveType(type.getReturnType(), src);
+		IListWriter parameterTypes = vf.listWriter();
+		Stream.of(type.getParameterTypes()).forEach(it -> parameterTypes.append(resolveType(it, src)));
+		return builder.TypeSymbol_functionType(returnType, parameterTypes.done(), vf.bool(type.takesVarArgs()));
 	}
 
 	private IConstructor resolveIIndexType(IIndexType type, ISourceLocation src) {
