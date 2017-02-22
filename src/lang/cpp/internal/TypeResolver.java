@@ -39,28 +39,19 @@ import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.IPDOMCPPClassType;
 import org.rascalmpl.interpreter.IEvaluatorContext;
 import org.rascalmpl.value.IConstructor;
-import org.rascalmpl.value.IList;
 import org.rascalmpl.value.IListWriter;
 import org.rascalmpl.value.ISourceLocation;
 import org.rascalmpl.value.IValueFactory;
-import org.rascalmpl.value.type.Type;
-import org.rascalmpl.value.type.TypeFactory;
-import org.rascalmpl.value.type.TypeStore;
 
 @SuppressWarnings("restriction")
 public class TypeResolver {
 	private AST builder;
-	private final TypeFactory tf = TypeFactory.getInstance();
 	private final IValueFactory vf;
 	private IEvaluatorContext ctx;
-	private TypeStore ts;
-
-	private Type typeSymbol;
 
 	public TypeResolver(AST builder, IValueFactory vf) {
 		this.builder = builder;
 		this.vf = vf;
-		ts = new TypeStore();
 	}
 
 	public void setIEvaluatorContext(IEvaluatorContext ctx) {
@@ -128,7 +119,7 @@ public class TypeResolver {
 		org.eclipse.cdt.core.dom.ast.IValue _size = type.getSize();
 		IConstructor baseType = resolveType(_type, src);
 		int size = _size.numberValue().intValue();
-		return arrayType(baseType, size);
+		return builder.TypeSymbol_array(baseType, vf.integer(size));
 	}
 
 	private IConstructor resolveIBasicType(IBasicType type, ISourceLocation src) {
@@ -160,39 +151,40 @@ public class TypeResolver {
 		if (type.isImaginary())
 			modifiers.append(builder.Modifier_imaginary(src));
 
+		builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_unspecified());
 		switch (type.getKind()) {
 		case eUnspecified:
-			return basicType(modifiers.done(), "unspecified");
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_unspecified());
 		case eVoid:
-			return basicType(modifiers.done(), "void");
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_void());
 		case eChar:
-			return basicType(modifiers.done(), "char");
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_char());
 		case eWChar:
-			return basicType(modifiers.done(), "wchar");
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_wchar());
 		case eInt:
-			return basicType(modifiers.done(), "int");
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_int());
 		case eFloat:
-			return basicType(modifiers.done(), "float");
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_float());
 		case eDouble:
-			return basicType(modifiers.done(), "double");
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_double());
 		case eBoolean:
-			return basicType(modifiers.done(), "boolean");
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_boolean());
 		case eChar16:
-			return basicType(modifiers.done(), "boolean");
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_boolean());
 		case eChar32:
-			return basicType(modifiers.done(), "char32");
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_char32());
 		case eNullPtr:
-			return basicType(modifiers.done(), "nullPtr");
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_nullPtr());
 		case eInt128:
-			return basicType(modifiers.done(), "int128");
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_int128());
 		case eFloat128:
-			return basicType(modifiers.done(), "float128");
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_float128());
 		case eDecimal32:
-			return basicType(modifiers.done(), "decimal32");
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_decimal32());
 		case eDecimal64:
-			return basicType(modifiers.done(), "decimal64");
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_decimal64());
 		case eDecimal128:
-			return basicType(modifiers.done(), "decimal128");
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_decimal128());
 		default:
 			throw new RuntimeException("Unknown ICPPBasicType kind " + type.getKind().name());
 		}
@@ -228,7 +220,7 @@ public class TypeResolver {
 		case ICPPClassTemplate.k_struct:
 			IListWriter fieldTypes = vf.listWriter();
 			Stream.of(type.getFields()).forEach(it -> fieldTypes.append(resolveType(it.getType(), src)));
-			return struct(fieldTypes.done());
+			return builder.TypeSymbol_struct(fieldTypes.done());
 		case ICPPClassTemplate.k_union:
 			out("ICPPClassTemplate union");
 			break;
@@ -352,7 +344,7 @@ public class TypeResolver {
 			modifiers.append(builder.Modifier_const(src));
 		if (type.isVolatile())
 			modifiers.append(builder.Modifier_volatile(src));
-		return qualifierType(modifiers.done(), baseType);
+		return builder.TypeSymbol_qualifierType(modifiers.done(), baseType);
 	}
 
 	private IConstructor resolveITypeContainer(ITypeContainer type, ISourceLocation src) {
@@ -363,40 +355,5 @@ public class TypeResolver {
 	private IConstructor resolveITypedef(ITypedef type, ISourceLocation src) {
 		IType _type = type.getType();
 		throw new RuntimeException("NYI: resolveITypedef");
-	}
-
-	private Type getTypeSymbol() {
-		if (typeSymbol == null) {
-			typeSymbol = ts.lookupAbstractDataType("TypeSymbol");
-		}
-		return typeSymbol;
-	}
-
-	private IConstructor arrayType(IConstructor baseType, int size) {
-		Type cons = ts.lookupConstructor(getTypeSymbol(), "array", tf.tupleType(baseType.getType(), tf.integerType()));
-		return vf.constructor(cons, baseType, vf.integer(size));
-	}
-
-	private IConstructor basicType(IList modifiers, String name) {
-		IConstructor primitive = primitiveType(name);
-		Type cons = ts.lookupConstructor(getTypeSymbol(), "basicType",
-				tf.tupleType(tf.listType(ts.lookupAbstractDataType("Modifier")), primitive.getType()));
-		return vf.constructor(cons, modifiers, vf.string(name));
-	}
-
-	private IConstructor primitiveType(String name) {
-		Type cons = ts.lookupConstructor(getTypeSymbol(), name, tf.voidType());
-		return vf.constructor(cons, vf.string(name));
-	}
-
-	private IConstructor struct(IList fieldTypes) {
-		Type cons = ts.lookupConstructor(getTypeSymbol(), "struct", tf.tupleType(tf.listType(getTypeSymbol())));
-		return vf.constructor(cons, fieldTypes);
-	}
-
-	private IConstructor qualifierType(IList modifiers, IConstructor baseType) {
-		Type cons = ts.lookupConstructor(getTypeSymbol(), "qualifierType",
-				tf.tupleType(tf.listType(ts.lookupAbstractDataType("Modifier")), baseType.getType()));
-		return vf.constructor(cons, modifiers, baseType);
 	}
 }
