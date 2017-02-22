@@ -34,7 +34,8 @@ public data TypeSymbol
   
   
   
-  | \unknown()
+  | \problemBinding()
+  | \problemType()
   | \noType()
   
   ;

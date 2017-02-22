@@ -535,6 +535,8 @@ public class AST {
     = tf.constructor(typestore,_Modifier,"pureVirtual");
   
   
+  private static final Type _TypeSymbol_problemType_0 
+    = tf.constructor(typestore,_TypeSymbol,"problemType");
   private static final Type _TypeSymbol_float_0 
     = tf.constructor(typestore,_TypeSymbol,"float");
   private static final Type _TypeSymbol_double_0 
@@ -587,6 +589,8 @@ public class AST {
     = tf.constructor(typestore,_TypeSymbol,"decimal128");
   private static final Type _TypeSymbol_pointerType_2 
     = tf.constructor(typestore,_TypeSymbol,"pointerType",tf.listType(_Modifier),"modifiers",_TypeSymbol,"type");
+  private static final Type _TypeSymbol_problemBinding_0 
+    = tf.constructor(typestore,_TypeSymbol,"problemBinding");
   
    
   
@@ -4147,6 +4151,15 @@ public class AST {
   }
     
   
+  public IConstructor TypeSymbol_problemType() {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeSymbol_problemType_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
   public IConstructor TypeSymbol_float() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
@@ -4431,6 +4444,15 @@ public class AST {
     
     
     return vf.constructor(_TypeSymbol_pointerType_2 , $modifiers, $type).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeSymbol_problemBinding() {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeSymbol_problemBinding_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
    
   
