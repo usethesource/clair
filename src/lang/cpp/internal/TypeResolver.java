@@ -1,9 +1,9 @@
 package lang.cpp.internal;
 
+import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
-import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation.Operator;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClass;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
@@ -48,6 +49,7 @@ public class TypeResolver {
 	private AST builder;
 	private final IValueFactory vf;
 	private IEvaluatorContext ctx;
+	private BindingsResolver br = new BindingsResolver();
 
 	public TypeResolver(AST builder, IValueFactory vf) {
 		this.builder = builder;
@@ -206,8 +208,7 @@ public class TypeResolver {
 		if (type instanceof ICPPASTCompositeTypeSpecifier)
 			;
 		if (type instanceof ICPPUnknownMemberClass)
-			;// return resolveICPPUnknownMemberClass((ICPPUnknownMemberClass)
-				// type);
+			return resolveICPPUnknownMemberClass((ICPPUnknownMemberClass) type, src);
 		if (type instanceof IPDOMCPPClassType)
 			;
 
@@ -257,7 +258,13 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveICPPDeferredClassInstance(ICPPDeferredClassInstance type, ISourceLocation src) {
-		throw new RuntimeException("NYI: resolveICPPDeferredClassInstance");
+		// FIXME
+		return builder.TypeSymbol_deferredClassInstance(type.toString());
+	}
+
+	private IConstructor resolveICPPUnknownMemberClass(ICPPUnknownMemberClass type, ISourceLocation src) {
+		// FIXME
+		return builder.TypeSymbol_unknownMemberClass(resolveType((IType) type.getOwner(), src), type.getName());
 	}
 
 	private IConstructor resolveICPPAliasTemplate(ICPPAliasTemplate type, ISourceLocation src) {
@@ -277,13 +284,10 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveICPPTemplateTypeParameter(ICPPTemplateTypeParameter type, ISourceLocation src) {
-		try {
-			IType _default = type.getDefault();
-		} catch (DOMException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		throw new RuntimeException("NYI: resolveICPPTemplateTypeParameter");
+		if (type instanceof CPPTemplateTypeParameter)// FIXME
+			return builder.TypeSymbol_templateTypeParameter(type.getOwner().getName(), type.getName());
+		throw new RuntimeException(
+				"NYI: resolveICPPTemplateTypeParameter " + type.getClass().getSimpleName() + ": " + type);
 	}
 
 	private IConstructor resolveICPPTypeSpecialization(ICPPTypeSpecialization type, ISourceLocation src) {
@@ -306,7 +310,12 @@ public class TypeResolver {
 		IEnumerator[] _enumerators = type.getEnumerators();
 		long minValue = type.getMinValue();
 		long maxValue = type.getMaxValue();
-		throw new RuntimeException("NYI: resolveIEnumeration");
+		try {
+			ISourceLocation decl = br.resolveBinding(type);
+			return builder.TypeSymbol_enumeration(decl);
+		} catch (URISyntaxException e) {
+			throw new RuntimeException("Could not resolve IEnumeration" + type);
+		}
 	}
 
 	private IConstructor resolveIFunctionType(IFunctionType type, ISourceLocation src) {

@@ -32,6 +32,11 @@ public data TypeSymbol
   | \pointerType(list[Modifier] modifiers, TypeSymbol \type)
   | \functionType(TypeSymbol returnType, list[TypeSymbol] parameterTypes, bool takesVarArgs)
   | \typeContainer(TypeSymbol \type)
+  | \enumeration(loc decl)
+  
+  | \templateTypeParameter(str ownerName, str name)
+  | \deferredClassInstance(str name)
+  | \unknownMemberClass(TypeSymbol owner, str name)
   
   
   | \typeOfDependentExpression(loc src)
