@@ -117,11 +117,11 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveIArrayType(IArrayType type, ISourceLocation src) {
-		IType _type = type.getType();
-		org.eclipse.cdt.core.dom.ast.IValue _size = type.getSize();
-		IConstructor baseType = resolveType(_type, src);
-		int size = _size.numberValue().intValue();
-		return builder.TypeSymbol_array(baseType, vf.integer(size));
+		IConstructor baseType = resolveType(type.getType(), src);
+		org.eclipse.cdt.core.dom.ast.IValue size = type.getSize();
+		if (size == null || size.numberValue() == null)
+			return builder.TypeSymbol_array(baseType);
+		return builder.TypeSymbol_array(baseType, vf.integer(size.numberValue().intValue()));
 	}
 
 	private IConstructor resolveIBasicType(IBasicType type, ISourceLocation src) {

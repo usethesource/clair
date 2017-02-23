@@ -24,6 +24,7 @@ public data TypeSymbol
   | \decimal64()
   | \decimal128()
   
+  | \array(TypeSymbol baseType)
   | \array(TypeSymbol baseType, int size)
   | \basicType(list[Modifier] modifiers, TypeSymbol baseType)
   | \class(list[TypeSymbol] bases)

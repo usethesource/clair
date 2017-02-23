@@ -541,8 +541,6 @@ public class AST {
     = tf.constructor(typestore,_TypeSymbol,"templateTypeParameter",tf.stringType(),"ownerName",tf.stringType(),"name");
   private static final Type _TypeSymbol_float_0 
     = tf.constructor(typestore,_TypeSymbol,"float");
-  private static final Type _TypeSymbol_typeOfDependentExpression_1 
-    = tf.constructor(typestore,_TypeSymbol,"typeOfDependentExpression",tf.sourceLocationType(),"src");
   private static final Type _TypeSymbol_double_0 
     = tf.constructor(typestore,_TypeSymbol,"double");
   private static final Type _TypeSymbol_decimal32_0 
@@ -561,6 +559,10 @@ public class AST {
     = tf.constructor(typestore,_TypeSymbol,"float128");
   private static final Type _TypeSymbol_char16_0 
     = tf.constructor(typestore,_TypeSymbol,"char16");
+  private static final Type _TypeSymbol_typeOfDependentExpression_1 
+    = tf.constructor(typestore,_TypeSymbol,"typeOfDependentExpression",tf.sourceLocationType(),"src");
+  private static final Type _TypeSymbol_array_1 
+    = tf.constructor(typestore,_TypeSymbol,"array",_TypeSymbol,"baseType");
   private static final Type _TypeSymbol_char32_0 
     = tf.constructor(typestore,_TypeSymbol,"char32");
   private static final Type _TypeSymbol_qualifierType_2 
@@ -4196,19 +4198,6 @@ public class AST {
     return vf.constructor(_TypeSymbol_float_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor TypeSymbol_typeOfDependentExpression(ISourceLocation $src) {
-      
-    if (!$src.getType().isSubtypeOf(tf.sourceLocationType())) {
-      throw new IllegalArgumentException("Expected " + tf.sourceLocationType() + " but got " + $src.getType() + " for $src:" + $src);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    
-    
-    return vf.constructor(_TypeSymbol_typeOfDependentExpression_1 , $src).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
   public IConstructor TypeSymbol_double() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
@@ -4292,6 +4281,32 @@ public class AST {
     
     
     return vf.constructor(_TypeSymbol_char16_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeSymbol_typeOfDependentExpression(ISourceLocation $src) {
+      
+    if (!$src.getType().isSubtypeOf(tf.sourceLocationType())) {
+      throw new IllegalArgumentException("Expected " + tf.sourceLocationType() + " but got " + $src.getType() + " for $src:" + $src);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeSymbol_typeOfDependentExpression_1 , $src).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeSymbol_array(IConstructor $baseType) {
+      
+    if (!$baseType.getType().isSubtypeOf(_TypeSymbol)) {
+      throw new IllegalArgumentException("Expected " + _TypeSymbol + " but got " + $baseType.getType() + " for $baseType:" + $baseType);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeSymbol_array_1 , $baseType).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeSymbol_char32() {
