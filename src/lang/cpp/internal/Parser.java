@@ -1951,8 +1951,10 @@ public class Parser extends ASTVisitor {
 			IConstructor fieldOwner = stack.pop();
 			_fieldName.accept(this);
 			IConstructor fieldName = stack.pop();
-
-			stack.push(builder.Expression_fieldReference(fieldOwner, fieldName, loc, decl, typ));
+			if (expression.isPointerDereference())
+				stack.push(builder.Expression_fieldReferencePointerDeref(fieldOwner, fieldName, loc, decl, typ));
+			else
+				stack.push(builder.Expression_fieldReference(fieldOwner, fieldName, loc, decl, typ));
 		} else
 			throw new RuntimeException("IASTFieldReference: NYI");
 		return PROCESS_ABORT;

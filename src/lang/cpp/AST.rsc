@@ -193,6 +193,7 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \noType())
     | \functionCall(Expression functionName, list[Expression] arguments)
     
     | \fieldReference(Expression fieldOwner, Expression name, loc decl = |unknown:///|)
+    | \fieldReferencePointerDeref(Expression fieldOnwer, Expression name, loc decl = |unknown:///|)
     //| \constructorInitializer(list[Expression] arguments)
     | \new(Expression typeId)
     | \new(Expression typeId, Expression initializer)

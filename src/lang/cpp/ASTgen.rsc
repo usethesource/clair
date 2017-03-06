@@ -125,7 +125,7 @@ str type2FactoryCall(Symbol t){
   bool hasDecl("Declaration", str cname)
     = cname in {"enumerator", "usingDirective", "sttClass", "sttTypename", "tttParameter", "baseSpecifier", "namespaceDefinition", "usingDeclaration", "namespaceAlias", "alias"};
   bool hasDecl("Expression", str cname)
-    = cname in {"qualifiedName", "idExpression", "fieldReference", "templateId", "constructorChainInitializer", "capture", "captureByRef"};
+    = cname in {"qualifiedName", "idExpression", "fieldReference", "fieldReferencePointerDeref", "templateId", "constructorChainInitializer", "capture", "captureByRef"};
   bool hasDecl("Statement", str cname) = cname in {"label", "goto"};
   bool hasDecl(str _, str _) = false;
   
@@ -138,7 +138,7 @@ str type2FactoryCall(Symbol t){
     "notEquals", "pmDot", "pmArrow", "max", "min", "ellipses",
     "prefixIncr", "prefixDecr", "plus", "minus", "star", "amper", "tilde", "not", "sizeof", "postfixIncr",
     "postfixDecr", "bracketed", "throw", "typeid", "alignOf", "sizeofParameterPack", "noexcept", "labelReference",
-    "functionCall", "fieldReference", "expressionList", "conditional",
+    "functionCall", "fieldReference", "fieldReferencePointerDeref", "expressionList", "conditional",
     "cast", "dynamicCast", "staticCast", "reinterpretCast", "constCast", "idExpression"
     };
   default bool hasTyp(str _, str _) = false;

@@ -173,6 +173,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"simpleTypeConstructor",_DeclSpecifier,"declSpecifier",_Expression,"initializer");
   private static final Type _Expression_throw_0 
     = tf.constructor(typestore,_Expression,"throw");
+  private static final Type _Expression_fieldReferencePointerDeref_2 
+    = tf.constructor(typestore,_Expression,"fieldReferencePointerDeref",_Expression,"fieldOnwer",_Expression,"name");
   private static final Type _Expression_binaryAnd_2 
     = tf.constructor(typestore,_Expression,"binaryAnd",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_modulo_2 
@@ -1830,6 +1832,23 @@ public class AST {
     
     kwParams.put("typ", $typ);
     return vf.constructor(_Expression_throw_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Expression_fieldReferencePointerDeref(IConstructor $fieldOnwer, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl, IConstructor $typ) {
+      
+    if (!$fieldOnwer.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $fieldOnwer.getType() + " for $fieldOnwer:" + $fieldOnwer);
+    }
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    kwParams.put("typ", $typ);
+    return vf.constructor(_Expression_fieldReferencePointerDeref_2 , $fieldOnwer, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_binaryAnd(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
