@@ -550,7 +550,6 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICPPASTConversionName name) {
 		ISourceLocation loc = getSourceLocation(name);
-		// TODO: check
 		name.getTypeId().accept(this);
 		stack.push(builder.Expression_conversionName(name.toString(), stack.pop(), loc));
 		return PROCESS_ABORT;
@@ -558,7 +557,6 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICPPASTOperatorName name) {
 		ISourceLocation loc = getSourceLocation(name);
-		// TODO: check
 		stack.push(builder.Expression_operatorName(name.toString(), loc));
 		return PROCESS_ABORT;
 	}
