@@ -2401,11 +2401,14 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(statement);
 		IASTExpression returnValue = statement.getReturnValue();
 		IASTInitializerClause returnArgument = statement.getReturnArgument();
-		// TODO: returnArgument?
-		if (returnValue == null)
+		if (returnValue == null && returnArgument == null)
 			stack.push(builder.Statement_return(loc));
-		else {
+		else if (returnValue != null) {
 			returnValue.accept(this);
+			stack.push(builder.Statement_return(stack.pop(), loc));
+		} else {
+			returnArgument.accept(this);
+			// Note: InitializerClause is currently mapped on Expression
 			stack.push(builder.Statement_return(stack.pop(), loc));
 		}
 		return PROCESS_ABORT;

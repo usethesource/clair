@@ -263,7 +263,7 @@ data Statement(loc src = |unknown:///|)
     | \continue()
     | \do(Statement body, Expression condition)
     
-    | \return(Expression expression)
+    | \return(Expression expression) //note: also with initializerClause, which currently is an Expression
     | \return()
     | \nullStatement()
     | \label(Expression name, Statement nestedStatement, loc decl = |unknown:///|)
