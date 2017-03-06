@@ -2109,7 +2109,7 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTLiteralExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		int kind = expression.getKind();
-		String value = expression.toString();
+		String value = new String(expression.getValue());// expression.toString();
 		switch (kind) {
 		case IASTLiteralExpression.lk_integer_constant:
 			stack.push(builder.Expression_integerConstant(value, loc));
