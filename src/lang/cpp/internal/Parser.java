@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
+import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -1634,7 +1635,9 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(IASTExpression expression) {
-		if (expression instanceof IASTBinaryExpression)
+		if (expression instanceof IASTArraySubscriptExpression)
+			visit((IASTArraySubscriptExpression) expression);
+		else if (expression instanceof IASTBinaryExpression)
 			visit((IASTBinaryExpression) expression);
 		else if (expression instanceof IASTBinaryTypeIdExpression)// TODO
 			visit((IASTBinaryTypeIdExpression) expression);
@@ -1696,6 +1699,14 @@ public class Parser extends ASTVisitor {
 			throw new RuntimeException(
 					"Expression: encountered non-implemented subtype " + expression.getClass().getName());
 		}
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTArraySubscriptExpression expression) {
+		if (expression instanceof ICPPASTArraySubscriptExpression)
+			visit((ICPPASTArraySubscriptExpression) expression);
+		else
+			throw new RuntimeException("NYI");
 		return PROCESS_ABORT;
 	}
 
