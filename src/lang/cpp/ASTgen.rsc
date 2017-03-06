@@ -14,7 +14,7 @@ public str apiGen(str apiName,list[type[value]] ts) {
 }
 
 public void generate()  {
-  code = generate("AST", [#Declarator, #DeclSpecifier, #Declaration, #Expression, #Type, #Statement, #Modifier, #TypeSymbol]);
+  code = generate("AST", [#Declarator, #DeclSpecifier, #Declaration, #Expression, #Type, #Statement, #Modifier, #TypeSymbol, #Attribute]);
   
   writeFile(|project://clair/src/lang/cpp/internal/AST.java|, code);
 }
