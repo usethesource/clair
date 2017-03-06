@@ -545,14 +545,14 @@ public class AST {
     = tf.constructor(typestore,_TypeSymbol,"double");
   private static final Type _TypeSymbol_decimal32_0 
     = tf.constructor(typestore,_TypeSymbol,"decimal32");
+  private static final Type _TypeSymbol_classSpecialization_2 
+    = tf.constructor(typestore,_TypeSymbol,"classSpecialization",tf.sourceLocationType(),"decl",tf.mapType(tf.integerType(),_TypeSymbol),"templateParameters");
   private static final Type _TypeSymbol_unspecified_0 
     = tf.constructor(typestore,_TypeSymbol,"unspecified");
-  private static final Type _TypeSymbol_char_0 
-    = tf.constructor(typestore,_TypeSymbol,"char");
+  private static final Type _TypeSymbol_class_1 
+    = tf.constructor(typestore,_TypeSymbol,"class",tf.sourceLocationType(),"decl");
   private static final Type _TypeSymbol_any_0 
     = tf.constructor(typestore,_TypeSymbol,"any");
-  private static final Type _TypeSymbol_class_1 
-    = tf.constructor(typestore,_TypeSymbol,"class",tf.listType(_TypeSymbol),"bases");
   private static final Type _TypeSymbol_noType_0 
     = tf.constructor(typestore,_TypeSymbol,"noType");
   private static final Type _TypeSymbol_float128_0 
@@ -573,6 +573,10 @@ public class AST {
     = tf.constructor(typestore,_TypeSymbol,"typeContainer",_TypeSymbol,"type");
   private static final Type _TypeSymbol_void_0 
     = tf.constructor(typestore,_TypeSymbol,"void");
+  private static final Type _TypeSymbol_char_0 
+    = tf.constructor(typestore,_TypeSymbol,"char");
+  private static final Type _TypeSymbol_referenceType_1 
+    = tf.constructor(typestore,_TypeSymbol,"referenceType",_TypeSymbol,"type");
   private static final Type _TypeSymbol_boolean_0 
     = tf.constructor(typestore,_TypeSymbol,"boolean");
   private static final Type _TypeSymbol_int128_0 
@@ -581,6 +585,8 @@ public class AST {
     = tf.constructor(typestore,_TypeSymbol,"wchar");
   private static final Type _TypeSymbol_basicType_2 
     = tf.constructor(typestore,_TypeSymbol,"basicType",tf.listType(_Modifier),"modifiers",_TypeSymbol,"baseType");
+  private static final Type _TypeSymbol_parameterPackType_1 
+    = tf.constructor(typestore,_TypeSymbol,"parameterPackType",_TypeSymbol,"type");
   private static final Type _TypeSymbol_decimal64_0 
     = tf.constructor(typestore,_TypeSymbol,"decimal64");
   private static final Type _TypeSymbol_int_0 
@@ -4216,6 +4222,23 @@ public class AST {
     return vf.constructor(_TypeSymbol_decimal32_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
+  public IConstructor TypeSymbol_classSpecialization(ISourceLocation $decl, IMap $templateParameters) {
+      
+    if (!$decl.getType().isSubtypeOf(tf.sourceLocationType())) {
+      throw new IllegalArgumentException("Expected " + tf.sourceLocationType() + " but got " + $decl.getType() + " for $decl:" + $decl);
+    }
+      
+    if (!$templateParameters.getType().isSubtypeOf(tf.mapType(tf.integerType(),_TypeSymbol))) {
+      throw new IllegalArgumentException("Expected " + tf.mapType(tf.integerType(),_TypeSymbol) + " but got " + $templateParameters.getType() + " for $templateParameters:" + $templateParameters);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeSymbol_classSpecialization_2 , $decl, $templateParameters).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
   public IConstructor TypeSymbol_unspecified() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
@@ -4225,13 +4248,17 @@ public class AST {
     return vf.constructor(_TypeSymbol_unspecified_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor TypeSymbol_char() {
+  public IConstructor TypeSymbol_class(ISourceLocation $decl) {
+      
+    if (!$decl.getType().isSubtypeOf(tf.sourceLocationType())) {
+      throw new IllegalArgumentException("Expected " + tf.sourceLocationType() + " but got " + $decl.getType() + " for $decl:" + $decl);
+    }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     
     
-    return vf.constructor(_TypeSymbol_char_0 ).asWithKeywordParameters().setParameters(kwParams);
+    return vf.constructor(_TypeSymbol_class_1 , $decl).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeSymbol_any() {
@@ -4241,19 +4268,6 @@ public class AST {
     
     
     return vf.constructor(_TypeSymbol_any_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor TypeSymbol_class(IList $bases) {
-      
-    if (!$bases.getType().isSubtypeOf(tf.listType(_TypeSymbol))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_TypeSymbol) + " but got " + $bases.getType() + " for $bases:" + $bases);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    
-    
-    return vf.constructor(_TypeSymbol_class_1 , $bases).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeSymbol_noType() {
@@ -4370,6 +4384,28 @@ public class AST {
     return vf.constructor(_TypeSymbol_void_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
+  public IConstructor TypeSymbol_char() {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeSymbol_char_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeSymbol_referenceType(IConstructor $type) {
+      
+    if (!$type.getType().isSubtypeOf(_TypeSymbol)) {
+      throw new IllegalArgumentException("Expected " + _TypeSymbol + " but got " + $type.getType() + " for $type:" + $type);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeSymbol_referenceType_1 , $type).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
   public IConstructor TypeSymbol_boolean() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
@@ -4412,6 +4448,19 @@ public class AST {
     
     
     return vf.constructor(_TypeSymbol_basicType_2 , $modifiers, $baseType).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeSymbol_parameterPackType(IConstructor $type) {
+      
+    if (!$type.getType().isSubtypeOf(_TypeSymbol)) {
+      throw new IllegalArgumentException("Expected " + _TypeSymbol + " but got " + $type.getType() + " for $type:" + $type);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeSymbol_parameterPackType_1 , $type).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeSymbol_decimal64() {

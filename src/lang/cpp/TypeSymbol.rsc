@@ -27,13 +27,17 @@ public data TypeSymbol
   | \array(TypeSymbol baseType)
   | \array(TypeSymbol baseType, int size)
   | \basicType(list[Modifier] modifiers, TypeSymbol baseType)
-  | \class(list[TypeSymbol] bases)
+  | \class(loc decl)
   | \struct(list[TypeSymbol] fields)
   | \qualifierType(list[Modifier] modifiers, TypeSymbol \type)
   | \pointerType(list[Modifier] modifiers, TypeSymbol \type)
   | \functionType(TypeSymbol returnType, list[TypeSymbol] parameterTypes, bool takesVarArgs)
   | \typeContainer(TypeSymbol \type)
   | \enumeration(loc decl)
+  | \referenceType(TypeSymbol \type)
+  | \parameterPackType(TypeSymbol \type)
+  
+  | \classSpecialization(loc decl, map[int,TypeSymbol] templateParameters)
   
   | \templateTypeParameter(str ownerName, str name)
   | \deferredClassInstance(str name)
