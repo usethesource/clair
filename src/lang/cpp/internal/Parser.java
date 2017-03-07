@@ -390,8 +390,12 @@ public class Parser extends ASTVisitor {
 	}
 
 	IList getAttributes(IASTAttributeOwner node) {
-		// TODO: NYI
-		return vf.listWriter().done();
+		IListWriter attributes = vf.listWriter();
+		Stream.of(node.getAttributes()).forEach(it -> {
+			it.accept(this);
+			attributes.append(stack.pop());
+		});
+		return attributes.done();
 	}
 
 	IList getModifiers(IASTNode node) {
