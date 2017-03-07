@@ -229,8 +229,6 @@ public class TypeResolver {
 			Stream.of(type.getFields()).forEach(it -> out("\tField: " + it));
 			// Stream.of(type.getFields()).forEach(it ->
 			// fields.append(resolveType(it.getType(), src)));
-			if (type.getFields().length > 0)
-				throw new RuntimeException();
 			return builder.TypeSymbol_struct(fields.done());
 		case ICPPClassType.k_union:
 			out("ICPPClassTemplate union");
