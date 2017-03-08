@@ -1736,17 +1736,20 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(IASTArraySubscriptExpression expression) {
-		if (expression instanceof ICPPASTArraySubscriptExpression)
-			visit((ICPPASTArraySubscriptExpression) expression);
-		else
-			throw new RuntimeException("NYI");
-		return PROCESS_ABORT;
-	}
+	public int visit(ICPPASTArraySubscriptExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
+		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
+		ICPPASTExpression _arrayExpression = expression.getArrayExpression();
+		ICPPASTInitializerClause _argument = expression.getArgument();
 
-	public int visit(ICPPASTUnaryExpression expression) {
-		out("CPPUnaryExpression: " + expression.getRawSignature());
-		throw new RuntimeException("NYI");
+		_arrayExpression.accept(this);
+		IConstructor arrayExpression = stack.pop();
+		_argument.accept(this);
+		IConstructor argument = stack.pop();
+
+		stack.push(builder.Expression_arraySubscriptExpression(arrayExpression, argument, loc, typ));
+
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTBinaryExpression expression) {
@@ -1754,79 +1757,34 @@ public class Parser extends ASTVisitor {
 		throw new RuntimeException("NYI");
 	}
 
-	public int visit(ICPPASTTypeIdExpression expression) {
-		out("CPPTypeIdExpression: " + expression.getRawSignature());
+	public int visit(ICPPASTCastExpression expression) {
+		out("CPPCastExpression: " + expression.getRawSignature());
 		throw new RuntimeException("NYI");
 	}
 
-	public int visit(ICPPASTSimpleTypeConstructorExpression expression) {
-		// decl keyword parameter?
-		ISourceLocation loc = getSourceLocation(expression);
-		ICPPASTDeclSpecifier _declSpecifier = expression.getDeclSpecifier();
-		IASTInitializer _initializer = expression.getInitializer();
-		_declSpecifier.accept(this);
-		IConstructor declSpecifier = stack.pop();
-		_initializer.accept(this);
-		IConstructor initializer = stack.pop();
-		stack.push(builder.Expression_simpleTypeConstructor(declSpecifier, initializer, loc));
-		return PROCESS_ABORT;
-	}
-
-	public int visit(ICPPASTPackExpansionExpression expression) {
-		ISourceLocation loc = getSourceLocation(expression);
-		expression.getPattern().accept(this);
-		stack.push(builder.Expression_packExpansion(stack.pop(), loc));
-		return PROCESS_ABORT;
-	}
-
-	public int visit(ICPPASTNewExpression expression) {
+	public int visit(ICPPASTDeleteExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		if (expression.isGlobal())
-			err("WARNING: ICPPASTNewExpression has isGlobal=true");
-		if (expression.isArrayAllocation())
-			err("WARNING: ICPPASTNewExpression has isArrayAllocation=true");
-		if (expression.isNewTypeId())
-			err("WARNING: ICPPASTNewExpression has isNewTypeId=true");
-
-		IASTTypeId _typeId = expression.getTypeId();
-		IASTInitializer _initializer = expression.getInitializer();
-
-		_typeId.accept(this);
-		IConstructor typeId = stack.pop();
-
-		IASTInitializerClause[] _placementArguments = expression.getPlacementArguments();
-		if (_placementArguments != null) {
-			IListWriter placementArguments = vf.listWriter();
-			Stream.of(_placementArguments).forEach(it -> {
-				it.accept(this);
-				placementArguments.append(stack.pop());
-			});
-			if (_initializer == null)
-				stack.push(builder.Expression_newWithArgs(placementArguments.done(), typeId, loc));
-			else {
-				_initializer.accept(this);
-				IConstructor initializer = stack.pop();
-				stack.push(builder.Expression_newWithArgs(placementArguments.done(), typeId, initializer, loc));
-			}
-		} else if (_initializer == null)
-			stack.push(builder.Expression_new(typeId, loc));
-		else {
-			_initializer.accept(this);
-			IConstructor initializer = stack.pop();
-			stack.push(builder.Expression_new(typeId, initializer, loc));
-		}
+			err("WARNING: ICPPASTDeleteExpression has isGlobal=true");
+		IASTExpression operand = expression.getOperand();
+		operand.accept(this);
+		stack.push(builder.Expression_delete(vf.bool(expression.isVectored()), stack.pop(), loc));
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICPPASTNaryTypeIdExpression expression) {
-		out("CPPNaryTypeIdExpression: " + expression.getRawSignature());
+	public int visit(ICPPASTExpressionList expression) {
+		out("CPPExpressionList: " + expression.getRawSignature());
 		throw new RuntimeException("NYI");
 	}
 
-	public int visit(ICPPASTLiteralExpression expression) {
-		// This may never be reached
-		visit((IASTLiteralExpression) expression);
-		return PROCESS_ABORT;
+	public int visit(ICPPASTFieldReference expression) {
+		out("CPPFieldReference: " + expression.getRawSignature());
+		throw new RuntimeException("NYI");
+	}
+
+	public int visit(ICPPASTFunctionCallExpression expression) {
+		out("CPPFunctionCallExpression: " + expression.getRawSignature());
+		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTLambdaExpression expression) {
@@ -1882,318 +1840,91 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICPPASTFunctionCallExpression expression) {
-		out("CPPFunctionCallExpression: " + expression.getRawSignature());
+	public int visit(ICPPASTLiteralExpression expression) {
+		// This may never be reached
+		visit((IASTLiteralExpression) expression);
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTNaryTypeIdExpression expression) {
+		out("CPPNaryTypeIdExpression: " + expression.getRawSignature());
 		throw new RuntimeException("NYI");
 	}
 
-	public int visit(ICPPASTFieldReference expression) {
-		out("CPPFieldReference: " + expression.getRawSignature());
-		throw new RuntimeException("NYI");
-	}
-
-	public int visit(ICPPASTExpressionList expression) {
-		out("CPPExpressionList: " + expression.getRawSignature());
-		throw new RuntimeException("NYI");
-	}
-
-	public int visit(ICPPASTDeleteExpression expression) {
+	public int visit(ICPPASTNewExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		if (expression.isGlobal())
-			err("WARNING: ICPPASTDeleteExpression has isGlobal=true");
-		IASTExpression operand = expression.getOperand();
-		operand.accept(this);
-		stack.push(builder.Expression_delete(vf.bool(expression.isVectored()), stack.pop(), loc));
+			err("WARNING: ICPPASTNewExpression has isGlobal=true");
+		if (expression.isArrayAllocation())
+			err("WARNING: ICPPASTNewExpression has isArrayAllocation=true");
+		if (expression.isNewTypeId())
+			err("WARNING: ICPPASTNewExpression has isNewTypeId=true");
+
+		IASTTypeId _typeId = expression.getTypeId();
+		IASTInitializer _initializer = expression.getInitializer();
+
+		_typeId.accept(this);
+		IConstructor typeId = stack.pop();
+
+		IASTInitializerClause[] _placementArguments = expression.getPlacementArguments();
+		if (_placementArguments != null) {
+			IListWriter placementArguments = vf.listWriter();
+			Stream.of(_placementArguments).forEach(it -> {
+				it.accept(this);
+				placementArguments.append(stack.pop());
+			});
+			if (_initializer == null)
+				stack.push(builder.Expression_newWithArgs(placementArguments.done(), typeId, loc));
+			else {
+				_initializer.accept(this);
+				IConstructor initializer = stack.pop();
+				stack.push(builder.Expression_newWithArgs(placementArguments.done(), typeId, initializer, loc));
+			}
+		} else if (_initializer == null)
+			stack.push(builder.Expression_new(typeId, loc));
+		else {
+			_initializer.accept(this);
+			IConstructor initializer = stack.pop();
+			stack.push(builder.Expression_new(typeId, initializer, loc));
+		}
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICPPASTCastExpression expression) {
-		out("CPPCastExpression: " + expression.getRawSignature());
+	public int visit(ICPPASTPackExpansionExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
+		expression.getPattern().accept(this);
+		stack.push(builder.Expression_packExpansion(stack.pop(), loc));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTSimpleTypeConstructorExpression expression) {
+		// decl keyword parameter?
+		ISourceLocation loc = getSourceLocation(expression);
+		ICPPASTDeclSpecifier _declSpecifier = expression.getDeclSpecifier();
+		IASTInitializer _initializer = expression.getInitializer();
+		_declSpecifier.accept(this);
+		IConstructor declSpecifier = stack.pop();
+		_initializer.accept(this);
+		IConstructor initializer = stack.pop();
+		stack.push(builder.Expression_simpleTypeConstructor(declSpecifier, initializer, loc));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTTypeIdExpression expression) {
+		out("CPPTypeIdExpression: " + expression.getRawSignature());
 		throw new RuntimeException("NYI");
 	}
 
-	public int visit(ICPPASTArraySubscriptExpression expression) {
-		ISourceLocation loc = getSourceLocation(expression);
-		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
-		ICPPASTExpression _arrayExpression = expression.getArrayExpression();
-		ICPPASTInitializerClause _argument = expression.getArgument();
-
-		_arrayExpression.accept(this);
-		IConstructor arrayExpression = stack.pop();
-		_argument.accept(this);
-		IConstructor argument = stack.pop();
-
-		stack.push(builder.Expression_arraySubscriptExpression(arrayExpression, argument, loc, typ));
-
-		return PROCESS_ABORT;
-	}
-
-	public int visit(IASTTypeIdInitializerExpression expression) {
-		out("TypeIdInitializerExpression: " + expression.getRawSignature());
+	public int visit(ICPPASTUnaryExpression expression) {
+		out("CPPUnaryExpression: " + expression.getRawSignature());
 		throw new RuntimeException("NYI");
 	}
 
-	public int visit(IASTTypeIdExpression expression) {
-		ISourceLocation loc = getSourceLocation(expression);
-		int operator = expression.getOperator();
-		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
-		expression.getTypeId().accept(this);
-		switch (operator) {
-		case IASTTypeIdExpression.op_sizeof:
-			stack.push(builder.Expression_sizeof(stack.pop(), loc, typ));
-			break;
-		case IASTTypeIdExpression.op_typeid:
-			stack.push(builder.Expression_typeid(stack.pop(), loc, typ));
-			break;
-		case IASTTypeIdExpression.op_alignof: // gnu-only?
-			stack.push(builder.Expression_alignOf(stack.pop(), loc, typ));
-			break;
-		case IASTTypeIdExpression.op_sizeofParameterPack:
-			stack.push(builder.Expression_sizeofParameterPack(stack.pop(), loc, typ));
-			break;
-		default:
-			throw new RuntimeException(
-					"ERROR: IASTTypeIdExpression called with unimplemented/unknown operator " + operator);
-		}
-		return PROCESS_ABORT;
-	}
-
-	public int visit(IASTProblemExpression expression) {
-		ISourceLocation loc = getSourceLocation(expression);
-		IASTProblem problem = expression.getProblem();
-		err("ProblemExpression " + expression.getRawSignature() + ":" + problem.getMessageWithLocation());
-		stack.push(builder.Expression_problemExpression(loc));
-		return PROCESS_ABORT;
-	}
-
-	public int visit(IASTFunctionCallExpression expression) {
-		ISourceLocation loc = getSourceLocation(expression);
-		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
-		IASTExpression _functionName = expression.getFunctionNameExpression();
-		IASTInitializerClause[] _arguments = expression.getArguments();
-
-		_functionName.accept(this);
-		IConstructor functionName = stack.pop();
-		IListWriter arguments = vf.listWriter();
-		Stream.of(_arguments).forEach(it -> {
-			it.accept(this);
-			arguments.append(stack.pop());
-		});
-		stack.push(builder.Expression_functionCall(functionName, arguments.done(), loc, typ));
-		return PROCESS_ABORT;
-	}
-
-	public int visit(IASTFieldReference expression) {
-		ISourceLocation loc = getSourceLocation(expression);
-		ISourceLocation decl = br.resolveBinding(expression);
-		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
-		if (expression instanceof ICPPASTFieldReference) {
-			ICPPASTFieldReference reference = (ICPPASTFieldReference) expression;
-			IASTExpression _fieldOwner = reference.getFieldOwner();
-			IASTName _fieldName = reference.getFieldName();
-
-			_fieldOwner.accept(this);
-			IConstructor fieldOwner = stack.pop();
-			_fieldName.accept(this);
-			IConstructor fieldName = stack.pop();
-			if (expression.isPointerDereference())
-				stack.push(builder.Expression_fieldReferencePointerDeref(fieldOwner, fieldName, loc, decl, typ));
-			else
-				stack.push(builder.Expression_fieldReference(fieldOwner, fieldName, loc, decl, typ));
-		} else
-			throw new RuntimeException("IASTFieldReference: NYI");
-		return PROCESS_ABORT;
-	}
-
-	public int visit(IASTExpressionList expression) {
-		ISourceLocation loc = getSourceLocation(expression);
-		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
-		IListWriter expressions = vf.listWriter();
-		Stream.of(expression.getExpressions()).forEach(it -> {
-			it.accept(this);
-			expressions.append(stack.pop());
-		});
-		stack.push(builder.Expression_expressionList(expressions.done(), loc, typ));
-		return PROCESS_ABORT;
-	}
-
-	public int visit(IASTBinaryTypeIdExpression expression) {
-		// has typ
-		out("BinaryTypeIdExpression: " + expression.getRawSignature());
-		throw new RuntimeException("NYI");
-	}
-
-	public int visit(IASTConditionalExpression expression) {
-		ISourceLocation loc = getSourceLocation(expression);
-		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
-		IASTExpression _condition = expression.getLogicalConditionExpression();
-		IASTExpression _positive = expression.getPositiveResultExpression();
-		IASTExpression _negative = expression.getNegativeResultExpression();
-
-		_condition.accept(this);
-		IConstructor condition = stack.pop();
-		_positive.accept(this);
-		IConstructor positive = stack.pop();
-		_negative.accept(this);
-		IConstructor negative = stack.pop();
-
-		stack.push(builder.Expression_conditional(condition, positive, negative, loc, typ));
-
-		return PROCESS_ABORT;
-	}
-
-	public int visit(IASTCastExpression expression) {
-		ISourceLocation loc = getSourceLocation(expression);
-		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
-		int operator = expression.getOperator();
-		IASTExpression _operand = expression.getOperand();
-		IASTTypeId typeId = expression.getTypeId();
-		_operand.accept(this);
-		IConstructor operand = stack.pop();
-		typeId.accept(this);
-		IConstructor type = stack.pop();
-
-		switch (operator) {
-		case ICPPASTCastExpression.op_cast:
-			stack.push(builder.Expression_cast(type, operand, loc, typ));
-			break;
-		case ICPPASTCastExpression.op_dynamic_cast:
-			stack.push(builder.Expression_dynamicCast(type, operand, loc, typ));
-			break;
-		case ICPPASTCastExpression.op_static_cast:
-			stack.push(builder.Expression_staticCast(type, operand, loc, typ));
-			break;
-		case ICPPASTCastExpression.op_reinterpret_cast:
-			stack.push(builder.Expression_reinterpretCast(type, operand, loc, typ));
-			break;
-		case ICPPASTCastExpression.op_const_cast:
-			stack.push(builder.Expression_constCast(type, operand, loc, typ));
-			break;
-		default:
-			throw new RuntimeException("Unknown cast type " + operator);
-		}
-		return PROCESS_ABORT;
-	}
-
-	public int visit(IASTUnaryExpression expression) {
-		ISourceLocation loc = getSourceLocation(expression);
-		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
-		int operator = expression.getOperator();
-		IASTExpression _operand = expression.getOperand();
-
-		IConstructor operand = null;
-		if (_operand != null) {
-			expression.getOperand().accept(this);
-			operand = stack.pop();
-		}
-
-		switch (operator) {
-		case IASTUnaryExpression.op_prefixIncr:
-			stack.push(builder.Expression_prefixIncr(operand, loc, typ));
-			break;
-		case IASTUnaryExpression.op_prefixDecr:
-			stack.push(builder.Expression_prefixDecr(operand, loc, typ));
-			break;
-		case IASTUnaryExpression.op_plus:
-			stack.push(builder.Expression_plus(operand, loc, typ));
-			break;
-		case IASTUnaryExpression.op_minus:
-			stack.push(builder.Expression_minus(operand, loc, typ));
-			break;
-		case IASTUnaryExpression.op_star:
-			stack.push(builder.Expression_star(operand, loc, typ));
-			break;
-		case IASTUnaryExpression.op_amper:
-			stack.push(builder.Expression_amper(operand, loc, typ));
-			break;
-		case IASTUnaryExpression.op_tilde:
-			stack.push(builder.Expression_tilde(operand, loc, typ));
-			break;
-		case IASTUnaryExpression.op_not:
-			stack.push(builder.Expression_not(operand, loc, typ));
-			break;
-		case IASTUnaryExpression.op_sizeof:
-			stack.push(builder.Expression_sizeof(operand, loc, typ));
-			break;
-		case IASTUnaryExpression.op_postFixIncr:
-			stack.push(builder.Expression_postfixIncr(operand, loc, typ));
-			break;
-		case IASTUnaryExpression.op_postFixDecr:
-			stack.push(builder.Expression_postfixDecr(operand, loc, typ));
-			break;
-		case IASTUnaryExpression.op_bracketedPrimary:
-			stack.push(builder.Expression_bracketed(operand, loc, typ));
-			break;
-		case IASTUnaryExpression.op_throw:
-			if (operand == null)
-				stack.push(builder.Expression_throw(loc, typ));
-			else
-				stack.push(builder.Expression_throw(operand, loc, typ));
-			break;
-		case IASTUnaryExpression.op_typeid:
-			stack.push(builder.Expression_typeid(operand, loc, typ));
-			break;
-		// case IASTUnaryExpression.op_typeof: (14) typeOf is deprecated
-		case IASTUnaryExpression.op_alignOf:
-			stack.push(builder.Expression_alignOf(operand, loc, typ));
-			break;
-		case IASTUnaryExpression.op_sizeofParameterPack:
-			stack.push(builder.Expression_sizeofParameterPack(operand, loc, typ));
-			break;
-		case IASTUnaryExpression.op_noexcept:
-			stack.push(builder.Expression_noexcept(operand, loc, typ));
-			break;
-		case IASTUnaryExpression.op_labelReference:
-			stack.push(builder.Expression_labelReference(operand, loc, typ));
-			break;
-		default:
-			throw new RuntimeException("Unknown unary operator " + operator + ". Exiting");
-		}
-
-		return PROCESS_ABORT;
-	}
-
-	public int visit(IASTLiteralExpression expression) {
-		ISourceLocation loc = getSourceLocation(expression);
-		int kind = expression.getKind();
-		String value = new String(expression.getValue());// expression.toString();
-		switch (kind) {
-		case IASTLiteralExpression.lk_integer_constant:
-			stack.push(builder.Expression_integerConstant(value, loc));
-			break;
-		case IASTLiteralExpression.lk_float_constant:
-			stack.push(builder.Expression_floatConstant(value, loc));
-			break;
-		case IASTLiteralExpression.lk_char_constant:
-			stack.push(builder.Expression_charConstant(value, loc));
-			break;
-		case IASTLiteralExpression.lk_string_literal:
-			stack.push(builder.Expression_stringLiteral(value, loc));
-			break;
-		case IASTLiteralExpression.lk_this:
-			stack.push(builder.Expression_this(loc));
-			break;
-		case IASTLiteralExpression.lk_true:
-			stack.push(builder.Expression_true(loc));
-			break;
-		case IASTLiteralExpression.lk_false:
-			stack.push(builder.Expression_false(loc));
-			break;
-		case IASTLiteralExpression.lk_nullptr:
-			stack.push(builder.Expression_nullptr(loc));
-			break;
-		default:
-			throw new RuntimeException("Encountered unknown literal kind " + kind + ". Exiting");
-		}
-		return PROCESS_ABORT;
-	}
-
-	public int visit(IASTIdExpression expression) {
-		ISourceLocation loc = getSourceLocation(expression);
-		ISourceLocation decl = br.resolveBinding(expression);
-		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
-		expression.getName().accept(this);
-		stack.push(builder.Expression_idExpression(stack.pop(), loc, decl, typ));
+	public int visit(IASTArraySubscriptExpression expression) {
+		if (expression instanceof ICPPASTArraySubscriptExpression)
+			visit((ICPPASTArraySubscriptExpression) expression);
+		else
+			throw new RuntimeException("NYI");
 		return PROCESS_ABORT;
 	}
 
@@ -2317,6 +2048,275 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
+	public int visit(IASTBinaryTypeIdExpression expression) {
+		// has typ
+		out("BinaryTypeIdExpression: " + expression.getRawSignature());
+		throw new RuntimeException("NYI");
+	}
+
+	public int visit(IASTCastExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
+		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
+		int operator = expression.getOperator();
+		IASTExpression _operand = expression.getOperand();
+		IASTTypeId typeId = expression.getTypeId();
+		_operand.accept(this);
+		IConstructor operand = stack.pop();
+		typeId.accept(this);
+		IConstructor type = stack.pop();
+
+		switch (operator) {
+		case ICPPASTCastExpression.op_cast:
+			stack.push(builder.Expression_cast(type, operand, loc, typ));
+			break;
+		case ICPPASTCastExpression.op_dynamic_cast:
+			stack.push(builder.Expression_dynamicCast(type, operand, loc, typ));
+			break;
+		case ICPPASTCastExpression.op_static_cast:
+			stack.push(builder.Expression_staticCast(type, operand, loc, typ));
+			break;
+		case ICPPASTCastExpression.op_reinterpret_cast:
+			stack.push(builder.Expression_reinterpretCast(type, operand, loc, typ));
+			break;
+		case ICPPASTCastExpression.op_const_cast:
+			stack.push(builder.Expression_constCast(type, operand, loc, typ));
+			break;
+		default:
+			throw new RuntimeException("Unknown cast type " + operator);
+		}
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTConditionalExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
+		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
+		IASTExpression _condition = expression.getLogicalConditionExpression();
+		IASTExpression _positive = expression.getPositiveResultExpression();
+		IASTExpression _negative = expression.getNegativeResultExpression();
+
+		_condition.accept(this);
+		IConstructor condition = stack.pop();
+		_positive.accept(this);
+		IConstructor positive = stack.pop();
+		_negative.accept(this);
+		IConstructor negative = stack.pop();
+
+		stack.push(builder.Expression_conditional(condition, positive, negative, loc, typ));
+
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTExpressionList expression) {
+		ISourceLocation loc = getSourceLocation(expression);
+		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
+		IListWriter expressions = vf.listWriter();
+		Stream.of(expression.getExpressions()).forEach(it -> {
+			it.accept(this);
+			expressions.append(stack.pop());
+		});
+		stack.push(builder.Expression_expressionList(expressions.done(), loc, typ));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTFieldReference expression) {
+		ISourceLocation loc = getSourceLocation(expression);
+		ISourceLocation decl = br.resolveBinding(expression);
+		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
+		if (expression instanceof ICPPASTFieldReference) {
+			ICPPASTFieldReference reference = (ICPPASTFieldReference) expression;
+			IASTExpression _fieldOwner = reference.getFieldOwner();
+			IASTName _fieldName = reference.getFieldName();
+
+			_fieldOwner.accept(this);
+			IConstructor fieldOwner = stack.pop();
+			_fieldName.accept(this);
+			IConstructor fieldName = stack.pop();
+			if (expression.isPointerDereference())
+				stack.push(builder.Expression_fieldReferencePointerDeref(fieldOwner, fieldName, loc, decl, typ));
+			else
+				stack.push(builder.Expression_fieldReference(fieldOwner, fieldName, loc, decl, typ));
+		} else
+			throw new RuntimeException("IASTFieldReference: NYI");
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTFunctionCallExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
+		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
+		IASTExpression _functionName = expression.getFunctionNameExpression();
+		IASTInitializerClause[] _arguments = expression.getArguments();
+
+		_functionName.accept(this);
+		IConstructor functionName = stack.pop();
+		IListWriter arguments = vf.listWriter();
+		Stream.of(_arguments).forEach(it -> {
+			it.accept(this);
+			arguments.append(stack.pop());
+		});
+		stack.push(builder.Expression_functionCall(functionName, arguments.done(), loc, typ));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTLiteralExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
+		int kind = expression.getKind();
+		String value = new String(expression.getValue());// expression.toString();
+		switch (kind) {
+		case IASTLiteralExpression.lk_integer_constant:
+			stack.push(builder.Expression_integerConstant(value, loc));
+			break;
+		case IASTLiteralExpression.lk_float_constant:
+			stack.push(builder.Expression_floatConstant(value, loc));
+			break;
+		case IASTLiteralExpression.lk_char_constant:
+			stack.push(builder.Expression_charConstant(value, loc));
+			break;
+		case IASTLiteralExpression.lk_string_literal:
+			stack.push(builder.Expression_stringLiteral(value, loc));
+			break;
+		case IASTLiteralExpression.lk_this:
+			stack.push(builder.Expression_this(loc));
+			break;
+		case IASTLiteralExpression.lk_true:
+			stack.push(builder.Expression_true(loc));
+			break;
+		case IASTLiteralExpression.lk_false:
+			stack.push(builder.Expression_false(loc));
+			break;
+		case IASTLiteralExpression.lk_nullptr:
+			stack.push(builder.Expression_nullptr(loc));
+			break;
+		default:
+			throw new RuntimeException("Encountered unknown literal kind " + kind + ". Exiting");
+		}
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTIdExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
+		ISourceLocation decl = br.resolveBinding(expression);
+		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
+		expression.getName().accept(this);
+		stack.push(builder.Expression_idExpression(stack.pop(), loc, decl, typ));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTProblemExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
+		IASTProblem problem = expression.getProblem();
+		err("ProblemExpression " + expression.getRawSignature() + ":" + problem.getMessageWithLocation());
+		stack.push(builder.Expression_problemExpression(loc));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTTypeIdInitializerExpression expression) {
+		out("TypeIdInitializerExpression: " + expression.getRawSignature());
+		throw new RuntimeException("NYI");
+	}
+
+	public int visit(IASTTypeIdExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
+		int operator = expression.getOperator();
+		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
+		expression.getTypeId().accept(this);
+		switch (operator) {
+		case IASTTypeIdExpression.op_sizeof:
+			stack.push(builder.Expression_sizeof(stack.pop(), loc, typ));
+			break;
+		case IASTTypeIdExpression.op_typeid:
+			stack.push(builder.Expression_typeid(stack.pop(), loc, typ));
+			break;
+		case IASTTypeIdExpression.op_alignof: // gnu-only?
+			stack.push(builder.Expression_alignOf(stack.pop(), loc, typ));
+			break;
+		case IASTTypeIdExpression.op_sizeofParameterPack:
+			stack.push(builder.Expression_sizeofParameterPack(stack.pop(), loc, typ));
+			break;
+		default:
+			throw new RuntimeException(
+					"ERROR: IASTTypeIdExpression called with unimplemented/unknown operator " + operator);
+		}
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTUnaryExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
+		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
+		int operator = expression.getOperator();
+		IASTExpression _operand = expression.getOperand();
+
+		IConstructor operand = null;
+		if (_operand != null) {
+			expression.getOperand().accept(this);
+			operand = stack.pop();
+		}
+
+		switch (operator) {
+		case IASTUnaryExpression.op_prefixIncr:
+			stack.push(builder.Expression_prefixIncr(operand, loc, typ));
+			break;
+		case IASTUnaryExpression.op_prefixDecr:
+			stack.push(builder.Expression_prefixDecr(operand, loc, typ));
+			break;
+		case IASTUnaryExpression.op_plus:
+			stack.push(builder.Expression_plus(operand, loc, typ));
+			break;
+		case IASTUnaryExpression.op_minus:
+			stack.push(builder.Expression_minus(operand, loc, typ));
+			break;
+		case IASTUnaryExpression.op_star:
+			stack.push(builder.Expression_star(operand, loc, typ));
+			break;
+		case IASTUnaryExpression.op_amper:
+			stack.push(builder.Expression_amper(operand, loc, typ));
+			break;
+		case IASTUnaryExpression.op_tilde:
+			stack.push(builder.Expression_tilde(operand, loc, typ));
+			break;
+		case IASTUnaryExpression.op_not:
+			stack.push(builder.Expression_not(operand, loc, typ));
+			break;
+		case IASTUnaryExpression.op_sizeof:
+			stack.push(builder.Expression_sizeof(operand, loc, typ));
+			break;
+		case IASTUnaryExpression.op_postFixIncr:
+			stack.push(builder.Expression_postfixIncr(operand, loc, typ));
+			break;
+		case IASTUnaryExpression.op_postFixDecr:
+			stack.push(builder.Expression_postfixDecr(operand, loc, typ));
+			break;
+		case IASTUnaryExpression.op_bracketedPrimary:
+			stack.push(builder.Expression_bracketed(operand, loc, typ));
+			break;
+		case IASTUnaryExpression.op_throw:
+			if (operand == null)
+				stack.push(builder.Expression_throw(loc, typ));
+			else
+				stack.push(builder.Expression_throw(operand, loc, typ));
+			break;
+		case IASTUnaryExpression.op_typeid:
+			stack.push(builder.Expression_typeid(operand, loc, typ));
+			break;
+		// case IASTUnaryExpression.op_typeof: (14) typeOf is deprecated
+		case IASTUnaryExpression.op_alignOf:
+			stack.push(builder.Expression_alignOf(operand, loc, typ));
+			break;
+		case IASTUnaryExpression.op_sizeofParameterPack:
+			stack.push(builder.Expression_sizeofParameterPack(operand, loc, typ));
+			break;
+		case IASTUnaryExpression.op_noexcept:
+			stack.push(builder.Expression_noexcept(operand, loc, typ));
+			break;
+		case IASTUnaryExpression.op_labelReference:
+			stack.push(builder.Expression_labelReference(operand, loc, typ));
+			break;
+		default:
+			throw new RuntimeException("Unknown unary operator " + operator + ". Exiting");
+		}
+
+		return PROCESS_ABORT;
+	}
+
 	@Override
 	public int visit(IASTStatement statement) {
 		// err("Statement: " + statement.getRawSignature() +
@@ -2373,41 +2373,27 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(IASTAmbiguousStatement statement) {
-		out("visit(IASTAmbiguousStatement)");
-		out(statement.getRawSignature());
-		ISourceLocation loc = getSourceLocation(statement);
-		IASTStatement[] _statements = statement.getStatements();
-		IListWriter statements = vf.listWriter();
-		prefix += 4;
-		Stream.of(_statements).forEach(it -> {
-			out("Statement " + it.getClass().getSimpleName() + ": " + it.getRawSignature());
-			it.accept(this);
-			statements.append(stack.pop());
-		});
-		prefix -= 4;
-		throw new RuntimeException("Encountered Ambiguous statement");
-	}
-
 	public int visit(IGNUASTGotoStatement statement) {
 		// requires decl keyword parameter
 		err("IGNUAstGotoStatement: " + statement.getRawSignature());
 		throw new RuntimeException("NYI");
 	}
 
-	public int visit(ICPPASTTryBlockStatement statement) {
+	public int visit(ICPPASTCatchHandler statement) {
 		ISourceLocation loc = getSourceLocation(statement);
 		IList attributes = getAttributes(statement);
-		IASTStatement _tryBody = statement.getTryBody();
-		ICPPASTCatchHandler[] _catchHandlers = statement.getCatchHandlers();
-		_tryBody.accept(this);
-		IConstructor tryBody = stack.pop();
-		IListWriter catchHandlers = vf.listWriter();
-		Stream.of(_catchHandlers).forEach(it -> {
-			it.accept(this);
-			catchHandlers.append(stack.pop());
-		});
-		stack.push(builder.Statement_tryBlock(attributes, tryBody, catchHandlers.done(), loc));
+		IASTStatement _catchBody = statement.getCatchBody();
+		IASTDeclaration _declaration = statement.getDeclaration();
+
+		_catchBody.accept(this);
+		IConstructor catchBody = stack.pop();
+
+		if (statement.isCatchAll())
+			stack.push(builder.Statement_catchAll(attributes, catchBody, loc));
+		else {
+			_declaration.accept(this);
+			stack.push(builder.Statement_catch(attributes, stack.pop(), catchBody, loc));
+		}
 		return PROCESS_ABORT;
 	}
 
@@ -2429,116 +2415,36 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICPPASTCatchHandler statement) {
+	public int visit(ICPPASTTryBlockStatement statement) {
 		ISourceLocation loc = getSourceLocation(statement);
 		IList attributes = getAttributes(statement);
-		IASTStatement _catchBody = statement.getCatchBody();
-		IASTDeclaration _declaration = statement.getDeclaration();
-
-		_catchBody.accept(this);
-		IConstructor catchBody = stack.pop();
-
-		if (statement.isCatchAll())
-			stack.push(builder.Statement_catchAll(attributes, catchBody, loc));
-		else {
-			_declaration.accept(this);
-			stack.push(builder.Statement_catch(attributes, stack.pop(), catchBody, loc));
-		}
+		IASTStatement _tryBody = statement.getTryBody();
+		ICPPASTCatchHandler[] _catchHandlers = statement.getCatchHandlers();
+		_tryBody.accept(this);
+		IConstructor tryBody = stack.pop();
+		IListWriter catchHandlers = vf.listWriter();
+		Stream.of(_catchHandlers).forEach(it -> {
+			it.accept(this);
+			catchHandlers.append(stack.pop());
+		});
+		stack.push(builder.Statement_tryBlock(attributes, tryBody, catchHandlers.done(), loc));
 		return PROCESS_ABORT;
 	}
 
-	public int visit(IASTReturnStatement statement) {
+	public int visit(IASTAmbiguousStatement statement) {
+		out("visit(IASTAmbiguousStatement)");
+		out(statement.getRawSignature());
 		ISourceLocation loc = getSourceLocation(statement);
-		IList attributes = getAttributes(statement);
-		IASTExpression returnValue = statement.getReturnValue();
-		IASTInitializerClause returnArgument = statement.getReturnArgument();
-		if (returnValue == null && returnArgument == null)
-			stack.push(builder.Statement_return(attributes, loc));
-		else if (returnValue != null) {
-			returnValue.accept(this);
-			stack.push(builder.Statement_return(attributes, stack.pop(), loc));
-		} else {
-			returnArgument.accept(this);
-			// Note: InitializerClause is currently mapped on Expression
-			stack.push(builder.Statement_return(attributes, stack.pop(), loc));
-		}
-		return PROCESS_ABORT;
-	}
-
-	public int visit(IASTNullStatement statement) {
-		ISourceLocation loc = getSourceLocation(statement);
-		IList attributes = getAttributes(statement);
-		stack.push(builder.Statement_nullStatement(attributes, loc));
-		return PROCESS_ABORT;
-	}
-
-	public int visit(IASTLabelStatement statement) {
-		ISourceLocation loc = getSourceLocation(statement);
-		ISourceLocation decl = br.resolveBinding(statement);
-		IList attributes = getAttributes(statement);
-		IASTName _name = statement.getName();
-		IASTStatement _nestedStatement = statement.getNestedStatement();
-
-		_name.accept(this);
-		IConstructor name = stack.pop();
-		_nestedStatement.accept(this);
-		IConstructor nestedStatement = stack.pop();
-
-		stack.push(builder.Statement_label(attributes, name, nestedStatement, loc, decl));
-		return PROCESS_ABORT;
-	}
-
-	public int visit(IASTGotoStatement statement) {
-		ISourceLocation loc = getSourceLocation(statement);
-		ISourceLocation decl = br.resolveBinding(statement);
-		IList attributes = getAttributes(statement);
-		IASTName _name = statement.getName();
-		_name.accept(this);
-		stack.push(builder.Statement_goto(attributes, stack.pop(), loc, decl));
-		return PROCESS_ABORT;
-	}
-
-	public int visit(IASTDoStatement statement) {
-		ISourceLocation loc = getSourceLocation(statement);
-		IList attributes = getAttributes(statement);
-		IASTStatement _body = statement.getBody();
-		IASTExpression _condition = statement.getCondition();
-
-		_body.accept(this);
-		IConstructor body = stack.pop();
-		_condition.accept(this);
-		IConstructor condition = stack.pop();
-		stack.push(builder.Statement_do(attributes, body, condition, loc));
-
-		return PROCESS_ABORT;
-	}
-
-	public int visit(IASTContinueStatement statement) {
-		ISourceLocation loc = getSourceLocation(statement);
-		IList attributes = getAttributes(statement);
-		stack.push(builder.Statement_continue(attributes, loc));
-		return PROCESS_ABORT;
-	}
-
-	public int visit(IASTWhileStatement statement) {
-		ISourceLocation loc = getSourceLocation(statement);
-		IList attributes = getAttributes(statement);
-		IASTExpression _condition = statement.getCondition();
-		IASTStatement _body = statement.getBody();
-
-		_condition.accept(this);
-		IConstructor condition = stack.pop();
-		_body.accept(this);
-		IConstructor body = stack.pop();
-		stack.push(builder.Statement_while(attributes, condition, body, loc));
-		return PROCESS_ABORT;
-	}
-
-	public int visit(IASTDefaultStatement statement) {
-		ISourceLocation loc = getSourceLocation(statement);
-		IList attributes = getAttributes(statement);
-		stack.push(builder.Statement_defaultCase(attributes, loc));
-		return PROCESS_ABORT;
+		IASTStatement[] _statements = statement.getStatements();
+		IListWriter statements = vf.listWriter();
+		prefix += 4;
+		Stream.of(_statements).forEach(it -> {
+			out("Statement " + it.getClass().getSimpleName() + ": " + it.getRawSignature());
+			it.accept(this);
+			statements.append(stack.pop());
+		});
+		prefix -= 4;
+		throw new RuntimeException("Encountered Ambiguous statement");
 	}
 
 	public int visit(IASTBreakStatement statement) {
@@ -2558,29 +2464,63 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(IASTSwitchStatement statement) {
+	public int visit(IASTCompoundStatement statement) {
 		ISourceLocation loc = getSourceLocation(statement);
 		IList attributes = getAttributes(statement);
-		IASTExpression _controller = statement.getControllerExpression();
-		IASTStatement _body = statement.getBody();
+		IASTStatement[] _statements = statement.getStatements();
+		IListWriter statements = vf.listWriter();
+		Stream.of(_statements).forEach(it -> {
+			it.accept(this);
+			statements.append(stack.pop());
+		});
+		stack.push(builder.Statement_compoundStatement(attributes, statements.done(), loc));
+		return PROCESS_ABORT;
+	}
 
-		_controller.accept(this);
-		IConstructor controller = stack.pop();
+	public int visit(IASTContinueStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
+		IList attributes = getAttributes(statement);
+		stack.push(builder.Statement_continue(attributes, loc));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTDeclarationStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
+		IList attributes = getAttributes(statement);
+		IASTDeclaration _declaration = statement.getDeclaration();
+		_declaration.accept(this);
+		stack.push(builder.Statement_declarationStatement(attributes, stack.pop(), loc));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTDefaultStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
+		IList attributes = getAttributes(statement);
+		stack.push(builder.Statement_defaultCase(attributes, loc));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTDoStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
+		IList attributes = getAttributes(statement);
+		IASTStatement _body = statement.getBody();
+		IASTExpression _condition = statement.getCondition();
+
 		_body.accept(this);
 		IConstructor body = stack.pop();
-
-		stack.push(builder.Statement_switch(attributes, controller, body, loc));
+		_condition.accept(this);
+		IConstructor condition = stack.pop();
+		stack.push(builder.Statement_do(attributes, body, condition, loc));
 
 		return PROCESS_ABORT;
 	}
 
-	public int visit(IASTProblemStatement statement) {
-		err("IASTProblemStatement:");
-		prefix += 4;
-		err(statement.getProblem().getMessageWithLocation());
-		err(statement.getRawSignature());
-		prefix -= 4;
-		stack.push(builder.Statement_problem(statement.getRawSignature(), getSourceLocation(statement)));
+	public int visit(IASTExpressionStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
+		IList attributes = getAttributes(statement);
+		IASTExpression _expression = statement.getExpression();
+		_expression.accept(this);
+		stack.push(builder.Statement_expressionStatement(attributes, stack.pop(), loc));
 		return PROCESS_ABORT;
 	}
 
@@ -2628,34 +2568,13 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(IASTCompoundStatement statement) {
+	public int visit(IASTGotoStatement statement) {
 		ISourceLocation loc = getSourceLocation(statement);
+		ISourceLocation decl = br.resolveBinding(statement);
 		IList attributes = getAttributes(statement);
-		IASTStatement[] _statements = statement.getStatements();
-		IListWriter statements = vf.listWriter();
-		Stream.of(_statements).forEach(it -> {
-			it.accept(this);
-			statements.append(stack.pop());
-		});
-		stack.push(builder.Statement_compoundStatement(attributes, statements.done(), loc));
-		return PROCESS_ABORT;
-	}
-
-	public int visit(IASTDeclarationStatement statement) {
-		ISourceLocation loc = getSourceLocation(statement);
-		IList attributes = getAttributes(statement);
-		IASTDeclaration _declaration = statement.getDeclaration();
-		_declaration.accept(this);
-		stack.push(builder.Statement_declarationStatement(attributes, stack.pop(), loc));
-		return PROCESS_ABORT;
-	}
-
-	public int visit(IASTExpressionStatement statement) {
-		ISourceLocation loc = getSourceLocation(statement);
-		IList attributes = getAttributes(statement);
-		IASTExpression _expression = statement.getExpression();
-		_expression.accept(this);
-		stack.push(builder.Statement_expressionStatement(attributes, stack.pop(), loc));
+		IASTName _name = statement.getName();
+		_name.accept(this);
+		stack.push(builder.Statement_goto(attributes, stack.pop(), loc, decl));
 		return PROCESS_ABORT;
 	}
 
@@ -2691,6 +2610,87 @@ public class Parser extends ASTVisitor {
 				stack.push(builder.Statement_if(attributes, condition, thenClause, elseClause, loc));
 			}
 		}
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTLabelStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
+		ISourceLocation decl = br.resolveBinding(statement);
+		IList attributes = getAttributes(statement);
+		IASTName _name = statement.getName();
+		IASTStatement _nestedStatement = statement.getNestedStatement();
+
+		_name.accept(this);
+		IConstructor name = stack.pop();
+		_nestedStatement.accept(this);
+		IConstructor nestedStatement = stack.pop();
+
+		stack.push(builder.Statement_label(attributes, name, nestedStatement, loc, decl));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTNullStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
+		IList attributes = getAttributes(statement);
+		stack.push(builder.Statement_nullStatement(attributes, loc));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTProblemStatement statement) {
+		err("IASTProblemStatement:");
+		prefix += 4;
+		err(statement.getProblem().getMessageWithLocation());
+		err(statement.getRawSignature());
+		prefix -= 4;
+		stack.push(builder.Statement_problem(statement.getRawSignature(), getSourceLocation(statement)));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTReturnStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
+		IList attributes = getAttributes(statement);
+		IASTExpression returnValue = statement.getReturnValue();
+		IASTInitializerClause returnArgument = statement.getReturnArgument();
+		if (returnValue == null && returnArgument == null)
+			stack.push(builder.Statement_return(attributes, loc));
+		else if (returnValue != null) {
+			returnValue.accept(this);
+			stack.push(builder.Statement_return(attributes, stack.pop(), loc));
+		} else {
+			returnArgument.accept(this);
+			// Note: InitializerClause is currently mapped on Expression
+			stack.push(builder.Statement_return(attributes, stack.pop(), loc));
+		}
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTSwitchStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
+		IList attributes = getAttributes(statement);
+		IASTExpression _controller = statement.getControllerExpression();
+		IASTStatement _body = statement.getBody();
+
+		_controller.accept(this);
+		IConstructor controller = stack.pop();
+		_body.accept(this);
+		IConstructor body = stack.pop();
+
+		stack.push(builder.Statement_switch(attributes, controller, body, loc));
+
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTWhileStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
+		IList attributes = getAttributes(statement);
+		IASTExpression _condition = statement.getCondition();
+		IASTStatement _body = statement.getBody();
+
+		_condition.accept(this);
+		IConstructor condition = stack.pop();
+		_body.accept(this);
+		IConstructor body = stack.pop();
+		stack.push(builder.Statement_while(attributes, condition, body, loc));
 		return PROCESS_ABORT;
 	}
 
