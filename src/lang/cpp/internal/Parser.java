@@ -520,6 +520,8 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
+	// Names
+
 	@Override
 	public int visit(IASTName name) {
 		if (name instanceof IASTImplicitName)
@@ -611,6 +613,8 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
+	// Declarations
+
 	@Override
 	public int visit(IASTDeclaration declaration) {
 		if (declaration instanceof IASTASMDeclaration)
@@ -653,95 +657,17 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICPPASTVisibilityLabel declaration) {
-		ISourceLocation loc = getSourceLocation(declaration);
-		int visibility = declaration.getVisibility();
-		switch (visibility) {
-		case ICPPASTVisibilityLabel.v_public:
-			stack.push(builder.Declaration_visibilityLabel(builder.Modifier_public(loc), loc));
-			break;
-		case ICPPASTVisibilityLabel.v_protected:
-			stack.push(builder.Declaration_visibilityLabel(builder.Modifier_protected(loc), loc));
-			break;
-		case ICPPASTVisibilityLabel.v_private:
-			stack.push(builder.Declaration_visibilityLabel(builder.Modifier_private(loc), loc));
-			break;
-		default:
-			throw new RuntimeException("Unknown CPPVisibilityLabel code " + visibility + ". Exiting");
-		}
-		return PROCESS_ABORT;
-	}
-
-	public int visit(ICPPASTUsingDirective declaration) {
+	public int visit(ICPPASTAliasDeclaration declaration) {
 		ISourceLocation loc = getSourceLocation(declaration);
 		ISourceLocation decl = br.resolveBinding(declaration);
 		IList attributes = getAttributes(declaration);
-		IASTName qualifiedName = declaration.getQualifiedName();
-		qualifiedName.accept(this);
-		stack.push(builder.Declaration_usingDirective(attributes, stack.pop(), loc, decl));
-		return PROCESS_ABORT;
-	}
-
-	public int visit(ICPPASTUsingDeclaration declaration) {
-		ISourceLocation loc = getSourceLocation(declaration);
-		ISourceLocation decl = br.resolveBinding(declaration);
-		IList attributes = getAttributes(declaration);
-		IList modifiers = getModifiers(declaration);
-		declaration.getName().accept(this);
-		stack.push(builder.Declaration_usingDeclaration(attributes, modifiers, stack.pop(), loc, decl));
-		return PROCESS_ABORT;
-	}
-
-	public int visit(ICPPASTTemplateSpecialization declaration) {
-		out("CPPTemplateSpecialization: " + declaration.getRawSignature());
-		throw new RuntimeException("NYI");
-	}
-
-	public int visit(ICPPASTTemplateDeclaration declaration) {
-		ISourceLocation loc = getSourceLocation(declaration);
-		boolean isExported = declaration.isExported();
-		IASTDeclaration _declaration = declaration.getDeclaration();
-		ICPPASTTemplateParameter[] _templateParameters = declaration.getTemplateParameters();
-		IListWriter templateParameters = vf.listWriter();
-		Stream.of(_templateParameters).forEach(it -> {
-			it.accept(this);
-			templateParameters.append(stack.pop());
-		});
-		_declaration.accept(this);
-		stack.push(builder.Declaration_template(templateParameters.done(), stack.pop(), loc));
-		return PROCESS_ABORT;
-	}
-
-	public int visit(ICPPASTStaticAssertDeclaration declaration) {
-		ISourceLocation loc = getSourceLocation(declaration);
-		declaration.getCondition().accept(this);
-		stack.push(builder.Declaration_staticAssert(stack.pop(), loc));
-		return PROCESS_ABORT;
-	}
-
-	public int visit(ICPPASTNamespaceAlias declaration) {
-		ISourceLocation loc = getSourceLocation(declaration);
-		ISourceLocation decl = br.resolveBinding(declaration);
-		declaration.getAlias().accept(this);
+		IASTName _alias = declaration.getAlias();
+		ICPPASTTypeId _mappingTypeId = declaration.getMappingTypeId();
+		_alias.accept(this);
 		IConstructor alias = stack.pop();
-		declaration.getMappingName().accept(this);
-		IConstructor mappingName = stack.pop();
-		stack.push(builder.Declaration_namespaceAlias(alias, mappingName, loc, decl));
-		return PROCESS_ABORT;
-	}
-
-	public int visit(ICPPASTLinkageSpecification declaration) {
-		ISourceLocation loc = getSourceLocation(declaration);
-		String literal = declaration.getLiteral();
-		IASTDeclaration[] _declarations = declaration.getDeclarations();
-
-		IListWriter declarations = vf.listWriter();
-		Stream.of(_declarations).forEach(it -> {
-			it.accept(this);
-			declarations.append(stack.pop());
-		});
-
-		stack.push(builder.Declaration_linkageSpecification(literal, declarations.done(), loc));
+		_mappingTypeId.accept(this);
+		IConstructor mappingTypeId = stack.pop();
+		stack.push(builder.Declaration_alias(attributes, alias, mappingTypeId, loc, decl));
 		return PROCESS_ABORT;
 	}
 
@@ -769,50 +695,101 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICPPASTAliasDeclaration declaration) {
+	public int visit(ICPPASTLinkageSpecification declaration) {
 		ISourceLocation loc = getSourceLocation(declaration);
-		ISourceLocation decl = br.resolveBinding(declaration);
-		IList attributes = getAttributes(declaration);
-		IASTName _alias = declaration.getAlias();
-		ICPPASTTypeId _mappingTypeId = declaration.getMappingTypeId();
-		_alias.accept(this);
-		IConstructor alias = stack.pop();
-		_mappingTypeId.accept(this);
-		IConstructor mappingTypeId = stack.pop();
-		stack.push(builder.Declaration_alias(attributes, alias, mappingTypeId, loc, decl));
+		String literal = declaration.getLiteral();
+		IASTDeclaration[] _declarations = declaration.getDeclarations();
+
+		IListWriter declarations = vf.listWriter();
+		Stream.of(_declarations).forEach(it -> {
+			it.accept(this);
+			declarations.append(stack.pop());
+		});
+
+		stack.push(builder.Declaration_linkageSpecification(literal, declarations.done(), loc));
 		return PROCESS_ABORT;
 	}
 
-	public int visit(IASTProblemDeclaration declaration) {
-		err("ProblemDeclaration: ");
-		prefix += 4;
-		err(declaration.getProblem().getMessageWithLocation());
-		err(declaration.getRawSignature());
-		prefix -= 4;
-		stack.push(builder.Declaration_problemDeclaration(getSourceLocation(declaration)));
+	public int visit(ICPPASTNamespaceAlias declaration) {
+		ISourceLocation loc = getSourceLocation(declaration);
+		ISourceLocation decl = br.resolveBinding(declaration);
+		declaration.getAlias().accept(this);
+		IConstructor alias = stack.pop();
+		declaration.getMappingName().accept(this);
+		IConstructor mappingName = stack.pop();
+		stack.push(builder.Declaration_namespaceAlias(alias, mappingName, loc, decl));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTStaticAssertDeclaration declaration) {
+		ISourceLocation loc = getSourceLocation(declaration);
+		declaration.getCondition().accept(this);
+		stack.push(builder.Declaration_staticAssert(stack.pop(), loc));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTTemplateDeclaration declaration) {
+		ISourceLocation loc = getSourceLocation(declaration);
+		boolean isExported = declaration.isExported();
+		IASTDeclaration _declaration = declaration.getDeclaration();
+		ICPPASTTemplateParameter[] _templateParameters = declaration.getTemplateParameters();
+		IListWriter templateParameters = vf.listWriter();
+		Stream.of(_templateParameters).forEach(it -> {
+			it.accept(this);
+			templateParameters.append(stack.pop());
+		});
+		_declaration.accept(this);
+		stack.push(builder.Declaration_template(templateParameters.done(), stack.pop(), loc));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTTemplateSpecialization declaration) {
+		out("CPPTemplateSpecialization: " + declaration.getRawSignature());
+		throw new RuntimeException("NYI");
+	}
+
+	public int visit(ICPPASTUsingDeclaration declaration) {
+		ISourceLocation loc = getSourceLocation(declaration);
+		ISourceLocation decl = br.resolveBinding(declaration);
+		IList attributes = getAttributes(declaration);
+		IList modifiers = getModifiers(declaration);
+		declaration.getName().accept(this);
+		stack.push(builder.Declaration_usingDeclaration(attributes, modifiers, stack.pop(), loc, decl));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTUsingDirective declaration) {
+		ISourceLocation loc = getSourceLocation(declaration);
+		ISourceLocation decl = br.resolveBinding(declaration);
+		IList attributes = getAttributes(declaration);
+		IASTName qualifiedName = declaration.getQualifiedName();
+		qualifiedName.accept(this);
+		stack.push(builder.Declaration_usingDirective(attributes, stack.pop(), loc, decl));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(ICPPASTVisibilityLabel declaration) {
+		ISourceLocation loc = getSourceLocation(declaration);
+		int visibility = declaration.getVisibility();
+		switch (visibility) {
+		case ICPPASTVisibilityLabel.v_public:
+			stack.push(builder.Declaration_visibilityLabel(builder.Modifier_public(loc), loc));
+			break;
+		case ICPPASTVisibilityLabel.v_protected:
+			stack.push(builder.Declaration_visibilityLabel(builder.Modifier_protected(loc), loc));
+			break;
+		case ICPPASTVisibilityLabel.v_private:
+			stack.push(builder.Declaration_visibilityLabel(builder.Modifier_private(loc), loc));
+			break;
+		default:
+			throw new RuntimeException("Unknown CPPVisibilityLabel code " + visibility + ". Exiting");
+		}
 		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTASMDeclaration declaration) {
 		ISourceLocation loc = getSourceLocation(declaration);
 		stack.push(builder.Declaration_asmDeclaration(declaration.getAssembly(), loc));
-		return PROCESS_ABORT;
-	}
-
-	public int visit(IASTSimpleDeclaration declaration) {
-		ISourceLocation loc = getSourceLocation(declaration);
-		IASTDeclSpecifier _declSpecifier = declaration.getDeclSpecifier();
-		IASTDeclarator[] _declarators = declaration.getDeclarators();
-		IList attributes = getAttributes(declaration);
-
-		_declSpecifier.accept(this);
-		IConstructor declSpecifier = stack.pop();
-		IListWriter declarators = vf.listWriter();
-		Stream.of(_declarators).forEach(it -> {
-			it.accept(this);
-			declarators.append(stack.pop());
-		});
-		stack.push(builder.Declaration_simpleDeclaration(attributes, declSpecifier, declarators.done(), loc));
 		return PROCESS_ABORT;
 	}
 
@@ -883,6 +860,67 @@ public class Parser extends ASTVisitor {
 	}
 
 	@Override
+	public int visit(IASTParameterDeclaration parameterDeclaration) {
+		ISourceLocation loc = getSourceLocation(parameterDeclaration);
+		if (parameterDeclaration instanceof ICPPASTParameterDeclaration) {
+			ICPPASTParameterDeclaration declaration = (ICPPASTParameterDeclaration) parameterDeclaration;
+			IASTDeclSpecifier _declSpecifier = declaration.getDeclSpecifier();
+			ICPPASTDeclarator _declarator = declaration.getDeclarator();
+
+			_declSpecifier.accept(this);
+			IConstructor declSpecifier = stack.pop();
+			if (_declarator == null)
+				stack.push(builder.Declaration_parameter(declSpecifier, loc));
+			else {
+				_declarator.accept(this);
+				stack.push(builder.Declaration_parameter(declSpecifier, stack.pop(), loc));
+			}
+		} else {
+			IASTDeclSpecifier _declSpecifier = parameterDeclaration.getDeclSpecifier();
+			IASTDeclarator _declarator = parameterDeclaration.getDeclarator();
+
+			_declSpecifier.accept(this);
+			IConstructor declSpecifier = stack.pop();
+			if (_declarator == null)
+				stack.push(builder.Declaration_parameter(declSpecifier, loc));
+			else {
+				_declarator.accept(this);
+				stack.push(builder.Declaration_parameter(declSpecifier, stack.pop(), loc));
+			}
+		}
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTProblemDeclaration declaration) {
+		err("ProblemDeclaration: ");
+		prefix += 4;
+		err(declaration.getProblem().getMessageWithLocation());
+		err(declaration.getRawSignature());
+		prefix -= 4;
+		stack.push(builder.Declaration_problemDeclaration(getSourceLocation(declaration)));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTSimpleDeclaration declaration) {
+		ISourceLocation loc = getSourceLocation(declaration);
+		IASTDeclSpecifier _declSpecifier = declaration.getDeclSpecifier();
+		IASTDeclarator[] _declarators = declaration.getDeclarators();
+		IList attributes = getAttributes(declaration);
+
+		_declSpecifier.accept(this);
+		IConstructor declSpecifier = stack.pop();
+		IListWriter declarators = vf.listWriter();
+		Stream.of(_declarators).forEach(it -> {
+			it.accept(this);
+			declarators.append(stack.pop());
+		});
+		stack.push(builder.Declaration_simpleDeclaration(attributes, declSpecifier, declarators.done(), loc));
+		return PROCESS_ABORT;
+	}
+
+	// Initializers
+
+	@Override
 	public int visit(IASTInitializer initializer) {
 		if (initializer instanceof IASTEqualsInitializer)
 			visit((IASTEqualsInitializer) initializer);
@@ -909,26 +947,6 @@ public class Parser extends ASTVisitor {
 		initializerClause.accept(this);
 		stack.push(builder.Expression_equalsInitializer(stack.pop(), loc));
 		return PROCESS_ABORT;
-	}
-
-	public int visit(IASTInitializerClause initializerClause) {
-		if (initializerClause instanceof IASTExpression)
-			visit((IASTExpression) initializerClause);
-		else if (initializerClause instanceof IASTInitializerList)
-			visit((IASTInitializerList) initializerClause);
-		else if (initializerClause instanceof ICASTDesignatedInitializer)
-			visit((ICASTDesignatedInitializer) initializerClause);
-		else if (initializerClause instanceof ICPPASTInitializerClause)
-			visit((ICPPASTInitializerClause) initializerClause);
-		else
-			throw new RuntimeException(
-					"Unknown IASTInitializerClause subclass " + initializerClause.getClass().getName() + ". Exiting");
-		return PROCESS_ABORT;
-	}
-
-	public int visit(ICPPASTInitializerClause initializer) {
-		err("ICPPASTInitializerClause: " + initializer.getRawSignature());
-		throw new RuntimeException("NYI");
 	}
 
 	public int visit(IASTInitializerList initializer) {
@@ -989,37 +1007,29 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	@Override
-	public int visit(IASTParameterDeclaration parameterDeclaration) {
-		ISourceLocation loc = getSourceLocation(parameterDeclaration);
-		if (parameterDeclaration instanceof ICPPASTParameterDeclaration) {
-			ICPPASTParameterDeclaration declaration = (ICPPASTParameterDeclaration) parameterDeclaration;
-			IASTDeclSpecifier _declSpecifier = declaration.getDeclSpecifier();
-			ICPPASTDeclarator _declarator = declaration.getDeclarator();
+	// InitializerClauses
 
-			_declSpecifier.accept(this);
-			IConstructor declSpecifier = stack.pop();
-			if (_declarator == null)
-				stack.push(builder.Declaration_parameter(declSpecifier, loc));
-			else {
-				_declarator.accept(this);
-				stack.push(builder.Declaration_parameter(declSpecifier, stack.pop(), loc));
-			}
-		} else {
-			IASTDeclSpecifier _declSpecifier = parameterDeclaration.getDeclSpecifier();
-			IASTDeclarator _declarator = parameterDeclaration.getDeclarator();
-
-			_declSpecifier.accept(this);
-			IConstructor declSpecifier = stack.pop();
-			if (_declarator == null)
-				stack.push(builder.Declaration_parameter(declSpecifier, loc));
-			else {
-				_declarator.accept(this);
-				stack.push(builder.Declaration_parameter(declSpecifier, stack.pop(), loc));
-			}
-		}
+	public int visit(IASTInitializerClause initializerClause) {
+		if (initializerClause instanceof IASTExpression)
+			visit((IASTExpression) initializerClause);
+		else if (initializerClause instanceof IASTInitializerList)
+			visit((IASTInitializerList) initializerClause);
+		else if (initializerClause instanceof ICASTDesignatedInitializer)
+			visit((ICASTDesignatedInitializer) initializerClause);
+		else if (initializerClause instanceof ICPPASTInitializerClause)
+			visit((ICPPASTInitializerClause) initializerClause);
+		else
+			throw new RuntimeException(
+					"Unknown IASTInitializerClause subclass " + initializerClause.getClass().getName() + ". Exiting");
 		return PROCESS_ABORT;
 	}
+
+	public int visit(ICPPASTInitializerClause initializer) {
+		err("ICPPASTInitializerClause: " + initializer.getRawSignature());
+		throw new RuntimeException("NYI");
+	}
+
+	// Declarators
 
 	@Override
 	public int visit(IASTDeclarator declarator) {
@@ -1285,6 +1295,8 @@ public class Parser extends ASTVisitor {
 
 		return PROCESS_ABORT;
 	}
+
+	// DeclSpecifiers
 
 	@Override
 	public int visit(IASTDeclSpecifier declSpec) {
