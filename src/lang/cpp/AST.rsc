@@ -352,7 +352,11 @@ data Modifier(loc src = |unknown:///|)
     | \captDefByReference()
     ;
 
-data Attribute = a();
+data Attribute 
+    = \attribute(str name)
+    | \attribute(str name, str argumentClause)
+    | \attributeSpecifier(list[Attribute] attributes)
+	;
     
 public map[str, list[loc]] classPaths =
   ("vs14": [|file://c:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2014.0/VC/include/|],

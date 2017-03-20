@@ -437,8 +437,8 @@ public class Parser extends ASTVisitor {
 	IList getAttributes(IASTAttributeOwner node) {
 		IListWriter attributeSpecifiers = vf.listWriter();
 		Stream.of(node.getAttributeSpecifiers()).forEach(it -> {
-			// it.accept(this);
-			// attributeSpecifiers.append(stack.pop());
+			it.accept(this);
+			attributeSpecifiers.append(stack.pop());
 		});
 		return attributeSpecifiers.done();
 	}
@@ -1711,14 +1711,26 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(IASTAttribute attribute) {
-		err("Attribute: " + attribute.getRawSignature());
-		throw new RuntimeException("NYI");
+		ISourceLocation src = getSourceLocation(attribute);
+		if (attribute.getArgumentClause() == null)
+			stack.push(builder.Attribute_attribute(new String(attribute.getName()), src));
+		else
+			stack.push(builder.Attribute_attribute(new String(attribute.getName()),
+					new String(attribute.getArgumentClause().getTokenCharImage()), src));
+		return PROCESS_ABORT;
 	}
 
 	@Override
 	public int visit(IASTAttributeSpecifier specifier) {
-		err("Specifier: " + specifier.getRawSignature());
-		throw new RuntimeException("NYI");
+		ISourceLocation src = getSourceLocation(specifier);
+		IASTAttributeList list = (IASTAttributeList) specifier;
+		IListWriter attributes = vf.listWriter();
+		Stream.of(list.getAttributes()).forEach(it -> {
+			it.accept(this);
+			attributes.append(stack.pop());
+		});
+		stack.push(builder.Attribute_attributeSpecifier(attributes.done(), src));
+		return PROCESS_ABORT;
 	}
 
 	@Override
