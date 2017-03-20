@@ -212,7 +212,13 @@ public class Parser extends ASTVisitor {
 		this.vf = vf;
 		this.builder = new AST(vf);
 		this.includeInactiveNodes = true;
-		this.tr = new TypeResolver(builder, vf);
+		this.tr = new TypeResolver(builder, vf) {
+			@Override
+			public IConstructor resolveType(IType type, ISourceLocation src) {
+				return builder.TypeSymbol_any();
+			}
+		};
+
 	}
 
 	public IMap parseFiles(IList files, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
