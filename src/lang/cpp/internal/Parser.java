@@ -209,9 +209,13 @@ public class Parser extends ASTVisitor {
 
 	public Parser(IValueFactory vf) {
 		super(true);
+		this.shouldVisitAmbiguousNodes = true;
+		this.shouldVisitImplicitNames = true;
+		this.includeInactiveNodes = true;
+		this.shouldVisitTokens = true;
+
 		this.vf = vf;
 		this.builder = new AST(vf);
-		this.includeInactiveNodes = true;
 		this.tr = new TypeResolver(builder, vf) {
 			@Override
 			public IConstructor resolveType(IType type, ISourceLocation src) {
