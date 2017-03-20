@@ -133,7 +133,7 @@ public class BindingsResolver {
 
 		if (binding instanceof ICPPBinding)
 			return resolveICPPBinding((ICPPBinding) binding);
-		return UNKNOWN;
+		return makeBinding("UNKNOWN1", null, null);
 	}
 
 	private ISourceLocation resolveIVariable(IVariable binding) throws URISyntaxException {
@@ -147,9 +147,8 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation resolveIProblemBinding(IProblemBinding binding) {
-		// err("Trying to resolve " + binding.getClass().getSimpleName() + ": "
-		// + binding);
-		return UNKNOWN;
+		err("IProblemBinding: " + binding.toString());
+		return makeBinding("cpp+problem", binding.getMessage(), null);
 	}
 
 	private ISourceLocation resolveIMacroBinding(IMacroBinding binding) {
@@ -215,7 +214,7 @@ public class BindingsResolver {
 			return resolveICPPUsingDeclaration((ICPPUsingDeclaration) binding);
 		if (binding instanceof ICPPVariable)
 			return resolveICPPVariable((ICPPVariable) binding);
-		return UNKNOWN;
+		return makeBinding("UNKNOWN3", null, null);
 	}
 
 	private ISourceLocation resolveICPPVariable(ICPPVariable binding) throws URISyntaxException {
@@ -418,7 +417,7 @@ public class BindingsResolver {
 			err("Caught URISyntaxException, return UNKNOWN");
 			err(e.getMessage());
 		}
-		return UNKNOWN;
+		return makeBinding("UNKNOWN4", null, null);
 	}
 
 	private ISourceLocation resolveUsingDeclaration(ICPPASTUsingDeclaration node) throws URISyntaxException {
