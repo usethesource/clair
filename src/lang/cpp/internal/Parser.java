@@ -640,6 +640,7 @@ public class Parser extends ASTVisitor {
 		});
 		_lastName.accept(this);
 		IConstructor lastName = stack.pop();
+		// TODO: check fullyQualified
 		if (fullyQualified)
 			err("WARNING: ICPPASTQualifiedName has fullyQualified=true");
 		if (conversionOrOperator)
@@ -777,6 +778,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTStaticAssertDeclaration declaration) {
+		// TODO: check getMessage
 		ISourceLocation loc = getSourceLocation(declaration);
 		declaration.getCondition().accept(this);
 		stack.push(builder.Declaration_staticAssert(stack.pop(), loc));
@@ -785,6 +787,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICPPASTTemplateDeclaration declaration) {
 		ISourceLocation loc = getSourceLocation(declaration);
+		// TODO: check isExported
 		boolean isExported = declaration.isExported();
 		IASTDeclaration _declaration = declaration.getDeclaration();
 		ICPPASTTemplateParameter[] _templateParameters = declaration.getTemplateParameters();
@@ -799,11 +802,13 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTTemplateSpecialization declaration) {
+		// TODO: check getDeclaration
 		out("CPPTemplateSpecialization: " + declaration.getRawSignature());
 		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTUsingDeclaration declaration) {
+		// TODO: check isTypename
 		ISourceLocation loc = getSourceLocation(declaration);
 		ISourceLocation decl = br.resolveBinding(declaration);
 		IList attributes = getAttributes(declaration);
@@ -917,6 +922,7 @@ public class Parser extends ASTVisitor {
 	@Override
 	public int visit(IASTParameterDeclaration parameterDeclaration) {
 		ISourceLocation loc = getSourceLocation(parameterDeclaration);
+		// TODO: remove duplicate code
 		if (parameterDeclaration instanceof ICPPASTParameterDeclaration) {
 			ICPPASTParameterDeclaration declaration = (ICPPASTParameterDeclaration) parameterDeclaration;
 			IASTDeclSpecifier _declSpecifier = declaration.getDeclSpecifier();
@@ -1005,6 +1011,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTInitializerList initializer) {
+		// TODO: cpp: check isPackExpansion, maybe getSize
 		ISourceLocation loc = getSourceLocation(initializer);
 		IASTInitializerClause[] _clauses = initializer.getClauses();
 		IListWriter clauses = vf.listWriter();
@@ -1022,6 +1029,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTConstructorChainInitializer initializer) {
+		// TODO: check isPackExpansion
 		ISourceLocation loc = getSourceLocation(initializer);
 		ISourceLocation decl = br.resolveBinding(initializer);
 		IASTName _memberInitializerId = initializer.getMemberInitializerId();
@@ -1097,6 +1105,7 @@ public class Parser extends ASTVisitor {
 		else if (declarator instanceof ICPPASTDeclarator)
 			visit((ICPPASTDeclarator) declarator);
 		else {
+			// TODO: add attributes
 			IASTPointerOperator[] _pointerOperators = declarator.getPointerOperators();
 			IASTDeclarator _nestedDeclarator = declarator.getNestedDeclarator();
 			IASTName _name = declarator.getName();
@@ -1150,9 +1159,11 @@ public class Parser extends ASTVisitor {
 		});
 		_name.accept(this);
 		IConstructor name = stack.pop();
+		// TODO: check declaresParameterPack
 		if (declarator instanceof ICPPASTArrayDeclarator
 				&& ((ICPPASTArrayDeclarator) declarator).declaresParameterPack())
 			out("WARNING: IASTArrayDeclarator has declaresParameterPack=true");
+		// TODO: check pointerOperators and nestedDeclarator
 		if (_pointerOperators.length > 0 || _nestedDeclarator != null)
 			err("WARNING: IASTArrayDeclarator encountered unimplemented field");
 		if (_initializer == null)
@@ -1166,6 +1177,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTFieldDeclarator declarator) {
+		// TODO: implement
 		err("FieldDeclarator: " + declarator.getRawSignature());
 		throw new RuntimeException("NYI");
 	}
@@ -1185,6 +1197,7 @@ public class Parser extends ASTVisitor {
 		if (declarator instanceof ICPPASTFunctionDeclarator)
 			visit((ICPPASTFunctionDeclarator) declarator);
 		else {
+			// TODO: check getNestedDeclarator and getInitializer
 			ISourceLocation loc = getSourceLocation(declarator);
 			ISourceLocation decl = br.resolveBinding(declarator);
 			IList attributes = getAttributes(declarator);
@@ -1221,6 +1234,8 @@ public class Parser extends ASTVisitor {
 		Map<IASTName, IASTDeclarator> map = new HashMap<IASTName, IASTDeclarator>();
 		for (IASTName name : names)
 			map.put(name, declarator.getDeclaratorForParameterName(name));
+		// TODO: implement
+		// check add getDeclarator, getParameterNames, getParameterDeclarations
 
 		throw new RuntimeException("NYI");
 	}
@@ -1269,11 +1284,13 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTFieldDeclarator declarator) {
+		// TODO: implement, add bitfieldsize
 		err("CPPFieldDeclarator: " + declarator.getRawSignature());
 		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTFunctionDeclarator declarator) {
+		// TODO: check refQualifier and declaresParameterPack
 		ISourceLocation loc = getSourceLocation(declarator);
 		ISourceLocation decl = br.resolveBinding(declarator);
 		IList attributes = getAttributes(declarator);
@@ -1291,6 +1308,7 @@ public class Parser extends ASTVisitor {
 
 		IList modifiers = getModifiers(declarator);
 
+		// TODO: check takesVarArgs, noexceptExpression, and trailingReturnType
 		if (declarator.takesVarArgs())
 			err("WARNING: ICPPASTFunctionDeclarator has takesVarArgs=true");
 		if (noexceptExpression != null)
@@ -1427,9 +1445,11 @@ public class Parser extends ASTVisitor {
 		int key = declSpec.getKey();
 		IASTName _name = declSpec.getName();
 		IASTDeclaration[] _members = declSpec.getMembers();
+		// TODO: check: remove isFinal
 		boolean isFinal = declSpec.isFinal();
 		ICPPASTClassVirtSpecifier virtSpecifier = declSpec.getVirtSpecifier();
 
+		// TODO: check getVirtSpecifier
 		if (virtSpecifier != null)
 			err("WARNING: ICPPASTCompositeTypeSpecifier has virtSpecifier: " + virtSpecifier.getRawSignature());
 		if (isFinal)
@@ -1505,6 +1525,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTNamedTypeSpecifier declSpec) {
+		// TODO: cpp: check getName and isTypename
 		ISourceLocation loc = getSourceLocation(declSpec);
 		ISourceLocation decl = br.resolveBinding(declSpec);
 		IList modifiers = getModifiers(declSpec);
@@ -1520,6 +1541,7 @@ public class Parser extends ASTVisitor {
 		IList attributes = getAttributes((ICPPASTSimpleDeclSpecifier) declSpec);
 		IList modifiers = getModifiers(declSpec);
 
+		// TODO: check getDeclTypeExpression
 		switch (declSpec.getType()) {
 		case IASTSimpleDeclSpecifier.t_unspecified:
 			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_unspecified(loc), loc));
@@ -1622,6 +1644,7 @@ public class Parser extends ASTVisitor {
 		IASTEnumerator[] _enumerators = declSpec.getEnumerators();
 		IASTDeclSpecifier _baseType = declSpec.getBaseType();
 
+		// TODO: check isOpaque
 		if (declSpec.isOpaque())
 			err("WARNING: ICPPASTEnumerationSpecifier has isOpaque=true");
 
@@ -1660,6 +1683,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTTypeTransformationSpecifier declSpec) {
+		// TODO: implement, check operator and operand
 		err("ICPPASTTypeTransformationSpecifier: " + declSpec.getRawSignature());
 		throw new RuntimeException("NYI");
 	}
@@ -1672,6 +1696,7 @@ public class Parser extends ASTVisitor {
 		} else {
 			IList attributes = getAttributes(arrayModifier);
 			IASTExpression _constantExpression = arrayModifier.getConstantExpression();
+			// TODO: remove attributeSpecifiers, are in attributes
 			IASTAttributeSpecifier[] _attributeSpecifiers = arrayModifier.getAttributeSpecifiers();
 
 			if (_attributeSpecifiers != null && _attributeSpecifiers.length > 0)
@@ -1707,6 +1732,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTReferenceOperator referenceOperator) {
+		// TODO: check pointerToMember, getName, isRValueReference
 		ISourceLocation loc = getSourceLocation(referenceOperator);
 		IList attributes = getAttributes(referenceOperator);
 		boolean isRValueReference = referenceOperator.isRValueReference();
@@ -1843,6 +1869,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICPPASTDeleteExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
+		// TODO: check isGlobal
 		if (expression.isGlobal())
 			err("WARNING: ICPPASTDeleteExpression has isGlobal=true");
 		IASTExpression operand = expression.getOperand();
@@ -1857,6 +1884,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTFieldReference expression) {
+		// TODO: Implement
 		out("CPPFieldReference: " + expression.getRawSignature());
 		throw new RuntimeException("NYI");
 	}
@@ -1882,6 +1910,7 @@ public class Parser extends ASTVisitor {
 			captures.append(stack.pop());
 		});
 
+		// TODO: check to remove closureType and functionCallOperatorName
 		if (!_closureTypeName.getRawSignature().equals("["))
 			err("ICPPASTLambdaExpression has closureTypeName " + _closureTypeName.getRawSignature()
 					+ ", not implemented");
@@ -1932,6 +1961,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICPPASTNewExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
+		// TODO: check to remove isArrayAllocation
 		if (expression.isGlobal())
 			err("WARNING: ICPPASTNewExpression has isGlobal=true");
 		if (expression.isArrayAllocation())
@@ -2202,6 +2232,7 @@ public class Parser extends ASTVisitor {
 		ISourceLocation decl = br.resolveBinding(expression);
 		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
 		if (expression instanceof ICPPASTFieldReference) {
+			// TODO: check isTemplate
 			ICPPASTFieldReference reference = (ICPPASTFieldReference) expression;
 			IASTExpression _fieldOwner = reference.getFieldOwner();
 			IASTName _fieldName = reference.getFieldName();
@@ -2613,6 +2644,7 @@ public class Parser extends ASTVisitor {
 
 		if (statement instanceof ICPPASTForStatement) {
 			IASTDeclaration _conditionDeclaration = ((ICPPASTForStatement) statement).getConditionDeclaration();
+			// TODO: check conditionDeclaration
 			if (_conditionDeclaration != null)
 				err("WARNING: ICPPASTForStatement has ConditionDeclaration: "
 						+ _conditionDeclaration.getRawSignature());
@@ -2744,6 +2776,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTSwitchStatement statement) {
+		// TODO: check controllerDeclaration
 		ISourceLocation loc = getSourceLocation(statement);
 		IList attributes = getAttributes(statement);
 		IASTExpression _controller = statement.getControllerExpression();
@@ -2760,6 +2793,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTWhileStatement statement) {
+		// TODO: check conditionDeclaration
 		ISourceLocation loc = getSourceLocation(statement);
 		IList attributes = getAttributes(statement);
 		IASTExpression _condition = statement.getCondition();
@@ -2951,6 +2985,7 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(ICPPASTCapture capture) {
+		// TODO: check isPackExpansion and capturesThisPointer
 		ISourceLocation loc = getSourceLocation(capture);
 		ISourceLocation decl = br.resolveBinding(capture);
 		if (capture.capturesThisPointer())
