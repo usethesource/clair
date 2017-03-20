@@ -104,8 +104,6 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"deletedFunctionDefinition",tf.listType(_Attribute),"attributes",_DeclSpecifier,"declSpecifier",tf.listType(_Expression),"memberInitializer",_Declarator,"declarator");
   private static final Type _Declaration_namespaceAlias_2 
     = tf.constructor(typestore,_Declaration,"namespaceAlias",_Expression,"alias",_Expression,"mapping");
-  private static final Type _Declaration_linkageSpecification_2 
-    = tf.constructor(typestore,_Declaration,"linkageSpecification",tf.stringType(),"literal",tf.listType(_Declaration),"declarations");
   private static final Type _Declaration_translationUnit_1 
     = tf.constructor(typestore,_Declaration,"translationUnit",tf.listType(_Declaration),"declarations");
   private static final Type _Declaration_problemDeclaration_0 
@@ -134,6 +132,10 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"usingDeclaration",tf.listType(_Attribute),"attributes",tf.listType(_Modifier),"modifiers",_Expression,"name");
   private static final Type _Declaration_sttTypename_1 
     = tf.constructor(typestore,_Declaration,"sttTypename",_Expression,"name");
+  private static final Type _Declaration_explicitTemplateInstantiation_1 
+    = tf.constructor(typestore,_Declaration,"explicitTemplateInstantiation",_Declaration,"declaration");
+  private static final Type _Declaration_linkageSpecification_2 
+    = tf.constructor(typestore,_Declaration,"linkageSpecification",tf.stringType(),"literal",tf.listType(_Declaration),"declarations");
   private static final Type _Declaration_pointer_2 
     = tf.constructor(typestore,_Declaration,"pointer",tf.listType(_Attribute),"attributes",tf.listType(_Modifier),"modifiers");
   private static final Type _Declaration_parameter_2 

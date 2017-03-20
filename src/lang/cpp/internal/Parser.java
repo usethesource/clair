@@ -715,24 +715,27 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTExplicitTemplateInstantiation declaration) {
 		ISourceLocation loc = getSourceLocation(declaration);
 		IASTDeclaration _declaration = declaration.getDeclaration();
-		int _modifier = declaration.getModifier();
-		IConstructor modifier;
-		switch (_modifier) {
+		_declaration.accept(this);
+		switch (declaration.getModifier()) {
+		case 0:
+			stack.push(builder.Declaration_explicitTemplateInstantiation(stack.pop(), loc));
+			break;
 		case ICPPASTExplicitTemplateInstantiation.STATIC:
-			modifier = builder.Modifier_static(loc);
+			stack.push(
+					builder.Declaration_explicitTemplateInstantiation(builder.Modifier_static(loc), stack.pop(), loc));
 			break;
 		case ICPPASTExplicitTemplateInstantiation.INLINE:
-			modifier = builder.Modifier_inline(loc);
+			stack.push(
+					builder.Declaration_explicitTemplateInstantiation(builder.Modifier_inline(loc), stack.pop(), loc));
 			break;
 		case ICPPASTExplicitTemplateInstantiation.EXTERN:
-			modifier = builder.Modifier_extern(loc);
+			stack.push(
+					builder.Declaration_explicitTemplateInstantiation(builder.Modifier_extern(loc), stack.pop(), loc));
 			break;
 		default:
 			throw new RuntimeException(
-					"ICPPASTExplicitTemplateInstantiation encountered unknown modifier " + _modifier);
+					"ICPPASTExplicitTemplateInstantiation encountered unknown modifier " + declaration.getModifier());
 		}
-		_declaration.accept(this);
-		stack.push(builder.Declaration_explicitTemplateInstantiation(modifier, stack.pop(), loc));
 		return PROCESS_ABORT;
 	}
 
