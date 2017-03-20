@@ -41,11 +41,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExp
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.IPDOMCPPClassType;
 import org.rascalmpl.interpreter.IEvaluatorContext;
-import org.rascalmpl.value.IConstructor;
-import org.rascalmpl.value.IListWriter;
-import org.rascalmpl.value.IMapWriter;
-import org.rascalmpl.value.ISourceLocation;
-import org.rascalmpl.value.IValueFactory;
+
+import io.usethesource.vallang.IConstructor;
+import io.usethesource.vallang.IListWriter;
+import io.usethesource.vallang.IMapWriter;
+import io.usethesource.vallang.ISourceLocation;
+import io.usethesource.vallang.IValueFactory;
 
 @SuppressWarnings("restriction")
 public class TypeResolver {

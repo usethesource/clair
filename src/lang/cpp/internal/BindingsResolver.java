@@ -63,9 +63,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableTemplate;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.rascalmpl.interpreter.IEvaluatorContext;
 import org.rascalmpl.uri.URIUtil;
-import org.rascalmpl.value.ISourceLocation;
-import org.rascalmpl.value.IValueFactory;
 import org.rascalmpl.values.ValueFactoryFactory;
+
+import io.usethesource.vallang.ISourceLocation;
+import io.usethesource.vallang.IValueFactory;
 
 public class BindingsResolver {
 	private final IValueFactory vf = ValueFactoryFactory.getValueFactory();
