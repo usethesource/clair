@@ -87,6 +87,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
@@ -181,8 +182,6 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
-import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnknownField;
 import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
@@ -2824,7 +2823,9 @@ public class Parser extends ASTVisitor {
 			_declSpecifier.accept(this);
 			IConstructor declSpecifier = stack.pop();
 			_abstractDeclarator.accept(this);
-			stack.push(builder.Expression_typeId(declSpecifier, stack.pop(), loc));
+			IConstructor abstractDeclarator = stack.pop();
+			stack.push(builder.Expression_typeId(declSpecifier,
+					abstractDeclarator.set("name", builder.Expression_abstractEmptyName(loc)), loc));
 		}
 		return PROCESS_ABORT;
 	}
