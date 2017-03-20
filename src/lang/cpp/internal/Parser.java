@@ -2213,6 +2213,15 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
+	public int visit(IASTIdExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
+		ISourceLocation decl = br.resolveBinding(expression);
+		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
+		expression.getName().accept(this);
+		stack.push(builder.Expression_idExpression(stack.pop(), loc, decl, typ));
+		return PROCESS_ABORT;
+	}
+
 	public int visit(IASTLiteralExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		int kind = expression.getKind();
@@ -2248,15 +2257,6 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(IASTIdExpression expression) {
-		ISourceLocation loc = getSourceLocation(expression);
-		ISourceLocation decl = br.resolveBinding(expression);
-		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
-		expression.getName().accept(this);
-		stack.push(builder.Expression_idExpression(stack.pop(), loc, decl, typ));
-		return PROCESS_ABORT;
-	}
-
 	public int visit(IASTProblemExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		IASTProblem problem = expression.getProblem();
@@ -2272,8 +2272,8 @@ public class Parser extends ASTVisitor {
 
 	public int visit(IASTTypeIdExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
-		int operator = expression.getOperator();
 		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
+		int operator = expression.getOperator();
 		expression.getTypeId().accept(this);
 		switch (operator) {
 		case IASTTypeIdExpression.op_sizeof:
