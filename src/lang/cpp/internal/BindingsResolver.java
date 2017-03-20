@@ -151,9 +151,12 @@ public class BindingsResolver {
 		return makeBinding("cpp+problem", binding.getMessage(), null);
 	}
 
-	private ISourceLocation resolveIMacroBinding(IMacroBinding binding) {
-		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
-		throw new RuntimeException("NYI");
+	private ISourceLocation resolveIMacroBinding(IMacroBinding binding) throws URISyntaxException {
+		if (binding.isDynamic()) {
+			err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
+			throw new RuntimeException("Encountered dynamic MacroBinding");
+		}
+		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), "cpp+macro");
 	}
 
 	private ISourceLocation resolveILabel(ILabel binding) throws URISyntaxException {
