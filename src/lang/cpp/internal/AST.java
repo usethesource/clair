@@ -302,6 +302,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"binaryAndAssign",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_moduloAssign_2 
     = tf.constructor(typestore,_Expression,"moduloAssign",_Expression,"lhs",_Expression,"rhs");
+  private static final Type _Expression_abstractEmptyName_0 
+    = tf.constructor(typestore,_Expression,"abstractEmptyName");
   private static final Type _Expression_integerConstant_1 
     = tf.constructor(typestore,_Expression,"integerConstant",tf.stringType(),"value");
   private static final Type _Expression_staticCast_2 
@@ -2911,6 +2913,15 @@ public class AST {
     
     kwParams.put("typ", $typ);
     return vf.constructor(_Expression_moduloAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Expression_abstractEmptyName(ISourceLocation $loc) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    
+    return vf.constructor(_Expression_abstractEmptyName_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_integerConstant(String $value, ISourceLocation $loc) {

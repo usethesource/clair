@@ -176,6 +176,8 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \noType())
     | \qualifiedName(list[Expression] qualifiers, Expression lastName, loc decl = |unknown:///|)
     | \operatorName(str \value)
     | \conversionName(str \value, Expression typeId)
+    | \abstractEmptyName()
+
     | \idExpression(Expression name, loc decl = |unknown:///|)
     | \integerLiteral(int number)
     | \conditional(Expression condition, Expression positive, Expression negative)
