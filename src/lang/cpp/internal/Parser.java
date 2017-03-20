@@ -238,6 +238,14 @@ public class Parser extends ASTVisitor {
 		return map.done();
 	}
 
+	Map<String, Set<String>> dependencies = new HashMap<String, Set<String>>();
+
+	private void addDependency(String from, String to) {
+		if (!dependencies.containsKey(from))
+			dependencies.put(from, new HashSet<String>());
+		dependencies.get(from).add(to);
+	}
+
 	public IValue parseCpp(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
 		try {
 			setIEvaluatorContext(ctx);
@@ -313,8 +321,11 @@ public class Parser extends ASTVisitor {
 						if (files == null)
 							continue;
 						for (File f : files)
-							if (isRightFile(f.getName(), fileName))
+							if (isRightFile(f.getName(), fileName)) {
+								addDependency(currentFile, include);
 								return f.getAbsolutePath();
+							}
+
 					}
 					throw new RuntimeException("Include " + include + " for " + currentFile + " not found");
 				}
