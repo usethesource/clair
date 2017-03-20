@@ -252,6 +252,29 @@ public class Parser extends ASTVisitor {
 				macros.put(entry.getKey().toString().replace("\"", ""), entry.getValue().toString().replace("\"", ""));
 			}
 
+			// from WinDiscoveredPathInfo.java:
+			macros.put("_M_IX86", "600");
+			macros.put("_WIN32", "1");
+			// macros.put("_MSC_VER", "1400");
+			macros.put("__cdecl", "");
+			macros.put("__fastcall", "");
+			macros.put("__restrict", "");
+			macros.put("__sptr", "");
+			macros.put("__stdcall", "");
+			macros.put("__unaligned", "");
+			macros.put("__uptr", "");
+			macros.put("__w64", "");
+			macros.put("__forceinline", "__inline");
+			macros.put("__int8", "char");
+			macros.put("__int16", "short");
+			macros.put("__int32", "int");
+			macros.put("__int64", "long long");
+
+			// additional:
+			macros.put("_MSC_VER", "1700");
+			macros.put("__cplusplus", "");
+			macros.put("__thiscall", "");
+
 			IScannerInfo si = new ScannerInfo(macros, null);
 
 			InternalFileContentProvider ifcp = new InternalFileContentProvider() {
