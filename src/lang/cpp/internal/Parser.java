@@ -1407,6 +1407,8 @@ public class Parser extends ASTVisitor {
 	public int visit(ICASTCompositeTypeSpecifier declSpec) {
 		ISourceLocation loc = getSourceLocation(declSpec);
 		ISourceLocation decl = br.resolveBinding(declSpec);
+		IList modifiers = getModifiers(declSpec);
+
 		int key = declSpec.getKey();
 		IASTName _name = declSpec.getName();
 		IASTDeclaration[] _members = declSpec.getMembers();
@@ -1423,10 +1425,10 @@ public class Parser extends ASTVisitor {
 
 		switch (key) {
 		case IASTCompositeTypeSpecifier.k_struct:
-			stack.push(builder.DeclSpecifier_struct(name, members.done(), loc, decl));
+			stack.push(builder.DeclSpecifier_struct(modifiers, name, members.done(), loc, decl));
 			break;
 		case IASTCompositeTypeSpecifier.k_union:
-			stack.push(builder.DeclSpecifier_union(name, members.done(), loc, decl));
+			stack.push(builder.DeclSpecifier_union(modifiers, name, members.done(), loc, decl));
 			break;
 		default:
 			throw new RuntimeException("Unknown IASTCompositeTypeSpecifier code " + key + ". Exiting");
@@ -1439,6 +1441,7 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(declSpec);
 		ISourceLocation decl = br.resolveBinding(declSpec);
 		IList attributes = getAttributes(declSpec);
+		IList modifiers = getModifiers(declSpec);
 
 		ICPPASTBaseSpecifier[] _baseSpecifiers = declSpec.getBaseSpecifiers();
 		int key = declSpec.getKey();
@@ -1468,14 +1471,16 @@ public class Parser extends ASTVisitor {
 
 		switch (key) {
 		case ICPPASTCompositeTypeSpecifier.k_struct:
-			stack.push(
-					builder.DeclSpecifier_struct(attributes, name, baseSpecifiers.done(), members.done(), loc, decl));
+			stack.push(builder.DeclSpecifier_struct(attributes, modifiers, name, baseSpecifiers.done(), members.done(),
+					loc, decl));
 			break;
 		case ICPPASTCompositeTypeSpecifier.k_union:
-			stack.push(builder.DeclSpecifier_union(attributes, name, baseSpecifiers.done(), members.done(), loc, decl));
+			stack.push(builder.DeclSpecifier_union(attributes, modifiers, name, baseSpecifiers.done(), members.done(),
+					loc, decl));
 			break;
 		case ICPPASTCompositeTypeSpecifier.k_class:
-			stack.push(builder.DeclSpecifier_class(attributes, name, baseSpecifiers.done(), members.done(), loc, decl));
+			stack.push(builder.DeclSpecifier_class(attributes, modifiers, name, baseSpecifiers.done(), members.done(),
+					loc, decl));
 			break;
 		default:
 			throw new RuntimeException("Unknown IASTCompositeTypeSpecifier code " + key + ". Exiting");
@@ -1639,6 +1644,8 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(declSpec);
 		ISourceLocation decl = br.resolveBinding(declSpec);
 		IList attributes = getAttributes(declSpec);
+		IList modifiers = getModifiers(declSpec);
+
 		IASTName _name = declSpec.getName();
 		IASTEnumerator[] _enumerators = declSpec.getEnumerators();
 		IASTDeclSpecifier _baseType = declSpec.getBaseType();
@@ -1657,16 +1664,19 @@ public class Parser extends ASTVisitor {
 
 		if (_baseType == null) {
 			if (declSpec.isScoped())
-				stack.push(builder.DeclSpecifier_enumScoped(attributes, name, enumerators.done(), loc, decl));
+				stack.push(
+						builder.DeclSpecifier_enumScoped(attributes, modifiers, name, enumerators.done(), loc, decl));
 			else
-				stack.push(builder.DeclSpecifier_enum(attributes, name, enumerators.done(), loc, decl));
+				stack.push(builder.DeclSpecifier_enum(attributes, modifiers, name, enumerators.done(), loc, decl));
 		} else {
 			_baseType.accept(this);
 			IConstructor baseType = stack.pop();
 			if (declSpec.isScoped())
-				stack.push(builder.DeclSpecifier_enumScoped(attributes, baseType, name, enumerators.done(), loc, decl));
+				stack.push(builder.DeclSpecifier_enumScoped(attributes, modifiers, baseType, name, enumerators.done(),
+						loc, decl));
 			else
-				stack.push(builder.DeclSpecifier_enum(attributes, baseType, name, enumerators.done(), loc, decl));
+				stack.push(builder.DeclSpecifier_enum(attributes, modifiers, baseType, name, enumerators.done(), loc,
+						decl));
 		}
 		return PROCESS_ABORT;
 	}

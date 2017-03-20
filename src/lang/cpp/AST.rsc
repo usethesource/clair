@@ -31,17 +31,17 @@ data DeclSpecifier(loc src = |unknown:///|)
     | \etsClass(list[Modifier] modifiers, Expression name, loc decl = |unknown:///|)
     | \namedTypeSpecifier(list[Modifier] modifiers, Expression name, loc decl = |unknown:///|)
     
-    | \struct(Expression name, list[Declaration] members, loc decl = |unknown:///|)  //c
-    | \union(Expression name, list[Declaration] members, loc decl = |unknown:///|)   //c
-    | \class(Expression name, list[Declaration] members, loc decl = |unknown:///|)   //c
-    | \struct(list[Attribute] attributes, Expression name, list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
-    | \union(list[Attribute] attributes, Expression name, list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
-    | \class(list[Attribute] attributes, Expression name, list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
+    | \struct(list[Modifier] modifiers, Expression name, list[Declaration] members, loc decl = |unknown:///|)  //c
+    | \union(list[Modifier] modifiers, Expression name, list[Declaration] members, loc decl = |unknown:///|)   //c
+    | \class(list[Modifier] modifiers, Expression name, list[Declaration] members, loc decl = |unknown:///|)   //c
+    | \struct(list[Attribute] attributes, list[Modifier] modifiers, Expression name, list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
+    | \union(list[Attribute] attributes, list[Modifier] modifiers, Expression name, list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
+    | \class(list[Attribute] attributes, list[Modifier] modifiers, Expression name, list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
     
-    | \enum(list[Attribute] attributes, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
-    | \enum(list[Attribute] attributes, DeclSpecifier baseType, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
-    | \enumScoped(list[Attribute] attributes, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
-    | \enumScoped(list[Attribute] attributes, DeclSpecifier baseType, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
+    | \enum(list[Attribute] attributes, list[Modifier] modifiers, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
+    | \enum(list[Attribute] attributes, list[Modifier] modifiers, DeclSpecifier baseType, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
+    | \enumScoped(list[Attribute] attributes, list[Modifier] modifiers, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
+    | \enumScoped(list[Attribute] attributes, list[Modifier] modifiers, DeclSpecifier baseType, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
     
      // Non-standard MSVC throw ellipsis
     | \msThrowEllipsis()
