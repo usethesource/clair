@@ -2834,9 +2834,11 @@ public class Parser extends ASTVisitor {
 			IConstructor declSpecifier = stack.pop();
 			_abstractDeclarator.accept(this);
 			IConstructor abstractDeclarator = stack.pop();
-			stack.push(builder.Expression_typeId(declSpecifier, abstractDeclarator
-					.set(2, builder.Expression_abstractEmptyName(loc)).asWithKeywordParameters().unsetParameter("decl"),
-					loc));
+			if (abstractDeclarator.has("name")) {
+				abstractDeclarator = abstractDeclarator.set("name", builder.Expression_abstractEmptyName(loc));
+				abstractDeclarator = abstractDeclarator.asWithKeywordParameters().unsetParameter("decl");
+			}
+			stack.push(builder.Expression_typeId(declSpecifier, abstractDeclarator, loc));
 		}
 		return PROCESS_ABORT;
 	}
