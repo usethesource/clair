@@ -2942,8 +2942,10 @@ public class Parser extends ASTVisitor {
 			it.accept(this);
 			declarations.append(stack.pop());
 		});
-		stack.push(builder.Declaration_namespaceDefinition(attributes, name, declarations.done(), vf.bool(isInline),
-				loc, decl));
+		if (namespaceDefinition.isInline())
+			stack.push(builder.Declaration_namespaceDefinitionInline(attributes, name, declarations.done(), loc, decl));
+		else
+			stack.push(builder.Declaration_namespaceDefinition(attributes, name, declarations.done(), loc, decl));
 		return PROCESS_ABORT;
 	}
 

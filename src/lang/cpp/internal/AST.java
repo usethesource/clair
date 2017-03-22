@@ -140,6 +140,8 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"explicitTemplateInstantiation",_Declaration,"declaration");
   private static final Type _Declaration_linkageSpecification_2 
     = tf.constructor(typestore,_Declaration,"linkageSpecification",tf.stringType(),"literal",tf.listType(_Declaration),"declarations");
+  private static final Type _Declaration_namespaceDefinition_3 
+    = tf.constructor(typestore,_Declaration,"namespaceDefinition",tf.listType(_Attribute),"attributes",_Expression,"name",tf.listType(_Declaration),"declarations");
   private static final Type _Declaration_pointer_2 
     = tf.constructor(typestore,_Declaration,"pointer",tf.listType(_Attribute),"attributes",tf.listType(_Modifier),"modifiers");
   private static final Type _Declaration_parameter_2 
@@ -148,14 +150,14 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"enumerator",_Expression,"name");
   private static final Type _Declaration_functionDefinition_3 
     = tf.constructor(typestore,_Declaration,"functionDefinition",_Expression,"returnSpec",_Declarator,"declarator",_Statement,"body");
+  private static final Type _Declaration_namespaceDefinitionInline_3 
+    = tf.constructor(typestore,_Declaration,"namespaceDefinitionInline",tf.listType(_Attribute),"attributes",_Expression,"name",tf.listType(_Declaration),"declarations");
   private static final Type _Declaration_tttParameter_2 
     = tf.constructor(typestore,_Declaration,"tttParameter",tf.listType(_Declaration),"nestedParameters",_Expression,"name");
   private static final Type _Declaration_virtSpecifier_1 
     = tf.constructor(typestore,_Declaration,"virtSpecifier",_Modifier,"modifier");
   private static final Type _Declaration_sttClass_2 
     = tf.constructor(typestore,_Declaration,"sttClass",_Expression,"name",_Expression,"defaultType");
-  private static final Type _Declaration_namespaceDefinition_4 
-    = tf.constructor(typestore,_Declaration,"namespaceDefinition",tf.listType(_Attribute),"attributes",_Expression,"name",tf.listType(_Declaration),"declarations",tf.boolType(),"isInline");
   private static final Type _Declaration_functionWithTryBlockDefinition_6 
     = tf.constructor(typestore,_Declaration,"functionWithTryBlockDefinition",tf.listType(_Attribute),"attributes",_DeclSpecifier,"declSpecifier",_Declarator,"declarator",tf.listType(_Expression),"memberInitializers",_Statement,"sbody",tf.listType(_Statement),"catchHandlers");
   private static final Type _Declaration_visibilityLabel_1 
@@ -1732,6 +1734,26 @@ public class AST {
     return vf.constructor(_Declaration_linkageSpecification_2 , vf.string($literal), $declarations).asWithKeywordParameters().setParameters(kwParams);
   }
   
+  public IConstructor Declaration_namespaceDefinition(IList $attributes, IConstructor $name, IList $declarations, ISourceLocation $loc, ISourceLocation $decl) {
+      
+    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
+    }
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$declarations.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $declarations.getType() + " for $declarations:" + $declarations);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    return vf.constructor(_Declaration_namespaceDefinition_3 , $attributes, $name, $declarations).asWithKeywordParameters().setParameters(kwParams);
+  }
   public IConstructor Declaration_pointer(IList $attributes, IList $modifiers, ISourceLocation $loc) {
       
     if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
@@ -1800,6 +1822,27 @@ public class AST {
     return vf.constructor(_Declaration_functionDefinition_3 , $returnSpec, $declarator, $body).asWithKeywordParameters().setParameters(kwParams);
   }
   
+  public IConstructor Declaration_namespaceDefinitionInline(IList $attributes, IConstructor $name, IList $declarations, ISourceLocation $loc, ISourceLocation $decl) {
+      
+    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
+    }
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$declarations.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $declarations.getType() + " for $declarations:" + $declarations);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    return vf.constructor(_Declaration_namespaceDefinitionInline_3 , $attributes, $name, $declarations).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
   public IConstructor Declaration_tttParameter(IList $nestedParameters, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
       
     if (!$nestedParameters.getType().isSubtypeOf(tf.listType(_Declaration))) {
@@ -1845,31 +1888,6 @@ public class AST {
     kwParams.put("decl", $decl);
     
     return vf.constructor(_Declaration_sttClass_2 , $name, $defaultType).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_namespaceDefinition(IList $attributes, IConstructor $name, IList $declarations, IValue $isInline, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
-    }
-      
-    if (!$name.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
-    }
-      
-    if (!$declarations.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $declarations.getType() + " for $declarations:" + $declarations);
-    }
-      
-    if (!$isInline.getType().isSubtypeOf(tf.boolType())) {
-      throw new IllegalArgumentException("Expected " + tf.boolType() + " but got " + $isInline.getType() + " for $isInline:" + $isInline);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_Declaration_namespaceDefinition_4 , $attributes, $name, $declarations, $isInline).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_functionWithTryBlockDefinition(IList $attributes, IConstructor $declSpecifier, IConstructor $declarator, IList $memberInitializers, IConstructor $sbody, IList $catchHandlers, ISourceLocation $loc) {

@@ -96,7 +96,8 @@ data Declaration(loc src=|unknown:///|)
     
     | \virtSpecifier(Modifier modifier)
     
-    | \namespaceDefinition(list[Attribute] attributes, Expression name, list[Declaration] declarations, bool isInline, loc decl = |unknown:///|)
+    | \namespaceDefinition(list[Attribute] attributes, Expression name, list[Declaration] declarations, loc decl = |unknown:///|)
+    | \namespaceDefinitionInline(list[Attribute] attributes, Expression name, list[Declaration] declarations, loc decl = |unknown:///|)
     | \usingDeclaration(list[Attribute] attributes, list[Modifier] modifiers, Expression name, loc decl = |unknown:///|)
     | \namespaceAlias(Expression \alias, Expression mapping, loc decl = |unknown:///|)
     
