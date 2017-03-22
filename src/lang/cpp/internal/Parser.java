@@ -2958,24 +2958,37 @@ public class Parser extends ASTVisitor {
 			}
 		} else if (templateParameter instanceof ICPPASTSimpleTypeTemplateParameter) {
 			ISourceLocation decl = br.resolveBinding((ICPPASTSimpleTypeTemplateParameter) templateParameter);
-			int parameterType = ((ICPPASTSimpleTypeTemplateParameter) templateParameter).getParameterType();
-			IASTTypeId defaultType = ((ICPPASTSimpleTypeTemplateParameter) templateParameter).getDefaultType();
-			IASTName _name = ((ICPPASTSimpleTypeTemplateParameter) templateParameter).getName();
-			_name.accept(this);
+			ICPPASTSimpleTypeTemplateParameter parameter = (ICPPASTSimpleTypeTemplateParameter) templateParameter;
+			parameter.getName().accept(this);
 			IConstructor name = stack.pop();
-			switch (parameterType) {
-			case ICPPASTSimpleTypeTemplateParameter.st_class:
-				stack.push(builder.Declaration_sttClass(name, loc, decl));
-				break;
-			case ICPPASTSimpleTypeTemplateParameter.st_typename:
-				stack.push(builder.Declaration_sttTypename(name, loc, decl));
-				break;
-			default:
-				throw new RuntimeException(
-						"ICPPASTTemplateParameter encountered non-implemented parameter type " + parameterType);
+
+			if (parameter.getDefaultType() != null) {
+				parameter.getDefaultType().accept(this);
+				switch (parameter.getParameterType()) {
+				case ICPPASTSimpleTypeTemplateParameter.st_class:
+					stack.push(builder.Declaration_sttClass(name, stack.pop(), loc, decl));
+					break;
+				case ICPPASTSimpleTypeTemplateParameter.st_typename:
+					stack.push(builder.Declaration_sttTypename(name, stack.pop(), loc, decl));
+					break;
+				default:
+					throw new RuntimeException("ICPPASTTemplateParameter encountered non-implemented parameter type "
+							+ parameter.getParameterType());
+				}
+			} else {
+
+				switch (parameter.getParameterType()) {
+				case ICPPASTSimpleTypeTemplateParameter.st_class:
+					stack.push(builder.Declaration_sttClass(name, loc, decl));
+					break;
+				case ICPPASTSimpleTypeTemplateParameter.st_typename:
+					stack.push(builder.Declaration_sttTypename(name, loc, decl));
+					break;
+				default:
+					throw new RuntimeException("ICPPASTTemplateParameter encountered non-implemented parameter type "
+							+ parameter.getParameterType());
+				}
 			}
-			if (defaultType != null)
-				err("WARNING: ICPPASTTemplateParameter has defaultType, not implemented");
 		} else if (templateParameter instanceof ICPPASTTemplatedTypeTemplateParameter) {
 			ISourceLocation decl = br.resolveBinding((ICPPASTTemplatedTypeTemplateParameter) templateParameter);
 			ICPPASTTemplateParameter[] _templateParameters = ((ICPPASTTemplatedTypeTemplateParameter) templateParameter)
