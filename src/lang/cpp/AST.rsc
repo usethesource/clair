@@ -71,6 +71,7 @@ data Declaration(loc src=|unknown:///|)
     
     | \pointer(list[Attribute] attributes, list[Modifier] modifiers)    // *
     | \reference(list[Attribute] attributes)  // &
+    | \rvalueReference(list[Attribute] attributes) // &&
     
     | \parameter(DeclSpecifier declSpecifier)
     | \parameter(DeclSpecifier declSpecifier, Declarator declarator)

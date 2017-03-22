@@ -1748,13 +1748,13 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTReferenceOperator referenceOperator) {
-		// TODO: check pointerToMember, getName, isRValueReference
+		// TODO: check pointerToMember, getName
 		ISourceLocation loc = getSourceLocation(referenceOperator);
 		IList attributes = getAttributes(referenceOperator);
-		boolean isRValueReference = referenceOperator.isRValueReference();
-		if (isRValueReference)
-			err("WARNING: ICPPASTReferenceOperator has isRValueReference=true ignored");
-		stack.push(builder.Declaration_reference(attributes, loc));
+		if (referenceOperator.isRValueReference())
+			stack.push(builder.Declaration_rvalueReference(attributes, loc));
+		else
+			stack.push(builder.Declaration_reference(attributes, loc));
 		return PROCESS_ABORT;
 	}
 

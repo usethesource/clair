@@ -130,6 +130,8 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"defaultedFunctionDefinition",tf.listType(_Attribute),"attributes",_DeclSpecifier,"declSpecifier",tf.listType(_Expression),"memberInitializer",_Declarator,"declarator");
   private static final Type _Declaration_alias_3 
     = tf.constructor(typestore,_Declaration,"alias",tf.listType(_Attribute),"attributes",_Expression,"alias",_Expression,"mappingTypeId");
+  private static final Type _Declaration_rvalueReference_1 
+    = tf.constructor(typestore,_Declaration,"rvalueReference",tf.listType(_Attribute),"attributes");
   private static final Type _Declaration_usingDeclaration_3 
     = tf.constructor(typestore,_Declaration,"usingDeclaration",tf.listType(_Attribute),"attributes",tf.listType(_Modifier),"modifiers",_Expression,"name");
   private static final Type _Declaration_sttTypename_1 
@@ -1651,6 +1653,19 @@ public class AST {
     kwParams.put("decl", $decl);
     
     return vf.constructor(_Declaration_alias_3 , $attributes, $alias, $mappingTypeId).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_rvalueReference(IList $attributes, ISourceLocation $loc) {
+      
+    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    
+    return vf.constructor(_Declaration_rvalueReference_1 , $attributes).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_usingDeclaration(IList $attributes, IList $modifiers, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
