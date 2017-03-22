@@ -553,6 +553,13 @@ public class Parser extends ASTVisitor {
 				modifiers.append(builder.Modifier_final(loc));
 		}
 
+		if (node instanceof ICPPASTNamedTypeSpecifier) {
+			if (((ICPPASTNamedTypeSpecifier) node).isTypename())
+				modifiers.append(builder.Modifier_typename(loc));
+		} else if (node instanceof ICPPASTUsingDeclaration)
+			if (((ICPPASTUsingDeclaration) node).isTypename())
+				modifiers.append(builder.Modifier_typename(loc));
+
 		return modifiers.done();
 	}
 
