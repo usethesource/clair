@@ -1149,7 +1149,7 @@ public class Parser extends ASTVisitor {
 
 		IASTArrayModifier[] _arrayModifiers = declarator.getArrayModifiers();
 		IASTPointerOperator[] _pointerOperators = declarator.getPointerOperators();
-		IASTDeclarator _nestedDeclarator = declarator.getNestedDeclarator();
+
 		IASTName _name = declarator.getName();
 		IASTInitializer _initializer = declarator.getInitializer();
 
@@ -1170,15 +1170,31 @@ public class Parser extends ASTVisitor {
 				&& ((ICPPASTArrayDeclarator) declarator).declaresParameterPack())
 			out("WARNING: IASTArrayDeclarator has declaresParameterPack=true");
 		// TODO: check pointerOperators and nestedDeclarator
-		if (_pointerOperators.length > 0 || _nestedDeclarator != null)
-			err("WARNING: IASTArrayDeclarator encountered unimplemented field");
-		if (_initializer == null)
-			stack.push(builder.Declarator_arrayDeclarator(attributes, name, arrayModifiers.done(), loc, decl));
-		else {
-			_initializer.accept(this);
-			stack.push(builder.Declarator_arrayDeclarator(attributes, name, arrayModifiers.done(), stack.pop(), loc,
-					decl));
+		if (_pointerOperators.length > 0)
+			err("WARNING: IASTArrayDeclarator has #pointerOperators > 0");
+
+		IASTDeclarator _nestedDeclarator = declarator.getNestedDeclarator();
+		if (_nestedDeclarator == null) {
+			if (_initializer == null)
+				stack.push(builder.Declarator_arrayDeclarator(attributes, name, arrayModifiers.done(), loc, decl));
+			else {
+				_initializer.accept(this);
+				stack.push(builder.Declarator_arrayDeclarator(attributes, name, arrayModifiers.done(), stack.pop(), loc,
+						decl));
+			}
+		} else {
+			_nestedDeclarator.accept(this);
+			IConstructor nestedDeclarator = stack.pop();
+			if (_initializer == null)
+				stack.push(builder.Declarator_arrayDeclaratorNested(attributes, nestedDeclarator, arrayModifiers.done(),
+						loc, decl));
+			else {
+				_initializer.accept(this);
+				stack.push(builder.Declarator_arrayDeclaratorNested(attributes, nestedDeclarator, arrayModifiers.done(),
+						stack.pop(), loc, decl));
+			}
 		}
+
 		return PROCESS_ABORT;
 	}
 
