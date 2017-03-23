@@ -17,6 +17,8 @@ data Declarator(loc src = |unknown:///|, loc decl = |unknown:///|)
     | \functionDeclaratorWithES(list[Attribute] attributes, list[Declaration] pointerOperators, list[Modifier] modifiers, Expression name, list[Declaration] arguments, list[Declaration] virtSpecifiers, list[Expression] exceptionSpecification)
     | \arrayDeclarator(list[Attribute] attributes, Expression name, list[Expression] arrayModifier)
     | \arrayDeclarator(list[Attribute] attributes, Expression name, list[Expression] arrayModifier, Expression initializer)
+    | \arrayDeclaratorNested(list[Attribute] attributes, Declarator declarator, list[Expression] arrayModifier)
+    | \arrayDeclaratorNested(list[Attribute] attributes, Declarator declarator, list[Expression] arrayModifier, Expression initializer)
     
     //quick fix
     | \missingDeclarator()
