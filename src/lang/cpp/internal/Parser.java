@@ -787,7 +787,9 @@ public class Parser extends ASTVisitor {
 		// TODO: check getMessage
 		ISourceLocation loc = getSourceLocation(declaration);
 		declaration.getCondition().accept(this);
-		stack.push(builder.Declaration_staticAssert(stack.pop(), loc));
+		IConstructor condition = stack.pop();
+		declaration.getMessage().accept(this);
+		stack.push(builder.Declaration_staticAssert(condition, stack.pop(), loc));
 		return PROCESS_ABORT;
 	}
 

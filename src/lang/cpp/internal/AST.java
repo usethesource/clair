@@ -118,8 +118,8 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"parameter",_DeclSpecifier,"declSpecifier");
   private static final Type _Declaration_explicitTemplateInstantiation_2 
     = tf.constructor(typestore,_Declaration,"explicitTemplateInstantiation",_Modifier,"modifier",_Declaration,"declaration");
-  private static final Type _Declaration_staticAssert_1 
-    = tf.constructor(typestore,_Declaration,"staticAssert",_Expression,"condition");
+  private static final Type _Declaration_staticAssert_2 
+    = tf.constructor(typestore,_Declaration,"staticAssert",_Expression,"condition",_Expression,"message");
   private static final Type _Declaration_baseSpecifier_1 
     = tf.constructor(typestore,_Declaration,"baseSpecifier",_Modifier,"modifier");
   private static final Type _Declaration_reference_1 

@@ -106,7 +106,7 @@ data Declaration(loc src=|unknown:///|)
     | \linkageSpecification(str literal, list[Declaration] declarations)
     | \alias(list[Attribute] attributes, Expression \alias, Expression mappingTypeId, loc decl = |unknown:///|)
     
-    | \staticAssert(Expression condition)
+    | \staticAssert(Expression condition, Expression message)
     
     | \explicitTemplateInstantiation(Declaration declaration)
     | \explicitTemplateInstantiation(Modifier modifier, Declaration declaration)
