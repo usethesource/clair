@@ -86,8 +86,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
@@ -2965,7 +2963,6 @@ public class Parser extends ASTVisitor {
 		ISourceLocation decl = br.resolveBinding(namespaceDefinition);
 		IList attributes = getAttributes(namespaceDefinition);
 		IASTName _name = namespaceDefinition.getName();
-		boolean isInline = namespaceDefinition.isInline();
 		IASTDeclaration[] _declarations = namespaceDefinition.getDeclarations();
 
 		_name.accept(this);
