@@ -369,6 +369,7 @@ public class Parser extends ASTVisitor {
 			if (result == null) {
 				throw RuntimeExceptionFactory.parseError(file, null, null);
 			}
+			out(dependencies.toString());
 			return result;
 		} catch (CoreException e) {
 			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
@@ -2861,9 +2862,11 @@ public class Parser extends ASTVisitor {
 			if (typeId.getRawSignature().equals("..."))
 				stack.push(builder.Expression_typeId(
 						builder.DeclSpecifier_msThrowEllipsis(loc, vf.sourceLocation("unknown:///")), loc));
-			else
+			else {
+				out("ProblemTypeId " + typeId.getClass().getSimpleName() + ": " + typeId.getRawSignature());
 				throw new RuntimeException("IASTProblemTypeId encountered! "
 						+ ((IASTProblemTypeId) typeId).getProblem().getMessageWithLocation());
+			}
 		} else {
 			IASTDeclSpecifier _declSpecifier = typeId.getDeclSpecifier();
 			IASTDeclarator _abstractDeclarator = typeId.getAbstractDeclarator();
@@ -2986,6 +2989,7 @@ public class Parser extends ASTVisitor {
 		if (isParameterPack)
 			err("WARNING: ICPPASTTemplateParameter has isParameterPack=true, unimplemented");
 		if (templateParameter instanceof ICPPASTParameterDeclaration) {
+			// TODO: duplicate, never reached, remove
 			IASTDeclSpecifier _declSpecifier = ((ICPPASTParameterDeclaration) templateParameter).getDeclSpecifier();
 			ICPPASTDeclarator _declarator = ((ICPPASTParameterDeclaration) templateParameter).getDeclarator();
 			_declSpecifier.accept(this);
