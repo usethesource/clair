@@ -2865,7 +2865,8 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTTypeId typeId) {
 		ISourceLocation loc = getSourceLocation(typeId);
 		if (typeId instanceof IASTProblemTypeId) {
-			if (typeId.getRawSignature().equals("..."))
+			String raw = typeId.getRawSignature();
+			if (typeId.getRawSignature().equals("...") || typeId.getRawSignature().contains("_THROW1("))
 				stack.push(builder.Expression_typeId(
 						builder.DeclSpecifier_msThrowEllipsis(loc, vf.sourceLocation("unknown:///")), loc));
 			else {
