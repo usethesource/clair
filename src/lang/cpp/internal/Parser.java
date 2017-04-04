@@ -144,6 +144,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTOperatorName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpansionExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTRangeBasedForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
@@ -1761,12 +1762,15 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(pointer);
 		IList attributes = getAttributes(pointer);
 		IList modifiers = getModifiers(pointer);
-		stack.push(builder.Declaration_pointer(attributes, modifiers, loc));
+		if (pointer instanceof ICPPASTPointerToMember) {
+			((ICPPASTPointerToMember) pointer).getName().accept(this);
+			stack.push(builder.Declaration_pointerToMember(attributes, modifiers, stack.pop(), loc));
+		} else
+			stack.push(builder.Declaration_pointer(attributes, modifiers, loc));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTReferenceOperator referenceOperator) {
-		// TODO: check pointerToMember, getName
 		ISourceLocation loc = getSourceLocation(referenceOperator);
 		IList attributes = getAttributes(referenceOperator);
 		if (referenceOperator.isRValueReference())

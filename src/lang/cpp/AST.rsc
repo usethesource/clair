@@ -72,6 +72,7 @@ data Declaration(loc src=|unknown:///|)
     //| \etsClass(Expression name)
     
     | \pointer(list[Attribute] attributes, list[Modifier] modifiers)    // *
+    | \pointerToMember(list[Attribute] attributes, list[Modifier] modifiers, Expression nestedName)
     | \reference(list[Attribute] attributes)  // &
     | \rvalueReference(list[Attribute] attributes) // &&
     
