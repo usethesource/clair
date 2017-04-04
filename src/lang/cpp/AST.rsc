@@ -4,7 +4,7 @@ import IO;
 import Node;
 import lang::cpp::TypeSymbol;
 
-extend analysis::m3::AST;
+//extend analysis::m3::AST;
 
 data Declarator(loc src = |unknown:///|, loc decl = |unknown:///|)
     = \declarator(list[Attribute] attributes, list[Declaration] pointerOperators, Expression name)
@@ -117,7 +117,7 @@ data Declaration(loc src=|unknown:///|)
     ;
 
 
-data Expression(loc src = |unknown:///|, TypeSymbol typ = \noType())
+data Expression(loc src = |unknown:///|)//, TypeSymbol typ = \noType())
     = \multiply(Expression lhs, Expression rhs)
     | \divide(Expression lhs, Expression rhs)
     | \modulo(Expression lhs, Expression rhs)
