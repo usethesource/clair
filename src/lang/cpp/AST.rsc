@@ -381,7 +381,7 @@ public map[str, list[loc]] classPaths =
   "mingw": [|file://c:/MinGW/include|, |file://c:/MinGW/include/sys|, |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include|,
     |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++|, |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/mingw32|]);
 
-map[str,str] macros = ("_MSC_VER": "1700");
+map[str,str] macros = ("_MSC_VER": "1700", "__if_not_exists(x)":"if (true /* if_not_exists(x) */)", "__if_exists(x)" : "if (true /* if_exists(x) */)");
 
 @javaClass{lang.cpp.internal.Parser}  
 @reflect{need access to streams}   

@@ -291,6 +291,12 @@ public class Parser extends ASTVisitor {
 			macros.put("_MSC_VER", "1700");
 			macros.put("__cplusplus", "");
 			macros.put("__thiscall", "");
+			macros.put("_CHAR16T", "");
+			macros.put("_NATIVE_WCHAR_T_DEFINED", "1");
+			macros.put("__nullptr", "nullptr");
+
+			// MSVC specific keywords
+			macros.put("__pragma(A)", "");
 
 			IScannerInfo si = new ScannerInfo(macros, null);
 
