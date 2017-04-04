@@ -11,6 +11,7 @@ data Declarator(loc src = |unknown:///|, loc decl = |unknown:///|)
     | \declarator(list[Attribute] attributes, list[Declaration] pointerOperators, Expression name, Expression initializer)
     | \functionDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, Expression name, list[Declaration] parameters)  //superfluous?
     | \functionDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, list[Modifier] modifiers, Expression name, list[Declaration] parameters, list[Declaration] virtSpecifiers)
+    | \functionDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, list[Modifier] modifiers, Expression name, list[Declaration] parameters, list[Declaration] virtSpecifiers, Expression trailingReturnType)
     | \functionDeclaratorNested(list[Attribute] attributes, list[Declaration] pointerOperators, list[Modifier] modifiers, Declarator declarator, list[Declaration] arguments, list[Declaration] virtSpecifiers)
     | \functionDeclaratorNested(list[Attribute] attributes, list[Declaration] pointerOperators, list[Modifier] modifiers, Declarator declarator, list[Declaration] arguments, list[Declaration] virtSpecifiers, Expression initializer)
     | \functionDeclaratorWithES(list[Attribute] attributes, list[Declaration] pointerOperators, list[Modifier] modifiers, Expression name, list[Declaration] arguments, list[Declaration] virtSpecifiers) //empty exception specification

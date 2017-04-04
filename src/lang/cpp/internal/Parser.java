@@ -1333,13 +1333,12 @@ public class Parser extends ASTVisitor {
 
 		IList modifiers = getModifiers(declarator);
 
-		// TODO: check takesVarArgs, noexceptExpression, and trailingReturnType
+		// TODO: check takesVarArgs, noexceptExpression
 		if (declarator.takesVarArgs())
 			err("WARNING: ICPPASTFunctionDeclarator has takesVarArgs=true");
 		if (noexceptExpression != null)
 			err("WARNING: ICPPASTFunctionDeclarator has noexceptExpression " + noexceptExpression.getRawSignature());
-		if (trailingReturnType != null)
-			err("WARNING: ICPPASTFunctionDeclarator has trailingReturnType " + trailingReturnType.getRawSignature());
+
 		IConstructor name = builder.Expression_name("", loc);
 		// TODO: fix when name == null
 		if (_name != null) {
@@ -1363,6 +1362,8 @@ public class Parser extends ASTVisitor {
 		});
 
 		if (_nestedDeclarator != null) {
+			if (trailingReturnType != null)
+				throw new RuntimeException("FunctionDeclarator: Trailing return type and nested declarator?");
 			_nestedDeclarator.accept(this);
 			IConstructor nestedDeclarator = stack.pop();
 			if (_initializer == null)
@@ -1375,13 +1376,23 @@ public class Parser extends ASTVisitor {
 			}
 			if (!(_exceptionSpecification.equals(ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION)))
 				err("WARNING: ICPPASTFunctionDeclaration had nestedDeclarator and also exceptionSpecification");
-		} else if (_exceptionSpecification.equals(ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION))
-			stack.push(builder.Declarator_functionDeclarator(attributes, pointerOperators.done(), modifiers, name,
-					parameters.done(), virtSpecifiers.done(), loc, decl));
-		else if (_exceptionSpecification.equals(IASTTypeId.EMPTY_TYPEID_ARRAY))
+		} else if (_exceptionSpecification.equals(ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION)) {
+			if (trailingReturnType == null)
+				stack.push(builder.Declarator_functionDeclarator(attributes, pointerOperators.done(), modifiers, name,
+						parameters.done(), virtSpecifiers.done(), loc, decl));
+			else {
+				trailingReturnType.accept(this);
+				stack.push(builder.Declarator_functionDeclarator(attributes, pointerOperators.done(), modifiers, name,
+						parameters.done(), virtSpecifiers.done(), stack.pop(), loc, decl));
+			}
+		} else if (_exceptionSpecification.equals(IASTTypeId.EMPTY_TYPEID_ARRAY)) {
+			if (trailingReturnType != null)
+				throw new RuntimeException("FunctionDeclarator: Trailing return type and exception specification?");
 			stack.push(builder.Declarator_functionDeclaratorWithES(attributes, pointerOperators.done(), modifiers, name,
 					parameters.done(), virtSpecifiers.done(), loc, decl));
-		else {
+		} else {
+			if (trailingReturnType != null)
+				throw new RuntimeException("FunctionDeclarator: Trailing return type and exception specification?");
 			IListWriter exceptionSpecification = vf.listWriter();
 			Stream.of(_exceptionSpecification).forEach(it -> {
 				it.accept(this);
