@@ -1227,6 +1227,7 @@ public class Parser extends ASTVisitor {
 		if (declarator instanceof ICPPASTFunctionDeclarator)
 			visit((ICPPASTFunctionDeclarator) declarator);
 		else {
+			// TODO: not reached, remove?
 			// TODO: check getNestedDeclarator and getInitializer
 			ISourceLocation loc = getSourceLocation(declarator);
 			ISourceLocation decl = br.resolveBinding(declarator);
@@ -1338,9 +1339,7 @@ public class Parser extends ASTVisitor {
 
 		IList modifiers = getModifiers(declarator);
 
-		// TODO: check takesVarArgs, noexceptExpression
-		if (declarator.takesVarArgs())
-			err("WARNING: ICPPASTFunctionDeclarator has takesVarArgs=true");
+		// TODO: check noexceptExpression
 		if (noexceptExpression != null)
 			err("WARNING: ICPPASTFunctionDeclarator has noexceptExpression " + noexceptExpression.getRawSignature());
 
@@ -1355,6 +1354,8 @@ public class Parser extends ASTVisitor {
 			it.accept(this);
 			parameters.append(stack.pop());
 		});
+		if (declarator.takesVarArgs())
+			parameters.append(builder.Declaration_varArgs(loc));
 		IListWriter virtSpecifiers = vf.listWriter();
 		Stream.of(_virtSpecifiers).forEach(it -> {
 			it.accept(this);

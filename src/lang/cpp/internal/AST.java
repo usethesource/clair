@@ -110,8 +110,6 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"functionDefinition",_Expression,"returnSpec",_Declarator,"declarator",_Statement,"body");
   private static final Type _Declaration_functionDefinition_5 
     = tf.constructor(typestore,_Declaration,"functionDefinition",tf.listType(_Attribute),"attributes",_DeclSpecifier,"declSpecifier",_Declarator,"declarator",tf.listType(_Expression),"memberInitializer",_Statement,"body");
-  private static final Type _Declaration_template_2 
-    = tf.constructor(typestore,_Declaration,"template",tf.listType(_Declaration),"parameters",_Declaration,"declaration");
   private static final Type _Declaration_reference_1 
     = tf.constructor(typestore,_Declaration,"reference",tf.listType(_Attribute),"attributes");
   private static final Type _Declaration_namespaceAlias_2 
@@ -146,6 +144,10 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"sttClass",_Expression,"name",_Expression,"defaultType");
   private static final Type _Declaration_parameter_2 
     = tf.constructor(typestore,_Declaration,"parameter",_DeclSpecifier,"declSpecifier",_Declarator,"declarator");
+  private static final Type _Declaration_varArgs_0 
+    = tf.constructor(typestore,_Declaration,"varArgs");
+  private static final Type _Declaration_template_2 
+    = tf.constructor(typestore,_Declaration,"template",tf.listType(_Declaration),"parameters",_Declaration,"declaration");
   private static final Type _Declaration_alias_3 
     = tf.constructor(typestore,_Declaration,"alias",tf.listType(_Attribute),"attributes",_Expression,"alias",_Expression,"mappingTypeId");
   private static final Type _Declaration_deletedFunctionDefinition_4 
@@ -1535,23 +1537,6 @@ public class AST {
     return vf.constructor(_Declaration_functionDefinition_5 , $attributes, $declSpecifier, $declarator, $memberInitializer, $body).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declaration_template(IList $parameters, IConstructor $declaration, ISourceLocation $loc) {
-      
-    if (!$parameters.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $parameters.getType() + " for $parameters:" + $parameters);
-    }
-      
-    if (!$declaration.getType().isSubtypeOf(_Declaration)) {
-      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $declaration.getType() + " for $declaration:" + $declaration);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Declaration_template_2 , $parameters, $declaration).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
   public IConstructor Declaration_reference(IList $attributes, ISourceLocation $loc) {
       
     if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
@@ -1835,6 +1820,32 @@ public class AST {
     
     
     return vf.constructor(_Declaration_parameter_2 , $declSpecifier, $declarator).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_varArgs(ISourceLocation $loc) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    
+    return vf.constructor(_Declaration_varArgs_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_template(IList $parameters, IConstructor $declaration, ISourceLocation $loc) {
+      
+    if (!$parameters.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $parameters.getType() + " for $parameters:" + $parameters);
+    }
+      
+    if (!$declaration.getType().isSubtypeOf(_Declaration)) {
+      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $declaration.getType() + " for $declaration:" + $declaration);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    
+    return vf.constructor(_Declaration_template_2 , $parameters, $declaration).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_alias(IList $attributes, IConstructor $alias, IConstructor $mappingTypeId, ISourceLocation $loc, ISourceLocation $decl) {
