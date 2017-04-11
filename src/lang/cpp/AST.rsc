@@ -95,8 +95,8 @@ data Declaration(loc src=|unknown:///|)
     
     | \tttParameter(list[Declaration] nestedParameters, Expression name, loc decl = |unknown:///|) //templatedTypeTemplateParameter
     
-    | \baseSpecifier(Modifier modifier, loc decl = |unknown:///|)
-    | \baseSpecifier(Modifier modifier, Expression name, loc decl = |unknown:///|)
+    | \baseSpecifier(list[Modifier] modifiers, loc decl = |unknown:///|)
+    | \baseSpecifier(list[Modifier] modifiers, Expression name, loc decl = |unknown:///|)
     
     | \virtSpecifier(Modifier modifier)
     

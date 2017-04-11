@@ -2922,48 +2922,33 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTBaseSpecifier baseSpecifier) {
 		ISourceLocation loc = getSourceLocation(baseSpecifier);
 		ISourceLocation decl = br.resolveBinding(baseSpecifier);
-		boolean isVirtual = baseSpecifier.isVirtual();
-		if (isVirtual)
-			err("WARNING: ICPPASTBaseSpecifier has isVirtual set, not implemented");
-		int visibility = baseSpecifier.getVisibility();
+
+		IListWriter modifiers = vf.listWriter();
+		switch (baseSpecifier.getVisibility()) {
+		case ICPPASTBaseSpecifier.v_public:
+			modifiers.append(builder.Modifier_public(loc));
+			break;
+		case ICPPASTBaseSpecifier.v_protected:
+			modifiers.append(builder.Modifier_protected(loc));
+			break;
+		case ICPPASTBaseSpecifier.v_private:
+			modifiers.append(builder.Modifier_private(loc));
+			break;
+		case 0:
+			modifiers.append(builder.Modifier_unspecifiedInheritance(loc));
+			break;
+		default:
+			throw new RuntimeException("Unknown BaseSpecifier visibility code " + baseSpecifier.getVisibility());
+		}
+		if (baseSpecifier.isVirtual())
+			modifiers.append(builder.Modifier_virtual(loc));
+
 		ICPPASTNameSpecifier _nameSpecifier = baseSpecifier.getNameSpecifier();
-		if (_nameSpecifier == null) {
-			switch (visibility) {
-			case ICPPASTBaseSpecifier.v_public:
-				stack.push(builder.Declaration_baseSpecifier(builder.Modifier_public(loc), loc, decl));
-				break;
-			case ICPPASTBaseSpecifier.v_protected:
-				stack.push(builder.Declaration_baseSpecifier(builder.Modifier_protected(loc), loc, decl));
-				break;
-			case ICPPASTBaseSpecifier.v_private:
-				stack.push(builder.Declaration_baseSpecifier(builder.Modifier_private(loc), loc, decl));
-				break;
-			case 0: // unset
-				stack.push(builder.Declaration_baseSpecifier(builder.Modifier_unspecifiedInheritance(loc), stack.pop(),
-						loc, decl));
-				break;
-			default:
-				throw new RuntimeException("Unknown BaseSpecifier visibility code " + visibility + ". Exiting");
-			}
-		} else {
+		if (_nameSpecifier == null)
+			stack.push(builder.Declaration_baseSpecifier(modifiers.done(), loc, decl));
+		else {
 			_nameSpecifier.accept(this);
-			switch (visibility) {
-			case ICPPASTBaseSpecifier.v_public:
-				stack.push(builder.Declaration_baseSpecifier(builder.Modifier_public(loc), stack.pop(), loc, decl));
-				break;
-			case ICPPASTBaseSpecifier.v_protected:
-				stack.push(builder.Declaration_baseSpecifier(builder.Modifier_protected(loc), stack.pop(), loc, decl));
-				break;
-			case ICPPASTBaseSpecifier.v_private:
-				stack.push(builder.Declaration_baseSpecifier(builder.Modifier_private(loc), stack.pop(), loc, decl));
-				break;
-			case 0: // unset
-				stack.push(builder.Declaration_baseSpecifier(builder.Modifier_unspecifiedInheritance(loc), stack.pop(),
-						loc, decl));
-				break;
-			default:
-				throw new RuntimeException("Unknown BaseSpecifier visibility code " + visibility + ". Exiting");
-			}
+			stack.push(builder.Declaration_baseSpecifier(modifiers.done(), stack.pop(), loc, decl));
 		}
 		return PROCESS_ABORT;
 	}
