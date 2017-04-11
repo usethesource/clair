@@ -217,7 +217,8 @@ data Expression(loc src = |unknown:///|)//, TypeSymbol typ = \noType())
     | \globalNewWithArgs(list[Expression] arguments, Expression typeId)
     | \globalNewWithArgs(list[Expression] arguments, Expression typeId, Expression initializer)
     
-    | \delete(bool isVectored, Expression expression)
+    | \delete(Expression expression)
+    | \vectoredDelete(Expression expression)
     
     | \arraySubscriptExpression(Expression array, Expression argument)
     | \arrayModifier(list[Attribute] attributes)

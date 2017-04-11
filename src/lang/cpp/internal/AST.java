@@ -300,8 +300,6 @@ public class AST {
     = tf.constructor(typestore,_Expression,"nyi",tf.stringType(),"raw");
   private static final Type _Expression_assign_2 
     = tf.constructor(typestore,_Expression,"assign",_Expression,"lhs",_Expression,"rhs");
-  private static final Type _Expression_delete_2 
-    = tf.constructor(typestore,_Expression,"delete",tf.boolType(),"isVectored",_Expression,"expression");
   private static final Type _Expression_name_1 
     = tf.constructor(typestore,_Expression,"name",tf.stringType(),"value");
   private static final Type _Expression_postfixDecr_1 
@@ -358,6 +356,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"problemExpression");
   private static final Type _Expression_abstractEmptyName_0 
     = tf.constructor(typestore,_Expression,"abstractEmptyName");
+  private static final Type _Expression_vectoredDelete_1 
+    = tf.constructor(typestore,_Expression,"vectoredDelete",_Expression,"expression");
   private static final Type _Expression_integerConstant_1 
     = tf.constructor(typestore,_Expression,"integerConstant",tf.stringType(),"value");
   private static final Type _Expression_staticCast_2 
@@ -390,12 +390,14 @@ public class AST {
     = tf.constructor(typestore,_Expression,"postfixIncr",_Expression,"expression");
   private static final Type _Expression_capture_1 
     = tf.constructor(typestore,_Expression,"capture",_Expression,"name");
-  private static final Type _Expression_templateId_2 
-    = tf.constructor(typestore,_Expression,"templateId",_Expression,"name",tf.listType(_Expression),"argumentTypes");
   private static final Type _Expression_globalNewWithArgs_3 
     = tf.constructor(typestore,_Expression,"globalNewWithArgs",tf.listType(_Expression),"arguments",_Expression,"typeId",_Expression,"initializer");
   private static final Type _Expression_expressionList_1 
     = tf.constructor(typestore,_Expression,"expressionList",tf.listType(_Expression),"expressions");
+  private static final Type _Expression_delete_1 
+    = tf.constructor(typestore,_Expression,"delete",_Expression,"expression");
+  private static final Type _Expression_templateId_2 
+    = tf.constructor(typestore,_Expression,"templateId",_Expression,"name",tf.listType(_Expression),"argumentTypes");
   
   
   private static final Type _Type_wchar_t_0 
@@ -3008,23 +3010,6 @@ public class AST {
     return vf.constructor(_Expression_assign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_delete(IValue $isVectored, IConstructor $expression, ISourceLocation $loc) {
-      
-    if (!$isVectored.getType().isSubtypeOf(tf.boolType())) {
-      throw new IllegalArgumentException("Expected " + tf.boolType() + " but got " + $isVectored.getType() + " for $isVectored:" + $isVectored);
-    }
-      
-    if (!$expression.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Expression_delete_2 , $isVectored, $expression).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
   public IConstructor Expression_name(String $value, ISourceLocation $loc) {
       
     if (!vf.string($value).getType().isSubtypeOf(tf.stringType())) {
@@ -3445,6 +3430,19 @@ public class AST {
     return vf.constructor(_Expression_abstractEmptyName_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
+  public IConstructor Expression_vectoredDelete(IConstructor $expression, ISourceLocation $loc) {
+      
+    if (!$expression.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    
+    return vf.constructor(_Expression_vectoredDelete_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
   public IConstructor Expression_integerConstant(String $value, ISourceLocation $loc) {
       
     if (!vf.string($value).getType().isSubtypeOf(tf.stringType())) {
@@ -3697,23 +3695,6 @@ public class AST {
     return vf.constructor(_Expression_capture_1 , $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_templateId(IConstructor $name, IList $argumentTypes, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$name.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
-    }
-      
-    if (!$argumentTypes.getType().isSubtypeOf(tf.listType(_Expression))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $argumentTypes.getType() + " for $argumentTypes:" + $argumentTypes);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_Expression_templateId_2 , $name, $argumentTypes).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
   public IConstructor Expression_globalNewWithArgs(IList $arguments, IConstructor $typeId, IConstructor $initializer, ISourceLocation $loc) {
       
     if (!$arguments.getType().isSubtypeOf(tf.listType(_Expression))) {
@@ -3746,6 +3727,36 @@ public class AST {
     
     kwParams.put("typ", $typ);
     return vf.constructor(_Expression_expressionList_1 , $expressions).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Expression_delete(IConstructor $expression, ISourceLocation $loc) {
+      
+    if (!$expression.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    
+    return vf.constructor(_Expression_delete_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Expression_templateId(IConstructor $name, IList $argumentTypes, ISourceLocation $loc, ISourceLocation $decl) {
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$argumentTypes.getType().isSubtypeOf(tf.listType(_Expression))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $argumentTypes.getType() + " for $argumentTypes:" + $argumentTypes);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    return vf.constructor(_Expression_templateId_2 , $name, $argumentTypes).asWithKeywordParameters().setParameters(kwParams);
   }
     
   

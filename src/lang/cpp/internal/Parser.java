@@ -1927,9 +1927,11 @@ public class Parser extends ASTVisitor {
 		// TODO: check isGlobal
 		if (expression.isGlobal())
 			err("WARNING: ICPPASTDeleteExpression has isGlobal=true");
-		IASTExpression operand = expression.getOperand();
-		operand.accept(this);
-		stack.push(builder.Expression_delete(vf.bool(expression.isVectored()), stack.pop(), loc));
+		expression.getOperand().accept(this);
+		if (expression.isVectored())
+			stack.push(builder.Expression_vectoredDelete(stack.pop(), loc));
+		else
+			stack.push(builder.Expression_delete(stack.pop(), loc));
 		return PROCESS_ABORT;
 	}
 
