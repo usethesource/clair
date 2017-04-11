@@ -212,6 +212,11 @@ data Expression(loc src = |unknown:///|)//, TypeSymbol typ = \noType())
     | \new(Expression typeId, Expression initializer)
     | \newWithArgs(list[Expression] arguments, Expression typeId)
     | \newWithArgs(list[Expression] arguments, Expression typeId, Expression initializer)
+    | \globalNew(Expression typeId)
+    | \globalNew(Expression typeId, Expression initializer)
+    | \globalNewWithArgs(list[Expression] arguments, Expression typeId)
+    | \globalNewWithArgs(list[Expression] arguments, Expression typeId, Expression initializer)
+    
     | \delete(bool isVectored, Expression expression)
     
     | \arraySubscriptExpression(Expression array, Expression argument)

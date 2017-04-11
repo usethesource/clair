@@ -2017,8 +2017,6 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTNewExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		// TODO: check to remove isArrayAllocation
-		if (expression.isGlobal())
-			err("WARNING: ICPPASTNewExpression has isGlobal=true");
 		if (expression.isArrayAllocation())
 			err("WARNING: ICPPASTNewExpression has isArrayAllocation=true");
 		if (expression.isNewTypeId())
@@ -2037,19 +2035,32 @@ public class Parser extends ASTVisitor {
 				it.accept(this);
 				placementArguments.append(stack.pop());
 			});
-			if (_initializer == null)
-				stack.push(builder.Expression_newWithArgs(placementArguments.done(), typeId, loc));
-			else {
+			if (_initializer == null) {
+				if (expression.isGlobal())
+					stack.push(builder.Expression_globalNewWithArgs(placementArguments.done(), typeId, loc));
+				else
+					stack.push(builder.Expression_newWithArgs(placementArguments.done(), typeId, loc));
+			} else {
 				_initializer.accept(this);
 				IConstructor initializer = stack.pop();
-				stack.push(builder.Expression_newWithArgs(placementArguments.done(), typeId, initializer, loc));
+				if (expression.isGlobal())
+					stack.push(
+							builder.Expression_globalNewWithArgs(placementArguments.done(), typeId, initializer, loc));
+				else
+					stack.push(builder.Expression_newWithArgs(placementArguments.done(), typeId, initializer, loc));
 			}
-		} else if (_initializer == null)
-			stack.push(builder.Expression_new(typeId, loc));
-		else {
+		} else if (_initializer == null) {
+			if (expression.isGlobal())
+				stack.push(builder.Expression_globalNew(typeId, loc));
+			else
+				stack.push(builder.Expression_new(typeId, loc));
+		} else {
 			_initializer.accept(this);
 			IConstructor initializer = stack.pop();
-			stack.push(builder.Expression_new(typeId, initializer, loc));
+			if (expression.isGlobal())
+				stack.push(builder.Expression_globalNew(typeId, initializer, loc));
+			else
+				stack.push(builder.Expression_new(typeId, initializer, loc));
 		}
 		return PROCESS_ABORT;
 	}
