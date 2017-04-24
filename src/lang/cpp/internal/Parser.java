@@ -1311,9 +1311,37 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTFieldDeclarator declarator) {
-		// TODO: implement, add bitfieldsize
-		err("CPPFieldDeclarator: " + declarator.getRawSignature());
-		throw new RuntimeException("NYI");
+		ISourceLocation loc = getSourceLocation(declarator);
+		ISourceLocation decl = br.resolveBinding(declarator);
+		IList attributes = getAttributes(declarator);
+
+		IListWriter pointerOperators = vf.listWriter();
+		Stream.of(declarator.getPointerOperators()).forEach(it -> {
+			it.accept(this);
+			pointerOperators.append(stack.pop());
+		});
+
+		declarator.getBitFieldSize().accept(this);
+		IConstructor bitFieldSize = stack.pop();
+
+		IASTDeclarator _nestedDeclarator = declarator.getNestedDeclarator();
+		if (_nestedDeclarator != null)
+			err("WARNING: ICPPASTDeclarator has nestedDeclarator " + _nestedDeclarator.getRawSignature());
+
+		declarator.getName().accept(this);
+		IConstructor name = stack.pop();
+
+		IASTInitializer _initializer = declarator.getInitializer();
+		if (_initializer == null) {
+			stack.push(builder.Declarator_fieldDeclarator(attributes, pointerOperators.done(), name, bitFieldSize, loc,
+					decl));
+		} else {
+			_initializer.accept(this);
+			stack.push(builder.Declarator_fieldDeclarator(attributes, pointerOperators.done(), name, bitFieldSize,
+					stack.pop(), loc, decl));
+		}
+
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTFunctionDeclarator declarator) {

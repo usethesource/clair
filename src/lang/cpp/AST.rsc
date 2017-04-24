@@ -9,6 +9,8 @@ import lang::cpp::TypeSymbol;
 data Declarator(loc src = |unknown:///|, loc decl = |unknown:///|)
     = \declarator(list[Attribute] attributes, list[Declaration] pointerOperators, Expression name)
     | \declarator(list[Attribute] attributes, list[Declaration] pointerOperators, Expression name, Expression initializer)
+    | \fieldDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, Expression name, Expression bitFieldSize)
+    | \fieldDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, Expression name, Expression bitFieldSize, Expression initializer)
     | \functionDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, Expression name, list[Declaration] parameters)  //superfluous?
     | \functionDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, list[Modifier] modifiers, Expression name, list[Declaration] parameters, list[Declaration] virtSpecifiers)
     | \functionDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, list[Modifier] modifiers, Expression name, list[Declaration] parameters, list[Declaration] virtSpecifiers, Expression trailingReturnType)
