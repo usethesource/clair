@@ -32,28 +32,28 @@ public class AST {
   
   private static final Type _Declarator_functionDeclarator_7 
     = tf.constructor(typestore,_Declarator,"functionDeclarator",tf.listType(_Attribute),"attributes",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Expression,"name",tf.listType(_Declaration),"parameters",tf.listType(_Declaration),"virtSpecifiers",_Expression,"trailingReturnType");
-  private static final Type _Declarator_functionDeclaratorWithES_7 
-    = tf.constructor(typestore,_Declarator,"functionDeclaratorWithES",tf.listType(_Attribute),"attributes",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Expression,"name",tf.listType(_Declaration),"arguments",tf.listType(_Declaration),"virtSpecifiers",tf.listType(_Expression),"exceptionSpecification");
-  private static final Type _Declarator_arrayDeclaratorNested_3 
-    = tf.constructor(typestore,_Declarator,"arrayDeclaratorNested",tf.listType(_Attribute),"attributes",_Declarator,"declarator",tf.listType(_Expression),"arrayModifier");
-  private static final Type _Declarator_functionDeclarator_4 
-    = tf.constructor(typestore,_Declarator,"functionDeclarator",tf.listType(_Attribute),"attributes",tf.listType(_Declaration),"pointerOperators",_Expression,"name",tf.listType(_Declaration),"parameters");
   private static final Type _Declarator_declarator_4 
     = tf.constructor(typestore,_Declarator,"declarator",tf.listType(_Attribute),"attributes",tf.listType(_Declaration),"pointerOperators",_Expression,"name",_Expression,"initializer");
-  private static final Type _Declarator_arrayDeclaratorNested_4 
-    = tf.constructor(typestore,_Declarator,"arrayDeclaratorNested",tf.listType(_Attribute),"attributes",_Declarator,"declarator",tf.listType(_Expression),"arrayModifier",_Expression,"initializer");
   private static final Type _Declarator_arrayDeclarator_4 
-    = tf.constructor(typestore,_Declarator,"arrayDeclarator",tf.listType(_Attribute),"attributes",_Expression,"name",tf.listType(_Expression),"arrayModifier",_Expression,"initializer");
+    = tf.constructor(typestore,_Declarator,"arrayDeclarator",tf.listType(_Attribute),"attributes",tf.listType(_Declaration),"pointerOperators",_Expression,"name",tf.listType(_Expression),"arrayModifier");
+  private static final Type _Declarator_functionDeclaratorWithES_7 
+    = tf.constructor(typestore,_Declarator,"functionDeclaratorWithES",tf.listType(_Attribute),"attributes",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Expression,"name",tf.listType(_Declaration),"arguments",tf.listType(_Declaration),"virtSpecifiers",tf.listType(_Expression),"exceptionSpecification");
   private static final Type _Declarator_functionDeclaratorWithES_6 
     = tf.constructor(typestore,_Declarator,"functionDeclaratorWithES",tf.listType(_Attribute),"attributes",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Expression,"name",tf.listType(_Declaration),"arguments",tf.listType(_Declaration),"virtSpecifiers");
+  private static final Type _Declarator_arrayDeclarator_5 
+    = tf.constructor(typestore,_Declarator,"arrayDeclarator",tf.listType(_Attribute),"attributes",tf.listType(_Declaration),"pointerOperators",_Expression,"name",tf.listType(_Expression),"arrayModifier",_Expression,"initializer");
+  private static final Type _Declarator_arrayDeclaratorNested_5 
+    = tf.constructor(typestore,_Declarator,"arrayDeclaratorNested",tf.listType(_Attribute),"attributes",tf.listType(_Declaration),"pointerOperators",_Declarator,"declarator",tf.listType(_Expression),"arrayModifier",_Expression,"initializer");
+  private static final Type _Declarator_functionDeclarator_4 
+    = tf.constructor(typestore,_Declarator,"functionDeclarator",tf.listType(_Attribute),"attributes",tf.listType(_Declaration),"pointerOperators",_Expression,"name",tf.listType(_Declaration),"parameters");
+  private static final Type _Declarator_functionDeclaratorNested_6 
+    = tf.constructor(typestore,_Declarator,"functionDeclaratorNested",tf.listType(_Attribute),"attributes",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Declarator,"declarator",tf.listType(_Declaration),"arguments",tf.listType(_Declaration),"virtSpecifiers");
+  private static final Type _Declarator_arrayDeclaratorNested_4 
+    = tf.constructor(typestore,_Declarator,"arrayDeclaratorNested",tf.listType(_Attribute),"attributes",tf.listType(_Declaration),"pointerOperators",_Declarator,"declarator",tf.listType(_Expression),"arrayModifier");
   private static final Type _Declarator_missingDeclarator_0 
     = tf.constructor(typestore,_Declarator,"missingDeclarator");
   private static final Type _Declarator_declarator_3 
     = tf.constructor(typestore,_Declarator,"declarator",tf.listType(_Attribute),"attributes",tf.listType(_Declaration),"pointerOperators",_Expression,"name");
-  private static final Type _Declarator_functionDeclaratorNested_6 
-    = tf.constructor(typestore,_Declarator,"functionDeclaratorNested",tf.listType(_Attribute),"attributes",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Declarator,"declarator",tf.listType(_Declaration),"arguments",tf.listType(_Declaration),"virtSpecifiers");
-  private static final Type _Declarator_arrayDeclarator_3 
-    = tf.constructor(typestore,_Declarator,"arrayDeclarator",tf.listType(_Attribute),"attributes",_Expression,"name",tf.listType(_Expression),"arrayModifier");
   private static final Type _Declarator_functionDeclaratorNested_7 
     = tf.constructor(typestore,_Declarator,"functionDeclaratorNested",tf.listType(_Attribute),"attributes",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Declarator,"declarator",tf.listType(_Declaration),"arguments",tf.listType(_Declaration),"virtSpecifiers",_Expression,"initializer");
   private static final Type _Declarator_functionDeclarator_6 
@@ -692,6 +692,56 @@ public class AST {
     return vf.constructor(_Declarator_functionDeclarator_7 , $attributes, $pointerOperators, $modifiers, $name, $parameters, $virtSpecifiers, $trailingReturnType).asWithKeywordParameters().setParameters(kwParams);
   }
   
+  public IConstructor Declarator_declarator(IList $attributes, IList $pointerOperators, IConstructor $name, IConstructor $initializer, ISourceLocation $loc, ISourceLocation $decl) {
+      
+    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
+    }
+      
+    if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
+    }
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$initializer.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    return vf.constructor(_Declarator_declarator_4 , $attributes, $pointerOperators, $name, $initializer).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declarator_arrayDeclarator(IList $attributes, IList $pointerOperators, IConstructor $name, IList $arrayModifier, ISourceLocation $loc, ISourceLocation $decl) {
+      
+    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
+    }
+      
+    if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
+    }
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$arrayModifier.getType().isSubtypeOf(tf.listType(_Expression))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $arrayModifier.getType() + " for $arrayModifier:" + $arrayModifier);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    return vf.constructor(_Declarator_arrayDeclarator_4 , $attributes, $pointerOperators, $name, $arrayModifier).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
   public IConstructor Declarator_functionDeclaratorWithES(IList $attributes, IList $pointerOperators, IList $modifiers, IConstructor $name, IList $arguments, IList $virtSpecifiers, IList $exceptionSpecification, ISourceLocation $loc, ISourceLocation $decl) {
       
     if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
@@ -729,127 +779,6 @@ public class AST {
     return vf.constructor(_Declarator_functionDeclaratorWithES_7 , $attributes, $pointerOperators, $modifiers, $name, $arguments, $virtSpecifiers, $exceptionSpecification).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_arrayDeclaratorNested(IList $attributes, IConstructor $declarator, IList $arrayModifier, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
-    }
-      
-    if (!$declarator.getType().isSubtypeOf(_Declarator)) {
-      throw new IllegalArgumentException("Expected " + _Declarator + " but got " + $declarator.getType() + " for $declarator:" + $declarator);
-    }
-      
-    if (!$arrayModifier.getType().isSubtypeOf(tf.listType(_Expression))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $arrayModifier.getType() + " for $arrayModifier:" + $arrayModifier);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_Declarator_arrayDeclaratorNested_3 , $attributes, $declarator, $arrayModifier).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declarator_functionDeclarator(IList $attributes, IList $pointerOperators, IConstructor $name, IList $parameters, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
-    }
-      
-    if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
-    }
-      
-    if (!$name.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
-    }
-      
-    if (!$parameters.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $parameters.getType() + " for $parameters:" + $parameters);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_Declarator_functionDeclarator_4 , $attributes, $pointerOperators, $name, $parameters).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declarator_declarator(IList $attributes, IList $pointerOperators, IConstructor $name, IConstructor $initializer, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
-    }
-      
-    if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
-    }
-      
-    if (!$name.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
-    }
-      
-    if (!$initializer.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_Declarator_declarator_4 , $attributes, $pointerOperators, $name, $initializer).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declarator_arrayDeclaratorNested(IList $attributes, IConstructor $declarator, IList $arrayModifier, IConstructor $initializer, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
-    }
-      
-    if (!$declarator.getType().isSubtypeOf(_Declarator)) {
-      throw new IllegalArgumentException("Expected " + _Declarator + " but got " + $declarator.getType() + " for $declarator:" + $declarator);
-    }
-      
-    if (!$arrayModifier.getType().isSubtypeOf(tf.listType(_Expression))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $arrayModifier.getType() + " for $arrayModifier:" + $arrayModifier);
-    }
-      
-    if (!$initializer.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_Declarator_arrayDeclaratorNested_4 , $attributes, $declarator, $arrayModifier, $initializer).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declarator_arrayDeclarator(IList $attributes, IConstructor $name, IList $arrayModifier, IConstructor $initializer, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
-    }
-      
-    if (!$name.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
-    }
-      
-    if (!$arrayModifier.getType().isSubtypeOf(tf.listType(_Expression))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $arrayModifier.getType() + " for $arrayModifier:" + $arrayModifier);
-    }
-      
-    if (!$initializer.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_Declarator_arrayDeclarator_4 , $attributes, $name, $arrayModifier, $initializer).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
   public IConstructor Declarator_functionDeclaratorWithES(IList $attributes, IList $pointerOperators, IList $modifiers, IConstructor $name, IList $arguments, IList $virtSpecifiers, ISourceLocation $loc, ISourceLocation $decl) {
       
     if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
@@ -883,16 +812,7 @@ public class AST {
     return vf.constructor(_Declarator_functionDeclaratorWithES_6 , $attributes, $pointerOperators, $modifiers, $name, $arguments, $virtSpecifiers).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_missingDeclarator(ISourceLocation $loc, ISourceLocation $decl) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_Declarator_missingDeclarator_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declarator_declarator(IList $attributes, IList $pointerOperators, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Declarator_arrayDeclarator(IList $attributes, IList $pointerOperators, IConstructor $name, IList $arrayModifier, IConstructor $initializer, ISourceLocation $loc, ISourceLocation $decl) {
       
     if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
@@ -905,12 +825,74 @@ public class AST {
     if (!$name.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
     }
+      
+    if (!$arrayModifier.getType().isSubtypeOf(tf.listType(_Expression))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $arrayModifier.getType() + " for $arrayModifier:" + $arrayModifier);
+    }
+      
+    if (!$initializer.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
+    }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
-    return vf.constructor(_Declarator_declarator_3 , $attributes, $pointerOperators, $name).asWithKeywordParameters().setParameters(kwParams);
+    return vf.constructor(_Declarator_arrayDeclarator_5 , $attributes, $pointerOperators, $name, $arrayModifier, $initializer).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declarator_arrayDeclaratorNested(IList $attributes, IList $pointerOperators, IConstructor $declarator, IList $arrayModifier, IConstructor $initializer, ISourceLocation $loc, ISourceLocation $decl) {
+      
+    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
+    }
+      
+    if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
+    }
+      
+    if (!$declarator.getType().isSubtypeOf(_Declarator)) {
+      throw new IllegalArgumentException("Expected " + _Declarator + " but got " + $declarator.getType() + " for $declarator:" + $declarator);
+    }
+      
+    if (!$arrayModifier.getType().isSubtypeOf(tf.listType(_Expression))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $arrayModifier.getType() + " for $arrayModifier:" + $arrayModifier);
+    }
+      
+    if (!$initializer.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    return vf.constructor(_Declarator_arrayDeclaratorNested_5 , $attributes, $pointerOperators, $declarator, $arrayModifier, $initializer).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declarator_functionDeclarator(IList $attributes, IList $pointerOperators, IConstructor $name, IList $parameters, ISourceLocation $loc, ISourceLocation $decl) {
+      
+    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
+    }
+      
+    if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
+    }
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$parameters.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $parameters.getType() + " for $parameters:" + $parameters);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    return vf.constructor(_Declarator_functionDeclarator_4 , $attributes, $pointerOperators, $name, $parameters).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declarator_functionDeclaratorNested(IList $attributes, IList $pointerOperators, IList $modifiers, IConstructor $declarator, IList $arguments, IList $virtSpecifiers, ISourceLocation $loc, ISourceLocation $decl) {
@@ -946,14 +928,18 @@ public class AST {
     return vf.constructor(_Declarator_functionDeclaratorNested_6 , $attributes, $pointerOperators, $modifiers, $declarator, $arguments, $virtSpecifiers).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_arrayDeclarator(IList $attributes, IConstructor $name, IList $arrayModifier, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Declarator_arrayDeclaratorNested(IList $attributes, IList $pointerOperators, IConstructor $declarator, IList $arrayModifier, ISourceLocation $loc, ISourceLocation $decl) {
       
     if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
     }
       
-    if (!$name.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
+    }
+      
+    if (!$declarator.getType().isSubtypeOf(_Declarator)) {
+      throw new IllegalArgumentException("Expected " + _Declarator + " but got " + $declarator.getType() + " for $declarator:" + $declarator);
     }
       
     if (!$arrayModifier.getType().isSubtypeOf(tf.listType(_Expression))) {
@@ -964,7 +950,37 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
-    return vf.constructor(_Declarator_arrayDeclarator_3 , $attributes, $name, $arrayModifier).asWithKeywordParameters().setParameters(kwParams);
+    return vf.constructor(_Declarator_arrayDeclaratorNested_4 , $attributes, $pointerOperators, $declarator, $arrayModifier).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declarator_missingDeclarator(ISourceLocation $loc, ISourceLocation $decl) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    return vf.constructor(_Declarator_missingDeclarator_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declarator_declarator(IList $attributes, IList $pointerOperators, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
+      
+    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
+    }
+      
+    if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
+    }
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    return vf.constructor(_Declarator_declarator_3 , $attributes, $pointerOperators, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declarator_functionDeclaratorNested(IList $attributes, IList $pointerOperators, IList $modifiers, IConstructor $declarator, IList $arguments, IList $virtSpecifiers, IConstructor $initializer, ISourceLocation $loc, ISourceLocation $decl) {

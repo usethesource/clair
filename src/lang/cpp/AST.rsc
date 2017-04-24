@@ -16,10 +16,10 @@ data Declarator(loc src = |unknown:///|, loc decl = |unknown:///|)
     | \functionDeclaratorNested(list[Attribute] attributes, list[Declaration] pointerOperators, list[Modifier] modifiers, Declarator declarator, list[Declaration] arguments, list[Declaration] virtSpecifiers, Expression initializer)
     | \functionDeclaratorWithES(list[Attribute] attributes, list[Declaration] pointerOperators, list[Modifier] modifiers, Expression name, list[Declaration] arguments, list[Declaration] virtSpecifiers) //empty exception specification
     | \functionDeclaratorWithES(list[Attribute] attributes, list[Declaration] pointerOperators, list[Modifier] modifiers, Expression name, list[Declaration] arguments, list[Declaration] virtSpecifiers, list[Expression] exceptionSpecification)
-    | \arrayDeclarator(list[Attribute] attributes, Expression name, list[Expression] arrayModifier)
-    | \arrayDeclarator(list[Attribute] attributes, Expression name, list[Expression] arrayModifier, Expression initializer)
-    | \arrayDeclaratorNested(list[Attribute] attributes, Declarator declarator, list[Expression] arrayModifier)
-    | \arrayDeclaratorNested(list[Attribute] attributes, Declarator declarator, list[Expression] arrayModifier, Expression initializer)
+    | \arrayDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, Expression name, list[Expression] arrayModifier)
+    | \arrayDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, Expression name, list[Expression] arrayModifier, Expression initializer)
+    | \arrayDeclaratorNested(list[Attribute] attributes, list[Declaration] pointerOperators, Declarator declarator, list[Expression] arrayModifier)
+    | \arrayDeclaratorNested(list[Attribute] attributes, list[Declaration] pointerOperators, Declarator declarator, list[Expression] arrayModifier, Expression initializer)
     
     //quick fix
     | \missingDeclarator()

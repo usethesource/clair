@@ -1155,51 +1155,47 @@ public class Parser extends ASTVisitor {
 		ISourceLocation decl = br.resolveBinding(declarator);
 		IList attributes = getAttributes(declarator);
 
-		IASTArrayModifier[] _arrayModifiers = declarator.getArrayModifiers();
-		IASTPointerOperator[] _pointerOperators = declarator.getPointerOperators();
-
-		IASTName _name = declarator.getName();
-		IASTInitializer _initializer = declarator.getInitializer();
-
 		IListWriter arrayModifiers = vf.listWriter();
-		Stream.of(_arrayModifiers).forEach(it -> {
+		Stream.of(declarator.getArrayModifiers()).forEach(it -> {
 			it.accept(this);
 			arrayModifiers.append(stack.pop());
 		});
+
 		IListWriter pointerOperators = vf.listWriter();
-		Stream.of(_pointerOperators).forEach(it -> {
+		Stream.of(declarator.getPointerOperators()).forEach(it -> {
 			it.accept(this);
 			pointerOperators.append(stack.pop());
 		});
-		_name.accept(this);
+
+		declarator.getName().accept(this);
 		IConstructor name = stack.pop();
+
 		// TODO: check declaresParameterPack
 		if (declarator instanceof ICPPASTArrayDeclarator
 				&& ((ICPPASTArrayDeclarator) declarator).declaresParameterPack())
 			out("WARNING: IASTArrayDeclarator has declaresParameterPack=true");
-		// TODO: check pointerOperators and nestedDeclarator
-		if (_pointerOperators.length > 0)
-			err("WARNING: IASTArrayDeclarator has #pointerOperators > 0");
 
 		IASTDeclarator _nestedDeclarator = declarator.getNestedDeclarator();
+		IASTInitializer _initializer = declarator.getInitializer();
 		if (_nestedDeclarator == null) {
 			if (_initializer == null)
-				stack.push(builder.Declarator_arrayDeclarator(attributes, name, arrayModifiers.done(), loc, decl));
+				stack.push(builder.Declarator_arrayDeclarator(attributes, pointerOperators.done(), name,
+						arrayModifiers.done(), loc, decl));
 			else {
 				_initializer.accept(this);
-				stack.push(builder.Declarator_arrayDeclarator(attributes, name, arrayModifiers.done(), stack.pop(), loc,
-						decl));
+				stack.push(builder.Declarator_arrayDeclarator(attributes, pointerOperators.done(), name,
+						arrayModifiers.done(), stack.pop(), loc, decl));
 			}
 		} else {
 			_nestedDeclarator.accept(this);
 			IConstructor nestedDeclarator = stack.pop();
 			if (_initializer == null)
-				stack.push(builder.Declarator_arrayDeclaratorNested(attributes, nestedDeclarator, arrayModifiers.done(),
-						loc, decl));
+				stack.push(builder.Declarator_arrayDeclaratorNested(attributes, pointerOperators.done(),
+						nestedDeclarator, arrayModifiers.done(), loc, decl));
 			else {
 				_initializer.accept(this);
-				stack.push(builder.Declarator_arrayDeclaratorNested(attributes, nestedDeclarator, arrayModifiers.done(),
-						stack.pop(), loc, decl));
+				stack.push(builder.Declarator_arrayDeclaratorNested(attributes, pointerOperators.done(),
+						nestedDeclarator, arrayModifiers.done(), stack.pop(), loc, decl));
 			}
 		}
 
