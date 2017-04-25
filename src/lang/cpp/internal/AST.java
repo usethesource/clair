@@ -38,6 +38,8 @@ public class AST {
     = tf.constructor(typestore,_Declarator,"functionDeclaratorWithES",tf.listType(_Attribute),"attributes",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Expression,"name",tf.listType(_Declaration),"arguments",tf.listType(_Declaration),"virtSpecifiers",tf.listType(_Expression),"exceptionSpecification");
   private static final Type _Declarator_functionDeclaratorWithES_6 
     = tf.constructor(typestore,_Declarator,"functionDeclaratorWithES",tf.listType(_Attribute),"attributes",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Expression,"name",tf.listType(_Declaration),"arguments",tf.listType(_Declaration),"virtSpecifiers");
+  private static final Type _Declarator_functionDeclaratorNoexcept_7 
+    = tf.constructor(typestore,_Declarator,"functionDeclaratorNoexcept",tf.listType(_Attribute),"attributes",tf.listType(_Declaration),"pointerOperators",tf.listType(_Modifier),"modifiers",_Expression,"name",tf.listType(_Declaration),"parameters",tf.listType(_Declaration),"virtSpecifiers",_Expression,"noexceptExpression");
   private static final Type _Declarator_arrayDeclarator_5 
     = tf.constructor(typestore,_Declarator,"arrayDeclarator",tf.listType(_Attribute),"attributes",tf.listType(_Declaration),"pointerOperators",_Expression,"name",tf.listType(_Expression),"arrayModifier",_Expression,"initializer");
   private static final Type _Declarator_fieldDeclarator_5 
@@ -789,6 +791,43 @@ public class AST {
     kwParams.put("decl", $decl);
     
     return vf.constructor(_Declarator_functionDeclaratorWithES_6 , $attributes, $pointerOperators, $modifiers, $name, $arguments, $virtSpecifiers).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declarator_functionDeclaratorNoexcept(IList $attributes, IList $pointerOperators, IList $modifiers, IConstructor $name, IList $parameters, IList $virtSpecifiers, IConstructor $noexceptExpression, ISourceLocation $loc, ISourceLocation $decl) {
+      
+    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
+    }
+      
+    if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
+    }
+      
+    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
+    }
+      
+    if (!$name.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$parameters.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $parameters.getType() + " for $parameters:" + $parameters);
+    }
+      
+    if (!$virtSpecifiers.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $virtSpecifiers.getType() + " for $virtSpecifiers:" + $virtSpecifiers);
+    }
+      
+    if (!$noexceptExpression.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $noexceptExpression.getType() + " for $noexceptExpression:" + $noexceptExpression);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    return vf.constructor(_Declarator_functionDeclaratorNoexcept_7 , $attributes, $pointerOperators, $modifiers, $name, $parameters, $virtSpecifiers, $noexceptExpression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declarator_arrayDeclarator(IList $attributes, IList $pointerOperators, IConstructor $name, IList $arrayModifier, IConstructor $initializer, ISourceLocation $loc, ISourceLocation $decl) {

@@ -1342,50 +1342,44 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(declarator);
 		ISourceLocation decl = br.resolveBinding(declarator);
 		IList attributes = getAttributes(declarator);
-
-		IASTName _name = declarator.getName();
-		IASTParameterDeclaration[] _parameters = declarator.getParameters();
-		IASTTypeId[] _exceptionSpecification = declarator.getExceptionSpecification();
-		ICPPASTExpression noexceptExpression = declarator.getNoexceptExpression();
-		IASTTypeId trailingReturnType = declarator.getTrailingReturnType();
-		ICPPASTVirtSpecifier[] _virtSpecifiers = declarator.getVirtSpecifiers();
-		IASTPointerOperator[] _pointerOperators = declarator.getPointerOperators();
+		IList modifiers = getModifiers(declarator);
 
 		IASTDeclarator _nestedDeclarator = declarator.getNestedDeclarator();
 		IASTInitializer _initializer = declarator.getInitializer();
+		IASTTypeId _trailingReturnType = declarator.getTrailingReturnType();
+		IASTTypeId[] _exceptionSpecification = declarator.getExceptionSpecification();
+		ICPPASTExpression _noexceptExpression = declarator.getNoexceptExpression();
 
-		IList modifiers = getModifiers(declarator);
-
-		// TODO: check noexceptExpression
-		if (noexceptExpression != null)
-			err("WARNING: ICPPASTFunctionDeclarator has noexceptExpression " + noexceptExpression.getRawSignature());
-
-		IConstructor name = builder.Expression_name("", loc);
 		// TODO: fix when name == null
+		IConstructor name = builder.Expression_name("", loc);
+		IASTName _name = declarator.getName();
 		if (_name != null) {
 			_name.accept(this);
 			name = stack.pop();
 		}
+
 		IListWriter parameters = vf.listWriter();
-		Stream.of(_parameters).forEach(it -> {
+		Stream.of(declarator.getParameters()).forEach(it -> {
 			it.accept(this);
 			parameters.append(stack.pop());
 		});
 		if (declarator.takesVarArgs())
 			parameters.append(builder.Declaration_varArgs(loc));
+
 		IListWriter virtSpecifiers = vf.listWriter();
-		Stream.of(_virtSpecifiers).forEach(it -> {
+		Stream.of(declarator.getVirtSpecifiers()).forEach(it -> {
 			it.accept(this);
 			virtSpecifiers.append(stack.pop());
 		});
+
 		IListWriter pointerOperators = vf.listWriter();
-		Stream.of(_pointerOperators).forEach(it -> {
+		Stream.of(declarator.getPointerOperators()).forEach(it -> {
 			it.accept(this);
 			pointerOperators.append(stack.pop());
 		});
 
 		if (_nestedDeclarator != null) {
-			if (trailingReturnType != null)
+			if (_trailingReturnType != null)
 				throw new RuntimeException("FunctionDeclarator: Trailing return type and nested declarator?");
 			_nestedDeclarator.accept(this);
 			IConstructor nestedDeclarator = stack.pop();
@@ -1400,21 +1394,29 @@ public class Parser extends ASTVisitor {
 			if (!(_exceptionSpecification.equals(ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION)))
 				err("WARNING: ICPPASTFunctionDeclaration had nestedDeclarator and also exceptionSpecification");
 		} else if (_exceptionSpecification.equals(ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION)) {
-			if (trailingReturnType == null)
+			if (_trailingReturnType == null)
 				stack.push(builder.Declarator_functionDeclarator(attributes, pointerOperators.done(), modifiers, name,
 						parameters.done(), virtSpecifiers.done(), loc, decl));
 			else {
-				trailingReturnType.accept(this);
+				_trailingReturnType.accept(this);
 				stack.push(builder.Declarator_functionDeclarator(attributes, pointerOperators.done(), modifiers, name,
 						parameters.done(), virtSpecifiers.done(), stack.pop(), loc, decl));
 			}
 		} else if (_exceptionSpecification.equals(IASTTypeId.EMPTY_TYPEID_ARRAY)) {
-			if (trailingReturnType != null)
+			if (_trailingReturnType != null)
 				throw new RuntimeException("FunctionDeclarator: Trailing return type and exception specification?");
 			stack.push(builder.Declarator_functionDeclaratorWithES(attributes, pointerOperators.done(), modifiers, name,
 					parameters.done(), virtSpecifiers.done(), loc, decl));
+		} else if (_noexceptExpression != null) {
+			if (_trailingReturnType != null)
+				throw new RuntimeException("FunctionDeclarator: Trailing return type and noexceptExpression?");
+			if (_initializer != null)
+				throw new RuntimeException("FunctionDeclarator: Initializer and noexceptExpression?");
+			_noexceptExpression.accept(this);
+			stack.push(builder.Declarator_functionDeclaratorNoexcept(attributes, pointerOperators.done(), modifiers,
+					name, parameters.done(), virtSpecifiers.done(), stack.pop(), loc, decl));
 		} else {
-			if (trailingReturnType != null)
+			if (_trailingReturnType != null)
 				throw new RuntimeException("FunctionDeclarator: Trailing return type and exception specification?");
 			IListWriter exceptionSpecification = vf.listWriter();
 			Stream.of(_exceptionSpecification).forEach(it -> {
