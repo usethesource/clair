@@ -1689,7 +1689,6 @@ public class Parser extends ASTVisitor {
 		IList attributes = getAttributes((ICPPASTSimpleDeclSpecifier) declSpec);
 		IList modifiers = getModifiers(declSpec);
 
-		// TODO: check getDeclTypeExpression
 		switch (declSpec.getType()) {
 		case IASTSimpleDeclSpecifier.t_unspecified:
 			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_unspecified(loc), loc));
