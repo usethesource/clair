@@ -2870,11 +2870,11 @@ public class Parser extends ASTVisitor {
 		if (_controller == null && statement instanceof ICPPASTSwitchStatement) {
 			((ICPPASTSwitchStatement) statement).getControllerDeclaration().accept(this);
 			stack.push(builder.Statement_switchWithDecl(attributes, stack.pop(), body, loc));
+			return PROCESS_ABORT;
 		}
 
 		_controller.accept(this);
 		stack.push(builder.Statement_switch(attributes, stack.pop(), body, loc));
-
 		return PROCESS_ABORT;
 	}
 
