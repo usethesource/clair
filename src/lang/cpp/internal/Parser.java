@@ -2727,14 +2727,6 @@ public class Parser extends ASTVisitor {
 		IASTExpression _iteration = statement.getIterationExpression();
 		IASTStatement _body = statement.getBody();
 
-		if (statement instanceof ICPPASTForStatement) {
-			IASTDeclaration _conditionDeclaration = ((ICPPASTForStatement) statement).getConditionDeclaration();
-			// TODO: check conditionDeclaration
-			if (_conditionDeclaration != null)
-				err("WARNING: ICPPASTForStatement has ConditionDeclaration: "
-						+ _conditionDeclaration.getRawSignature());
-		}
-
 		IConstructor initializer;
 		if (_initializer == null)
 			initializer = builder.Expression_empty(loc);
@@ -2759,8 +2751,15 @@ public class Parser extends ASTVisitor {
 		_body.accept(this);
 		IConstructor body = stack.pop();
 
+		if (statement instanceof ICPPASTForStatement) {
+			IASTDeclaration _conditionDeclaration = ((ICPPASTForStatement) statement).getConditionDeclaration();
+			if (_conditionDeclaration != null) {
+				_conditionDeclaration.accept(this);
+				stack.push(builder.Statement_forWithDecl(attributes, initializer, stack.pop(), iteration, body, loc));
+				return PROCESS_ABORT;
+			}
+		}
 		stack.push(builder.Statement_for(attributes, initializer, condition, iteration, body, loc));
-
 		return PROCESS_ABORT;
 	}
 

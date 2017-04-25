@@ -479,15 +479,17 @@ public class AST {
   private static final Type _Statement_while_3 
     = tf.constructor(typestore,_Statement,"while",tf.listType(_Attribute),"attributes",_Expression,"condition",_Statement,"body");
   private static final Type _Statement_ifWithDecl_3 
-    = tf.constructor(typestore,_Statement,"ifWithDecl",tf.listType(_Attribute),"attributes",_Declaration,"declaration",_Statement,"thenClause");
+    = tf.constructor(typestore,_Statement,"ifWithDecl",tf.listType(_Attribute),"attributes",_Declaration,"conditionDeclaration",_Statement,"thenClause");
   private static final Type _Statement_break_1 
     = tf.constructor(typestore,_Statement,"break",tf.listType(_Attribute),"attributes");
+  private static final Type _Statement_forWithDecl_5 
+    = tf.constructor(typestore,_Statement,"forWithDecl",tf.listType(_Attribute),"attributes",_Statement,"sInitializer",_Declaration,"conditionDeclaration",_Expression,"iteration",_Statement,"body");
   private static final Type _Statement_problem_1 
     = tf.constructor(typestore,_Statement,"problem",tf.stringType(),"raw");
-  private static final Type _Statement_ifWithDecl_4 
-    = tf.constructor(typestore,_Statement,"ifWithDecl",tf.listType(_Attribute),"attributes",_Declaration,"declaration",_Statement,"thenClause",_Statement,"elseClause");
   private static final Type _Statement_continue_1 
     = tf.constructor(typestore,_Statement,"continue",tf.listType(_Attribute),"attributes");
+  private static final Type _Statement_ifWithDecl_4 
+    = tf.constructor(typestore,_Statement,"ifWithDecl",tf.listType(_Attribute),"attributes",_Declaration,"conditionDeclaration",_Statement,"thenClause",_Statement,"elseClause");
   private static final Type _Statement_expressionStatement_2 
     = tf.constructor(typestore,_Statement,"expressionStatement",tf.listType(_Attribute),"attributes",_Expression,"expression");
   private static final Type _Statement_return_1 
@@ -4363,14 +4365,14 @@ public class AST {
     return vf.constructor(_Statement_while_3 , $attributes, $condition, $body).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Statement_ifWithDecl(IList $attributes, IConstructor $declaration, IConstructor $thenClause, ISourceLocation $loc) {
+  public IConstructor Statement_ifWithDecl(IList $attributes, IConstructor $conditionDeclaration, IConstructor $thenClause, ISourceLocation $loc) {
       
     if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
     }
       
-    if (!$declaration.getType().isSubtypeOf(_Declaration)) {
-      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $declaration.getType() + " for $declaration:" + $declaration);
+    if (!$conditionDeclaration.getType().isSubtypeOf(_Declaration)) {
+      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $conditionDeclaration.getType() + " for $conditionDeclaration:" + $conditionDeclaration);
     }
       
     if (!$thenClause.getType().isSubtypeOf(_Statement)) {
@@ -4381,7 +4383,7 @@ public class AST {
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Statement_ifWithDecl_3 , $attributes, $declaration, $thenClause).asWithKeywordParameters().setParameters(kwParams);
+    return vf.constructor(_Statement_ifWithDecl_3 , $attributes, $conditionDeclaration, $thenClause).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_break(IList $attributes, ISourceLocation $loc) {
@@ -4397,6 +4399,35 @@ public class AST {
     return vf.constructor(_Statement_break_1 , $attributes).asWithKeywordParameters().setParameters(kwParams);
   }
   
+  public IConstructor Statement_forWithDecl(IList $attributes, IConstructor $sInitializer, IConstructor $conditionDeclaration, IConstructor $iteration, IConstructor $body, ISourceLocation $loc) {
+      
+    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
+    }
+      
+    if (!$sInitializer.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $sInitializer.getType() + " for $sInitializer:" + $sInitializer);
+    }
+      
+    if (!$conditionDeclaration.getType().isSubtypeOf(_Declaration)) {
+      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $conditionDeclaration.getType() + " for $conditionDeclaration:" + $conditionDeclaration);
+    }
+      
+    if (!$iteration.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $iteration.getType() + " for $iteration:" + $iteration);
+    }
+      
+    if (!$body.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    
+    return vf.constructor(_Statement_forWithDecl_5 , $attributes, $sInitializer, $conditionDeclaration, $iteration, $body).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
   public IConstructor Statement_problem(String $raw, ISourceLocation $loc) {
       
     if (!vf.string($raw).getType().isSubtypeOf(tf.stringType())) {
@@ -4410,14 +4441,27 @@ public class AST {
     return vf.constructor(_Statement_problem_1 , vf.string($raw)).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Statement_ifWithDecl(IList $attributes, IConstructor $declaration, IConstructor $thenClause, IConstructor $elseClause, ISourceLocation $loc) {
+  public IConstructor Statement_continue(IList $attributes, ISourceLocation $loc) {
+      
+    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    
+    return vf.constructor(_Statement_continue_1 , $attributes).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Statement_ifWithDecl(IList $attributes, IConstructor $conditionDeclaration, IConstructor $thenClause, IConstructor $elseClause, ISourceLocation $loc) {
       
     if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
     }
       
-    if (!$declaration.getType().isSubtypeOf(_Declaration)) {
-      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $declaration.getType() + " for $declaration:" + $declaration);
+    if (!$conditionDeclaration.getType().isSubtypeOf(_Declaration)) {
+      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $conditionDeclaration.getType() + " for $conditionDeclaration:" + $conditionDeclaration);
     }
       
     if (!$thenClause.getType().isSubtypeOf(_Statement)) {
@@ -4432,20 +4476,7 @@ public class AST {
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Statement_ifWithDecl_4 , $attributes, $declaration, $thenClause, $elseClause).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Statement_continue(IList $attributes, ISourceLocation $loc) {
-      
-    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Statement_continue_1 , $attributes).asWithKeywordParameters().setParameters(kwParams);
+    return vf.constructor(_Statement_ifWithDecl_4 , $attributes, $conditionDeclaration, $thenClause, $elseClause).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_expressionStatement(IList $attributes, IConstructor $expression, ISourceLocation $loc) {
