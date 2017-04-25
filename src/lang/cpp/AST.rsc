@@ -290,6 +290,7 @@ data Statement(loc src = |unknown:///|)
     | \defaultCase(list[Attribute] attributes)
     | \break(list[Attribute] attributes)
     | \while(list[Attribute] attributes, Expression condition, Statement body)
+    | \whileWithDecl(list[Attribute] attributes, Declaration conditionDeclaration, Statement body)
     | \continue(list[Attribute] attributes)
     | \do(list[Attribute] attributes, Statement body, Expression condition)
     

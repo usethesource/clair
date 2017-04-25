@@ -2879,17 +2879,20 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTWhileStatement statement) {
-		// TODO: check conditionDeclaration
 		ISourceLocation loc = getSourceLocation(statement);
 		IList attributes = getAttributes(statement);
-		IASTExpression _condition = statement.getCondition();
-		IASTStatement _body = statement.getBody();
 
-		_condition.accept(this);
-		IConstructor condition = stack.pop();
-		_body.accept(this);
+		statement.getBody().accept(this);
 		IConstructor body = stack.pop();
-		stack.push(builder.Statement_while(attributes, condition, body, loc));
+
+		IASTExpression _condition = statement.getCondition();
+		if (_condition == null && statement instanceof ICPPASTWhileStatement) {
+			((ICPPASTWhileStatement) statement).getConditionDeclaration().accept(this);
+			stack.push(builder.Statement_whileWithDecl(attributes, stack.pop(), body, loc));
+			return PROCESS_ABORT;
+		}
+		_condition.accept(this);
+		stack.push(builder.Statement_while(attributes, stack.pop(), body, loc));
 		return PROCESS_ABORT;
 	}
 
