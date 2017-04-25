@@ -783,7 +783,6 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTStaticAssertDeclaration declaration) {
-		// TODO: check getMessage
 		ISourceLocation loc = getSourceLocation(declaration);
 		declaration.getCondition().accept(this);
 		IConstructor condition = stack.pop();
@@ -794,8 +793,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICPPASTTemplateDeclaration declaration) {
 		ISourceLocation loc = getSourceLocation(declaration);
-		// TODO: check isExported
-		boolean isExported = declaration.isExported();
+		// The "export" keyword has been removed from the C++ standard
 		IASTDeclaration _declaration = declaration.getDeclaration();
 		ICPPASTTemplateParameter[] _templateParameters = declaration.getTemplateParameters();
 		IListWriter templateParameters = vf.listWriter();
@@ -815,7 +813,6 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTUsingDeclaration declaration) {
-		// TODO: check isTypename
 		ISourceLocation loc = getSourceLocation(declaration);
 		ISourceLocation decl = br.resolveBinding(declaration);
 		IList attributes = getAttributes(declaration);
@@ -1596,7 +1593,6 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTNamedTypeSpecifier declSpec) {
-		// TODO: cpp: check getName and isTypename
 		ISourceLocation loc = getSourceLocation(declSpec);
 		ISourceLocation decl = br.resolveBinding(declSpec);
 		IList modifiers = getModifiers(declSpec);
