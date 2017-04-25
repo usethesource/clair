@@ -477,8 +477,6 @@ public class Parser extends ASTVisitor {
 				modifiers.append(builder.Modifier_mutable(loc));
 			if (((ICPPASTFunctionDeclarator) node).isPureVirtual())
 				modifiers.append(builder.Modifier_pureVirtual(loc));
-			if (((ICPPASTFunctionDeclarator) node).isOverride())
-				modifiers.append(builder.Modifier_override(loc));
 		}
 
 		if (node instanceof IASTDeclSpecifier) {
@@ -533,8 +531,6 @@ public class Parser extends ASTVisitor {
 				modifiers.append(builder.Modifier_const(loc));
 			if (((ICPPASTFunctionDeclarator) node).isVolatile())
 				modifiers.append(builder.Modifier_volatile(loc));
-			if (((ICPPASTFunctionDeclarator) node).isFinal())
-				modifiers.append(builder.Modifier_final(loc));
 		} else if (node instanceof IASTDeclSpecifier) {
 			if (((IASTDeclSpecifier) node).isConst())
 				modifiers.append(builder.Modifier_const(loc));
@@ -554,9 +550,6 @@ public class Parser extends ASTVisitor {
 		} else if (node instanceof ICPPASTNamespaceDefinition) {
 			if (((ICPPASTNamespaceDefinition) node).isInline())
 				modifiers.append(builder.Modifier_inline(loc));
-		} else if (node instanceof ICPPASTCompositeTypeSpecifier) {
-			if (((ICPPASTCompositeTypeSpecifier) node).isFinal())
-				modifiers.append(builder.Modifier_final(loc));
 		}
 
 		if (node instanceof ICPPASTNamedTypeSpecifier) {
@@ -1514,15 +1507,11 @@ public class Parser extends ASTVisitor {
 		int key = declSpec.getKey();
 		IASTName _name = declSpec.getName();
 		IASTDeclaration[] _members = declSpec.getMembers();
-		// TODO: check: remove isFinal
-		boolean isFinal = declSpec.isFinal();
 		ICPPASTClassVirtSpecifier virtSpecifier = declSpec.getVirtSpecifier();
 
 		// TODO: check getVirtSpecifier
 		if (virtSpecifier != null)
 			err("WARNING: ICPPASTCompositeTypeSpecifier has virtSpecifier: " + virtSpecifier.getRawSignature());
-		if (isFinal)
-			err("WARNING: ICPPASTCompositeTypeSpecifier has isFinal=true");
 		_name.accept(this);
 		IConstructor name = stack.pop();
 		IListWriter members = vf.listWriter();
