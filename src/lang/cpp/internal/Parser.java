@@ -1602,76 +1602,11 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTSimpleDeclSpecifier declSpec) {
-		ISourceLocation loc = getSourceLocation(declSpec);
-		if (!(declSpec instanceof ICPPASTSimpleDeclSpecifier))
-			throw new RuntimeException("NYI: C SimpleDeclSpecifier");
-		IList attributes = getAttributes((ICPPASTSimpleDeclSpecifier) declSpec);
-		IList modifiers = getModifiers(declSpec);
-
-		// TODO: check getDeclTypeExpression
-		switch (declSpec.getType()) {
-		case IASTSimpleDeclSpecifier.t_unspecified:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_unspecified(loc), loc));
-			break;
-		case IASTSimpleDeclSpecifier.t_void:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_void(loc), loc));
-			break;
-		case IASTSimpleDeclSpecifier.t_char:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_char(loc), loc));
-			break;
-		case IASTSimpleDeclSpecifier.t_int:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_integer(loc), loc));
-			break;
-		case IASTSimpleDeclSpecifier.t_float:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_float(loc), loc));
-			break;
-		case IASTSimpleDeclSpecifier.t_double:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_double(loc), loc));
-			break;
-		case IASTSimpleDeclSpecifier.t_bool:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_bool(loc), loc));
-			break;
-		case IASTSimpleDeclSpecifier.t_wchar_t:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_wchar_t(loc), loc));
-			break;
-		case IASTSimpleDeclSpecifier.t_typeof:
-			declSpec.getDeclTypeExpression().accept(this);
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_typeof(loc), stack.pop(),
-					loc));
-			break;
-		case IASTSimpleDeclSpecifier.t_decltype:
-			declSpec.getDeclTypeExpression().accept(this);
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_decltype(loc),
-					stack.pop(), loc));
-			break;
-		case IASTSimpleDeclSpecifier.t_auto:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_auto(loc), loc));
-			break;
-		case IASTSimpleDeclSpecifier.t_char16_t:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_char16_t(loc), loc));
-			break;
-		case IASTSimpleDeclSpecifier.t_char32_t:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_char32_t(loc), loc));
-			break;
-		case IASTSimpleDeclSpecifier.t_int128:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_int128(loc), loc));
-			break;
-		case IASTSimpleDeclSpecifier.t_float128:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_float128(loc), loc));
-			break;
-		case IASTSimpleDeclSpecifier.t_decimal32:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_decimal128(loc), loc));
-			break;
-		case IASTSimpleDeclSpecifier.t_decimal64:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_decimal64(loc), loc));
-			break;
-		case IASTSimpleDeclSpecifier.t_decimal128:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_decimal128(loc), loc));
-			break;
-		default:
-			throw new RuntimeException("Unknown IASTSimpleDeclSpecifier kind " + declSpec.getType() + ". Exiting");
+		if (declSpec instanceof ICPPASTSimpleDeclSpecifier) {
+			visit((ICPPASTSimpleDeclSpecifier) declSpec);
+			return PROCESS_ABORT;
 		}
-		return PROCESS_ABORT;
+		throw new RuntimeException("NYI: C SimpleDeclSpecifier");
 	}
 
 	public int visit(ICASTDeclSpecifier declSpec) {
@@ -1750,7 +1685,73 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTSimpleDeclSpecifier declSpec) {
-		visit((IASTSimpleDeclSpecifier) declSpec);
+		ISourceLocation loc = getSourceLocation(declSpec);
+		IList attributes = getAttributes((ICPPASTSimpleDeclSpecifier) declSpec);
+		IList modifiers = getModifiers(declSpec);
+
+		// TODO: check getDeclTypeExpression
+		switch (declSpec.getType()) {
+		case IASTSimpleDeclSpecifier.t_unspecified:
+			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_unspecified(loc), loc));
+			break;
+		case IASTSimpleDeclSpecifier.t_void:
+			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_void(loc), loc));
+			break;
+		case IASTSimpleDeclSpecifier.t_char:
+			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_char(loc), loc));
+			break;
+		case IASTSimpleDeclSpecifier.t_int:
+			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_integer(loc), loc));
+			break;
+		case IASTSimpleDeclSpecifier.t_float:
+			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_float(loc), loc));
+			break;
+		case IASTSimpleDeclSpecifier.t_double:
+			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_double(loc), loc));
+			break;
+		case IASTSimpleDeclSpecifier.t_bool:
+			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_bool(loc), loc));
+			break;
+		case IASTSimpleDeclSpecifier.t_wchar_t:
+			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_wchar_t(loc), loc));
+			break;
+		case IASTSimpleDeclSpecifier.t_typeof:
+			declSpec.getDeclTypeExpression().accept(this);
+			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_typeof(loc), stack.pop(),
+					loc));
+			break;
+		case IASTSimpleDeclSpecifier.t_decltype:
+			declSpec.getDeclTypeExpression().accept(this);
+			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_decltype(loc),
+					stack.pop(), loc));
+			break;
+		case IASTSimpleDeclSpecifier.t_auto:
+			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_auto(loc), loc));
+			break;
+		case IASTSimpleDeclSpecifier.t_char16_t:
+			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_char16_t(loc), loc));
+			break;
+		case IASTSimpleDeclSpecifier.t_char32_t:
+			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_char32_t(loc), loc));
+			break;
+		case IASTSimpleDeclSpecifier.t_int128:
+			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_int128(loc), loc));
+			break;
+		case IASTSimpleDeclSpecifier.t_float128:
+			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_float128(loc), loc));
+			break;
+		case IASTSimpleDeclSpecifier.t_decimal32:
+			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_decimal128(loc), loc));
+			break;
+		case IASTSimpleDeclSpecifier.t_decimal64:
+			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_decimal64(loc), loc));
+			break;
+		case IASTSimpleDeclSpecifier.t_decimal128:
+			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_decimal128(loc), loc));
+			break;
+		default:
+			throw new RuntimeException("Unknown IASTSimpleDeclSpecifier kind " + declSpec.getType() + ". Exiting");
+		}
 		return PROCESS_ABORT;
 	}
 
