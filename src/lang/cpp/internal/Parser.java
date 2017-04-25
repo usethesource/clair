@@ -2860,18 +2860,20 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTSwitchStatement statement) {
-		// TODO: check controllerDeclaration
 		ISourceLocation loc = getSourceLocation(statement);
 		IList attributes = getAttributes(statement);
-		IASTExpression _controller = statement.getControllerExpression();
-		IASTStatement _body = statement.getBody();
 
-		_controller.accept(this);
-		IConstructor controller = stack.pop();
-		_body.accept(this);
+		statement.getBody().accept(this);
 		IConstructor body = stack.pop();
 
-		stack.push(builder.Statement_switch(attributes, controller, body, loc));
+		IASTExpression _controller = statement.getControllerExpression();
+		if (_controller == null && statement instanceof ICPPASTSwitchStatement) {
+			((ICPPASTSwitchStatement) statement).getControllerDeclaration().accept(this);
+			stack.push(builder.Statement_switchWithDecl(attributes, stack.pop(), body, loc));
+		}
+
+		_controller.accept(this);
+		stack.push(builder.Statement_switch(attributes, stack.pop(), body, loc));
 
 		return PROCESS_ABORT;
 	}

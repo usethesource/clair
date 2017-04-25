@@ -488,6 +488,8 @@ public class AST {
     = tf.constructor(typestore,_Statement,"problem",tf.stringType(),"raw");
   private static final Type _Statement_continue_1 
     = tf.constructor(typestore,_Statement,"continue",tf.listType(_Attribute),"attributes");
+  private static final Type _Statement_switchWithDecl_3 
+    = tf.constructor(typestore,_Statement,"switchWithDecl",tf.listType(_Attribute),"attributes",_Declaration,"controllerDeclaration",_Statement,"body");
   private static final Type _Statement_ifWithDecl_4 
     = tf.constructor(typestore,_Statement,"ifWithDecl",tf.listType(_Attribute),"attributes",_Declaration,"conditionDeclaration",_Statement,"thenClause",_Statement,"elseClause");
   private static final Type _Statement_expressionStatement_2 
@@ -4452,6 +4454,27 @@ public class AST {
     
     
     return vf.constructor(_Statement_continue_1 , $attributes).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Statement_switchWithDecl(IList $attributes, IConstructor $controllerDeclaration, IConstructor $body, ISourceLocation $loc) {
+      
+    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
+    }
+      
+    if (!$controllerDeclaration.getType().isSubtypeOf(_Declaration)) {
+      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $controllerDeclaration.getType() + " for $controllerDeclaration:" + $controllerDeclaration);
+    }
+      
+    if (!$body.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    
+    return vf.constructor(_Statement_switchWithDecl_3 , $attributes, $controllerDeclaration, $body).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_ifWithDecl(IList $attributes, IConstructor $conditionDeclaration, IConstructor $thenClause, IConstructor $elseClause, ISourceLocation $loc) {
