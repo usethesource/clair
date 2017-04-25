@@ -150,6 +150,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStaticAssertDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
@@ -165,23 +166,30 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier.SpecifierKind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTArrayRangeDesignator;
+import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.DefaultLogService;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IParserLogService;
+import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
+import org.eclipse.cdt.internal.core.index.CIndex;
+import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
+import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 import org.eclipse.core.runtime.CoreException;
@@ -294,9 +302,15 @@ public class Parser extends ASTVisitor {
 			macros.put("_CHAR16T", "");
 			macros.put("_NATIVE_WCHAR_T_DEFINED", "1");
 			macros.put("__nullptr", "nullptr");
+			macros.put("_MSC_EXTENSIONS", "1");
+			macros.put("__inline", "inline");
+			macros.put("__ptr32", "");
+			macros.put("__ptr64", "");
+			macros.put("__interface", "struct");
 
-			// MSVC specific keywords
 			macros.put("__pragma(A)", "");
+			macros.put("__identifier(A)", "A");
+			macros.put("__declspec(A)", "");
 
 			IScannerInfo si = new ScannerInfo(macros, null);
 
@@ -353,7 +367,7 @@ public class Parser extends ASTVisitor {
 			};
 
 			ifcp.setIncludeResolutionHeuristics(ifrh);
-			IIndex idx = null;
+			IIndex idx = new CIndex(new IIndexFragment[] {});
 			int options = ILanguage.OPTION_PARSE_INACTIVE_CODE;
 
 			IParserLogService log = new IParserLogService() {
@@ -375,12 +389,18 @@ public class Parser extends ASTVisitor {
 			if (result == null) {
 				throw RuntimeExceptionFactory.parseError(file, null, null);
 			}
-			out(dependencies.toString());
+			// out(dependencies.toString());
+
+			scanner = new CPreprocessor(fc, si, ParserLanguage.CPP, log,
+					GPPScannerExtensionConfiguration.getInstance(si), ifcp);
+
 			return result;
 		} catch (CoreException e) {
 			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
 		}
 	}
+
+	IScanner scanner;
 
 	public IValue parseExpression(IString expression, IEvaluatorContext ctx) throws CoreException, IOException {
 		setIEvaluatorContext(ctx);
@@ -647,7 +667,8 @@ public class Parser extends ASTVisitor {
 		IConstructor lastName = stack.pop();
 		// TODO: check fullyQualified
 		if (fullyQualified)
-			err("WARNING: ICPPASTQualifiedName has fullyQualified=true");
+			;
+		// err("WARNING: ICPPASTQualifiedName has fullyQualified=true");
 		if (conversionOrOperator)
 			err("WARNING: ICPPASTQualifiedName has conversionOrOperator=true");
 		stack.push(builder.Expression_qualifiedName(qualifier.done(), lastName, loc, decl));
@@ -962,6 +983,9 @@ public class Parser extends ASTVisitor {
 		err(declaration.getProblem().getMessageWithLocation());
 		err(declaration.getRawSignature());
 		prefix -= 4;
+		String problem = declaration.getProblem().getMessageWithLocation();
+		ISourceLocation loc = getSourceLocation(declaration);
+		String raw = declaration.getRawSignature();
 		stack.push(builder.Declaration_problemDeclaration(getSourceLocation(declaration)));
 		return PROCESS_ABORT;
 	}
@@ -2900,7 +2924,6 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTTypeId typeId) {
 		ISourceLocation loc = getSourceLocation(typeId);
 		if (typeId instanceof IASTProblemTypeId) {
-			String raw = typeId.getRawSignature();
 			if (typeId.getRawSignature().equals("...") || typeId.getRawSignature().contains("_THROW1("))
 				stack.push(builder.Expression_typeId(
 						builder.DeclSpecifier_msThrowEllipsis(loc, vf.sourceLocation("unknown:///")), loc));
