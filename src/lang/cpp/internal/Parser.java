@@ -1762,23 +1762,16 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(IASTArrayModifier arrayModifier) {
-		ISourceLocation loc = getSourceLocation(arrayModifier);
-		if (arrayModifier instanceof ICASTArrayModifier) {
+		if (arrayModifier instanceof ICASTArrayModifier)
 			throw new RuntimeException("NYI");
-		} else {
-			IList attributes = getAttributes(arrayModifier);
-			IASTExpression _constantExpression = arrayModifier.getConstantExpression();
-			// TODO: remove attributeSpecifiers, are in attributes
-			IASTAttributeSpecifier[] _attributeSpecifiers = arrayModifier.getAttributeSpecifiers();
-
-			if (_attributeSpecifiers != null && _attributeSpecifiers.length > 0)
-				err("WARNING: IASTArrayModifier has unimplemented field set");
-			if (_constantExpression == null)
-				stack.push(builder.Expression_arrayModifier(attributes, loc));
-			else {
-				_constantExpression.accept(this);
-				stack.push(builder.Expression_arrayModifier(attributes, stack.pop(), loc));
-			}
+		ISourceLocation loc = getSourceLocation(arrayModifier);
+		IList attributes = getAttributes(arrayModifier);
+		IASTExpression _constantExpression = arrayModifier.getConstantExpression();
+		if (_constantExpression == null)
+			stack.push(builder.Expression_arrayModifier(attributes, loc));
+		else {
+			_constantExpression.accept(this);
+			stack.push(builder.Expression_arrayModifier(attributes, stack.pop(), loc));
 		}
 		return PROCESS_ABORT;
 	}
