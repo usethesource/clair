@@ -1505,43 +1505,52 @@ public class Parser extends ASTVisitor {
 		IList attributes = getAttributes(declSpec);
 		IList modifiers = getModifiers(declSpec);
 
-		ICPPASTBaseSpecifier[] _baseSpecifiers = declSpec.getBaseSpecifiers();
-		int key = declSpec.getKey();
-		IASTName _name = declSpec.getName();
-		IASTDeclaration[] _members = declSpec.getMembers();
 		ICPPASTClassVirtSpecifier virtSpecifier = declSpec.getVirtSpecifier();
+		if (virtSpecifier != null && !(virtSpecifier.getKind().equals(ICPPASTClassVirtSpecifier.SpecifierKind.Final)))
+			throw new RuntimeException("ICPPASTCompositeTypeSpecifier encountered unknown classVirtSpecifier type");
 
-		// TODO: check getVirtSpecifier
-		if (virtSpecifier != null)
-			err("WARNING: ICPPASTCompositeTypeSpecifier has virtSpecifier: " + virtSpecifier.getRawSignature());
-		_name.accept(this);
+		declSpec.getName().accept(this);
 		IConstructor name = stack.pop();
+
 		IListWriter members = vf.listWriter();
-		Stream.of(_members).forEach(it -> {
+		Stream.of(declSpec.getMembers()).forEach(it -> {
 			it.accept(this);
 			members.append(stack.pop());
 		});
+
 		IListWriter baseSpecifiers = vf.listWriter();
-		Stream.of(_baseSpecifiers).forEach(it -> {
+		Stream.of(declSpec.getBaseSpecifiers()).forEach(it -> {
 			it.accept(this);
 			baseSpecifiers.append(stack.pop());
 		});
 
-		switch (key) {
+		switch (declSpec.getKey()) {
 		case ICPPASTCompositeTypeSpecifier.k_struct:
-			stack.push(builder.DeclSpecifier_struct(attributes, modifiers, name, baseSpecifiers.done(), members.done(),
-					loc, decl));
+			if (virtSpecifier == null)
+				stack.push(builder.DeclSpecifier_struct(attributes, modifiers, name, baseSpecifiers.done(),
+						members.done(), loc, decl));
+			else
+				stack.push(builder.DeclSpecifier_structFinal(attributes, modifiers, name, baseSpecifiers.done(),
+						members.done(), loc, decl));
 			break;
 		case ICPPASTCompositeTypeSpecifier.k_union:
-			stack.push(builder.DeclSpecifier_union(attributes, modifiers, name, baseSpecifiers.done(), members.done(),
-					loc, decl));
+			if (virtSpecifier == null)
+				stack.push(builder.DeclSpecifier_union(attributes, modifiers, name, baseSpecifiers.done(),
+						members.done(), loc, decl));
+			else
+				stack.push(builder.DeclSpecifier_unionFinal(attributes, modifiers, name, baseSpecifiers.done(),
+						members.done(), loc, decl));
 			break;
 		case ICPPASTCompositeTypeSpecifier.k_class:
-			stack.push(builder.DeclSpecifier_class(attributes, modifiers, name, baseSpecifiers.done(), members.done(),
-					loc, decl));
+			if (virtSpecifier == null)
+				stack.push(builder.DeclSpecifier_class(attributes, modifiers, name, baseSpecifiers.done(),
+						members.done(), loc, decl));
+			else
+				stack.push(builder.DeclSpecifier_classFinal(attributes, modifiers, name, baseSpecifiers.done(),
+						members.done(), loc, decl));
 			break;
 		default:
-			throw new RuntimeException("Unknown IASTCompositeTypeSpecifier code " + key + ". Exiting");
+			throw new RuntimeException("Unknown IASTCompositeTypeSpecifier code " + declSpec.getKey() + ". Exiting");
 		}
 
 		return PROCESS_ABORT;
