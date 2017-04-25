@@ -216,6 +216,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"lessEqual",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_arrayModifier_2 
     = tf.constructor(typestore,_Expression,"arrayModifier",tf.listType(_Attribute),"attributes",_Expression,"constExpression");
+  private static final Type _Expression_globalVectoredDelete_1 
+    = tf.constructor(typestore,_Expression,"globalVectoredDelete",_Expression,"expression");
   private static final Type _Expression_functionCall_2 
     = tf.constructor(typestore,_Expression,"functionCall",_Expression,"functionName",tf.listType(_Expression),"arguments");
   private static final Type _Expression_binaryXor_2 
@@ -382,6 +384,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"conditional",_Expression,"condition",_Expression,"positive",_Expression,"negative");
   private static final Type _Expression_moduloAssign_2 
     = tf.constructor(typestore,_Expression,"moduloAssign",_Expression,"lhs",_Expression,"rhs");
+  private static final Type _Expression_globalDelete_1 
+    = tf.constructor(typestore,_Expression,"globalDelete",_Expression,"expression");
   private static final Type _Expression_max_2 
     = tf.constructor(typestore,_Expression,"max",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_binaryOr_2 
@@ -2492,6 +2496,19 @@ public class AST {
     return vf.constructor(_Expression_arrayModifier_2 , $attributes, $constExpression).asWithKeywordParameters().setParameters(kwParams);
   }
   
+  public IConstructor Expression_globalVectoredDelete(IConstructor $expression, ISourceLocation $loc) {
+      
+    if (!$expression.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    
+    return vf.constructor(_Expression_globalVectoredDelete_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
   public IConstructor Expression_functionCall(IConstructor $functionName, IList $arguments, ISourceLocation $loc, IConstructor $typ) {
       
     if (!$functionName.getType().isSubtypeOf(_Expression)) {
@@ -3745,6 +3762,19 @@ public class AST {
     
     kwParams.put("typ", $typ);
     return vf.constructor(_Expression_moduloAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Expression_globalDelete(IConstructor $expression, ISourceLocation $loc) {
+      
+    if (!$expression.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    
+    return vf.constructor(_Expression_globalDelete_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_max(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {

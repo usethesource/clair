@@ -225,6 +225,8 @@ data Expression(loc src = |unknown:///|)//, TypeSymbol typ = \noType())
     
     | \delete(Expression expression)
     | \vectoredDelete(Expression expression)
+    | \globalDelete(Expression expression)
+    | \globalVectoredDelete(Expression expression)
     
     | \arraySubscriptExpression(Expression array, Expression argument)
     | \arrayModifier(list[Attribute] attributes)
