@@ -1263,8 +1263,8 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTDeclarator declarator) {
 		if (declarator instanceof ICPPASTArrayDeclarator)
 			visit((ICPPASTArrayDeclarator) declarator);
-		// else if (declarator instanceof ICPPASTFieldDeclarator)
-		// visit((ICPPASTFieldDeclarator) declarator);
+		else if (declarator instanceof ICPPASTFieldDeclarator)
+			visit((ICPPASTFieldDeclarator) declarator);
 		else if (declarator instanceof ICPPASTFunctionDeclarator)
 			visit((ICPPASTFunctionDeclarator) declarator);
 		else {
