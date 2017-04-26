@@ -2057,9 +2057,6 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICPPASTNewExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
-		// TODO: check to remove isArrayAllocation
-		if (expression.isArrayAllocation())
-			err("WARNING: ICPPASTNewExpression has isArrayAllocation=true");
 		if (expression.isNewTypeId())
 			err("WARNING: ICPPASTNewExpression has isNewTypeId=true");
 
