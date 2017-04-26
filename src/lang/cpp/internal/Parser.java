@@ -715,10 +715,10 @@ public class Parser extends ASTVisitor {
 		// visit((ICPPASTNamespaceDefinition) declaration);
 		else if (declaration instanceof ICPPASTStaticAssertDeclaration)
 			visit((ICPPASTStaticAssertDeclaration) declaration);
-		else if (declaration instanceof ICPPASTTemplateDeclaration)
-			visit((ICPPASTTemplateDeclaration) declaration);
 		else if (declaration instanceof ICPPASTTemplateSpecialization)
 			visit((ICPPASTTemplateSpecialization) declaration);
+		else if (declaration instanceof ICPPASTTemplateDeclaration)
+			visit((ICPPASTTemplateDeclaration) declaration);
 		else if (declaration instanceof ICPPASTUsingDeclaration)
 			visit((ICPPASTUsingDeclaration) declaration);
 		else if (declaration instanceof ICPPASTUsingDirective)
@@ -828,9 +828,10 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTTemplateSpecialization declaration) {
-		// TODO: check getDeclaration
-		out("CPPTemplateSpecialization: " + declaration.getRawSignature());
-		throw new RuntimeException("NYI");
+		ISourceLocation loc = getSourceLocation(declaration);
+		declaration.getDeclaration().accept(this);
+		stack.push(builder.Declaration_explicitTemplateSpecialization(stack.pop(), loc));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTUsingDeclaration declaration) {

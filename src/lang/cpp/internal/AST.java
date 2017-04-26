@@ -116,6 +116,8 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"namespaceDefinitionInline",tf.listType(_Attribute),"attributes",_Expression,"name",tf.listType(_Declaration),"declarations");
   private static final Type _Declaration_functionDefinition_3 
     = tf.constructor(typestore,_Declaration,"functionDefinition",_Expression,"returnSpec",_Declarator,"declarator",_Statement,"body");
+  private static final Type _Declaration_explicitTemplateSpecialization_1 
+    = tf.constructor(typestore,_Declaration,"explicitTemplateSpecialization",_Declaration,"declaration");
   private static final Type _Declaration_functionDefinition_5 
     = tf.constructor(typestore,_Declaration,"functionDefinition",tf.listType(_Attribute),"attributes",_DeclSpecifier,"declSpecifier",_Declarator,"declarator",tf.listType(_Expression),"memberInitializer",_Statement,"body");
   private static final Type _Declaration_baseSpecifier_1 
@@ -1710,6 +1712,19 @@ public class AST {
     
     
     return vf.constructor(_Declaration_functionDefinition_3 , $returnSpec, $declarator, $body).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_explicitTemplateSpecialization(IConstructor $declaration, ISourceLocation $loc) {
+      
+    if (!$declaration.getType().isSubtypeOf(_Declaration)) {
+      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $declaration.getType() + " for $declaration:" + $declaration);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    
+    return vf.constructor(_Declaration_explicitTemplateSpecialization_1 , $declaration).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_functionDefinition(IList $attributes, IConstructor $declSpecifier, IConstructor $declarator, IList $memberInitializer, IConstructor $body, ISourceLocation $loc) {

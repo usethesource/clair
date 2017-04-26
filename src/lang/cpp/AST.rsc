@@ -118,6 +118,7 @@ data Declaration(loc src=|unknown:///|)
     
     | \explicitTemplateInstantiation(Declaration declaration)
     | \explicitTemplateInstantiation(Modifier modifier, Declaration declaration)
+    | \explicitTemplateSpecialization(Declaration declaration)
     
     | \varArgs() //encoding for ellipsis in f(x, ...);
     
