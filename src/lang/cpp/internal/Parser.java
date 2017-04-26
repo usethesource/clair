@@ -631,8 +631,8 @@ public class Parser extends ASTVisitor {
 			visit((ICPPASTQualifiedName) name);
 		else if (name instanceof ICPPASTTemplateId)
 			visit((ICPPASTTemplateId) name);
-		else {// TODO is this correct?
-			stack.push(builder.Expression_name(name.toString(), loc));
+		else {
+			stack.push(builder.Expression_name(new String(name.toCharArray()), loc));
 		}
 		return PROCESS_ABORT;
 	}
