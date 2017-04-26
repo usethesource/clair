@@ -656,7 +656,6 @@ public class Parser extends ASTVisitor {
 		ICPPASTNameSpecifier[] _qualifier = name.getQualifier();
 		IASTName _lastName = name.getLastName();
 		boolean fullyQualified = name.isFullyQualified();
-		boolean conversionOrOperator = name.isConversionOrOperator();
 
 		IListWriter qualifier = vf.listWriter();
 		Stream.of(_qualifier).forEach(it -> {
