@@ -669,8 +669,6 @@ public class Parser extends ASTVisitor {
 		if (fullyQualified)
 			;
 		// err("WARNING: ICPPASTQualifiedName has fullyQualified=true");
-		if (conversionOrOperator)
-			err("WARNING: ICPPASTQualifiedName has conversionOrOperator=true");
 		stack.push(builder.Expression_qualifiedName(qualifier.done(), lastName, loc, decl));
 		return PROCESS_ABORT;
 	}
