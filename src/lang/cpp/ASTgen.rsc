@@ -8,10 +8,10 @@ import String;
 import IO;
 
 
-public str apiGen(str apiName,list[type[value]] ts) {
-  map[str,str] emp = ();
-  return apiGen(apiName,ts,emp);
-}
+//public str apiGen(str apiName,list[type[value]] ts) {
+//  map[str,str] emp = ();
+//  return apiGen(apiName,ts,emp);
+//}
 
 public void generate()  {
   code = generate("AST", [#Declarator, #DeclSpecifier, #Declaration, #Expression, #Type, #Statement, #Modifier, #TypeSymbol, #Attribute]);
@@ -42,7 +42,7 @@ public str generate(str apiName, list[type[value]] types) {
            '    this.vf = vf;
            '  }
            '
-           '  <for(type[value] t <- allTypes, adt(name, _) := t.symbol) {>private static final Type _<name> = tf.abstractDataType(typestore, \"<name>\");
+           '  <for(type[value] t <- allTypes, adt(str name, _) := t.symbol) {>private static final Type _<name> = tf.abstractDataType(typestore, \"<name>\");
            '  <}> 
            '  <for(type[value] t <- allTypes) {>
            '  <declareType(t.symbol, t.definitions[t.symbol])>
@@ -54,7 +54,7 @@ public str generate(str apiName, list[type[value]] types) {
 
 }
 
-str declareType(adt(name, list[Symbol] _), Production choice) 
+str declareType(adt(str name, list[Symbol] _), Production choice) 
  =   "<for(Production c <- choice.alternatives ) {>
      '<declareConstructor(c, name)><}>";
   
@@ -76,14 +76,14 @@ str type2FactoryCall(Symbol t){
       case Symbol::\loc() : return "tf.sourceLocationType()";
       case Symbol::\datetime() : return "tf.dateTimeType()";
       case Symbol::\node() : return "tf.nodeType()";
-      case Symbol::\cons(Symbol::\adt(name,_),_,_) : return  (name);
+      case Symbol::\cons(Symbol::\adt(str name,_),_,_) : return  (name);
       case Symbol::\set(ti) :  return "tf.setType(<type2FactoryCall(ti)>)";  
       case Symbol::\list(ti) :  return "tf.listType(<type2FactoryCall(ti)>)";
       case Symbol::\map(label(l1,ti),label(l2, ti2)) : return "tf.mapType(<type2FactoryCall(ti)>,\"<l1>\", <type2FactoryCall(ti2)>, \"<l2>\")";
       case Symbol::\map(ti,ti2) : return "tf.mapType(<type2FactoryCall(ti)>,<type2FactoryCall(ti2)>)";
       case Symbol::\tuple(tis) : return "tf.tupleType(<typeList2FactoryVarArgs(tis)>)";
       case Symbol::\rel(tis) : return "tf.relType(<typeList2FactoryVarArgs(tis)>)";
-      case Symbol::\adt(name, _) : return "_<name>";
+      case Symbol::\adt(str name, _) : return "_<name>";
       default: 
         throw "Do not now how to construct <t>";  
     }
@@ -106,13 +106,13 @@ str type2FactoryCall(Symbol t){
     return toExtraArgs([type2FactoryCall(t),"\"" + n + "\"" | label(n,t) <- args]);
   } 
   
-  str declareGetters(Symbol t, set[Production] cs){
-    if(adt(name, ps) := t){
-      return   "<for(c <- cs) {><declareConstructorGetters(c,name)><}>";
-    } 
-    // throw "Cannot declare getters for type <t>";
-    return ""; 
-  }
+  //str declareGetters(Symbol t, set[Production] cs){
+  //  if(adt(str name, ps) := t){
+  //    return   "<for(c <- cs) {><declareConstructorGetters(c,name)><}>";
+  //  } 
+  //  // throw "Cannot declare getters for type <t>";
+  //  return ""; 
+  //}
   
   str declareMakers(adt(str name, list[Symbol] _), set[Production] cs) 
      = "<for (c <- cs) {>
