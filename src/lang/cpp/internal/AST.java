@@ -244,6 +244,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"divide",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_fieldReferencePointerDeref_2 
     = tf.constructor(typestore,_Expression,"fieldReferencePointerDeref",_Expression,"fieldOnwer",_Expression,"name");
+  private static final Type _Expression_uuidof_1 
+    = tf.constructor(typestore,_Expression,"uuidof",_Expression,"expression");
   private static final Type _Expression_star_1 
     = tf.constructor(typestore,_Expression,"star",_Expression,"expression");
   private static final Type _Expression_conversionName_2 
@@ -2724,6 +2726,19 @@ public class AST {
     kwParams.put("decl", $decl);
     kwParams.put("typ", $typ);
     return vf.constructor(_Expression_fieldReferencePointerDeref_2 , $fieldOnwer, $name).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Expression_uuidof(IConstructor $expression, ISourceLocation $loc) {
+      
+    if (!$expression.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    
+    return vf.constructor(_Expression_uuidof_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_star(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {

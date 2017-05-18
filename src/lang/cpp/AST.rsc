@@ -271,6 +271,8 @@ data Expression(loc src = |unknown:///|)//, TypeSymbol typ = \noType())
     
     | \problemExpression()
     
+    | \uuidof(Expression expression)
+    
     ;                       
  
 

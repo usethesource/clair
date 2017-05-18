@@ -2528,6 +2528,9 @@ public class Parser extends ASTVisitor {
 		case IASTUnaryExpression.op_labelReference:
 			stack.push(builder.Expression_labelReference(operand, loc, typ));
 			break;
+		case 20: // __uuidof
+			stack.push(builder.Expression_uuidof(operand, loc));
+			break;
 		default:
 			throw new RuntimeException("Unknown unary operator " + operator + ". Exiting");
 		}
