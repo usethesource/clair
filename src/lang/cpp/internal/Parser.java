@@ -83,6 +83,8 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTToken;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTryExceptStatement;
+import org.eclipse.cdt.core.dom.ast.IASTTryFinallyStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
@@ -2586,6 +2588,10 @@ public class Parser extends ASTVisitor {
 			visit((IASTIfExistsStatement) statement);
 		else if (statement instanceof IASTIfNotExistsStatement)
 			visit((IASTIfNotExistsStatement) statement);
+		else if (statement instanceof IASTTryExceptStatement)
+			visit((IASTTryExceptStatement) statement);
+		else if (statement instanceof IASTTryFinallyStatement)
+			visit((IASTTryFinallyStatement) statement);
 		else {
 			throw new RuntimeException(
 					"Statement: encountered non-implemented subtype " + statement.getClass().getName());
@@ -2815,6 +2821,28 @@ public class Parser extends ASTVisitor {
 		IConstructor condition = stack.pop();
 		statement.getThenClause().accept(this);
 		stack.push(builder.Statement_ifNotExists(attributes, condition, stack.pop(), loc));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTTryExceptStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
+		IList attributes = getAttributes(statement);
+		statement.getTryBody().accept(this);
+		IConstructor tryBody = stack.pop();
+		statement.getExceptFilter().accept(this);
+		IConstructor exceptFilter = stack.pop();
+		statement.getExceptBody().accept(this);
+		stack.push(builder.Statement_tryExcept(attributes, tryBody, exceptFilter, stack.pop(), loc));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTTryFinallyStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
+		IList attributes = getAttributes(statement);
+		statement.getTryBody().accept(this);
+		IConstructor tryBody = stack.pop();
+		statement.getFinallyBody().accept(this);
+		stack.push(builder.Statement_tryFinally(attributes, tryBody, stack.pop(), loc));
 		return PROCESS_ABORT;
 	}
 

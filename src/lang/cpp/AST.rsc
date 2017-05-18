@@ -309,6 +309,8 @@ data Statement(loc src = |unknown:///|)
 
     | \ifExists(list[Attribute] attributes, Expression condition, Statement thenClause)
     | \ifNotExists(list[Attribute] attributes, Expression condition, Statement thenClause)
+    | \tryExcept(list[Attribute] attributes, Statement tryBody, Expression exceptFilter, Statement exceptBody)
+    | \tryFinally(list[Attribute] attributes, Statement tryBody, Statement finallyBody)
     ;           
   
 data Type(loc src = |unknown:///|)
