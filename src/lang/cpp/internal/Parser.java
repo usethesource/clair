@@ -301,9 +301,11 @@ public class Parser extends ASTVisitor {
 
 			// additional:
 			macros.put("_MSC_VER", "1700");
-			macros.put("__cplusplus", "");
+			macros.put("_MSC_FULL_VER", "170050727");
+			macros.put("__cplusplus", "199711L");
 			macros.put("__thiscall", "");
 			macros.put("_CHAR16T", "");
+			macros.put("_WCHAR_T_DEFINED", "");
 			macros.put("_NATIVE_WCHAR_T_DEFINED", "1");
 			macros.put("__nullptr", "nullptr");
 			macros.put("_MSC_EXTENSIONS", "1");
@@ -311,10 +313,12 @@ public class Parser extends ASTVisitor {
 			macros.put("__ptr32", "");
 			macros.put("__ptr64", "");
 			macros.put("__interface", "struct");
+			macros.put("__override", "");
 
 			macros.put("__pragma(A)", "");
 			macros.put("__identifier(A)", "A");
 			macros.put("__declspec(A)", "");
+			macros.put("_stdcall", "");
 
 			IScannerInfo si = new ScannerInfo(macros, null);
 
@@ -388,6 +392,18 @@ public class Parser extends ASTVisitor {
 
 			};
 
+			boolean saveTokens = false;
+			if (saveTokens) {
+				IScanner scanner = new CPreprocessor(fc, si, ParserLanguage.CPP, log,
+						GPPScannerExtensionConfiguration.getInstance(si), ifcp);
+				try {
+					while (true)
+						tokens.add(scanner.nextToken());
+				} catch (EndOfFileException e) {
+					out("Got " + tokens.size() + " tokens");
+				}
+			}
+
 			IASTTranslationUnit tu = GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, idx, options, log);
 			IValue result = convertCdtToRascal(tu);
 			if (result == null) {
@@ -395,8 +411,6 @@ public class Parser extends ASTVisitor {
 			}
 			// out(dependencies.toString());
 
-			scanner = new CPreprocessor(fc, si, ParserLanguage.CPP, log,
-					GPPScannerExtensionConfiguration.getInstance(si), ifcp);
 
 			return result;
 		} catch (CoreException e) {
@@ -404,7 +418,7 @@ public class Parser extends ASTVisitor {
 		}
 	}
 
-	IScanner scanner;
+	private ArrayList<IToken> tokens = new ArrayList<IToken>();
 
 	public IValue parseExpression(IString expression, IEvaluatorContext ctx) throws CoreException, IOException {
 		setIEvaluatorContext(ctx);
@@ -980,15 +994,14 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTProblemDeclaration declaration) {
+		ISourceLocation loc = getSourceLocation(declaration);
+		IASTProblem problem = declaration.getProblem();
 		err("ProblemDeclaration: ");
 		prefix += 4;
-		err(declaration.getProblem().getMessageWithLocation());
+		err(Integer.toHexString(problem.getID()) + ": " + problem.getMessageWithLocation() + loc);
 		err(declaration.getRawSignature());
 		prefix -= 4;
-		String problem = declaration.getProblem().getMessageWithLocation();
-		ISourceLocation loc = getSourceLocation(declaration);
-		String raw = declaration.getRawSignature();
-		stack.push(builder.Declaration_problemDeclaration(getSourceLocation(declaration)));
+		stack.push(builder.Declaration_problemDeclaration(loc));
 		return PROCESS_ABORT;
 	}
 
@@ -2908,12 +2921,15 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTProblemStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
+		IASTProblem problem = statement.getProblem();
+		String raw = statement.getRawSignature();
 		err("IASTProblemStatement:");
 		prefix += 4;
-		err(statement.getProblem().getMessageWithLocation());
-		err(statement.getRawSignature());
+		err(Integer.toHexString(problem.getID()) + ": " + problem.getMessageWithLocation() + ", " + loc);
+		err(raw);
 		prefix -= 4;
-		stack.push(builder.Statement_problem(statement.getRawSignature(), getSourceLocation(statement)));
+		stack.push(builder.Statement_problem(raw, loc));
 		return PROCESS_ABORT;
 	}
 
