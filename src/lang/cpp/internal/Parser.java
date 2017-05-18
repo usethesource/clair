@@ -180,10 +180,12 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.DefaultLogService;
+import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ScannerInfo;
@@ -410,7 +412,6 @@ public class Parser extends ASTVisitor {
 				throw RuntimeExceptionFactory.parseError(file, null, null);
 			}
 			// out(dependencies.toString());
-
 
 			return result;
 		} catch (CoreException e) {
@@ -998,7 +999,7 @@ public class Parser extends ASTVisitor {
 		IASTProblem problem = declaration.getProblem();
 		err("ProblemDeclaration: ");
 		prefix += 4;
-		err(Integer.toHexString(problem.getID()) + ": " + problem.getMessageWithLocation() + loc);
+		err(Integer.toHexString(problem.getID()) + ": " + problem.getMessageWithLocation() + ", " + loc);
 		err(declaration.getRawSignature());
 		prefix -= 4;
 		stack.push(builder.Declaration_problemDeclaration(loc));
