@@ -478,6 +478,8 @@ public class AST {
     = tf.constructor(typestore,_Statement,"label",tf.listType(_Attribute),"attributes",_Expression,"name",_Statement,"nestedStatement");
   private static final Type _Statement_while_3 
     = tf.constructor(typestore,_Statement,"while",tf.listType(_Attribute),"attributes",_Expression,"condition",_Statement,"body");
+  private static final Type _Statement_ifNotExists_3 
+    = tf.constructor(typestore,_Statement,"ifNotExists",tf.listType(_Attribute),"attributes",_Expression,"condition",_Statement,"thenClause");
   private static final Type _Statement_ifWithDecl_3 
     = tf.constructor(typestore,_Statement,"ifWithDecl",tf.listType(_Attribute),"attributes",_Declaration,"conditionDeclaration",_Statement,"thenClause");
   private static final Type _Statement_break_1 
@@ -494,6 +496,8 @@ public class AST {
     = tf.constructor(typestore,_Statement,"ifWithDecl",tf.listType(_Attribute),"attributes",_Declaration,"conditionDeclaration",_Statement,"thenClause",_Statement,"elseClause");
   private static final Type _Statement_expressionStatement_2 
     = tf.constructor(typestore,_Statement,"expressionStatement",tf.listType(_Attribute),"attributes",_Expression,"expression");
+  private static final Type _Statement_ifExists_3 
+    = tf.constructor(typestore,_Statement,"ifExists",tf.listType(_Attribute),"attributes",_Expression,"condition",_Statement,"thenClause");
   private static final Type _Statement_return_1 
     = tf.constructor(typestore,_Statement,"return",tf.listType(_Attribute),"attributes");
   private static final Type _Statement_rangeBasedFor_4 
@@ -4363,6 +4367,27 @@ public class AST {
     return vf.constructor(_Statement_while_3 , $attributes, $condition, $body).asWithKeywordParameters().setParameters(kwParams);
   }
   
+  public IConstructor Statement_ifNotExists(IList $attributes, IConstructor $condition, IConstructor $thenClause, ISourceLocation $loc) {
+      
+    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
+    }
+      
+    if (!$condition.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $condition.getType() + " for $condition:" + $condition);
+    }
+      
+    if (!$thenClause.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $thenClause.getType() + " for $thenClause:" + $thenClause);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    
+    return vf.constructor(_Statement_ifNotExists_3 , $attributes, $condition, $thenClause).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
   public IConstructor Statement_ifWithDecl(IList $attributes, IConstructor $conditionDeclaration, IConstructor $thenClause, ISourceLocation $loc) {
       
     if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
@@ -4513,6 +4538,27 @@ public class AST {
     
     
     return vf.constructor(_Statement_expressionStatement_2 , $attributes, $expression).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Statement_ifExists(IList $attributes, IConstructor $condition, IConstructor $thenClause, ISourceLocation $loc) {
+      
+    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
+    }
+      
+    if (!$condition.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $condition.getType() + " for $condition:" + $condition);
+    }
+      
+    if (!$thenClause.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $thenClause.getType() + " for $thenClause:" + $thenClause);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    
+    return vf.constructor(_Statement_ifExists_3 , $attributes, $condition, $thenClause).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_return(IList $attributes, ISourceLocation $loc) {

@@ -54,6 +54,8 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTIfExistsStatement;
+import org.eclipse.cdt.core.dom.ast.IASTIfNotExistsStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
@@ -2580,6 +2582,10 @@ public class Parser extends ASTVisitor {
 		else if (statement instanceof IASTProblemStatement)
 			// Should not happen, will hopefully extract some useful hints
 			visit((IASTProblemStatement) statement);
+		else if (statement instanceof IASTIfExistsStatement)
+			visit((IASTIfExistsStatement) statement);
+		else if (statement instanceof IASTIfNotExistsStatement)
+			visit((IASTIfNotExistsStatement) statement);
 		else {
 			throw new RuntimeException(
 					"Statement: encountered non-implemented subtype " + statement.getClass().getName());
@@ -2789,6 +2795,26 @@ public class Parser extends ASTVisitor {
 		IASTName _name = statement.getName();
 		_name.accept(this);
 		stack.push(builder.Statement_goto(attributes, stack.pop(), loc, decl));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTIfExistsStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
+		IList attributes = getAttributes(statement);
+		statement.getCondition().accept(this);
+		IConstructor condition = stack.pop();
+		statement.getThenClause().accept(this);
+		stack.push(builder.Statement_ifExists(attributes, condition, stack.pop(), loc));
+		return PROCESS_ABORT;
+	}
+
+	public int visit(IASTIfNotExistsStatement statement) {
+		ISourceLocation loc = getSourceLocation(statement);
+		IList attributes = getAttributes(statement);
+		statement.getCondition().accept(this);
+		IConstructor condition = stack.pop();
+		statement.getThenClause().accept(this);
+		stack.push(builder.Statement_ifNotExists(attributes, condition, stack.pop(), loc));
 		return PROCESS_ABORT;
 	}
 

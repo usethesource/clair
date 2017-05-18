@@ -306,6 +306,9 @@ data Statement(loc src = |unknown:///|)
     | \catchAll(list[Attribute] attributes, Statement body)    
     
     | \problem(str raw)
+
+    | \ifExists(list[Attribute] attributes, Expression condition, Statement thenClause)
+    | \ifNotExists(list[Attribute] attributes, Expression condition, Statement thenClause)
     ;           
   
 data Type(loc src = |unknown:///|)
