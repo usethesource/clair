@@ -2925,6 +2925,16 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(statement);
 		IASTProblem problem = statement.getProblem();
 		String raw = statement.getRawSignature();
+		if (raw.trim().startsWith("__asm")) {
+			String rawStatement = raw.trim();
+			if (rawStatement.contains("{")) {
+				String assembly = rawStatement.substring(rawStatement.indexOf('{') + 1, rawStatement.lastIndexOf('}'));
+				stack.push(builder.Statement_asm(assembly, loc));
+			} else {
+				stack.push(builder.Statement_asm(rawStatement.substring("__asm".length()), loc));
+			}
+			return PROCESS_ABORT;
+		}
 		err("IASTProblemStatement:");
 		prefix += 4;
 		err(Integer.toHexString(problem.getID()) + ": " + problem.getMessageWithLocation() + ", " + loc);

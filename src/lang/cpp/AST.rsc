@@ -313,6 +313,7 @@ data Statement(loc src = |unknown:///|)
     | \ifNotExists(list[Attribute] attributes, Expression condition, Statement thenClause)
     | \tryExcept(list[Attribute] attributes, Statement tryBody, Expression exceptFilter, Statement exceptBody)
     | \tryFinally(list[Attribute] attributes, Statement tryBody, Statement finallyBody)
+    | \asm(str assembly)
     ;           
   
 data Type(loc src = |unknown:///|)

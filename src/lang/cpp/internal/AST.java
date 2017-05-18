@@ -472,8 +472,6 @@ public class AST {
   
   private static final Type _Statement_goto_2 
     = tf.constructor(typestore,_Statement,"goto",tf.listType(_Attribute),"attributes",_Expression,"name");
-  private static final Type _Statement_defaultCase_1 
-    = tf.constructor(typestore,_Statement,"defaultCase",tf.listType(_Attribute),"attributes");
   private static final Type _Statement_for_5 
     = tf.constructor(typestore,_Statement,"for",tf.listType(_Attribute),"attributes",_Statement,"sInitializer",_Expression,"condition",_Expression,"iteration",_Statement,"body");
   private static final Type _Statement_label_3 
@@ -486,8 +484,6 @@ public class AST {
     = tf.constructor(typestore,_Statement,"ifWithDecl",tf.listType(_Attribute),"attributes",_Declaration,"conditionDeclaration",_Statement,"thenClause");
   private static final Type _Statement_break_1 
     = tf.constructor(typestore,_Statement,"break",tf.listType(_Attribute),"attributes");
-  private static final Type _Statement_forWithDecl_5 
-    = tf.constructor(typestore,_Statement,"forWithDecl",tf.listType(_Attribute),"attributes",_Statement,"sInitializer",_Declaration,"conditionDeclaration",_Expression,"iteration",_Statement,"body");
   private static final Type _Statement_tryExcept_4 
     = tf.constructor(typestore,_Statement,"tryExcept",tf.listType(_Attribute),"attributes",_Statement,"tryBody",_Expression,"exceptFilter",_Statement,"exceptBody");
   private static final Type _Statement_problem_1 
@@ -502,6 +498,8 @@ public class AST {
     = tf.constructor(typestore,_Statement,"expressionStatement",tf.listType(_Attribute),"attributes",_Expression,"expression");
   private static final Type _Statement_ifExists_3 
     = tf.constructor(typestore,_Statement,"ifExists",tf.listType(_Attribute),"attributes",_Expression,"condition",_Statement,"thenClause");
+  private static final Type _Statement_defaultCase_1 
+    = tf.constructor(typestore,_Statement,"defaultCase",tf.listType(_Attribute),"attributes");
   private static final Type _Statement_return_1 
     = tf.constructor(typestore,_Statement,"return",tf.listType(_Attribute),"attributes");
   private static final Type _Statement_rangeBasedFor_4 
@@ -516,12 +514,16 @@ public class AST {
     = tf.constructor(typestore,_Statement,"if",tf.listType(_Attribute),"attributes",_Expression,"condition",_Statement,"thenClause");
   private static final Type _Statement_tryBlock_3 
     = tf.constructor(typestore,_Statement,"tryBlock",tf.listType(_Attribute),"attributes",_Statement,"tryBody",tf.listType(_Statement),"catchHandlers");
+  private static final Type _Statement_forWithDecl_5 
+    = tf.constructor(typestore,_Statement,"forWithDecl",tf.listType(_Attribute),"attributes",_Statement,"sInitializer",_Declaration,"conditionDeclaration",_Expression,"iteration",_Statement,"body");
   private static final Type _Statement_tryFinally_3 
     = tf.constructor(typestore,_Statement,"tryFinally",tf.listType(_Attribute),"attributes",_Statement,"tryBody",_Statement,"finallyBody");
   private static final Type _Statement_nullStatement_1 
     = tf.constructor(typestore,_Statement,"nullStatement",tf.listType(_Attribute),"attributes");
   private static final Type _Statement_declarationStatement_2 
     = tf.constructor(typestore,_Statement,"declarationStatement",tf.listType(_Attribute),"attributes",_Declaration,"declaration");
+  private static final Type _Statement_asm_1 
+    = tf.constructor(typestore,_Statement,"asm",tf.stringType(),"assembly");
   private static final Type _Statement_catchAll_2 
     = tf.constructor(typestore,_Statement,"catchAll",tf.listType(_Attribute),"attributes",_Statement,"body");
   private static final Type _Statement_compoundStatement_2 
@@ -4302,19 +4304,6 @@ public class AST {
     return vf.constructor(_Statement_goto_2 , $attributes, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Statement_defaultCase(IList $attributes, ISourceLocation $loc) {
-      
-    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Statement_defaultCase_1 , $attributes).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
   public IConstructor Statement_for(IList $attributes, IConstructor $sInitializer, IConstructor $condition, IConstructor $iteration, IConstructor $body, ISourceLocation $loc) {
       
     if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
@@ -4576,6 +4565,19 @@ public class AST {
     return vf.constructor(_Statement_ifExists_3 , $attributes, $condition, $thenClause).asWithKeywordParameters().setParameters(kwParams);
   }
   
+  public IConstructor Statement_defaultCase(IList $attributes, ISourceLocation $loc) {
+      
+    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    
+    return vf.constructor(_Statement_defaultCase_1 , $attributes).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
   public IConstructor Statement_return(IList $attributes, ISourceLocation $loc) {
       
     if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
@@ -4797,6 +4799,19 @@ public class AST {
     
     
     return vf.constructor(_Statement_declarationStatement_2 , $attributes, $declaration).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Statement_asm(String $assembly, ISourceLocation $loc) {
+      
+    if (!vf.string($assembly).getType().isSubtypeOf(tf.stringType())) {
+      throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($assembly).getType() + " for vf.string($assembly):" + vf.string($assembly));
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    
+    return vf.constructor(_Statement_asm_1 , vf.string($assembly)).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_catchAll(IList $attributes, IConstructor $body, ISourceLocation $loc) {
