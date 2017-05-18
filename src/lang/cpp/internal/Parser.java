@@ -198,6 +198,7 @@ import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.rascalmpl.interpreter.IEvaluatorContext;
 import org.rascalmpl.interpreter.utils.RuntimeExceptionFactory;
@@ -340,6 +341,9 @@ public class Parser extends ASTVisitor {
 			IIncludeFileResolutionHeuristics ifrh = new IIncludeFileResolutionHeuristics() {
 				List<String> path = new ArrayList<String>();
 				{
+					path.add(ResourcesPlugin.getWorkspace().getRoot().getProject("clair").getLocation().toString()
+							+ "/includes");
+
 					for (IValue include : includePath)
 						path.add(locToPath((ISourceLocation) include));
 				}
