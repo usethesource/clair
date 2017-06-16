@@ -374,7 +374,14 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation resolveICPPEnumeration(ICPPEnumeration binding) throws URISyntaxException {
-		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), "cpp+enum");
+		String scheme;
+		if (binding instanceof ICPPEnumerationSpecialization)
+			scheme = "cpp+enumSpecialization";
+		else if (binding instanceof IPDOMCPPEnumType)
+			throw new RuntimeException("resolveICPPEnumeration encountered IPDOMCPPEnumType");
+		else
+			scheme = "cpp+enum";
+		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), scheme);
 	}
 
 	private ISourceLocation resolveICPPClassType(ICPPClassType binding) throws URISyntaxException {
