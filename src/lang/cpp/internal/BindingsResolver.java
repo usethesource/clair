@@ -295,9 +295,29 @@ public class BindingsResolver {
 		throw new RuntimeException("NYI");
 	}
 
-	private ISourceLocation resolveICPPFunction(ICPPFunction binding) {
-		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
-		throw new RuntimeException("NYI");
+	private ISourceLocation resolveICPPFunction(ICPPFunction binding) throws URISyntaxException {
+		String scheme;
+		if (binding instanceof ICPPDeferredFunction)
+			scheme = "cpp+deferredFunction";
+		else if (binding instanceof ICPPFunctionInstance)
+			scheme = "cpp+functionInstance";
+		else if (binding instanceof ICPPFunctionSpecialization)
+			scheme = "cpp+functionSpecialization";
+		else if (binding instanceof ICPPFunctionTemplate)
+			scheme = "cpp+functionTemplate";
+		else if (binding instanceof ICPPMethod) {
+			if (binding instanceof ICPPConstructor) {
+				if (binding instanceof ICPPConstructorSpecialization)
+					scheme = "cpp+constructorSpecialization";
+				else
+					scheme = "cpp+constructor";
+			} else if (binding instanceof ICPPMethodSpecialization)
+				scheme = "cpp+methodSpecialization";
+			else
+				scheme = "cpp+method";
+		} else
+			scheme = "cpp+function";
+		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), scheme);
 	}
 
 	private ISourceLocation resolveICPPEnumeration(ICPPEnumeration binding) throws URISyntaxException {
