@@ -344,8 +344,12 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation resolveICPPNamespace(ICPPNamespace binding) throws URISyntaxException {
-		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()),
-				"cpp+namespace");
+		String scheme;
+		if (binding instanceof ICPPNamespaceAlias)
+			scheme = "cpp+namespaceAlias";
+		else
+			scheme = "cpp+namespace";
+		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), scheme);
 	}
 
 	private ISourceLocation resolveICPPMember(ICPPMember binding) {
