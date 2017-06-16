@@ -143,7 +143,12 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation resolveITypedef(ITypedef binding) throws URISyntaxException {
-		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), "cpp+typedef");
+		String scheme;
+		if (binding instanceof ICPPAliasTemplateInstance)
+			scheme = "cpp+aliasTemplateInstance";
+		else
+			scheme = "cpp+typedef";
+		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), scheme);
 	}
 
 	private ISourceLocation resolveIProblemBinding(IProblemBinding binding) {
