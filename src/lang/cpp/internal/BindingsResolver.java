@@ -286,8 +286,28 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation resolveICPPTemplateDefinition(ICPPTemplateDefinition binding) throws URISyntaxException {
-		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()),
-				"cpp+templateDefinition");
+		String scheme;
+		if (binding instanceof ICPPAliasTemplate)
+			scheme = "cpp+aliasTemplate";
+		else if (binding instanceof ICPPFunctionTemplate)
+			scheme = "cpp+functionTemplate";
+		else if (binding instanceof ICPPPartiallySpecializable) {
+			if (binding instanceof ICPPClassTemplate)
+				return resolveICPPClassType((ICPPClassTemplate) binding);
+			else if (binding instanceof ICPPVariableTemplate)
+				return resolveICPPVariable((ICPPVariableTemplate) binding);
+			else
+				throw new RuntimeException("resolveICPPTemplateDefinition encountered unknown type");
+		} else if (binding instanceof ICPPPartialSpecialization) {
+			if (binding instanceof ICPPClassTemplatePartialSpecialization)
+				return resolveICPPClassType((ICPPClassTemplatePartialSpecialization) binding);
+			else if (binding instanceof ICPPVariableTemplatePartialSpecialization)
+				return resolveICPPVariable((ICPPVariableTemplatePartialSpecialization) binding);
+			else
+				throw new RuntimeException("resolveICPPTemplateDefinition encountered unknown type");
+		} else
+			scheme = "cpp+templateDefinition";
+		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), scheme);
 	}
 
 	private ISourceLocation resolveICPPSpecialization(ICPPSpecialization binding) {
