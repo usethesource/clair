@@ -256,13 +256,36 @@ public class BindingsResolver {
 				"cpp+templateNonTypeParameter");
 	}
 
-	private ISourceLocation resolveICPPVariableInstance(ICPPVariableInstance binding) {
-		throw new RuntimeException("NYI");
 	}
 
 	private ISourceLocation resolveICPPVariableTemplate(ICPPVariableTemplate binding) throws URISyntaxException {
 		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()),
 				"cpp+variableTemplate");
+	private ISourceLocation resolveICPPVariable(ICPPVariable binding) throws URISyntaxException {
+		String scheme;
+		if (binding instanceof ICPPField) {
+			if (binding instanceof ICPPFieldTemplate)
+				scheme = "cpp+fieldTemplate";
+			else
+				scheme = "cpp+field";
+		} else if (binding instanceof ICPPParameter)
+			scheme = "cpp+parameter";
+		else if (binding instanceof ICPPTemplateNonTypeParameter)
+			scheme = "cpp+templateNonTypeParameter";
+		else if (binding instanceof ICPPVariableInstance)
+			scheme = "cpp+variableInstance";
+		else if (binding instanceof ICPPVariableTemplate) {
+			if (binding instanceof ICPPFieldTemplate)
+				scheme = "cpp+fieldTemplate";
+			else if (binding instanceof ICPPVariableTemplatePartialSpecialization)
+				scheme = "cpp+variableTemplatePartialSpec";
+			else
+				scheme = "cpp+variableTemplate";
+		} else if (binding instanceof ICPPInternalVariable)
+			scheme = "cpp+internalVariable";
+		else
+			scheme = "cpp+variable";
+		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), scheme);
 	}
 
 	private ISourceLocation resolveICPPUsingDeclaration(ICPPUsingDeclaration binding) throws URISyntaxException {
