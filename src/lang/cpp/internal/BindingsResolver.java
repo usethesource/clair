@@ -271,8 +271,18 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation resolveICPPTemplateParameter(ICPPTemplateParameter binding) throws URISyntaxException {
-		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()),
-				"cpp+templateParameter");
+		String scheme;
+		if (binding instanceof ICPPTemplateNonTypeParameter)
+			return resolveICPPVariable((ICPPTemplateNonTypeParameter) binding);
+		else if (binding instanceof ICPPTemplateTemplateParameter)
+			return resolveICPPClassType((ICPPTemplateTemplateParameter) binding);
+		else if (binding instanceof ICPPTemplateTypeParameter)
+			scheme = "cpp+templateTypeParameter";
+		else if (binding instanceof IPDOMCPPTemplateParameter)
+			throw new RuntimeException("resolveICPPTemplateParameter encountered IPDOMCPPTemplateParameter");
+		else
+			scheme = "cpp+templateParameter";
+		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), scheme);
 	}
 
 	private ISourceLocation resolveICPPTemplateDefinition(ICPPTemplateDefinition binding) throws URISyntaxException {
