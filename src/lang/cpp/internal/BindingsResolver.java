@@ -305,38 +305,31 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation resolveICPPClassType(ICPPClassType binding) throws URISyntaxException {
-		if (binding instanceof ICPPClassSpecialization)
-			return resolveICPPClassSpecialization((ICPPClassSpecialization) binding);
-		if (binding instanceof ICPPClassTemplate)
-			return resolveICPPClassTemplate((ICPPClassTemplate) binding);
-		// Discouraged access
-		// if (binding instanceof ICPPDeferredClassInstance)
-		// return resolveICPPDeferredClassInstance((ICPPDeferredClassInstance)
-		// binding);
-		// Not visible
-		// if (binding instanceof ICPPInternalClassTypeMixinHost)
-		// return
-		// resolveICPPInternalClassTypeMixinHost((ICPPInternalClassTypeMixinHost)
-		// binding);
-		// Discouraged access
-		// if (binding instanceof ICPPUnknownMemberClass)
-		// return resolveICPPUnknownMemberClass((ICPPUnknownMemberClass)
-		// binding);
-		// Discouraged access
-		// if (binding instanceof IPDOMCPPClassType)
-		// return resolveIPDOMCPPClassType((IPDOMCPPClassType) binding);
-		ISourceLocation owner = resolveOwner(binding);
-		return vf.sourceLocation("cpp+class", owner.getAuthority(), owner.getPath() + "/" + binding.getName());
-	}
-
-	private ISourceLocation resolveICPPClassSpecialization(ICPPClassSpecialization binding) throws URISyntaxException {
-		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()),
-				"cpp+classSpecialization");
-	}
-
-	private ISourceLocation resolveICPPClassTemplate(ICPPClassTemplate binding) throws URISyntaxException {
-		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()),
-				"cpp+classTemplate");
+		String scheme;
+		if (binding instanceof ICPPClassSpecialization) {
+			if (binding instanceof ICPPClassTemplatePartialSpecializationSpecialization)
+				scheme = "cpp+classTemplatePartialSpecSpec";
+			else
+				scheme = "cpp+classSpecialization";
+		} else if (binding instanceof ICPPClassTemplate) {
+			if (binding instanceof ICPPClassTemplatePartialSpecialization)
+				scheme = "cpp+classTemplatePartialSpec";
+			else if (binding instanceof ICPPTemplateTemplateParameter)
+				scheme = "cpp+templateTemplateParameter";
+			else
+				scheme = "cpp+classTemplate";
+		} else if (binding instanceof ICPPDeferredClassInstance)
+			scheme = "cpp+deferredClassInstance";
+		else if (binding instanceof ICPPUnknownMemberClass) {
+			if (binding instanceof ICPPUnknownMemberClassInstance)
+				scheme = "cpp+unknownMemberClassInstance";
+			else
+				scheme = "cpp+unknownMemberClass";
+		} else if (binding instanceof IPDOMCPPClassType)
+			throw new RuntimeException("resolveICPPClassType encountered IPDOMCPPClassType");
+		else
+			scheme = "cpp+class";
+		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), scheme);
 	}
 
 	private ISourceLocation resolveICPPAliasTemplateInstance(ICPPAliasTemplateInstance binding) {
