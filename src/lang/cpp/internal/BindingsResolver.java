@@ -40,27 +40,55 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecializationSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructorSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumerationSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFieldTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethodSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPartialSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPartiallySpecializable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableTemplatePartialSpecialization;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalVariable;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPTwoPhaseBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClass;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClassInstance;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.IPDOMCPPClassType;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.IPDOMCPPEnumType;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.IPDOMCPPTemplateParameter;
 import org.rascalmpl.interpreter.IEvaluatorContext;
 import org.rascalmpl.uri.URIUtil;
 import org.rascalmpl.values.ValueFactoryFactory;
@@ -68,6 +96,7 @@ import org.rascalmpl.values.ValueFactoryFactory;
 import io.usethesource.vallang.ISourceLocation;
 import io.usethesource.vallang.IValueFactory;
 
+@SuppressWarnings("restriction")
 public class BindingsResolver {
 	private final IValueFactory vf = ValueFactoryFactory.getValueFactory();
 	public final ISourceLocation UNKNOWN = makeBinding("UNKNOWN", null, null);
@@ -108,10 +137,6 @@ public class BindingsResolver {
 			return resolveICExternalBinding((ICExternalBinding) binding);
 		if (binding instanceof ICompositeType)
 			return resolveICompositeType((ICompositeType) binding);
-		// CPPBinding moved to bottom
-		// Discouraged access
-		// if (binding instanceof ICPPTwoPhaseBinding)
-		// return resolveICPPTwoPhaseBinding((ICPPTwoPhaseBinding) binding);
 		if (binding instanceof IEnumeration)
 			return resolveIEnumeration((IEnumeration) binding);
 		if (binding instanceof IEnumerator)
@@ -130,10 +155,15 @@ public class BindingsResolver {
 			return resolveITypedef((ITypedef) binding);
 		if (binding instanceof IVariable)
 			return resolveIVariable((IVariable) binding);
-
 		if (binding instanceof ICPPBinding)
 			return resolveICPPBinding((ICPPBinding) binding);
+		if (binding instanceof ICPPTwoPhaseBinding)
+			return resolveICPPTwoPhaseBinding((ICPPTwoPhaseBinding) binding);
 		return makeBinding("UNKNOWN1", null, null);
+	}
+
+	private ISourceLocation resolveICPPTwoPhaseBinding(ICPPTwoPhaseBinding binding) {
+		throw new RuntimeException("Trying to resolve ICPPTwoPhaseBinding " + binding.getClass().getSimpleName());
 	}
 
 	private ISourceLocation resolveIVariable(IVariable binding) throws URISyntaxException {
@@ -174,10 +204,8 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation resolveIFunction(IFunction binding) throws URISyntaxException {
-		if (binding instanceof ICPPFunction) {
-			return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()),
-					"cpp+function");
-		}
+		if (binding instanceof ICPPFunction)
+			return resolveICPPFunction((ICPPFunction) binding);
 		throw new RuntimeException("NYI: C IFunction");
 	}
 
@@ -202,9 +230,6 @@ public class BindingsResolver {
 			return resolveICPPEnumeration((ICPPEnumeration) binding);
 		if (binding instanceof ICPPFunction)
 			return resolveICPPFunction((ICPPFunction) binding);
-		// Discouraged access
-		// if (binding instanceof ICPPInternalBinding)
-		// return resolveICPPInternalBinding((ICPPInternalBinding) binding);
 		if (binding instanceof ICPPMember)
 			return resolveICPPMember((ICPPMember) binding);
 		if (binding instanceof ICPPNamespace)
@@ -215,57 +240,26 @@ public class BindingsResolver {
 			return resolveICPPTemplateDefinition((ICPPTemplateDefinition) binding);
 		if (binding instanceof ICPPTemplateParameter)
 			return resolveICPPTemplateParameter((ICPPTemplateParameter) binding);
-		// Discouraged access
-		// if (binding instanceof ICPPUnknownBinding)
-		// return resolveICPPUnknownBinding((ICPPUnknownBinding) binding);
 		if (binding instanceof ICPPUsingDeclaration)
 			return resolveICPPUsingDeclaration((ICPPUsingDeclaration) binding);
 		if (binding instanceof ICPPVariable)
 			return resolveICPPVariable((ICPPVariable) binding);
+		if (binding instanceof ICPPInternalBinding)
+			return resolveICPPInternalBinding((ICPPInternalBinding) binding);
+		if (binding instanceof ICPPUnknownBinding)
+			return resolveICPPUnknownBinding((ICPPUnknownBinding) binding);
 		return makeBinding("UNKNOWN3", null, null);
 	}
 
-	private ISourceLocation resolveICPPVariable(ICPPVariable binding) throws URISyntaxException {
-		if (binding instanceof ICPPField)
-			return resolveICPPField((ICPPField) binding);
-		// Discouraged access
-		// if (binding instanceof ICPPInternalVariable)
-		// return resolveICPPInternalVariable((ICPPInternalVariable) binding);
-		if (binding instanceof ICPPParameter)
-			return resolveICPPParameter((ICPPParameter) binding);
-		if (binding instanceof ICPPTemplateNonTypeParameter)
-			return resolveICPPTemplateNonTypeParameter((ICPPTemplateNonTypeParameter) binding);
-		if (binding instanceof ICPPVariableInstance)
-			return resolveICPPVariableInstance((ICPPVariableInstance) binding);
-		if (binding instanceof ICPPVariableTemplate)
-			return resolveICPPVariableTemplate((ICPPVariableTemplate) binding);
-
-		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), "cpp+variable");
+	private ISourceLocation resolveICPPInternalBinding(ICPPInternalBinding binding) throws URISyntaxException {
+		String scheme = "cpp+internal";
+		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), scheme);
 	}
 
-	private ISourceLocation resolveICPPField(ICPPField binding) throws URISyntaxException {
-		if (binding instanceof ICPPFieldTemplate)
-			throw new RuntimeException("NYI");
-		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), "cpp+field");
+	private ISourceLocation resolveICPPUnknownBinding(ICPPUnknownBinding binding) {
+		throw new RuntimeException("Trying to resolve ICPPUnknownBinding");
 	}
 
-	private ISourceLocation resolveICPPParameter(ICPPParameter binding) throws URISyntaxException {
-		// FIXME: Nested function declarator binding can be its own owner
-		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()),
-				"cpp+parameter");
-	}
-
-	private ISourceLocation resolveICPPTemplateNonTypeParameter(ICPPTemplateNonTypeParameter binding)
-			throws URISyntaxException {
-		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()),
-				"cpp+templateNonTypeParameter");
-	}
-
-	}
-
-	private ISourceLocation resolveICPPVariableTemplate(ICPPVariableTemplate binding) throws URISyntaxException {
-		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()),
-				"cpp+variableTemplate");
 	private ISourceLocation resolveICPPVariable(ICPPVariable binding) throws URISyntaxException {
 		String scheme;
 		if (binding instanceof ICPPField) {
