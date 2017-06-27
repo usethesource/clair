@@ -1660,37 +1660,40 @@ public class Parser extends ASTVisitor {
 		IList attributes = getAttributes(declSpec);
 		IList modifiers = getModifiers(declSpec);
 
-		IASTName _name = declSpec.getName();
-		IASTEnumerator[] _enumerators = declSpec.getEnumerators();
-		IASTDeclSpecifier _baseType = declSpec.getBaseType();
-
-		// TODO: check isOpaque
-		if (declSpec.isOpaque())
-			err("WARNING: ICPPASTEnumerationSpecifier has isOpaque=true");
-
-		_name.accept(this);
+		declSpec.getName().accept(this);
 		IConstructor name = stack.pop();
 		IListWriter enumerators = vf.listWriter();
-		Stream.of(_enumerators).forEach(it -> {
+		Stream.of(declSpec.getEnumerators()).forEach(it -> {
 			it.accept(this);
 			enumerators.append(stack.pop());
 		});
 
-		if (_baseType == null) {
-			if (declSpec.isScoped())
-				stack.push(
-						builder.DeclSpecifier_enumScoped(attributes, modifiers, name, enumerators.done(), loc, decl));
-			else
+		IASTDeclSpecifier baseType = declSpec.getBaseType();
+		if (baseType == null) {
+			if (declSpec.isScoped()) {
+				if (declSpec.isOpaque())
+					stack.push(builder.DeclSpecifier_enumScopedOpaque(attributes, modifiers, name, loc, decl));
+				else
+					stack.push(builder.DeclSpecifier_enumScoped(attributes, modifiers, name, enumerators.done(), loc,
+							decl));
+			} else
 				stack.push(builder.DeclSpecifier_enum(attributes, modifiers, name, enumerators.done(), loc, decl));
 		} else {
-			_baseType.accept(this);
-			IConstructor baseType = stack.pop();
-			if (declSpec.isScoped())
-				stack.push(builder.DeclSpecifier_enumScoped(attributes, modifiers, baseType, name, enumerators.done(),
-						loc, decl));
-			else
-				stack.push(builder.DeclSpecifier_enum(attributes, modifiers, baseType, name, enumerators.done(), loc,
-						decl));
+			baseType.accept(this);
+			if (declSpec.isScoped()) {
+				if (declSpec.isOpaque())
+					stack.push(builder.DeclSpecifier_enumScopedOpaque(attributes, modifiers, stack.pop(), name, loc,
+							decl));
+				else
+					stack.push(builder.DeclSpecifier_enumScoped(attributes, modifiers, stack.pop(), name,
+							enumerators.done(), loc, decl));
+			} else {
+				if (declSpec.isOpaque())
+					stack.push(builder.DeclSpecifier_enumOpaque(attributes, modifiers, stack.pop(), name, loc, decl));
+				else
+					stack.push(builder.DeclSpecifier_enum(attributes, modifiers, stack.pop(), name, enumerators.done(),
+							loc, decl));
+			}
 		}
 		return PROCESS_ABORT;
 	}

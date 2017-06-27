@@ -49,8 +49,11 @@ data DeclSpecifier(loc src = |unknown:///|)
     
     | \enum(list[Attribute] attributes, list[Modifier] modifiers, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
     | \enum(list[Attribute] attributes, list[Modifier] modifiers, DeclSpecifier baseType, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
+    | \enumOpaque(list[Attribute] attributes, list[Modifier] modifiers, DeclSpecifier baseType, Expression name, loc decl = |unknown:///|)
     | \enumScoped(list[Attribute] attributes, list[Modifier] modifiers, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
     | \enumScoped(list[Attribute] attributes, list[Modifier] modifiers, DeclSpecifier baseType, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
+    | \enumScopedOpaque(list[Attribute] attributes, list[Modifier] modifiers, Expression name, loc decl = |unknown:///|)
+    | \enumScopedOpaque(list[Attribute] attributes, list[Modifier] modifiers, DeclSpecifier baseType, Expression name, loc decl = |unknown:///|)
     
      // Non-standard MSVC throw ellipsis
     | \msThrowEllipsis()
