@@ -2947,18 +2947,16 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTEnumerator enumerator) {
 		ISourceLocation loc = getSourceLocation(enumerator);
 		ISourceLocation decl = br.resolveBinding(enumerator);
-		IASTName _name = enumerator.getName();
-		IASTExpression _value = enumerator.getValue();
 
-		_name.accept(this);
+		enumerator.getName().accept(this);
 		IConstructor name = stack.pop();
+
+		IASTExpression _value = enumerator.getValue();
 		if (_value == null)
-			stack.push(builder.Declaration_enumerator(builder.Expression_name(name.get("value").toString(), loc), loc,
-					decl));
+			stack.push(builder.Declaration_enumerator(name, loc, decl));
 		else {
 			_value.accept(this);
-			stack.push(builder.Declaration_enumerator(builder.Expression_name(name.get("value").toString(), loc),
-					stack.pop(), loc, decl));
+			stack.push(builder.Declaration_enumerator(name, stack.pop(), loc, decl));
 		}
 		return PROCESS_ABORT;
 	}
