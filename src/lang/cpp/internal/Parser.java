@@ -86,7 +86,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
-import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
@@ -229,13 +228,7 @@ public class Parser extends ASTVisitor {
 
 		this.vf = vf;
 		this.builder = new AST(vf);
-		this.tr = new TypeResolver(builder, vf) {
-			@Override
-			public IConstructor resolveType(IType type, ISourceLocation src) {
-				return builder.TypeSymbol_any();
-			}
-		};
-
+		this.tr = new TypeResolver(builder, vf);
 	}
 
 	public IMap parseFiles(IList files, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
