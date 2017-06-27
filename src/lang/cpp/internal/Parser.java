@@ -632,8 +632,9 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICPPASTConversionName name) {
 		ISourceLocation loc = getSourceLocation(name);
+		IConstructor typ = tr.resolveType(name);
 		name.getTypeId().accept(this);
-		stack.push(builder.Expression_conversionName(name.toString(), stack.pop(), loc));
+		stack.push(builder.Expression_conversionName(name.toString(), stack.pop(), loc, typ));
 		return PROCESS_ABORT;
 	}
 
@@ -1952,17 +1953,18 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICPPASTDeleteExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
+		IConstructor typ = tr.resolveType(expression);
 		expression.getOperand().accept(this);
 		if (expression.isGlobal()) {
 			if (expression.isVectored())
-				stack.push(builder.Expression_globalVectoredDelete(stack.pop(), loc));
+				stack.push(builder.Expression_globalVectoredDelete(stack.pop(), loc, typ));
 			else
-				stack.push(builder.Expression_globalDelete(stack.pop(), loc));
+				stack.push(builder.Expression_globalDelete(stack.pop(), loc, typ));
 		} else {
 			if (expression.isVectored())
-				stack.push(builder.Expression_vectoredDelete(stack.pop(), loc));
+				stack.push(builder.Expression_vectoredDelete(stack.pop(), loc, typ));
 			else
-				stack.push(builder.Expression_delete(stack.pop(), loc));
+				stack.push(builder.Expression_delete(stack.pop(), loc, typ));
 		}
 		return PROCESS_ABORT;
 	}
@@ -2020,15 +2022,15 @@ public class Parser extends ASTVisitor {
 		switch (captureDefault) {
 		case BY_COPY:
 			stack.push(builder.Expression_lambda(builder.Modifier_captDefByCopy(loc), captures.done(), declarator, body,
-					loc));
+					loc, typ));
 			break;
 		case BY_REFERENCE:
 			stack.push(builder.Expression_lambda(builder.Modifier_captDefByReference(loc), captures.done(), declarator,
-					body, loc));
+					body, loc, typ));
 			break;
 		case UNSPECIFIED:
 			stack.push(builder.Expression_lambda(builder.Modifier_captDefUnspecified(loc), captures.done(), declarator,
-					body, loc));
+					body, loc, typ));
 			break;
 		default:
 			throw new RuntimeException("Unknown default capture type " + captureDefault + " encountered, exiting");
@@ -2068,51 +2070,54 @@ public class Parser extends ASTVisitor {
 			});
 			if (_initializer == null) {
 				if (expression.isGlobal())
-					stack.push(builder.Expression_globalNewWithArgs(placementArguments.done(), typeId, loc));
+					stack.push(builder.Expression_globalNewWithArgs(placementArguments.done(), typeId, loc, typ));
 				else
-					stack.push(builder.Expression_newWithArgs(placementArguments.done(), typeId, loc));
+					stack.push(builder.Expression_newWithArgs(placementArguments.done(), typeId, loc, typ));
 			} else {
 				_initializer.accept(this);
 				IConstructor initializer = stack.pop();
 				if (expression.isGlobal())
-					stack.push(
-							builder.Expression_globalNewWithArgs(placementArguments.done(), typeId, initializer, loc));
+					stack.push(builder.Expression_globalNewWithArgs(placementArguments.done(), typeId, initializer, loc,
+							typ));
 				else
-					stack.push(builder.Expression_newWithArgs(placementArguments.done(), typeId, initializer, loc));
+					stack.push(
+							builder.Expression_newWithArgs(placementArguments.done(), typeId, initializer, loc, typ));
 			}
 		} else if (_initializer == null) {
 			if (expression.isGlobal())
-				stack.push(builder.Expression_globalNew(typeId, loc));
+				stack.push(builder.Expression_globalNew(typeId, loc, typ));
 			else
-				stack.push(builder.Expression_new(typeId, loc));
+				stack.push(builder.Expression_new(typeId, loc, typ));
 		} else {
 			_initializer.accept(this);
 			IConstructor initializer = stack.pop();
 			if (expression.isGlobal())
-				stack.push(builder.Expression_globalNew(typeId, initializer, loc));
+				stack.push(builder.Expression_globalNew(typeId, initializer, loc, typ));
 			else
-				stack.push(builder.Expression_new(typeId, initializer, loc));
+				stack.push(builder.Expression_new(typeId, initializer, loc, typ));
 		}
 		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTPackExpansionExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
+		IConstructor typ = tr.resolveType(expression);
 		expression.getPattern().accept(this);
-		stack.push(builder.Expression_packExpansion(stack.pop(), loc));
+		stack.push(builder.Expression_packExpansion(stack.pop(), loc, typ));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTSimpleTypeConstructorExpression expression) {
 		// decl keyword parameter?
 		ISourceLocation loc = getSourceLocation(expression);
+		IConstructor typ = tr.resolveType(expression);
 		ICPPASTDeclSpecifier _declSpecifier = expression.getDeclSpecifier();
 		IASTInitializer _initializer = expression.getInitializer();
 		_declSpecifier.accept(this);
 		IConstructor declSpecifier = stack.pop();
 		_initializer.accept(this);
 		IConstructor initializer = stack.pop();
-		stack.push(builder.Expression_simpleTypeConstructor(declSpecifier, initializer, loc));
+		stack.push(builder.Expression_simpleTypeConstructor(declSpecifier, initializer, loc, typ));
 		return PROCESS_ABORT;
 	}
 
@@ -2375,32 +2380,33 @@ public class Parser extends ASTVisitor {
 
 	public int visit(IASTLiteralExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
+		IConstructor typ = tr.resolveType(expression);
 		int kind = expression.getKind();
-		String value = new String(expression.getValue());// expression.toString();
+		String value = new String(expression.getValue());
 		switch (kind) {
 		case IASTLiteralExpression.lk_integer_constant:
-			stack.push(builder.Expression_integerConstant(value, loc));
+			stack.push(builder.Expression_integerConstant(value, loc, typ));
 			break;
 		case IASTLiteralExpression.lk_float_constant:
-			stack.push(builder.Expression_floatConstant(value, loc));
+			stack.push(builder.Expression_floatConstant(value, loc, typ));
 			break;
 		case IASTLiteralExpression.lk_char_constant:
-			stack.push(builder.Expression_charConstant(value, loc));
+			stack.push(builder.Expression_charConstant(value, loc, typ));
 			break;
 		case IASTLiteralExpression.lk_string_literal:
-			stack.push(builder.Expression_stringLiteral(value, loc));
+			stack.push(builder.Expression_stringLiteral(value, loc, typ));
 			break;
 		case IASTLiteralExpression.lk_this:
-			stack.push(builder.Expression_this(loc));
+			stack.push(builder.Expression_this(loc, typ));
 			break;
 		case IASTLiteralExpression.lk_true:
-			stack.push(builder.Expression_true(loc));
+			stack.push(builder.Expression_true(loc, typ));
 			break;
 		case IASTLiteralExpression.lk_false:
-			stack.push(builder.Expression_false(loc));
+			stack.push(builder.Expression_false(loc, typ));
 			break;
 		case IASTLiteralExpression.lk_nullptr:
-			stack.push(builder.Expression_nullptr(loc));
+			stack.push(builder.Expression_nullptr(loc, typ));
 			break;
 		default:
 			throw new RuntimeException("Encountered unknown literal kind " + kind + ". Exiting");
