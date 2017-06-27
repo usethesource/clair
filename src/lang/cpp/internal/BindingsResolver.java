@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -111,11 +112,13 @@ public class BindingsResolver {
 	}
 
 	private void out(String msg) {
-		ctx.getStdOut().println(spaces() + msg.replace("\n", "\n" + spaces()));
+		// ctx.getStdOut().println(spaces() + msg.replace("\n", "\n" +
+		// spaces()));
 	}
 
 	private void err(String msg) {
-		ctx.getStdErr().println(spaces() + msg.replace("\n", "\n" + spaces()));
+		// ctx.getStdErr().println(spaces() + msg.replace("\n", "\n" +
+		// spaces()));
 	}
 
 	private ISourceLocation resolveOwner(IBinding binding) throws URISyntaxException {
@@ -133,6 +136,15 @@ public class BindingsResolver {
 	}
 
 	public ISourceLocation resolveBinding(IBinding binding) throws URISyntaxException {
+		ISourceLocation src = resolveBinding2(binding);
+		if (true)
+			return src;
+		if (binding == null)
+			return src;
+		return vf.sourceLocation(URIUtil.changeAuthority(src.getURI(), System.identityHashCode(binding) + ""));
+	}
+
+	public ISourceLocation resolveBinding2(IBinding binding) throws URISyntaxException {
 		if (binding instanceof ICExternalBinding)
 			return resolveICExternalBinding((ICExternalBinding) binding);
 		if (binding instanceof ICompositeType)
@@ -159,6 +171,7 @@ public class BindingsResolver {
 			return resolveICPPBinding((ICPPBinding) binding);
 		if (binding instanceof ICPPTwoPhaseBinding)
 			return resolveICPPTwoPhaseBinding((ICPPTwoPhaseBinding) binding);
+		// TODO: throw Exception here
 		return makeBinding("UNKNOWN1", null, null);
 	}
 
@@ -281,7 +294,7 @@ public class BindingsResolver {
 			else
 				scheme = "cpp+variableTemplate";
 		} else if (binding instanceof ICPPInternalVariable)
-			scheme = "cpp+internalVariable";
+			scheme = "cpp+variable";
 		else
 			scheme = "cpp+variable";
 		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), scheme);
@@ -373,7 +386,9 @@ public class BindingsResolver {
 				scheme = "cpp+method";
 		} else
 			scheme = "cpp+function";
-		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), scheme);
+		ISourceLocation foo = URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()),
+				scheme);
+		return foo;
 	}
 
 	private ISourceLocation resolveICPPEnumeration(ICPPEnumeration binding) throws URISyntaxException {
@@ -433,6 +448,29 @@ public class BindingsResolver {
 	}
 
 	public ISourceLocation resolveBinding(IASTNameOwner node) {
+		ISourceLocation decl = resolveBinding2(node);
+		if (decl.getScheme().equals("cpp+problem")) {
+			out(((IASTNode) node).getRawSignature());
+			// throw new RuntimeException();
+		}
+		// if (decl.getScheme().equals("cpp+problem")) {
+		// IASTNode n = (IASTNode) node;
+		// IASTNodeLocation[] nodeLocations = n.getNodeLocations();
+		// if (nodeLocations.length == 1 && nodeLocations[0] instanceof
+		// IASTMacroExpansionLocation) {
+		// try {
+		// return resolveBinding(((IASTMacroExpansionLocation)
+		// nodeLocations[0]).getExpansion()
+		// .getMacroReference().resolveBinding());
+		// } catch (URISyntaxException e) {
+		// err("Failed to get Macro binding for " + n);
+		// }
+		// }
+		// }
+		return decl;
+	}
+
+	public ISourceLocation resolveBinding2(IASTNameOwner node) {
 		try {
 			if (node instanceof IASTCompositeTypeSpecifier)
 				return resolveCompositeTypeSpecifier((IASTCompositeTypeSpecifier) node);

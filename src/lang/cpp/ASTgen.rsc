@@ -14,7 +14,7 @@ import IO;
 //}
 
 public void generate()  {
-  code = generate("AST", [#Declarator, #DeclSpecifier, #Declaration, #Expression, #Type, #Statement, #Modifier, #TypeSymbol, #Attribute]);
+  code = generate("AST", [#Declarator, #DeclSpecifier, #Declaration, #Expression, #Type, #Statement, #Modifier, #TypeSymbol, #Attribute, #TypeModifier]);
   
   writeFile(|project://clair/src/lang/cpp/internal/AST.java|, code);
 }
@@ -139,7 +139,11 @@ str type2FactoryCall(Symbol t){
     "prefixIncr", "prefixDecr", "plus", "minus", "star", "amper", "tilde", "not", "sizeof", "postfixIncr",
     "postfixDecr", "bracketed", "throw", "typeid", "alignOf", "sizeofParameterPack", "noexcept", "labelReference",
     "functionCall", "fieldReference", "fieldReferencePointerDeref", "expressionList", "conditional",
-    "cast", "dynamicCast", "staticCast", "reinterpretCast", "constCast", "idExpression"
+    "cast", "dynamicCast", "staticCast", "reinterpretCast", "constCast", "idExpression",
+    
+    "conversionName", "delete", "vectoredDelete", "globalDelete", "globalVectoredDelete", "lambda",
+    "new", "globalNew", "newWithArgs", "globalNewWithArgs", "packExpansion", "simpleTypeConstructor",
+    "integerConstant", "floatConstant", "charConstant", "stringLiteral", "this", "true", "false", "nullptr"
     };
   default bool hasTyp(str _, str _) = false;
   
@@ -151,7 +155,7 @@ str type2FactoryCall(Symbol t){
        '  }
        '  <}>
        '  Map\<String, IValue\> kwParams = new HashMap\<String, IValue\>();
-       '  <(typeName=="TypeSymbol"?"":"kwParams.put(\"src\", $loc);")>
+       '  <((typeName=="TypeSymbol"||typeName=="TypeModifier")?"":"kwParams.put(\"src\", $loc);")>
        '  <(hasDecl(typeName, cname)?"kwParams.put(\"decl\", $decl);":"")>
        '  <(hasTyp(typeName, cname)?"kwParams.put(\"typ\", $typ);":"")>
        '  return vf.constructor(_<typeName>_<cname>_<size(args)> <callConsArgs(args)>).asWithKeywordParameters().setParameters(kwParams);

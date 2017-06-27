@@ -49,8 +49,11 @@ data DeclSpecifier(loc src = |unknown:///|)
     
     | \enum(list[Attribute] attributes, list[Modifier] modifiers, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
     | \enum(list[Attribute] attributes, list[Modifier] modifiers, DeclSpecifier baseType, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
+    | \enumOpaque(list[Attribute] attributes, list[Modifier] modifiers, DeclSpecifier baseType, Expression name, loc decl = |unknown:///|)
     | \enumScoped(list[Attribute] attributes, list[Modifier] modifiers, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
     | \enumScoped(list[Attribute] attributes, list[Modifier] modifiers, DeclSpecifier baseType, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
+    | \enumScopedOpaque(list[Attribute] attributes, list[Modifier] modifiers, Expression name, loc decl = |unknown:///|)
+    | \enumScopedOpaque(list[Attribute] attributes, list[Modifier] modifiers, DeclSpecifier baseType, Expression name, loc decl = |unknown:///|)
     
      // Non-standard MSVC throw ellipsis
     | \msThrowEllipsis()
@@ -412,11 +415,9 @@ public map[str, list[loc]] classPaths =
     |file:///usr/include/c++/4.2.1|,
     |file:///usr/include/c++/4.2.1/tr1|]);
 
-map[str,str] macros = ("_MSC_VER": "1700", "__if_not_exists(x)":"if (true /* if_not_exists(x) */)", "__if_exists(x)" : "if (true /* if_exists(x) */)");
-
 @javaClass{lang.cpp.internal.Parser}  
 @reflect{need access to streams}   
-java Declaration parseCpp(loc file, list[loc] includePaths = classPaths["mingw"], map[str,str] additionalMacros = macros);
+java Declaration parseCpp(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ());
 
 @javaClass{lang.cpp.internal.Parser}  
 @reflect{need access to streams}   
@@ -424,9 +425,9 @@ java Expression parseExpression(str expression);
 
 Expression parseExpr(str expression) = unsetRec(parseExpression(expression));
 
-map[loc,Declaration] parseDir(loc dir, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = macros)
+map[loc,Declaration] parseDir(loc dir, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ())
   = parseFiles([dir + file|file <- listEntries(dir)], includePaths = includePaths, additionalMacros = additionalMacros);
 
 @javaClass{lang.cpp.internal.Parser}
 @reflect{need access to streams}
-java map[loc,Declaration] parseFiles(list[loc] files, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = macros);
+java map[loc,Declaration] parseFiles(list[loc] files, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ());
