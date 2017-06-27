@@ -4,6 +4,7 @@ import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -41,6 +42,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExp
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.IPDOMCPPClassType;
 import org.rascalmpl.interpreter.IEvaluatorContext;
+import org.rascalmpl.uri.URIUtil;
 
 import io.usethesource.vallang.IConstructor;
 import io.usethesource.vallang.IListWriter;
@@ -132,42 +134,42 @@ public class TypeResolver {
 		return null;
 	}
 
-	private IConstructor resolveIArrayType(IArrayType type, ISourceLocation src) {
-		IConstructor baseType = resolveType(type.getType(), src);
+	private IConstructor resolveIArrayType(IArrayType type) {
+		IConstructor baseType = resolveType(type.getType());
 		org.eclipse.cdt.core.dom.ast.IValue size = type.getSize();
 		if (size == null || size.numberValue() == null)
 			return builder.TypeSymbol_array(baseType);
 		return builder.TypeSymbol_array(baseType, vf.integer(size.numberValue().intValue()));
 	}
 
-	private IConstructor resolveIBasicType(IBasicType type, ISourceLocation src) {
+	private IConstructor resolveIBasicType(IBasicType type) {
 		if (type instanceof ICBasicType)
-			return resolveICBasicType((ICBasicType) type, src);
+			return resolveICBasicType((ICBasicType) type);
 		if (type instanceof ICPPBasicType)
-			return resolveICPPBasicType((ICPPBasicType) type, src);
+			return resolveICPPBasicType((ICPPBasicType) type);
 		throw new RuntimeException("Unknown IBasicType subtype " + type.getClass().getSimpleName());
 	}
 
-	private IConstructor resolveICBasicType(ICBasicType type, ISourceLocation src) {
+	private IConstructor resolveICBasicType(ICBasicType type) {
 		throw new RuntimeException("NYI: resolveICBasicType");
 	}
 
-	private IConstructor resolveICPPBasicType(ICPPBasicType type, ISourceLocation src) {
+	private IConstructor resolveICPPBasicType(ICPPBasicType type) {
 		IListWriter modifiers = vf.listWriter();
 		if (type.isSigned())
-			modifiers.append(builder.Modifier_signed(src));
+			;// modifiers.append((builder.TypeModifier_static());)
 		if (type.isUnsigned())
-			modifiers.append(builder.Modifier_unsigned(src));
+			;// modifiers.append((builder.TypeModifier_static());)
 		if (type.isShort())
-			modifiers.append(builder.Modifier_short(src));
+			;// modifiers.append((builder.TypeModifier_static());)
 		if (type.isLong())
-			modifiers.append(builder.Modifier_long(src));
+			;// modifiers.append((builder.TypeModifier_static());)
 		if (type.isLongLong())
-			modifiers.append(builder.Modifier_longlong(src));
+			;// modifiers.append((builder.TypeModifier_static());)
 		if (type.isComplex())
-			modifiers.append(builder.Modifier_complex(src));
+			;// modifiers.append((builder.TypeModifier_static());)
 		if (type.isImaginary())
-			modifiers.append(builder.Modifier_imaginary(src));
+			;// modifiers.append((builder.TypeModifier_static());)
 
 		builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_unspecified());
 		switch (type.getKind()) {
@@ -208,25 +210,25 @@ public class TypeResolver {
 		}
 	}
 
-	private IConstructor resolveICompositeType(ICompositeType type, ISourceLocation src) {
+	private IConstructor resolveICompositeType(ICompositeType type) {
 		if (type instanceof ICPPClassSpecialization)
-			return resolveICPPClassSpecialization((ICPPClassSpecialization) type, src);
+			return resolveICPPClassSpecialization((ICPPClassSpecialization) type);
 		if (type instanceof ICPPClassTemplate)
-			return resolveICPPClassTemplate((ICPPClassTemplate) type, src);
+			return resolveICPPClassTemplate((ICPPClassTemplate) type);
 		if (type instanceof ICPPDeferredClassInstance)
-			return resolveICPPDeferredClassInstance((ICPPDeferredClassInstance) type, src);
+			return resolveICPPDeferredClassInstance((ICPPDeferredClassInstance) type);
 		if (type instanceof ICPPASTCompositeTypeSpecifier)
 			;
 		if (type instanceof ICPPUnknownMemberClass)
-			return resolveICPPUnknownMemberClass((ICPPUnknownMemberClass) type, src);
+			return resolveICPPUnknownMemberClass((ICPPUnknownMemberClass) type);
 		if (type instanceof IPDOMCPPClassType)
 			;
 		if (type instanceof ICPPClassType)
-			return resolveICPPClassType((ICPPClassType) type, src);
+			return resolveICPPClassType((ICPPClassType) type);
 		throw new RuntimeException("NYI: resolveICompositeType");
 	}
 
-	private IConstructor resolveICPPClassType(ICPPClassType type, ISourceLocation src) {
+	private IConstructor resolveICPPClassType(ICPPClassType type) {
 		switch (type.getKey()) {
 		case ICPPClassType.k_struct:
 			IListWriter fields = vf.listWriter();
@@ -245,19 +247,19 @@ public class TypeResolver {
 		throw new RuntimeException("NYI: resolveICPPClassType " + type.getClass().getSimpleName());
 	}
 
-	private IConstructor resolveICPPClassSpecialization(ICPPClassSpecialization type, ISourceLocation src) {
+	private IConstructor resolveICPPClassSpecialization(ICPPClassSpecialization type) {
 		ISourceLocation decl = getDecl(type.getSpecializedBinding());
 		IMapWriter templateParameters = vf.mapWriter();
 		ICPPTemplateParameterMap parameterMap = type.getTemplateParameterMap();
-		Stream.of(parameterMap.getAllParameterPositions()).forEach(it -> templateParameters.put(vf.integer(it),
-				resolveType(parameterMap.getArgument(it).getTypeValue(), src)));
+		Stream.of(parameterMap.getAllParameterPositions()).forEach(
+				it -> templateParameters.put(vf.integer(it), resolveType(parameterMap.getArgument(it).getTypeValue())));
 		return builder.TypeSymbol_classSpecialization(decl, templateParameters.done());
 	}
 
-	private IConstructor resolveICPPClassTemplate(ICPPClassTemplate type, ISourceLocation src) {
+	private IConstructor resolveICPPClassTemplate(ICPPClassTemplate type) {
 		ICPPBase[] _bases = type.getBases();
 		IListWriter baseClassTypes = vf.listWriter();
-		Stream.of(_bases).forEach(it -> baseClassTypes.append(resolveType(it.getBaseClassType(), src)));
+		Stream.of(_bases).forEach(it -> baseClassTypes.append(resolveType(it.getBaseClassType())));
 		switch (type.getKey()) {
 		case ICPPClassTemplate.k_struct:
 			out("ICPPClassTemplate struct");
@@ -270,60 +272,60 @@ public class TypeResolver {
 			if (specs.length > 0)
 				throw new RuntimeException("ICPPClassTemplate has partial specializations!");
 			// FIXME
-			return resolveICPPClassType((ICPPClassType) type, src);
+			return resolveICPPClassType((ICPPClassType) type);
 		default:
 			throw new RuntimeException("Unknown ICompositeType key " + type.getKey());
 		}
 		throw new RuntimeException("NYI: resolveICPPClassTemplate");
 	}
 
-	private IConstructor resolveICPPDeferredClassInstance(ICPPDeferredClassInstance type, ISourceLocation src) {
+	private IConstructor resolveICPPDeferredClassInstance(ICPPDeferredClassInstance type) {
 		// FIXME
 		return builder.TypeSymbol_deferredClassInstance(type.toString());
 	}
 
-	private IConstructor resolveICPPUnknownMemberClass(ICPPUnknownMemberClass type, ISourceLocation src) {
+	private IConstructor resolveICPPUnknownMemberClass(ICPPUnknownMemberClass type) {
 		// FIXME
-		return builder.TypeSymbol_unknownMemberClass(resolveType((IType) type.getOwner(), src), type.getName());
+		return builder.TypeSymbol_unknownMemberClass(resolveType((IType) type.getOwner()), type.getName());
 	}
 
-	private IConstructor resolveICPPAliasTemplate(ICPPAliasTemplate type, ISourceLocation src) {
+	private IConstructor resolveICPPAliasTemplate(ICPPAliasTemplate type) {
 		IType _type = type.getType();
 		throw new RuntimeException("NYI: resolveICPPAliasTemplate");
 	}
 
-	private IConstructor resolveICPPParameterPackType(ICPPParameterPackType type, ISourceLocation src) {
-		return builder.TypeSymbol_parameterPackType(resolveType(type.getType(), src));
+	private IConstructor resolveICPPParameterPackType(ICPPParameterPackType type) {
+		return builder.TypeSymbol_parameterPackType(resolveType(type.getType()));
 	}
 
-	private IConstructor resolveICPPReferenceType(ICPPReferenceType type, ISourceLocation src) {
-		return builder.TypeSymbol_referenceType(resolveType(type.getType(), src));
+	private IConstructor resolveICPPReferenceType(ICPPReferenceType type) {
+		return builder.TypeSymbol_referenceType(resolveType(type.getType()));
 	}
 
-	private IConstructor resolveICPPTemplateTypeParameter(ICPPTemplateTypeParameter type, ISourceLocation src) {
+	private IConstructor resolveICPPTemplateTypeParameter(ICPPTemplateTypeParameter type) {
 		if (type instanceof CPPTemplateTypeParameter)// FIXME
 			return builder.TypeSymbol_templateTypeParameter(type.getOwner().getName(), type.getName());
 		throw new RuntimeException(
 				"NYI: resolveICPPTemplateTypeParameter " + type.getClass().getSimpleName() + ": " + type);
 	}
 
-	private IConstructor resolveICPPTypeSpecialization(ICPPTypeSpecialization type, ISourceLocation src) {
+	private IConstructor resolveICPPTypeSpecialization(ICPPTypeSpecialization type) {
 		throw new RuntimeException("NYI: resolveICPPTypeSpecialization");
 	}
 
-	private IConstructor resolveICPPUnaryTypeTransformation(ICPPUnaryTypeTransformation type, ISourceLocation src) {
+	private IConstructor resolveICPPUnaryTypeTransformation(ICPPUnaryTypeTransformation type) {
 		Operator operator = type.getOperator();
 		IType operand = type.getOperand();
 		throw new RuntimeException("NYI: resolveICPPUnaryTypeTransformation");
 	}
 
-	private IConstructor resolveICPPUnknownType(ICPPUnknownType type, ISourceLocation src) {
+	private IConstructor resolveICPPUnknownType(ICPPUnknownType type) {
 		if (type instanceof TypeOfDependentExpression)
-			return builder.TypeSymbol_typeOfDependentExpression(src);
+			return builder.TypeSymbol_typeOfDependentExpression(URIUtil.rootLocation("foo"));
 		throw new RuntimeException("NYI: resolveICPPUnknownType (" + type.getClass().getSimpleName() + ")");
 	}
 
-	private IConstructor resolveIEnumeration(IEnumeration type, ISourceLocation src) {
+	private IConstructor resolveIEnumeration(IEnumeration type) {
 		try {
 			ISourceLocation decl = br.resolveBinding(type);
 			return builder.TypeSymbol_enumeration(decl);
@@ -332,57 +334,55 @@ public class TypeResolver {
 		}
 	}
 
-	private IConstructor resolveIFunctionType(IFunctionType type, ISourceLocation src) {
-		IConstructor returnType = resolveType(type.getReturnType(), src);
+	private IConstructor resolveIFunctionType(IFunctionType type) {
+		IConstructor returnType = resolveType(type.getReturnType());
 		IListWriter parameterTypes = vf.listWriter();
-		Stream.of(type.getParameterTypes()).forEach(it -> parameterTypes.append(resolveType(it, src)));
+		Stream.of(type.getParameterTypes()).forEach(it -> parameterTypes.append(resolveType(it)));
 		return builder.TypeSymbol_functionType(returnType, parameterTypes.done(), vf.bool(type.takesVarArgs()));
 	}
 
-	private IConstructor resolveIIndexType(IIndexType type, ISourceLocation src) {
+	private IConstructor resolveIIndexType(IIndexType type) {
 		throw new RuntimeException("NYI: resolveIIndexType");
 	}
 
-	private IConstructor resolveIPointerType(IPointerType type, ISourceLocation src) {
+	private IConstructor resolveIPointerType(IPointerType type) {
 		IListWriter modifiers = vf.listWriter();
 		if (type.isConst())
-			modifiers.append(builder.Modifier_const(src));
+			;// modifiers.append((builder.TypeModifier_static());)
 		if (type.isVolatile())
-			modifiers.append(builder.Modifier_volatile(src));
+			;// modifiers.append((builder.TypeModifier_static());)
 		if (type.isRestrict())
-			modifiers.append(builder.Modifier_restrict(src));
-		return builder.TypeSymbol_pointerType(modifiers.done(), resolveType(type.getType(), src));
+			;// modifiers.append((builder.TypeModifier_static());)
+		return builder.TypeSymbol_pointerType(modifiers.done(), resolveType(type.getType()));
 	}
 
-	private IConstructor resolveIProblemBinding(IProblemBinding type, ISourceLocation src) {
+	private IConstructor resolveIProblemBinding(IProblemBinding type) {
 		err("Encountered IProblemBinding " + type.getClass().getSimpleName() + ": ");
 		err("\t" + type.getID() + ": " + type.getMessage());
-		err("\t" + src);
 		return builder.TypeSymbol_problemBinding();
 	}
 
-	private IConstructor resolveIProblemType(IProblemType type, ISourceLocation src) {
+	private IConstructor resolveIProblemType(IProblemType type) {
 		err("Encountered IProblemType " + type.getClass().getSimpleName() + ": ");
 		err("\t" + type.getID() + ": " + type.getMessage());
-		err("\t" + src);
 		return builder.TypeSymbol_problemType();
 	}
 
-	private IConstructor resolveIQualifierType(IQualifierType type, ISourceLocation src) {
-		IConstructor baseType = resolveType(type.getType(), src);
+	private IConstructor resolveIQualifierType(IQualifierType type) {
+		IConstructor baseType = resolveType(type.getType());
 		IListWriter modifiers = vf.listWriter();
 		if (type.isConst())
-			modifiers.append(builder.Modifier_const(src));
+			;// modifiers.append((builder.TM);)
 		if (type.isVolatile())
-			modifiers.append(builder.Modifier_volatile(src));
+			;// modifiers.append((builder.TypeModifier_static());)
 		return builder.TypeSymbol_qualifierType(modifiers.done(), baseType);
 	}
 
-	private IConstructor resolveITypeContainer(ITypeContainer type, ISourceLocation src) {
-		return builder.TypeSymbol_typeContainer(resolveType(type.getType(), src));
+	private IConstructor resolveITypeContainer(ITypeContainer type) {
+		return builder.TypeSymbol_typeContainer(resolveType(type.getType()));
 	}
 
-	private IConstructor resolveITypedef(ITypedef type, ISourceLocation src) {
+	private IConstructor resolveITypedef(ITypedef type) {
 		IType _type = type.getType();
 		throw new RuntimeException("NYI: resolveITypedef");
 	}
