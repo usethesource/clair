@@ -373,7 +373,9 @@ public class BindingsResolver {
 				scheme = "cpp+method";
 		} else
 			scheme = "cpp+function";
-		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), scheme);
+		ISourceLocation foo = URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()),
+				scheme);
+		return foo;
 	}
 
 	private ISourceLocation resolveICPPEnumeration(ICPPEnumeration binding) throws URISyntaxException {
