@@ -281,7 +281,7 @@ public class BindingsResolver {
 			else
 				scheme = "cpp+variableTemplate";
 		} else if (binding instanceof ICPPInternalVariable)
-			scheme = "cpp+internalVariable";
+			scheme = "cpp+variable";
 		else
 			scheme = "cpp+variable";
 		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), scheme);
