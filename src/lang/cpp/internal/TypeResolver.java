@@ -4,6 +4,7 @@ import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -90,8 +91,15 @@ public class TypeResolver {
 	}
 
 	public IConstructor resolveType(IASTNode node) {
+		if (node instanceof IASTExpression)
+			return resolveIASTExpression((IASTExpression) node);
 		return builder.TypeSymbol_any();
 	}
+
+	public IConstructor resolveIASTExpression(IASTExpression node) {
+		return resolveType(node.getExpressionType());
+	}
+
 	public IConstructor resolveType(IType type) {
 		if (type instanceof IArrayType)
 			return resolveIArrayType((IArrayType) type);
