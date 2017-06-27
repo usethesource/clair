@@ -723,6 +723,7 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTAliasDeclaration declaration) {
 		ISourceLocation loc = getSourceLocation(declaration);
 		ISourceLocation decl = br.resolveBinding(declaration);
+		IConstructor typ = tr.resolveType(declaration);
 		IList attributes = getAttributes(declaration);
 
 		declaration.getAlias().accept(this);
@@ -1311,6 +1312,7 @@ public class Parser extends ASTVisitor {
 		// TODO: check refQualifier and declaresParameterPack
 		ISourceLocation loc = getSourceLocation(declarator);
 		ISourceLocation decl = br.resolveBinding(declarator);
+		IConstructor typ = tr.resolveType(declarator);
 		IList attributes = getAttributes(declarator);
 		IList modifiers = getModifiers(declarator);
 
@@ -1473,6 +1475,7 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTCompositeTypeSpecifier declSpec) {
 		ISourceLocation loc = getSourceLocation(declSpec);
 		ISourceLocation decl = br.resolveBinding(declSpec);
+		IConstructor typ = tr.resolveType(declSpec);
 		IList attributes = getAttributes(declSpec);
 		IList modifiers = getModifiers(declSpec);
 
@@ -1615,6 +1618,7 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTEnumerationSpecifier declSpec) {
 		ISourceLocation loc = getSourceLocation(declSpec);
 		ISourceLocation decl = br.resolveBinding(declSpec);
+		IConstructor typ = tr.resolveType(declSpec);
 		IList attributes = getAttributes(declSpec);
 		IList modifiers = getModifiers(declSpec);
 
@@ -1664,6 +1668,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICPPASTSimpleDeclSpecifier declSpec) {
 		ISourceLocation loc = getSourceLocation(declSpec);
+		IConstructor typ = tr.resolveType(declSpec);
 		IList attributes = getAttributes(declSpec);
 		IList modifiers = getModifiers(declSpec);
 
@@ -1930,17 +1935,20 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTExpressionList expression) {
+		// has typ
 		out("CPPExpressionList: " + expression.getRawSignature());
 		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTFieldReference expression) {
 		// TODO: Implement
+		// has typ
 		out("CPPFieldReference: " + expression.getRawSignature());
 		throw new RuntimeException("NYI");
 	}
 
 	public int visit(ICPPASTFunctionCallExpression expression) {
+		// has typ
 		out("CPPFunctionCallExpression: " + expression.getRawSignature());
 		throw new RuntimeException("NYI");
 	}
@@ -1948,6 +1956,7 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTLambdaExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		ISourceLocation decl = br.UNKNOWN;
+		IConstructor typ = tr.resolveType(expression);
 		CaptureDefault captureDefault = expression.getCaptureDefault();
 
 		IListWriter captures = vf.listWriter();
@@ -2004,6 +2013,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTNaryTypeIdExpression expression) {
+		// has typ
 		out("CPPNaryTypeIdExpression: " + expression.getRawSignature());
 		throw new RuntimeException("NYI");
 	}
@@ -2081,6 +2091,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTTypeIdExpression expression) {
+		// has typ
 		out("CPPTypeIdExpression: " + expression.getRawSignature());
 		throw new RuntimeException("NYI");
 	}
@@ -2371,6 +2382,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTTypeIdInitializerExpression expression) {
+		// has typ
 		out("TypeIdInitializerExpression: " + expression.getRawSignature());
 		throw new RuntimeException("NYI");
 	}
@@ -2895,6 +2907,7 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTBaseSpecifier baseSpecifier) {
 		ISourceLocation loc = getSourceLocation(baseSpecifier);
 		ISourceLocation decl = br.resolveBinding(baseSpecifier);
+		IConstructor typ = tr.resolveType(baseSpecifier);
 
 		IListWriter modifiers = vf.listWriter();
 		switch (baseSpecifier.getVisibility()) {
@@ -3085,6 +3098,7 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(ICPPASTDecltypeSpecifier decltypeSpecifier) {
+		// has typ
 		err("DecltypeSpecifier: " + decltypeSpecifier.getRawSignature());
 		throw new RuntimeException("NYI");
 	}
