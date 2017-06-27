@@ -91,7 +91,7 @@ public class TypeResolver {
 	}
 
 	public IConstructor resolveType(IASTNode node) {
-		if (node instanceof IASTExpression)
+		if (node instanceof IASTExpression && false)
 			return resolveIASTExpression((IASTExpression) node);
 		return builder.TypeSymbol_any();
 	}
