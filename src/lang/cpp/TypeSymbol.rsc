@@ -26,11 +26,11 @@ public data TypeSymbol
   
   | \array(TypeSymbol baseType)
   | \array(TypeSymbol baseType, int size)
-  | \basicType(list[Modifier] modifiers, TypeSymbol baseType)
+  | \basicType(list[TypeModifier] modifiers, TypeSymbol baseType)
   | \class(loc decl)
   | \struct(list[TypeSymbol] fields)
-  | \qualifierType(list[Modifier] modifiers, TypeSymbol \type)
-  | \pointerType(list[Modifier] modifiers, TypeSymbol \type)
+  | \qualifierType(list[TypeModifier] modifiers, TypeSymbol \type)
+  | \pointerType(list[TypeModifier] modifiers, TypeSymbol \type)
   | \functionType(TypeSymbol returnType, list[TypeSymbol] parameterTypes, bool takesVarArgs)
   | \typeContainer(TypeSymbol \type)
   | \enumeration(loc decl)
@@ -50,5 +50,10 @@ public data TypeSymbol
   | \noType()
   
   | \any()
+  
+  ;
+  
+public data TypeModifier
+  = \static()
   
   ;
