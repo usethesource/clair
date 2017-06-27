@@ -87,45 +87,48 @@ public class TypeResolver {
 		}
 	}
 
-	public IConstructor resolveType(IType type, ISourceLocation src) {
+	public IConstructor resolveType(IASTNode node) {
+		return builder.TypeSymbol_any();
+	}
+	public IConstructor resolveType(IType type) {
 		if (type instanceof IArrayType)
-			return resolveIArrayType((IArrayType) type, src);
+			return resolveIArrayType((IArrayType) type);
 		if (type instanceof IBasicType)
-			return resolveIBasicType((IBasicType) type, src);
+			return resolveIBasicType((IBasicType) type);
 		if (type instanceof ICompositeType)
-			return resolveICompositeType((ICompositeType) type, src);
+			return resolveICompositeType((ICompositeType) type);
 		if (type instanceof ICPPAliasTemplate)
-			return resolveICPPAliasTemplate((ICPPAliasTemplate) type, src);
+			return resolveICPPAliasTemplate((ICPPAliasTemplate) type);
 		if (type instanceof ICPPParameterPackType)
-			return resolveICPPParameterPackType((ICPPParameterPackType) type, src);
+			return resolveICPPParameterPackType((ICPPParameterPackType) type);
 		if (type instanceof ICPPReferenceType)
-			return resolveICPPReferenceType((ICPPReferenceType) type, src);
+			return resolveICPPReferenceType((ICPPReferenceType) type);
 		if (type instanceof ICPPTemplateTypeParameter)
-			return resolveICPPTemplateTypeParameter((ICPPTemplateTypeParameter) type, src);
+			return resolveICPPTemplateTypeParameter((ICPPTemplateTypeParameter) type);
 		if (type instanceof ICPPTypeSpecialization)
-			return resolveICPPTypeSpecialization((ICPPTypeSpecialization) type, src);
+			return resolveICPPTypeSpecialization((ICPPTypeSpecialization) type);
 		if (type instanceof ICPPUnaryTypeTransformation)
-			return resolveICPPUnaryTypeTransformation((ICPPUnaryTypeTransformation) type, src);
+			return resolveICPPUnaryTypeTransformation((ICPPUnaryTypeTransformation) type);
 		if (type instanceof ICPPUnknownType)
-			return resolveICPPUnknownType((ICPPUnknownType) type, src);
+			return resolveICPPUnknownType((ICPPUnknownType) type);
 		if (type instanceof IEnumeration)
-			return resolveIEnumeration((IEnumeration) type, src);
+			return resolveIEnumeration((IEnumeration) type);
 		if (type instanceof IFunctionType)
-			return resolveIFunctionType((IFunctionType) type, src);
+			return resolveIFunctionType((IFunctionType) type);
 		if (type instanceof IIndexType)
-			return resolveIIndexType((IIndexType) type, src);
+			return resolveIIndexType((IIndexType) type);
 		if (type instanceof IPointerType)
-			return resolveIPointerType((IPointerType) type, src);
+			return resolveIPointerType((IPointerType) type);
 		if (type instanceof IProblemBinding)
-			return resolveIProblemBinding((IProblemBinding) type, src);
+			return resolveIProblemBinding((IProblemBinding) type);
 		if (type instanceof IProblemType)
-			return resolveIProblemType((IProblemType) type, src);
+			return resolveIProblemType((IProblemType) type);
 		if (type instanceof IQualifierType)
-			return resolveIQualifierType((IQualifierType) type, src);
+			return resolveIQualifierType((IQualifierType) type);
 		if (type instanceof ITypeContainer)
-			return resolveITypeContainer((ITypeContainer) type, src);
+			return resolveITypeContainer((ITypeContainer) type);
 		if (type instanceof ITypedef)
-			return resolveITypedef((ITypedef) type, src);
+			return resolveITypedef((ITypedef) type);
 		return null;
 	}
 

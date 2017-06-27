@@ -1926,7 +1926,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICPPASTArraySubscriptExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
-		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
+		IConstructor typ = tr.resolveType(expression);
 		ICPPASTExpression _arrayExpression = expression.getArrayExpression();
 		ICPPASTInitializerClause _argument = expression.getArgument();
 
@@ -2136,7 +2136,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(IASTBinaryExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
-		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
+		IConstructor typ = tr.resolveType(expression);
 		IASTExpression _lhs = expression.getOperand1();
 		_lhs.accept(this);
 		IConstructor lhs = stack.pop();
@@ -2262,7 +2262,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(IASTCastExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
-		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
+		IConstructor typ = tr.resolveType(expression);
 		int operator = expression.getOperator();
 		IASTExpression _operand = expression.getOperand();
 		IASTTypeId typeId = expression.getTypeId();
@@ -2295,7 +2295,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(IASTConditionalExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
-		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
+		IConstructor typ = tr.resolveType(expression);
 		IASTExpression _condition = expression.getLogicalConditionExpression();
 		IASTExpression _positive = expression.getPositiveResultExpression();
 		IASTExpression _negative = expression.getNegativeResultExpression();
@@ -2314,7 +2314,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(IASTExpressionList expression) {
 		ISourceLocation loc = getSourceLocation(expression);
-		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
+		IConstructor typ = tr.resolveType(expression);
 		IListWriter expressions = vf.listWriter();
 		Stream.of(expression.getExpressions()).forEach(it -> {
 			it.accept(this);
@@ -2327,7 +2327,7 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTFieldReference expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		ISourceLocation decl = br.resolveBinding(expression);
-		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
+		IConstructor typ = tr.resolveType(expression);
 		if (expression instanceof ICPPASTFieldReference) {
 			// TODO: check isTemplate
 			ICPPASTFieldReference reference = (ICPPASTFieldReference) expression;
@@ -2349,7 +2349,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(IASTFunctionCallExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
-		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
+		IConstructor typ = tr.resolveType(expression);
 		IASTExpression _functionName = expression.getFunctionNameExpression();
 		IASTInitializerClause[] _arguments = expression.getArguments();
 
@@ -2367,7 +2367,7 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTIdExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		ISourceLocation decl = br.resolveBinding(expression);
-		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
+		IConstructor typ = tr.resolveType(expression);
 		expression.getName().accept(this);
 		stack.push(builder.Expression_idExpression(stack.pop(), loc, decl, typ));
 		return PROCESS_ABORT;
@@ -2423,7 +2423,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(IASTTypeIdExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
-		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
+		IConstructor typ = tr.resolveType(expression);
 		int operator = expression.getOperator();
 		expression.getTypeId().accept(this);
 		switch (operator) {
@@ -2448,7 +2448,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(IASTUnaryExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
-		IConstructor typ = tr.resolveType(expression.getExpressionType(), loc);
+		IConstructor typ = tr.resolveType(expression);
 		int operator = expression.getOperator();
 		IASTExpression _operand = expression.getOperand();
 
