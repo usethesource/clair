@@ -156,14 +156,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeTransformationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier.SpecifierKind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTGotoStatement;
@@ -586,7 +584,6 @@ public class Parser extends ASTVisitor {
 
 		IConstructor translationUnit = builder.Declaration_translationUnit(declarations.done(), loc);
 		stack.push(translationUnit);
-
 		return PROCESS_ABORT;
 	}
 
@@ -647,19 +644,17 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTQualifiedName name) {
 		ISourceLocation loc = getSourceLocation(name);
 		ISourceLocation decl = br.resolveBinding(name);
-		ICPPASTNameSpecifier[] _qualifier = name.getQualifier();
-		IASTName _lastName = name.getLastName();
-		boolean fullyQualified = name.isFullyQualified();
 
 		IListWriter qualifier = vf.listWriter();
-		Stream.of(_qualifier).forEach(it -> {
+		Stream.of(name.getQualifier()).forEach(it -> {
 			it.accept(this);
 			qualifier.append(stack.pop());
 		});
-		_lastName.accept(this);
+
+		name.getLastName().accept(this);
 		IConstructor lastName = stack.pop();
 		// TODO: check fullyQualified
-		if (fullyQualified)
+		if (name.isFullyQualified())
 			;
 		// err("WARNING: ICPPASTQualifiedName has fullyQualified=true");
 		stack.push(builder.Expression_qualifiedName(qualifier.done(), lastName, loc, decl));
@@ -669,13 +664,11 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTTemplateId name) {
 		ISourceLocation loc = getSourceLocation(name);
 		ISourceLocation decl = br.resolveBinding(name);
-		IASTName _templateName = name.getTemplateName();
-		IASTNode[] _templateArguments = name.getTemplateArguments();
 
-		_templateName.accept(this);
+		name.getTemplateName().accept(this);
 		IConstructor templateName = stack.pop();
 		IListWriter templateArguments = vf.listWriter();
-		Stream.of(_templateArguments).forEach(it -> {
+		Stream.of(name.getTemplateArguments()).forEach(it -> {
 			it.accept(this);
 			templateArguments.append(stack.pop());
 		});
@@ -731,11 +724,10 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(declaration);
 		ISourceLocation decl = br.resolveBinding(declaration);
 		IList attributes = getAttributes(declaration);
-		IASTName _alias = declaration.getAlias();
-		ICPPASTTypeId _mappingTypeId = declaration.getMappingTypeId();
-		_alias.accept(this);
+
+		declaration.getAlias().accept(this);
 		IConstructor alias = stack.pop();
-		_mappingTypeId.accept(this);
+		declaration.getMappingTypeId().accept(this);
 		IConstructor mappingTypeId = stack.pop();
 		stack.push(builder.Declaration_alias(attributes, alias, mappingTypeId, loc, decl));
 		return PROCESS_ABORT;
@@ -743,8 +735,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICPPASTExplicitTemplateInstantiation declaration) {
 		ISourceLocation loc = getSourceLocation(declaration);
-		IASTDeclaration _declaration = declaration.getDeclaration();
-		_declaration.accept(this);
+		declaration.getDeclaration().accept(this);
 		switch (declaration.getModifier()) {
 		case 0:
 			stack.push(builder.Declaration_explicitTemplateInstantiation(stack.pop(), loc));
@@ -770,22 +761,20 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICPPASTLinkageSpecification declaration) {
 		ISourceLocation loc = getSourceLocation(declaration);
-		String literal = declaration.getLiteral();
-		IASTDeclaration[] _declarations = declaration.getDeclarations();
 
 		IListWriter declarations = vf.listWriter();
-		Stream.of(_declarations).forEach(it -> {
+		Stream.of(declaration.getDeclarations()).forEach(it -> {
 			it.accept(this);
 			declarations.append(stack.pop());
 		});
-
-		stack.push(builder.Declaration_linkageSpecification(literal, declarations.done(), loc));
+		stack.push(builder.Declaration_linkageSpecification(declaration.getLiteral(), declarations.done(), loc));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTNamespaceAlias declaration) {
 		ISourceLocation loc = getSourceLocation(declaration);
 		ISourceLocation decl = br.resolveBinding(declaration);
+
 		declaration.getAlias().accept(this);
 		IConstructor alias = stack.pop();
 		declaration.getMappingName().accept(this);
@@ -806,14 +795,12 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTTemplateDeclaration declaration) {
 		ISourceLocation loc = getSourceLocation(declaration);
 		// The "export" keyword has been removed from the C++ standard
-		IASTDeclaration _declaration = declaration.getDeclaration();
-		ICPPASTTemplateParameter[] _templateParameters = declaration.getTemplateParameters();
 		IListWriter templateParameters = vf.listWriter();
-		Stream.of(_templateParameters).forEach(it -> {
+		Stream.of(declaration.getTemplateParameters()).forEach(it -> {
 			it.accept(this);
 			templateParameters.append(stack.pop());
 		});
-		_declaration.accept(this);
+		declaration.getDeclaration().accept(this);
 		stack.push(builder.Declaration_template(templateParameters.done(), stack.pop(), loc));
 		return PROCESS_ABORT;
 	}
@@ -847,8 +834,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICPPASTVisibilityLabel declaration) {
 		ISourceLocation loc = getSourceLocation(declaration);
-		int visibility = declaration.getVisibility();
-		switch (visibility) {
+		switch (declaration.getVisibility()) {
 		case ICPPASTVisibilityLabel.v_public:
 			stack.push(builder.Declaration_visibilityLabel(builder.Modifier_public(loc), loc));
 			break;
@@ -859,7 +845,7 @@ public class Parser extends ASTVisitor {
 			stack.push(builder.Declaration_visibilityLabel(builder.Modifier_private(loc), loc));
 			break;
 		default:
-			throw new RuntimeException("Unknown CPPVisibilityLabel code " + visibility + ". Exiting");
+			throw new RuntimeException("Unknown CPPVisibilityLabel code " + declaration.getVisibility() + ". Exiting");
 		}
 		return PROCESS_ABORT;
 	}
@@ -874,21 +860,16 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(definition);
 		if (definition instanceof ICPPASTFunctionDefinition) {
 			IList attributes = getAttributes((ICPPASTFunctionDefinition) definition);
-			IASTDeclSpecifier _declSpecifier = definition.getDeclSpecifier();
-			IASTFunctionDeclarator _declarator = definition.getDeclarator();
-			IASTStatement _body = definition.getBody();
-			ICPPASTConstructorChainInitializer[] _memberInitializers = ((ICPPASTFunctionDefinition) definition)
-					.getMemberInitializers();
 			boolean isDefaulted = ((ICPPASTFunctionDefinition) definition).isDefaulted();
 			boolean isDeleted = ((ICPPASTFunctionDefinition) definition).isDeleted();
 
-			_declSpecifier.accept(this);
+			definition.getDeclSpecifier().accept(this);
 			IConstructor declSpecifier = stack.pop();
-			_declarator.accept(this);
+			definition.getDeclarator().accept(this);
 			IConstructor declarator = stack.pop();
 
 			IListWriter memberInitializers = vf.listWriter();
-			Stream.of(_memberInitializers).forEach(it -> {
+			Stream.of(((ICPPASTFunctionDefinition) definition).getMemberInitializers()).forEach(it -> {
 				it.accept(this);
 				memberInitializers.append(stack.pop());
 			});
@@ -904,32 +885,27 @@ public class Parser extends ASTVisitor {
 				stack.push(builder.Declaration_deletedFunctionDefinition(attributes, declSpecifier,
 						memberInitializers.done(), declarator, loc));
 			else if (definition instanceof ICPPASTFunctionWithTryBlock) {
-				ICPPASTCatchHandler[] _catchHandlers = ((ICPPASTFunctionWithTryBlock) definition).getCatchHandlers();
 				IListWriter catchHandlers = vf.listWriter();
-				Stream.of(_catchHandlers).forEach(it -> {
+				Stream.of(((ICPPASTFunctionWithTryBlock) definition).getCatchHandlers()).forEach(it -> {
 					it.accept(this);
 					catchHandlers.append(stack.pop());
 				});
-				_body.accept(this);
+				definition.getBody().accept(this);
 				stack.push(builder.Declaration_functionWithTryBlockDefinition(attributes, declSpecifier, declarator,
 						memberInitializers.done(), stack.pop(), catchHandlers.done(), loc));
 			} else {
-				_body.accept(this);
+				definition.getBody().accept(this);
 				stack.push(builder.Declaration_functionDefinition(attributes, declSpecifier, declarator,
 						memberInitializers.done(), stack.pop(), loc));
 			}
 		} else { // C Function definition
 			if (true)
-				throw new RuntimeException("QUE??");
-			IASTDeclSpecifier _declSpecifier = definition.getDeclSpecifier();
-			IASTFunctionDeclarator _declarator = definition.getDeclarator();
-			IASTStatement _body = definition.getBody();
-
-			_declSpecifier.accept(this);
+				throw new RuntimeException("Encountered C function definition, NYI");
+			definition.getDeclSpecifier().accept(this);
 			IConstructor declSpecifier = stack.pop();
-			_declarator.accept(this);
+			definition.getDeclarator().accept(this);
 			IConstructor declarator = stack.pop();
-			_body.accept(this);
+			definition.getBody().accept(this);
 			IConstructor body = stack.pop();
 			stack.push(builder.Declaration_functionDefinition(declSpecifier, declarator, body, loc));
 		}
@@ -942,27 +918,22 @@ public class Parser extends ASTVisitor {
 		// TODO: remove duplicate code
 		if (parameterDeclaration instanceof ICPPASTParameterDeclaration) {
 			ICPPASTParameterDeclaration declaration = (ICPPASTParameterDeclaration) parameterDeclaration;
-			IASTDeclSpecifier _declSpecifier = declaration.getDeclSpecifier();
-			ICPPASTDeclarator _declarator = declaration.getDeclarator();
 
-			_declSpecifier.accept(this);
+			declaration.getDeclSpecifier().accept(this);
 			IConstructor declSpecifier = stack.pop();
-			if (_declarator == null)
+			if (declaration.getDeclarator() == null)
 				stack.push(builder.Declaration_parameter(declSpecifier, loc));
 			else {
-				_declarator.accept(this);
+				declaration.getDeclarator().accept(this);
 				stack.push(builder.Declaration_parameter(declSpecifier, stack.pop(), loc));
 			}
 		} else {
-			IASTDeclSpecifier _declSpecifier = parameterDeclaration.getDeclSpecifier();
-			IASTDeclarator _declarator = parameterDeclaration.getDeclarator();
-
-			_declSpecifier.accept(this);
+			parameterDeclaration.getDeclSpecifier().accept(this);
 			IConstructor declSpecifier = stack.pop();
-			if (_declarator == null)
+			if (parameterDeclaration.getDeclarator() == null)
 				stack.push(builder.Declaration_parameter(declSpecifier, loc));
 			else {
-				_declarator.accept(this);
+				parameterDeclaration.getDeclarator().accept(this);
 				stack.push(builder.Declaration_parameter(declSpecifier, stack.pop(), loc));
 			}
 		}
@@ -984,14 +955,13 @@ public class Parser extends ASTVisitor {
 
 	public int visit(IASTSimpleDeclaration declaration) {
 		ISourceLocation loc = getSourceLocation(declaration);
-		IASTDeclSpecifier _declSpecifier = declaration.getDeclSpecifier();
-		IASTDeclarator[] _declarators = declaration.getDeclarators();
 		IList attributes = getAttributes(declaration);
 
-		_declSpecifier.accept(this);
+		declaration.getDeclSpecifier().accept(this);
 		IConstructor declSpecifier = stack.pop();
+		
 		IListWriter declarators = vf.listWriter();
-		Stream.of(_declarators).forEach(it -> {
+		Stream.of(declaration.getDeclarators()).forEach(it -> {
 			it.accept(this);
 			declarators.append(stack.pop());
 		});
@@ -1024,8 +994,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(IASTEqualsInitializer initializer) {
 		ISourceLocation loc = getSourceLocation(initializer);
-		IASTInitializerClause initializerClause = initializer.getInitializerClause();
-		initializerClause.accept(this);
+		initializer.getInitializerClause().accept(this);
 		stack.push(builder.Expression_equalsInitializer(stack.pop(), loc));
 		return PROCESS_ABORT;
 	}
@@ -1033,9 +1002,8 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTInitializerList initializer) {
 		// TODO: cpp: check isPackExpansion, maybe getSize
 		ISourceLocation loc = getSourceLocation(initializer);
-		IASTInitializerClause[] _clauses = initializer.getClauses();
 		IListWriter clauses = vf.listWriter();
-		Stream.of(_clauses).forEach(it -> {
+		Stream.of(initializer.getClauses()).forEach(it -> {
 			it.accept(this);
 			clauses.append(stack.pop());
 		});
@@ -1052,40 +1020,39 @@ public class Parser extends ASTVisitor {
 		// TODO: check isPackExpansion
 		ISourceLocation loc = getSourceLocation(initializer);
 		ISourceLocation decl = br.resolveBinding(initializer);
-		IASTName _memberInitializerId = initializer.getMemberInitializerId();
-		IASTInitializer _memberInitializer = initializer.getInitializer();
-		_memberInitializerId.accept(this);
+
+		initializer.getMemberInitializerId().accept(this);
 		IConstructor memberInitializerId = stack.pop();
-		_memberInitializer.accept(this);
+		initializer.getInitializer().accept(this);
 		IConstructor memberInitializer = stack.pop();
+
 		stack.push(builder.Expression_constructorChainInitializer(memberInitializerId, memberInitializer, loc, decl));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTConstructorInitializer initializer) {
 		ISourceLocation loc = getSourceLocation(initializer);
-		IASTInitializerClause[] _arguments = initializer.getArguments();
+
 		IListWriter arguments = vf.listWriter();
-		Stream.of(_arguments).forEach(it -> {
+		Stream.of(initializer.getArguments()).forEach(it -> {
 			it.accept(this);
 			arguments.append(stack.pop());
 		});
+
 		stack.push(builder.Expression_constructorInitializer(arguments.done(), loc));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTDesignatedInitializer initializer) {
 		ISourceLocation loc = getSourceLocation(initializer);
-		ICPPASTDesignator[] _designators = initializer.getDesignators();
-		ICPPASTInitializerClause _operand = initializer.getOperand();
 
 		IListWriter designators = vf.listWriter();
-		Stream.of(_designators).forEach(it -> {
+		Stream.of(initializer.getDesignators()).forEach(it -> {
 			it.accept(this);
 			designators.append(stack.pop());
 		});
-		_operand.accept(this);
 
+		initializer.getOperand().accept(this);
 		stack.push(builder.Expression_designatedInitializer(designators.done(), stack.pop(), loc));
 		return PROCESS_ABORT;
 	}
@@ -1126,28 +1093,23 @@ public class Parser extends ASTVisitor {
 			visit((ICPPASTDeclarator) declarator);
 		else {
 			// TODO: add attributes
-			IASTPointerOperator[] _pointerOperators = declarator.getPointerOperators();
-			IASTDeclarator _nestedDeclarator = declarator.getNestedDeclarator();
-			IASTName _name = declarator.getName();
-			IASTInitializer _initializer = declarator.getInitializer();
-
 			List<IConstructor> pointerOperators = new ArrayList<IConstructor>();
-			Stream.of(_pointerOperators).forEach(it -> {
+			Stream.of(declarator.getPointerOperators()).forEach(it -> {
 				it.accept(this);
 				pointerOperators.add(stack.pop());
 			});
 			IConstructor nestedDeclarator = null;
-			if (_nestedDeclarator != null) {
-				_nestedDeclarator.accept(this);
+			if (declarator.getNestedDeclarator() != null) {
+				declarator.getNestedDeclarator().accept(this);
 				nestedDeclarator = stack.pop();
 			}
-			_name.accept(this);
+			declarator.getName().accept(this);
 			IConstructor name = stack.pop();
 			IConstructor initializer = null;
-			if (_initializer == null) {
+			if (declarator.getInitializer() == null) {
 
 			} else {
-				_initializer.accept(this);
+				declarator.getInitializer().accept(this);
 				initializer = stack.pop();
 			}
 
@@ -1181,25 +1143,23 @@ public class Parser extends ASTVisitor {
 				&& ((ICPPASTArrayDeclarator) declarator).declaresParameterPack())
 			out("WARNING: IASTArrayDeclarator has declaresParameterPack=true");
 
-		IASTDeclarator _nestedDeclarator = declarator.getNestedDeclarator();
-		IASTInitializer _initializer = declarator.getInitializer();
-		if (_nestedDeclarator == null) {
-			if (_initializer == null)
+		if (declarator.getNestedDeclarator() == null) {
+			if (declarator.getInitializer() == null)
 				stack.push(builder.Declarator_arrayDeclarator(attributes, pointerOperators.done(), name,
 						arrayModifiers.done(), loc, decl));
 			else {
-				_initializer.accept(this);
+				declarator.getInitializer().accept(this);
 				stack.push(builder.Declarator_arrayDeclarator(attributes, pointerOperators.done(), name,
 						arrayModifiers.done(), stack.pop(), loc, decl));
 			}
 		} else {
-			_nestedDeclarator.accept(this);
+			declarator.getNestedDeclarator().accept(this);
 			IConstructor nestedDeclarator = stack.pop();
-			if (_initializer == null)
+			if (declarator.getInitializer() == null)
 				stack.push(builder.Declarator_arrayDeclaratorNested(attributes, pointerOperators.done(),
 						nestedDeclarator, arrayModifiers.done(), loc, decl));
 			else {
-				_initializer.accept(this);
+				declarator.getInitializer().accept(this);
 				stack.push(builder.Declarator_arrayDeclaratorNested(attributes, pointerOperators.done(),
 						nestedDeclarator, arrayModifiers.done(), stack.pop(), loc, decl));
 			}
@@ -1235,25 +1195,24 @@ public class Parser extends ASTVisitor {
 			ISourceLocation decl = br.resolveBinding(declarator);
 			IList attributes = getAttributes(declarator);
 
-			IASTName _name = declarator.getName();
-			IASTParameterDeclaration[] _parameters = declarator.getParameters();
 			if (declarator.takesVarArgs())
 				err("WARNING: IASTStandardFunctionDeclarator has takesVarArgs=true");
 
-			IASTPointerOperator[] _pointerOperators = declarator.getPointerOperators();
+			declarator.getName().accept(this);
+			IConstructor name = stack.pop();
+
 			IListWriter pointerOperators = vf.listWriter();
-			Stream.of(_pointerOperators).forEach(it -> {
+			Stream.of(declarator.getPointerOperators()).forEach(it -> {
 				it.accept(this);
 				pointerOperators.append(stack.pop());
 			});
 
-			_name.accept(this);
-			IConstructor name = stack.pop();
 			IListWriter parameters = vf.listWriter();
-			Stream.of(_parameters).forEach(it -> {
+			Stream.of(declarator.getParameters()).forEach(it -> {
 				it.accept(this);
 				parameters.append(stack.pop());
 			});
+
 			stack.push(builder.Declarator_functionDeclarator(attributes, pointerOperators.done(), name,
 					parameters.done(), loc, decl));
 		}
@@ -1284,27 +1243,26 @@ public class Parser extends ASTVisitor {
 			ISourceLocation loc = getSourceLocation(declarator);
 			ISourceLocation decl = br.resolveBinding(declarator);
 			IList attributes = getAttributes(declarator);
-			IASTPointerOperator[] _pointerOperators = declarator.getPointerOperators();
-			IASTDeclarator _nestedDeclarator = declarator.getNestedDeclarator();
-			IASTName _name = declarator.getName();
-			IASTInitializer _initializer = declarator.getInitializer();
+
+			// if (declarator.getNestedDeclarator() != null)
+			// err("WARNING: ICPPASTDeclarator has nestedDeclarator " +
+			// _nestedDeclarator.getRawSignature());
+
+			declarator.getName().accept(this);
+			IConstructor name = stack.pop();
 
 			IListWriter pointerOperators = vf.listWriter();
-			Stream.of(_pointerOperators).forEach(it -> {
+			Stream.of(declarator.getPointerOperators()).forEach(it -> {
 				it.accept(this);
 				pointerOperators.append(stack.pop());
 			});
-			if (_nestedDeclarator != null)
-				err("WARNING: ICPPASTDeclarator has nestedDeclarator " + _nestedDeclarator.getRawSignature());
-			_name.accept(this);
-			IConstructor name = stack.pop();
-			IConstructor initializer = null;
-			if (_initializer == null) {
+
+			IASTInitializer initializer = declarator.getInitializer();
+			if (initializer == null) {
 				stack.push(builder.Declarator_declarator(attributes, pointerOperators.done(), name, loc, decl));
 			} else {
-				_initializer.accept(this);
-				initializer = stack.pop();
-				stack.push(builder.Declarator_declarator(attributes, pointerOperators.done(), name, initializer, loc,
+				initializer.accept(this);
+				stack.push(builder.Declarator_declarator(attributes, pointerOperators.done(), name, stack.pop(), loc,
 						decl));
 			}
 		}
@@ -1329,20 +1287,19 @@ public class Parser extends ASTVisitor {
 
 		declarator.getBitFieldSize().accept(this);
 		IConstructor bitFieldSize = stack.pop();
-
-		IASTDeclarator _nestedDeclarator = declarator.getNestedDeclarator();
-		if (_nestedDeclarator != null)
-			err("WARNING: ICPPASTDeclarator has nestedDeclarator " + _nestedDeclarator.getRawSignature());
-
 		declarator.getName().accept(this);
 		IConstructor name = stack.pop();
 
-		IASTInitializer _initializer = declarator.getInitializer();
-		if (_initializer == null) {
+		IASTDeclarator nestedDeclarator = declarator.getNestedDeclarator();
+		if (nestedDeclarator != null)
+			err("WARNING: ICPPASTDeclarator has nestedDeclarator " + nestedDeclarator.getRawSignature());
+
+		IASTInitializer initializer = declarator.getInitializer();
+		if (initializer == null) {
 			stack.push(builder.Declarator_fieldDeclarator(attributes, pointerOperators.done(), name, bitFieldSize, loc,
 					decl));
 		} else {
-			_initializer.accept(this);
+			initializer.accept(this);
 			stack.push(builder.Declarator_fieldDeclarator(attributes, pointerOperators.done(), name, bitFieldSize,
 					stack.pop(), loc, decl));
 		}
@@ -1404,8 +1361,10 @@ public class Parser extends ASTVisitor {
 				stack.push(builder.Declarator_functionDeclaratorNested(attributes, pointerOperators.done(), modifiers,
 						nestedDeclarator, parameters.done(), virtSpecifiers.done(), stack.pop(), loc, decl));
 			}
-			if (!(_exceptionSpecification.equals(ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION)))
-				err("WARNING: ICPPASTFunctionDeclaration had nestedDeclarator and also exceptionSpecification");
+			// if
+			// (!(_exceptionSpecification.equals(ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION)))
+			// err("WARNING: ICPPASTFunctionDeclaration had nestedDeclarator and
+			// also exceptionSpecification");
 		} else if (_exceptionSpecification.equals(ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION)) {
 			if (_trailingReturnType == null)
 				stack.push(builder.Declarator_functionDeclarator(attributes, pointerOperators.done(), modifiers, name,
@@ -1484,13 +1443,12 @@ public class Parser extends ASTVisitor {
 		ISourceLocation decl = br.resolveBinding(declSpec);
 		IList modifiers = getModifiers(declSpec);
 
-		int key = declSpec.getKey();
 		IASTName _name = declSpec.getName();
-		IASTDeclaration[] _members = declSpec.getMembers();
 		_name.accept(this);
 		IConstructor name = stack.pop();
+
 		IListWriter members = vf.listWriter();
-		Stream.of(_members).forEach(it -> {
+		Stream.of(declSpec.getMembers()).forEach(it -> {
 			it.accept(this);
 			members.append(stack.pop());
 		});
@@ -1498,7 +1456,7 @@ public class Parser extends ASTVisitor {
 		if (true)
 			throw new RuntimeException("Unfinished");
 
-		switch (key) {
+		switch (declSpec.getKey()) {
 		case IASTCompositeTypeSpecifier.k_struct:
 			stack.push(builder.DeclSpecifier_struct(modifiers, name, members.done(), loc, decl));
 			break;
@@ -1506,7 +1464,7 @@ public class Parser extends ASTVisitor {
 			stack.push(builder.DeclSpecifier_union(modifiers, name, members.done(), loc, decl));
 			break;
 		default:
-			throw new RuntimeException("Unknown IASTCompositeTypeSpecifier code " + key + ". Exiting");
+			throw new RuntimeException("Unknown IASTCompositeTypeSpecifier code " + declSpec.getKey() + ". Exiting");
 		}
 
 		return PROCESS_ABORT;
@@ -1570,17 +1528,16 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTElaboratedTypeSpecifier declSpec) {
-		ISourceLocation loc = getSourceLocation(declSpec);
-		ISourceLocation decl = br.resolveBinding(declSpec);
 		if (declSpec instanceof ICASTElaboratedTypeSpecifier) {
 			out("ElaboratedTypeSpecifier: " + declSpec.getRawSignature());
 			throw new RuntimeException("NYI");
 		} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier) {
-			int kind = declSpec.getKind();
-			IASTName _name = declSpec.getName();
+			ISourceLocation loc = getSourceLocation(declSpec);
+			ISourceLocation decl = br.resolveBinding(declSpec);
 			IList modifiers = getModifiers(declSpec);
-			_name.accept(this);
-			switch (kind) {
+
+			declSpec.getName().accept(this);
+			switch (declSpec.getKind()) {
 			case ICPPASTElaboratedTypeSpecifier.k_enum:
 				stack.push(builder.DeclSpecifier_etsEnum(modifiers, stack.pop(), loc, decl));
 				break;
@@ -1594,7 +1551,8 @@ public class Parser extends ASTVisitor {
 				stack.push(builder.DeclSpecifier_etsClass(modifiers, stack.pop(), loc, decl));
 				break;
 			default:
-				throw new RuntimeException("IASTElaboratedTypeSpecifier encountered unknown kind " + kind);
+				throw new RuntimeException(
+						"IASTElaboratedTypeSpecifier encountered unknown kind " + declSpec.getKind());
 			}
 		}
 		return PROCESS_ABORT;
@@ -1662,6 +1620,7 @@ public class Parser extends ASTVisitor {
 
 		declSpec.getName().accept(this);
 		IConstructor name = stack.pop();
+
 		IListWriter enumerators = vf.listWriter();
 		Stream.of(declSpec.getEnumerators()).forEach(it -> {
 			it.accept(this);
@@ -1705,7 +1664,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICPPASTSimpleDeclSpecifier declSpec) {
 		ISourceLocation loc = getSourceLocation(declSpec);
-		IList attributes = getAttributes((ICPPASTSimpleDeclSpecifier) declSpec);
+		IList attributes = getAttributes(declSpec);
 		IList modifiers = getModifiers(declSpec);
 
 		switch (declSpec.getType()) {
@@ -1785,11 +1744,12 @@ public class Parser extends ASTVisitor {
 			throw new RuntimeException("NYI");
 		ISourceLocation loc = getSourceLocation(arrayModifier);
 		IList attributes = getAttributes(arrayModifier);
-		IASTExpression _constantExpression = arrayModifier.getConstantExpression();
-		if (_constantExpression == null)
+
+		IASTExpression constantExpression = arrayModifier.getConstantExpression();
+		if (constantExpression == null)
 			stack.push(builder.Expression_arrayModifier(attributes, loc));
 		else {
-			_constantExpression.accept(this);
+			constantExpression.accept(this);
 			stack.push(builder.Expression_arrayModifier(attributes, stack.pop(), loc));
 		}
 		return PROCESS_ABORT;
@@ -1931,16 +1891,13 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTArraySubscriptExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		IConstructor typ = tr.resolveType(expression);
-		ICPPASTExpression _arrayExpression = expression.getArrayExpression();
-		ICPPASTInitializerClause _argument = expression.getArgument();
 
-		_arrayExpression.accept(this);
+		expression.getArrayExpression().accept(this);
 		IConstructor arrayExpression = stack.pop();
-		_argument.accept(this);
+		expression.getArgument().accept(this);
 		IConstructor argument = stack.pop();
 
 		stack.push(builder.Expression_arraySubscriptExpression(arrayExpression, argument, loc, typ));
-
 		return PROCESS_ABORT;
 	}
 
@@ -1992,19 +1949,16 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(expression);
 		ISourceLocation decl = br.UNKNOWN;
 		CaptureDefault captureDefault = expression.getCaptureDefault();
-		ICPPASTCapture[] _captures = expression.getCaptures();
-		IASTImplicitName _closureTypeName = expression.getClosureTypeName();
-		ICPPASTFunctionDeclarator _declarator = expression.getDeclarator();
-		IASTImplicitName _functionCallOperatorName = expression.getFunctionCallOperatorName();
-		IASTCompoundStatement _body = expression.getBody();
 
 		IListWriter captures = vf.listWriter();
-		Stream.of(_captures).forEach(it -> {
+		Stream.of(expression.getCaptures()).forEach(it -> {
 			it.accept(this);
 			captures.append(stack.pop());
 		});
 
 		// TODO: check to remove closureType and functionCallOperatorName
+		IASTImplicitName _closureTypeName = expression.getClosureTypeName();
+		IASTImplicitName _functionCallOperatorName = expression.getFunctionCallOperatorName();
 		if (!_closureTypeName.getRawSignature().equals("["))
 			err("ICPPASTLambdaExpression has closureTypeName " + _closureTypeName.getRawSignature()
 					+ ", not implemented");
@@ -2013,13 +1967,14 @@ public class Parser extends ASTVisitor {
 					+ ", not implemented");
 
 		IConstructor declarator;
-		if (_declarator == null)
+		if (expression.getDeclarator() == null)
 			declarator = builder.Declarator_missingDeclarator(loc, decl);
 		else {
-			_declarator.accept(this);
+			expression.getDeclarator().accept(this);
 			declarator = stack.pop();
 		}
-		_body.accept(this);
+
+		expression.getBody().accept(this);
 		IConstructor body = stack.pop();
 
 		switch (captureDefault) {
@@ -2055,16 +2010,19 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICPPASTNewExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
-		if (expression.isNewTypeId())
-			err("WARNING: ICPPASTNewExpression has isNewTypeId=true");
+		IConstructor typ = tr.resolveType(expression);
+		// if (expression.isNewTypeId())
+		// err("WARNING: ICPPASTNewExpression \"" + expression.getRawSignature()
+		// + "\" has isNewTypeId=true");
+		// else
+		// err("WARNING: ICPPASTNewExpression \"" + expression.getRawSignature()
+		// + "\" has isNewTypeId=false");
 
-		IASTTypeId _typeId = expression.getTypeId();
-		IASTInitializer _initializer = expression.getInitializer();
-
-		_typeId.accept(this);
+		expression.getTypeId().accept(this);
 		IConstructor typeId = stack.pop();
 
 		IASTInitializerClause[] _placementArguments = expression.getPlacementArguments();
+		IASTInitializer _initializer = expression.getInitializer();
 		if (_placementArguments != null) {
 			IListWriter placementArguments = vf.listWriter();
 			Stream.of(_placementArguments).forEach(it -> {
@@ -2078,13 +2036,12 @@ public class Parser extends ASTVisitor {
 					stack.push(builder.Expression_newWithArgs(placementArguments.done(), typeId, loc, typ));
 			} else {
 				_initializer.accept(this);
-				IConstructor initializer = stack.pop();
 				if (expression.isGlobal())
-					stack.push(builder.Expression_globalNewWithArgs(placementArguments.done(), typeId, initializer, loc,
+					stack.push(builder.Expression_globalNewWithArgs(placementArguments.done(), typeId, stack.pop(), loc,
 							typ));
 				else
 					stack.push(
-							builder.Expression_newWithArgs(placementArguments.done(), typeId, initializer, loc, typ));
+							builder.Expression_newWithArgs(placementArguments.done(), typeId, stack.pop(), loc, typ));
 			}
 		} else if (_initializer == null) {
 			if (expression.isGlobal())
@@ -2093,11 +2050,10 @@ public class Parser extends ASTVisitor {
 				stack.push(builder.Expression_new(typeId, loc, typ));
 		} else {
 			_initializer.accept(this);
-			IConstructor initializer = stack.pop();
 			if (expression.isGlobal())
-				stack.push(builder.Expression_globalNew(typeId, initializer, loc, typ));
+				stack.push(builder.Expression_globalNew(typeId, stack.pop(), loc, typ));
 			else
-				stack.push(builder.Expression_new(typeId, initializer, loc, typ));
+				stack.push(builder.Expression_new(typeId, stack.pop(), loc, typ));
 		}
 		return PROCESS_ABORT;
 	}
@@ -2114,12 +2070,12 @@ public class Parser extends ASTVisitor {
 		// decl keyword parameter?
 		ISourceLocation loc = getSourceLocation(expression);
 		IConstructor typ = tr.resolveType(expression);
-		ICPPASTDeclSpecifier _declSpecifier = expression.getDeclSpecifier();
-		IASTInitializer _initializer = expression.getInitializer();
-		_declSpecifier.accept(this);
+
+		expression.getDeclSpecifier().accept(this);
 		IConstructor declSpecifier = stack.pop();
-		_initializer.accept(this);
+		expression.getInitializer().accept(this);
 		IConstructor initializer = stack.pop();
+
 		stack.push(builder.Expression_simpleTypeConstructor(declSpecifier, initializer, loc, typ));
 		return PROCESS_ABORT;
 	}
@@ -2145,15 +2101,13 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTBinaryExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		IConstructor typ = tr.resolveType(expression);
-		IASTExpression _lhs = expression.getOperand1();
-		_lhs.accept(this);
+
+		expression.getOperand1().accept(this);
 		IConstructor lhs = stack.pop();
-		int op = expression.getOperator();
-		IASTExpression _rhs = expression.getOperand2();
-		_rhs.accept(this);
+		expression.getOperand2().accept(this);
 		IConstructor rhs = stack.pop();
 
-		switch (op) {
+		switch (expression.getOperator()) {
 		case IASTBinaryExpression.op_multiply:
 			stack.push(builder.Expression_multiply(lhs, rhs, loc, typ));
 			break;
@@ -2257,7 +2211,7 @@ public class Parser extends ASTVisitor {
 			stack.push(builder.Expression_ellipses(lhs, rhs, loc, typ));
 			break;
 		default:
-			throw new RuntimeException("Operator " + op + " unknown, exiting");
+			throw new RuntimeException("Operator " + expression.getOperator() + " unknown, exiting");
 		}
 		return PROCESS_ABORT;
 	}
@@ -2271,15 +2225,13 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTCastExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		IConstructor typ = tr.resolveType(expression);
-		int operator = expression.getOperator();
-		IASTExpression _operand = expression.getOperand();
-		IASTTypeId typeId = expression.getTypeId();
-		_operand.accept(this);
+
+		expression.getOperand().accept(this);
 		IConstructor operand = stack.pop();
-		typeId.accept(this);
+		expression.getTypeId().accept(this);
 		IConstructor type = stack.pop();
 
-		switch (operator) {
+		switch (expression.getOperator()) {
 		case ICPPASTCastExpression.op_cast:
 			stack.push(builder.Expression_cast(type, operand, loc, typ));
 			break;
@@ -2296,7 +2248,7 @@ public class Parser extends ASTVisitor {
 			stack.push(builder.Expression_constCast(type, operand, loc, typ));
 			break;
 		default:
-			throw new RuntimeException("Unknown cast type " + operator);
+			throw new RuntimeException("Unknown cast type " + expression.getOperator());
 		}
 		return PROCESS_ABORT;
 	}
@@ -2304,19 +2256,15 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTConditionalExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		IConstructor typ = tr.resolveType(expression);
-		IASTExpression _condition = expression.getLogicalConditionExpression();
-		IASTExpression _positive = expression.getPositiveResultExpression();
-		IASTExpression _negative = expression.getNegativeResultExpression();
 
-		_condition.accept(this);
+		expression.getLogicalConditionExpression().accept(this);
 		IConstructor condition = stack.pop();
-		_positive.accept(this);
+		expression.getPositiveResultExpression().accept(this);
 		IConstructor positive = stack.pop();
-		_negative.accept(this);
+		expression.getNegativeResultExpression().accept(this);
 		IConstructor negative = stack.pop();
 
 		stack.push(builder.Expression_conditional(condition, positive, negative, loc, typ));
-
 		return PROCESS_ABORT;
 	}
 
@@ -2333,19 +2281,17 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTFieldReference expression) {
-		ISourceLocation loc = getSourceLocation(expression);
-		ISourceLocation decl = br.resolveBinding(expression);
-		IConstructor typ = tr.resolveType(expression);
 		if (expression instanceof ICPPASTFieldReference) {
-			// TODO: check isTemplate
-			ICPPASTFieldReference reference = (ICPPASTFieldReference) expression;
-			IASTExpression _fieldOwner = reference.getFieldOwner();
-			IASTName _fieldName = reference.getFieldName();
+			// TODO: implement isTemplate
+			ISourceLocation loc = getSourceLocation(expression);
+			ISourceLocation decl = br.resolveBinding(expression);
+			IConstructor typ = tr.resolveType(expression);
 
-			_fieldOwner.accept(this);
+			expression.getFieldOwner().accept(this);
 			IConstructor fieldOwner = stack.pop();
-			_fieldName.accept(this);
+			expression.getFieldName().accept(this);
 			IConstructor fieldName = stack.pop();
+
 			if (expression.isPointerDereference())
 				stack.push(builder.Expression_fieldReferencePointerDeref(fieldOwner, fieldName, loc, decl, typ));
 			else
@@ -2358,13 +2304,12 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTFunctionCallExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		IConstructor typ = tr.resolveType(expression);
-		IASTExpression _functionName = expression.getFunctionNameExpression();
-		IASTInitializerClause[] _arguments = expression.getArguments();
 
-		_functionName.accept(this);
+		expression.getFunctionNameExpression().accept(this);
 		IConstructor functionName = stack.pop();
+
 		IListWriter arguments = vf.listWriter();
-		Stream.of(_arguments).forEach(it -> {
+		Stream.of(expression.getArguments()).forEach(it -> {
 			it.accept(this);
 			arguments.append(stack.pop());
 		});
@@ -2384,9 +2329,9 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTLiteralExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		IConstructor typ = tr.resolveType(expression);
-		int kind = expression.getKind();
+
 		String value = new String(expression.getValue());
-		switch (kind) {
+		switch (expression.getKind()) {
 		case IASTLiteralExpression.lk_integer_constant:
 			stack.push(builder.Expression_integerConstant(value, loc, typ));
 			break;
@@ -2412,7 +2357,7 @@ public class Parser extends ASTVisitor {
 			stack.push(builder.Expression_nullptr(loc, typ));
 			break;
 		default:
-			throw new RuntimeException("Encountered unknown literal kind " + kind + ". Exiting");
+			throw new RuntimeException("Encountered unknown literal kind " + expression.getKind() + ". Exiting");
 		}
 		return PROCESS_ABORT;
 	}
@@ -2433,9 +2378,9 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTTypeIdExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		IConstructor typ = tr.resolveType(expression);
-		int operator = expression.getOperator();
+
 		expression.getTypeId().accept(this);
-		switch (operator) {
+		switch (expression.getOperator()) {
 		case IASTTypeIdExpression.op_sizeof:
 			stack.push(builder.Expression_sizeof(stack.pop(), loc, typ));
 			break;
@@ -2449,8 +2394,8 @@ public class Parser extends ASTVisitor {
 			stack.push(builder.Expression_sizeofParameterPack(stack.pop(), loc, typ));
 			break;
 		default:
-			throw new RuntimeException(
-					"ERROR: IASTTypeIdExpression called with unimplemented/unknown operator " + operator);
+			throw new RuntimeException("ERROR: IASTTypeIdExpression called with unimplemented/unknown operator "
+					+ expression.getOperator());
 		}
 		return PROCESS_ABORT;
 	}
@@ -2458,16 +2403,14 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTUnaryExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		IConstructor typ = tr.resolveType(expression);
-		int operator = expression.getOperator();
-		IASTExpression _operand = expression.getOperand();
 
 		IConstructor operand = null;
-		if (_operand != null) {
+		if (expression.getOperand() != null) {
 			expression.getOperand().accept(this);
 			operand = stack.pop();
 		}
 
-		switch (operator) {
+		switch (expression.getOperator()) {
 		case IASTUnaryExpression.op_prefixIncr:
 			stack.push(builder.Expression_prefixIncr(operand, loc, typ));
 			break;
@@ -2527,7 +2470,7 @@ public class Parser extends ASTVisitor {
 			stack.push(builder.Expression_labelReference(operand, loc, typ));
 			break;
 		default:
-			throw new RuntimeException("Unknown unary operator " + operator + ". Exiting");
+			throw new RuntimeException("Unknown unary operator " + expression.getOperator() + ". Exiting");
 		}
 
 		return PROCESS_ABORT;
@@ -2535,8 +2478,6 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(IASTStatement statement) {
-		// err("Statement: " + statement.getRawSignature() +
-		// ", " + statement.getClass().getName());
 		if (statement instanceof IASTAmbiguousStatement)
 			visit((IASTAmbiguousStatement) statement);
 		else if (statement instanceof IASTBreakStatement)
@@ -2557,15 +2498,15 @@ public class Parser extends ASTVisitor {
 			visit((IASTExpressionStatement) statement);
 		else if (statement instanceof IASTForStatement)
 			visit((IASTForStatement) statement);
-		else if (statement instanceof IASTGotoStatement)// TODO
+		else if (statement instanceof IASTGotoStatement)
 			visit((IASTGotoStatement) statement);
 		else if (statement instanceof IASTIfStatement)
 			visit((IASTIfStatement) statement);
-		else if (statement instanceof IASTLabelStatement)// TODO
+		else if (statement instanceof IASTLabelStatement)
 			visit((IASTLabelStatement) statement);
-		else if (statement instanceof IASTNullStatement)// TODO
+		else if (statement instanceof IASTNullStatement)
 			visit((IASTNullStatement) statement);
-		else if (statement instanceof IASTReturnStatement)// TODO
+		else if (statement instanceof IASTReturnStatement)
 			visit((IASTReturnStatement) statement);
 		else if (statement instanceof IASTSwitchStatement)
 			visit((IASTSwitchStatement) statement);
@@ -2577,10 +2518,9 @@ public class Parser extends ASTVisitor {
 			visit((ICPPASTRangeBasedForStatement) statement);
 		else if (statement instanceof ICPPASTTryBlockStatement)
 			visit((ICPPASTTryBlockStatement) statement);
-		else if (statement instanceof IGNUASTGotoStatement) // needed?
+		else if (statement instanceof IGNUASTGotoStatement)
 			visit((IGNUASTGotoStatement) statement);
 		else if (statement instanceof IASTProblemStatement)
-			// Should not happen, will hopefully extract some useful hints
 			visit((IASTProblemStatement) statement);
 		else {
 			throw new RuntimeException(
@@ -2598,16 +2538,14 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTCatchHandler statement) {
 		ISourceLocation loc = getSourceLocation(statement);
 		IList attributes = getAttributes(statement);
-		IASTStatement _catchBody = statement.getCatchBody();
-		IASTDeclaration _declaration = statement.getDeclaration();
 
-		_catchBody.accept(this);
+		statement.getCatchBody().accept(this);
 		IConstructor catchBody = stack.pop();
 
 		if (statement.isCatchAll())
 			stack.push(builder.Statement_catchAll(attributes, catchBody, loc));
 		else {
-			_declaration.accept(this);
+			statement.getDeclaration().accept(this);
 			stack.push(builder.Statement_catch(attributes, stack.pop(), catchBody, loc));
 		}
 		return PROCESS_ABORT;
@@ -2616,15 +2554,12 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTRangeBasedForStatement statement) {
 		ISourceLocation loc = getSourceLocation(statement);
 		IList attributes = getAttributes(statement);
-		IASTDeclaration _declaration = statement.getDeclaration();
-		IASTInitializerClause _initializerClause = statement.getInitializerClause();
-		IASTStatement _body = statement.getBody();
 
-		_declaration.accept(this);
+		statement.getDeclaration().accept(this);
 		IConstructor declaration = stack.pop();
-		_initializerClause.accept(this);
+		statement.getInitializerClause().accept(this);
 		IConstructor initializerClause = stack.pop();
-		_body.accept(this);
+		statement.getBody().accept(this);
 		IConstructor body = stack.pop();
 
 		stack.push(builder.Statement_rangeBasedFor(attributes, declaration, initializerClause, body, loc));
@@ -2634,27 +2569,27 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTTryBlockStatement statement) {
 		ISourceLocation loc = getSourceLocation(statement);
 		IList attributes = getAttributes(statement);
-		IASTStatement _tryBody = statement.getTryBody();
-		ICPPASTCatchHandler[] _catchHandlers = statement.getCatchHandlers();
-		_tryBody.accept(this);
+
+		statement.getTryBody().accept(this);
 		IConstructor tryBody = stack.pop();
+
 		IListWriter catchHandlers = vf.listWriter();
-		Stream.of(_catchHandlers).forEach(it -> {
+		Stream.of(statement.getCatchHandlers()).forEach(it -> {
 			it.accept(this);
 			catchHandlers.append(stack.pop());
 		});
+
 		stack.push(builder.Statement_tryBlock(attributes, tryBody, catchHandlers.done(), loc));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTAmbiguousStatement statement) {
-		out("visit(IASTAmbiguousStatement)");
-		out(statement.getRawSignature());
 		ISourceLocation loc = getSourceLocation(statement);
-		IASTStatement[] _statements = statement.getStatements();
+		out("visit(IASTAmbiguousStatement) " + loc);
+		out(statement.getRawSignature());
 		IListWriter statements = vf.listWriter();
 		prefix += 4;
-		Stream.of(_statements).forEach(it -> {
+		Stream.of(statement.getStatements()).forEach(it -> {
 			out("Statement " + it.getClass().getSimpleName() + ": " + it.getRawSignature());
 			it.accept(this);
 			statements.append(stack.pop());
@@ -2673,8 +2608,7 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTCaseStatement statement) {
 		ISourceLocation loc = getSourceLocation(statement);
 		IList attributes = getAttributes(statement);
-		IASTExpression _expression = statement.getExpression();
-		_expression.accept(this);
+		statement.getExpression().accept(this);
 		IConstructor expression = stack.pop();
 		stack.push(builder.Statement_case(attributes, expression, loc));
 		return PROCESS_ABORT;
@@ -2683,9 +2617,8 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTCompoundStatement statement) {
 		ISourceLocation loc = getSourceLocation(statement);
 		IList attributes = getAttributes(statement);
-		IASTStatement[] _statements = statement.getStatements();
 		IListWriter statements = vf.listWriter();
-		Stream.of(_statements).forEach(it -> {
+		Stream.of(statement.getStatements()).forEach(it -> {
 			it.accept(this);
 			statements.append(stack.pop());
 		});
@@ -2703,8 +2636,7 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTDeclarationStatement statement) {
 		ISourceLocation loc = getSourceLocation(statement);
 		IList attributes = getAttributes(statement);
-		IASTDeclaration _declaration = statement.getDeclaration();
-		_declaration.accept(this);
+		statement.getDeclaration().accept(this);
 		stack.push(builder.Statement_declarationStatement(attributes, stack.pop(), loc));
 		return PROCESS_ABORT;
 	}
@@ -2719,12 +2651,10 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTDoStatement statement) {
 		ISourceLocation loc = getSourceLocation(statement);
 		IList attributes = getAttributes(statement);
-		IASTStatement _body = statement.getBody();
-		IASTExpression _condition = statement.getCondition();
 
-		_body.accept(this);
+		statement.getBody().accept(this);
 		IConstructor body = stack.pop();
-		_condition.accept(this);
+		statement.getCondition().accept(this);
 		IConstructor condition = stack.pop();
 		stack.push(builder.Statement_do(attributes, body, condition, loc));
 
@@ -2734,8 +2664,7 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTExpressionStatement statement) {
 		ISourceLocation loc = getSourceLocation(statement);
 		IList attributes = getAttributes(statement);
-		IASTExpression _expression = statement.getExpression();
-		_expression.accept(this);
+		statement.getExpression().accept(this);
 		stack.push(builder.Statement_expressionStatement(attributes, stack.pop(), loc));
 		return PROCESS_ABORT;
 	}
@@ -2743,11 +2672,8 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTForStatement statement) {
 		ISourceLocation loc = getSourceLocation(statement);
 		IList attributes = getAttributes(statement);
-		IASTStatement _initializer = statement.getInitializerStatement();
-		IASTExpression _condition = statement.getConditionExpression();
-		IASTExpression _iteration = statement.getIterationExpression();
-		IASTStatement _body = statement.getBody();
 
+		IASTStatement _initializer = statement.getInitializerStatement();
 		IConstructor initializer;
 		if (_initializer == null)
 			initializer = builder.Expression_empty(loc);
@@ -2755,6 +2681,8 @@ public class Parser extends ASTVisitor {
 			_initializer.accept(this);
 			initializer = stack.pop();
 		}
+
+		IASTExpression _condition = statement.getConditionExpression();
 		IConstructor condition;
 		if (_condition == null)
 			condition = builder.Expression_empty(loc);
@@ -2762,6 +2690,8 @@ public class Parser extends ASTVisitor {
 			_condition.accept(this);
 			condition = stack.pop();
 		}
+
+		IASTExpression _iteration = statement.getIterationExpression();
 		IConstructor iteration;
 		if (_iteration == null)
 			iteration = builder.Expression_empty(loc);
@@ -2769,7 +2699,8 @@ public class Parser extends ASTVisitor {
 			_iteration.accept(this);
 			iteration = stack.pop();
 		}
-		_body.accept(this);
+
+		statement.getBody().accept(this);
 		IConstructor body = stack.pop();
 
 		if (statement instanceof ICPPASTForStatement) {
@@ -2788,8 +2719,7 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(statement);
 		ISourceLocation decl = br.resolveBinding(statement);
 		IList attributes = getAttributes(statement);
-		IASTName _name = statement.getName();
-		_name.accept(this);
+		statement.getName().accept(this);
 		stack.push(builder.Statement_goto(attributes, stack.pop(), loc, decl));
 		return PROCESS_ABORT;
 	}
@@ -2797,33 +2727,29 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTIfStatement statement) {
 		ISourceLocation loc = getSourceLocation(statement);
 		IList attributes = getAttributes(statement);
-		IASTExpression _condition = statement.getConditionExpression();
-		IASTStatement _thenClause = statement.getThenClause();
-		IASTStatement _elseClause = statement.getElseClause();
 
-		if (_condition == null && statement instanceof ICPPASTIfStatement) {
+		statement.getThenClause().accept(this);
+		IConstructor thenClause = stack.pop();
+
+		IConstructor elseClause = null;
+		if (statement.getElseClause() != null) {
+			statement.getElseClause().accept(this);
+			elseClause = stack.pop();
+		}
+
+		if (statement.getConditionExpression() == null && statement instanceof ICPPASTIfStatement) {
 			((ICPPASTIfStatement) statement).getConditionDeclaration().accept(this);
-			IConstructor condition = stack.pop();
-			_thenClause.accept(this);
-			IConstructor thenClause = stack.pop();
-			if (_elseClause == null) {
-				stack.push(builder.Statement_ifWithDecl(attributes, condition, thenClause, loc));
+			if (elseClause == null) {
+				stack.push(builder.Statement_ifWithDecl(attributes, stack.pop(), thenClause, loc));
 			} else {
-				_elseClause.accept(this);
-				IConstructor elseClause = stack.pop();
-				stack.push(builder.Statement_ifWithDecl(attributes, condition, thenClause, elseClause, loc));
+				stack.push(builder.Statement_ifWithDecl(attributes, stack.pop(), thenClause, elseClause, loc));
 			}
 		} else {
-			_condition.accept(this);
-			IConstructor condition = stack.pop();
-			_thenClause.accept(this);
-			IConstructor thenClause = stack.pop();
-			if (_elseClause == null) {
-				stack.push(builder.Statement_if(attributes, condition, thenClause, loc));
+			statement.getConditionExpression().accept(this);
+			if (elseClause == null) {
+				stack.push(builder.Statement_if(attributes, stack.pop(), thenClause, loc));
 			} else {
-				_elseClause.accept(this);
-				IConstructor elseClause = stack.pop();
-				stack.push(builder.Statement_if(attributes, condition, thenClause, elseClause, loc));
+				stack.push(builder.Statement_if(attributes, stack.pop(), thenClause, elseClause, loc));
 			}
 		}
 		return PROCESS_ABORT;
@@ -2833,12 +2759,10 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(statement);
 		ISourceLocation decl = br.resolveBinding(statement);
 		IList attributes = getAttributes(statement);
-		IASTName _name = statement.getName();
-		IASTStatement _nestedStatement = statement.getNestedStatement();
 
-		_name.accept(this);
+		statement.getName().accept(this);
 		IConstructor name = stack.pop();
-		_nestedStatement.accept(this);
+		statement.getNestedStatement().accept(this);
 		IConstructor nestedStatement = stack.pop();
 
 		stack.push(builder.Statement_label(attributes, name, nestedStatement, loc, decl));
@@ -2930,14 +2854,11 @@ public class Parser extends ASTVisitor {
 						+ ((IASTProblemTypeId) typeId).getProblem().getMessageWithLocation());
 			}
 		} else {
-			IASTDeclSpecifier _declSpecifier = typeId.getDeclSpecifier();
-			IASTDeclarator _abstractDeclarator = typeId.getAbstractDeclarator();
-
-			_declSpecifier.accept(this);
+			typeId.getDeclSpecifier().accept(this);
 			IConstructor declSpecifier = stack.pop();
-			_abstractDeclarator.accept(this);
+			typeId.getAbstractDeclarator().accept(this);
 			IConstructor abstractDeclarator = stack.pop();
-			if (abstractDeclarator.has("name")) {
+			if (abstractDeclarator.has("name")) {// TODO: properly fix
 				abstractDeclarator = abstractDeclarator.set("name", builder.Expression_abstractEmptyName(loc));
 				abstractDeclarator = abstractDeclarator.asWithKeywordParameters().unsetParameter("decl");
 			}
@@ -2954,11 +2875,11 @@ public class Parser extends ASTVisitor {
 		enumerator.getName().accept(this);
 		IConstructor name = stack.pop();
 
-		IASTExpression _value = enumerator.getValue();
-		if (_value == null)
+		IASTExpression value = enumerator.getValue();
+		if (value == null)
 			stack.push(builder.Declaration_enumerator(name, loc, decl));
 		else {
-			_value.accept(this);
+			value.accept(this);
 			stack.push(builder.Declaration_enumerator(name, stack.pop(), loc, decl));
 		}
 		return PROCESS_ABORT;
@@ -2995,11 +2916,11 @@ public class Parser extends ASTVisitor {
 		if (baseSpecifier.isVirtual())
 			modifiers.append(builder.Modifier_virtual(loc));
 
-		ICPPASTNameSpecifier _nameSpecifier = baseSpecifier.getNameSpecifier();
-		if (_nameSpecifier == null)
+		ICPPASTNameSpecifier nameSpecifier = baseSpecifier.getNameSpecifier();
+		if (nameSpecifier == null)
 			stack.push(builder.Declaration_baseSpecifier(modifiers.done(), loc, decl));
 		else {
-			_nameSpecifier.accept(this);
+			nameSpecifier.accept(this);
 			stack.push(builder.Declaration_baseSpecifier(modifiers.done(), stack.pop(), loc, decl));
 		}
 		return PROCESS_ABORT;
@@ -3010,16 +2931,16 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(namespaceDefinition);
 		ISourceLocation decl = br.resolveBinding(namespaceDefinition);
 		IList attributes = getAttributes(namespaceDefinition);
-		IASTName _name = namespaceDefinition.getName();
-		IASTDeclaration[] _declarations = namespaceDefinition.getDeclarations();
 
-		_name.accept(this);
+		namespaceDefinition.getName().accept(this);
 		IConstructor name = stack.pop();
+
 		IListWriter declarations = vf.listWriter();
-		Stream.of(_declarations).forEach(it -> {
+		Stream.of(namespaceDefinition.getDeclarations()).forEach(it -> {
 			it.accept(this);
 			declarations.append(stack.pop());
 		});
+
 		if (namespaceDefinition.isInline())
 			stack.push(builder.Declaration_namespaceDefinitionInline(attributes, name, declarations.done(), loc, decl));
 		else
@@ -3035,19 +2956,19 @@ public class Parser extends ASTVisitor {
 			err("WARNING: ICPPASTTemplateParameter has isParameterPack=true, unimplemented");
 		if (templateParameter instanceof ICPPASTParameterDeclaration) {
 			// TODO: duplicate, never reached, remove
-			IASTDeclSpecifier _declSpecifier = ((ICPPASTParameterDeclaration) templateParameter).getDeclSpecifier();
-			ICPPASTDeclarator _declarator = ((ICPPASTParameterDeclaration) templateParameter).getDeclarator();
-			_declSpecifier.accept(this);
+			((ICPPASTParameterDeclaration) templateParameter).getDeclSpecifier().accept(this);
 			IConstructor declSpecifier = stack.pop();
-			if (_declarator == null)
+			ICPPASTDeclarator declarator = ((ICPPASTParameterDeclaration) templateParameter).getDeclarator();
+			if (declarator == null)
 				stack.push(builder.Declaration_parameter(declSpecifier, loc));
 			else {
-				_declarator.accept(this);
-				IConstructor declarator = stack.pop();
-				stack.push(builder.Declaration_parameter(declSpecifier, declarator, loc));
+				declarator.accept(this);
+				stack.push(builder.Declaration_parameter(declSpecifier, stack.pop(), loc));
 			}
 		} else if (templateParameter instanceof ICPPASTSimpleTypeTemplateParameter) {
 			ISourceLocation decl = br.resolveBinding((ICPPASTSimpleTypeTemplateParameter) templateParameter);
+			IConstructor typ = tr.resolveType(templateParameter);
+
 			ICPPASTSimpleTypeTemplateParameter parameter = (ICPPASTSimpleTypeTemplateParameter) templateParameter;
 			parameter.getName().accept(this);
 			IConstructor name = stack.pop();
@@ -3066,7 +2987,6 @@ public class Parser extends ASTVisitor {
 							+ parameter.getParameterType());
 				}
 			} else {
-
 				switch (parameter.getParameterType()) {
 				case ICPPASTSimpleTypeTemplateParameter.st_class:
 					stack.push(builder.Declaration_sttClass(name, loc, decl));
@@ -3081,13 +3001,12 @@ public class Parser extends ASTVisitor {
 			}
 		} else if (templateParameter instanceof ICPPASTTemplatedTypeTemplateParameter) {
 			ISourceLocation decl = br.resolveBinding((ICPPASTTemplatedTypeTemplateParameter) templateParameter);
-			ICPPASTTemplateParameter[] _templateParameters = ((ICPPASTTemplatedTypeTemplateParameter) templateParameter)
-					.getTemplateParameters();
 			IListWriter templateParameters = vf.listWriter();
-			Stream.of(_templateParameters).forEach(it -> {
-				it.accept(this);
-				templateParameters.append(stack.pop());
-			});
+			Stream.of(((ICPPASTTemplatedTypeTemplateParameter) templateParameter).getTemplateParameters())
+					.forEach(it -> {
+						it.accept(this);
+						templateParameters.append(stack.pop());
+					});
 			((ICPPASTTemplatedTypeTemplateParameter) templateParameter).getName().accept(this);
 			stack.push(builder.Declaration_tttParameter(templateParameters.done(), stack.pop(), loc, decl));
 			if (((ICPPASTTemplatedTypeTemplateParameter) templateParameter).getDefaultValue() != null)
@@ -3131,11 +3050,9 @@ public class Parser extends ASTVisitor {
 			((ICPPASTFieldDesignator) designator).getName().accept(this);
 			stack.push(builder.Expression_fieldDesignator(stack.pop(), loc));
 		} else if (designator instanceof IGPPASTArrayRangeDesignator) {
-			ICPPASTExpression _rangeFloor = ((IGPPASTArrayRangeDesignator) designator).getRangeFloor();
-			ICPPASTExpression _rangeCeiling = ((IGPPASTArrayRangeDesignator) designator).getRangeCeiling();
-			_rangeFloor.accept(this);
+			((IGPPASTArrayRangeDesignator) designator).getRangeFloor().accept(this);
 			IConstructor rangeFloor = stack.pop();
-			_rangeCeiling.accept(this);
+			((IGPPASTArrayRangeDesignator) designator).getRangeCeiling().accept(this);
 			IConstructor rangeCeiling = stack.pop();
 			stack.push(builder.Expression_arrayRangeDesignator(rangeFloor, rangeCeiling, loc));
 		} else
@@ -3146,8 +3063,7 @@ public class Parser extends ASTVisitor {
 	@Override
 	public int visit(ICPPASTVirtSpecifier virtSpecifier) {
 		ISourceLocation loc = getSourceLocation(virtSpecifier);
-		SpecifierKind kind = virtSpecifier.getKind();
-		switch (kind) {
+		switch (virtSpecifier.getKind()) {
 		case Final:
 			stack.push(builder.Declaration_virtSpecifier(builder.Modifier_final(loc), loc));
 			break;
@@ -3155,7 +3071,8 @@ public class Parser extends ASTVisitor {
 			stack.push(builder.Declaration_virtSpecifier(builder.Modifier_override(loc), loc));
 			break;
 		default:
-			throw new RuntimeException("ICPPASTVirtSpecifier encountered unknown SpecifierKind " + kind.name());
+			throw new RuntimeException(
+					"ICPPASTVirtSpecifier encountered unknown SpecifierKind " + virtSpecifier.getKind().name());
 		}
 		return PROCESS_ABORT;
 	}
