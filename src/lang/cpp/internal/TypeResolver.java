@@ -245,22 +245,20 @@ public class TypeResolver {
 			// fields.append(resolveType(it.getType(), src)));
 			return builder.TypeSymbol_struct(fields.done());
 		case ICPPClassType.k_union:
-			out("ICPPClassTemplate union");
-			break;
+			return builder.TypeSymbol_union(getDecl(type));
 		case ICPPClassType.k_class:
 			return builder.TypeSymbol_class(getDecl(type));
 		default:
 			throw new RuntimeException("Unknown ICompositeType key " + type.getKey());
 		}
-		throw new RuntimeException("NYI: resolveICPPClassType " + type.getClass().getSimpleName());
 	}
 
 	private IConstructor resolveICPPClassSpecialization(ICPPClassSpecialization type) {
 		ISourceLocation decl = getDecl(type.getSpecializedBinding());
-		IMapWriter templateParameters = vf.mapWriter();
+		IListWriter templateParameters = vf.listWriter();
 		ICPPTemplateParameterMap parameterMap = type.getTemplateParameterMap();
-		Stream.of(parameterMap.getAllParameterPositions()).forEach(
-				it -> templateParameters.put(vf.integer(it), resolveType(parameterMap.getArgument(it).getTypeValue())));
+		Stream.of(parameterMap.getAllParameterPositions())
+				.forEach(it -> templateParameters.append(resolveType(parameterMap.getArgument(it).getTypeValue())));
 		return builder.TypeSymbol_classSpecialization(decl, templateParameters.done());
 	}
 
@@ -318,7 +316,30 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveICPPTypeSpecialization(ICPPTypeSpecialization type) {
-		throw new RuntimeException("NYI: resolveICPPTypeSpecialization");
+		if (type instanceof ICPPClassSpecialization)
+			return resolveICPPClassSpecialization((ICPPClassSpecialization) type);
+		if (type instanceof ICPPEnumerationSpecialization)
+			return resolveICPPEnumerationSpecialization((ICPPEnumerationSpecialization) type);
+		throw new RuntimeException("resolveICPPTypeSpecialization encountered unknown subtype");
+	}
+
+	private IConstructor resolveICPPEnumerationSpecialization(ICPPEnumerationSpecialization type) {
+		ISourceLocation specializedBinding = getDecl(type.getSpecializedBinding());
+		ICPPTemplateParameterMap templateParameterMap = type.getTemplateParameterMap();
+		IListWriter templateArguments = vf.listWriter();
+		Stream.of(templateParameterMap.getAllParameterPositions()).forEach(it -> {
+			ICPPTemplateArgument arg = templateParameterMap.getArgument(it);
+			if (arg.isNonTypeValue())
+				throw new RuntimeException("Bla");
+			IType typeValue = arg.getTypeValue();
+			err("TemplateArgument " + typeValue.getClass().getSimpleName());
+			err("typeValue " + type);
+
+			// templateArguments
+			// .append(builder.TypeSymbol_templateArgument(it,
+			// getDecl(templateParameterMap.getArgument(it))));
+		});
+		return builder.TypeSymbol_enumerationSpecialization(specializedBinding, templateArguments.done());
 	}
 
 	private IConstructor resolveICPPUnaryTypeTransformation(ICPPUnaryTypeTransformation type) {

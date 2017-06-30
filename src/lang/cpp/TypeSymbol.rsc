@@ -28,6 +28,7 @@ public data TypeSymbol
   | \array(TypeSymbol baseType, int size)
   | \basicType(list[TypeModifier] modifiers, TypeSymbol baseType)
   | \class(loc decl)
+  | \union(loc decl)
   | \struct(list[TypeSymbol] fields)
   | \qualifierType(list[TypeModifier] modifiers, TypeSymbol \type)
   | \pointerType(list[TypeModifier] modifiers, TypeSymbol \type)
@@ -38,12 +39,12 @@ public data TypeSymbol
   | \referenceType(TypeSymbol \type)
   | \parameterPackType(TypeSymbol \type)
   
-  | \classSpecialization(loc decl, map[int,TypeSymbol] templateParameters)
+  | \classSpecialization(loc decl, list[TypeSymbol] templateArguments)
+  | \enumerationSpecialization(loc specializedBinding, list[TypeSymbol] templateArguments)
   
   | \templateTypeParameter(str ownerName, str name)
   | \deferredClassInstance(str name)
   | \unknownMemberClass(TypeSymbol owner, str name)
-  
   
   | \typeOfDependentExpression(loc src)
   | \problemBinding()
