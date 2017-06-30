@@ -685,8 +685,28 @@ public class AST {
     = tf.constructor(typestore,_Attribute,"attribute",tf.stringType(),"name",tf.stringType(),"argumentClause");
   
   
+  private static final Type _TypeModifier_unsigned_0 
+    = tf.constructor(typestore,_TypeModifier,"unsigned");
+  private static final Type _TypeModifier_complex_0 
+    = tf.constructor(typestore,_TypeModifier,"complex");
+  private static final Type _TypeModifier_imaginary_0 
+    = tf.constructor(typestore,_TypeModifier,"imaginary");
+  private static final Type _TypeModifier_longlong_0 
+    = tf.constructor(typestore,_TypeModifier,"longlong");
+  private static final Type _TypeModifier_const_0 
+    = tf.constructor(typestore,_TypeModifier,"const");
   private static final Type _TypeModifier_static_0 
     = tf.constructor(typestore,_TypeModifier,"static");
+  private static final Type _TypeModifier_short_0 
+    = tf.constructor(typestore,_TypeModifier,"short");
+  private static final Type _TypeModifier_volatile_0 
+    = tf.constructor(typestore,_TypeModifier,"volatile");
+  private static final Type _TypeModifier_long_0 
+    = tf.constructor(typestore,_TypeModifier,"long");
+  private static final Type _TypeModifier_restrict_0 
+    = tf.constructor(typestore,_TypeModifier,"restrict");
+  private static final Type _TypeModifier_signed_0 
+    = tf.constructor(typestore,_TypeModifier,"signed");
   
    
   
@@ -5665,13 +5685,103 @@ public class AST {
   }
     
   
-  public IConstructor TypeModifier_static(ISourceLocation $loc) {
+  public IConstructor TypeModifier_unsigned() {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeModifier_unsigned_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeModifier_complex() {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeModifier_complex_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeModifier_imaginary() {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeModifier_imaginary_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeModifier_longlong() {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeModifier_longlong_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeModifier_const() {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeModifier_const_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeModifier_static() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     
     
     return vf.constructor(_TypeModifier_static_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeModifier_short() {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeModifier_short_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeModifier_volatile() {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeModifier_volatile_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeModifier_long() {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeModifier_long_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeModifier_restrict() {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeModifier_restrict_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeModifier_signed() {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeModifier_signed_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
    
   

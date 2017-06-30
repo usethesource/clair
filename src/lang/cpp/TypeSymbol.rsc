@@ -54,6 +54,17 @@ public data TypeSymbol
   ;
   
 public data TypeModifier
-  = \static()
+  = \signed()
+  | \unsigned()
+  | \short()
+  | \long()
+  | \longlong()
+  | \complex()
+  | \imaginary()
+  
+  | \static()
+  | \const()
+  | \volatile()
+  | \restrict()
   
   ;

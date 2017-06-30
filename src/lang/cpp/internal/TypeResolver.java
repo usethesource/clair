@@ -165,19 +165,19 @@ public class TypeResolver {
 	private IConstructor resolveICPPBasicType(ICPPBasicType type) {
 		IListWriter modifiers = vf.listWriter();
 		if (type.isSigned())
-			;// modifiers.append((builder.TypeModifier_static());)
+			modifiers.append(builder.TypeModifier_signed());
 		if (type.isUnsigned())
-			;// modifiers.append((builder.TypeModifier_static());)
+			modifiers.append(builder.TypeModifier_unsigned());
 		if (type.isShort())
-			;// modifiers.append((builder.TypeModifier_static());)
+			modifiers.append(builder.TypeModifier_short());
 		if (type.isLong())
-			;// modifiers.append((builder.TypeModifier_static());)
+			modifiers.append(builder.TypeModifier_long());
 		if (type.isLongLong())
-			;// modifiers.append((builder.TypeModifier_static());)
+			modifiers.append(builder.TypeModifier_longlong());
 		if (type.isComplex())
-			;// modifiers.append((builder.TypeModifier_static());)
+			modifiers.append(builder.TypeModifier_complex());
 		if (type.isImaginary())
-			;// modifiers.append((builder.TypeModifier_static());)
+			modifiers.append(builder.TypeModifier_imaginary());
 
 		builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_unspecified());
 		switch (type.getKind()) {
@@ -356,11 +356,11 @@ public class TypeResolver {
 	private IConstructor resolveIPointerType(IPointerType type) {
 		IListWriter modifiers = vf.listWriter();
 		if (type.isConst())
-			;// modifiers.append((builder.TypeModifier_static());)
+			modifiers.append(builder.TypeModifier_const());
 		if (type.isVolatile())
-			;// modifiers.append((builder.TypeModifier_static());)
+			modifiers.append(builder.TypeModifier_volatile());
 		if (type.isRestrict())
-			;// modifiers.append((builder.TypeModifier_static());)
+			modifiers.append(builder.TypeModifier_restrict());
 		return builder.TypeSymbol_pointerType(modifiers.done(), resolveType(type.getType()));
 	}
 
@@ -380,9 +380,9 @@ public class TypeResolver {
 		IConstructor baseType = resolveType(type.getType());
 		IListWriter modifiers = vf.listWriter();
 		if (type.isConst())
-			;// modifiers.append((builder.TM);)
+			modifiers.append(builder.TypeModifier_const());
 		if (type.isVolatile())
-			;// modifiers.append((builder.TypeModifier_static());)
+			modifiers.append(builder.TypeModifier_volatile());
 		return builder.TypeSymbol_qualifierType(modifiers.done(), baseType);
 	}
 
