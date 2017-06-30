@@ -27,8 +27,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumerationSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
@@ -47,7 +49,6 @@ import org.rascalmpl.uri.URIUtil;
 
 import io.usethesource.vallang.IConstructor;
 import io.usethesource.vallang.IListWriter;
-import io.usethesource.vallang.IMapWriter;
 import io.usethesource.vallang.ISourceLocation;
 import io.usethesource.vallang.IValueFactory;
 
@@ -90,8 +91,17 @@ public class TypeResolver {
 		}
 	}
 
+	private ISourceLocation getOwner(IBinding binding) {
+		try {
+			return br.resolveOwner(binding);
+		} catch (URISyntaxException e) {
+			err("Warning: could not resolve " + binding);
+			return br.makeBinding("ownerUnknown", null, null);
+		}
+	}
+
 	public IConstructor resolveType(IASTNode node) {
-		if (node instanceof IASTExpression && false)
+		if (node instanceof IASTExpression)
 			return resolveIASTExpression((IASTExpression) node);
 		return builder.TypeSymbol_any();
 	}
@@ -240,7 +250,7 @@ public class TypeResolver {
 		switch (type.getKey()) {
 		case ICPPClassType.k_struct:
 			IListWriter fields = vf.listWriter();
-			Stream.of(type.getFields()).forEach(it -> out("\tField: " + it));
+			// Stream.of(type.getFields()).forEach(it -> out("\tField: " + it));
 			// Stream.of(type.getFields()).forEach(it ->
 			// fields.append(resolveType(it.getType(), src)));
 			return builder.TypeSymbol_struct(fields.done());
@@ -310,7 +320,7 @@ public class TypeResolver {
 
 	private IConstructor resolveICPPTemplateTypeParameter(ICPPTemplateTypeParameter type) {
 		if (type instanceof CPPTemplateTypeParameter)// FIXME
-			return builder.TypeSymbol_templateTypeParameter(type.getOwner().getName(), type.getName());
+			return builder.TypeSymbol_templateTypeParameter(getOwner(type).toString(), type.getName());
 		throw new RuntimeException(
 				"NYI: resolveICPPTemplateTypeParameter " + type.getClass().getSimpleName() + ": " + type);
 	}

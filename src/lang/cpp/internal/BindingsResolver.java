@@ -120,7 +120,7 @@ public class BindingsResolver {
 		// spaces()));
 	}
 
-	private ISourceLocation resolveOwner(IBinding binding) throws URISyntaxException {
+	ISourceLocation resolveOwner(IBinding binding) throws URISyntaxException {
 		if (binding == null)
 			return URIUtil.rootLocation("cpp");
 		IBinding owner = binding.getOwner();
