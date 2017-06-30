@@ -267,8 +267,13 @@ public class TypeResolver {
 		ISourceLocation decl = getDecl(type.getSpecializedBinding());
 		IListWriter templateParameters = vf.listWriter();
 		ICPPTemplateParameterMap parameterMap = type.getTemplateParameterMap();
-		Stream.of(parameterMap.getAllParameterPositions())
-				.forEach(it -> templateParameters.append(resolveType(parameterMap.getArgument(it).getTypeValue())));
+		Stream.of(parameterMap.getAllParameterPositions()).forEach(it -> {
+			ICPPTemplateArgument arg = parameterMap.getArgument(it);
+			if (arg.isTypeValue())
+				templateParameters.append(resolveType(arg.getTypeValue()));
+			else
+				templateParameters.append(resolveType(arg.getNonTypeEvaluation().getType(null)));
+		});
 		return builder.TypeSymbol_classSpecialization(decl, templateParameters.done());
 	}
 
@@ -278,10 +283,10 @@ public class TypeResolver {
 		Stream.of(_bases).forEach(it -> baseClassTypes.append(resolveType(it.getBaseClassType())));
 		switch (type.getKey()) {
 		case ICPPClassTemplate.k_struct:
-			out("ICPPClassTemplate struct");
+			// out("ICPPClassTemplate struct");
 			break;
 		case ICPPClassTemplate.k_union:
-			out("ICPPClassTemplate union");
+			// out("ICPPClassTemplate union");
 			break;
 		case ICPPClassTemplate.k_class:
 			ICPPClassTemplatePartialSpecialization[] specs = type.getPartialSpecializations();
@@ -342,8 +347,8 @@ public class TypeResolver {
 			if (arg.isNonTypeValue())
 				throw new RuntimeException("Bla");
 			IType typeValue = arg.getTypeValue();
-			err("TemplateArgument " + typeValue.getClass().getSimpleName());
-			err("typeValue " + type);
+			// err("TemplateArgument " + typeValue.getClass().getSimpleName());
+			// err("typeValue " + type);
 
 			// templateArguments
 			// .append(builder.TypeSymbol_templateArgument(it,
@@ -399,14 +404,16 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveIProblemBinding(IProblemBinding type) {
-		err("Encountered IProblemBinding " + type.getClass().getSimpleName() + ": ");
-		err("\t" + type.getID() + ": " + type.getMessage());
+		// err("Encountered IProblemBinding " + type.getClass().getSimpleName()
+		// + ": ");
+		// err("\t" + type.getID() + ": " + type.getMessage());
 		return builder.TypeSymbol_problemBinding();
 	}
 
 	private IConstructor resolveIProblemType(IProblemType type) {
-		err("Encountered IProblemType " + type.getClass().getSimpleName() + ": ");
-		err("\t" + type.getID() + ": " + type.getMessage());
+		// err("Encountered IProblemType " + type.getClass().getSimpleName() +
+		// ": ");
+		// err("\t" + type.getID() + ": " + type.getMessage());
 		return builder.TypeSymbol_problemType();
 	}
 
