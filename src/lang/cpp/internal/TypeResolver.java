@@ -267,8 +267,13 @@ public class TypeResolver {
 		ISourceLocation decl = getDecl(type.getSpecializedBinding());
 		IListWriter templateParameters = vf.listWriter();
 		ICPPTemplateParameterMap parameterMap = type.getTemplateParameterMap();
-		Stream.of(parameterMap.getAllParameterPositions())
-				.forEach(it -> templateParameters.append(resolveType(parameterMap.getArgument(it).getTypeValue())));
+		Stream.of(parameterMap.getAllParameterPositions()).forEach(it -> {
+			ICPPTemplateArgument arg = parameterMap.getArgument(it);
+			if (arg.isTypeValue())
+				templateParameters.append(resolveType(arg.getTypeValue()));
+			else
+				templateParameters.append(resolveType(arg.getNonTypeEvaluation().getType(null)));
+		});
 		return builder.TypeSymbol_classSpecialization(decl, templateParameters.done());
 	}
 
