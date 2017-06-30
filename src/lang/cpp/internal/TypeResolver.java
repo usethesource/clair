@@ -27,8 +27,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumerationSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
@@ -47,7 +49,6 @@ import org.rascalmpl.uri.URIUtil;
 
 import io.usethesource.vallang.IConstructor;
 import io.usethesource.vallang.IListWriter;
-import io.usethesource.vallang.IMapWriter;
 import io.usethesource.vallang.ISourceLocation;
 import io.usethesource.vallang.IValueFactory;
 
@@ -90,8 +91,17 @@ public class TypeResolver {
 		}
 	}
 
+	private ISourceLocation getOwner(IBinding binding) {
+		try {
+			return br.resolveOwner(binding);
+		} catch (URISyntaxException e) {
+			err("Warning: could not resolve " + binding);
+			return br.makeBinding("ownerUnknown", null, null);
+		}
+	}
+
 	public IConstructor resolveType(IASTNode node) {
-		if (node instanceof IASTExpression && false)
+		if (node instanceof IASTExpression)
 			return resolveIASTExpression((IASTExpression) node);
 		return builder.TypeSymbol_any();
 	}
@@ -165,19 +175,19 @@ public class TypeResolver {
 	private IConstructor resolveICPPBasicType(ICPPBasicType type) {
 		IListWriter modifiers = vf.listWriter();
 		if (type.isSigned())
-			;// modifiers.append((builder.TypeModifier_static());)
+			modifiers.append(builder.TypeModifier_signed());
 		if (type.isUnsigned())
-			;// modifiers.append((builder.TypeModifier_static());)
+			modifiers.append(builder.TypeModifier_unsigned());
 		if (type.isShort())
-			;// modifiers.append((builder.TypeModifier_static());)
+			modifiers.append(builder.TypeModifier_short());
 		if (type.isLong())
-			;// modifiers.append((builder.TypeModifier_static());)
+			modifiers.append(builder.TypeModifier_long());
 		if (type.isLongLong())
-			;// modifiers.append((builder.TypeModifier_static());)
+			modifiers.append(builder.TypeModifier_longlong());
 		if (type.isComplex())
-			;// modifiers.append((builder.TypeModifier_static());)
+			modifiers.append(builder.TypeModifier_complex());
 		if (type.isImaginary())
-			;// modifiers.append((builder.TypeModifier_static());)
+			modifiers.append(builder.TypeModifier_imaginary());
 
 		builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_unspecified());
 		switch (type.getKind()) {
@@ -240,27 +250,25 @@ public class TypeResolver {
 		switch (type.getKey()) {
 		case ICPPClassType.k_struct:
 			IListWriter fields = vf.listWriter();
-			Stream.of(type.getFields()).forEach(it -> out("\tField: " + it));
+			// Stream.of(type.getFields()).forEach(it -> out("\tField: " + it));
 			// Stream.of(type.getFields()).forEach(it ->
 			// fields.append(resolveType(it.getType(), src)));
 			return builder.TypeSymbol_struct(fields.done());
 		case ICPPClassType.k_union:
-			out("ICPPClassTemplate union");
-			break;
+			return builder.TypeSymbol_union(getDecl(type));
 		case ICPPClassType.k_class:
 			return builder.TypeSymbol_class(getDecl(type));
 		default:
 			throw new RuntimeException("Unknown ICompositeType key " + type.getKey());
 		}
-		throw new RuntimeException("NYI: resolveICPPClassType " + type.getClass().getSimpleName());
 	}
 
 	private IConstructor resolveICPPClassSpecialization(ICPPClassSpecialization type) {
 		ISourceLocation decl = getDecl(type.getSpecializedBinding());
-		IMapWriter templateParameters = vf.mapWriter();
+		IListWriter templateParameters = vf.listWriter();
 		ICPPTemplateParameterMap parameterMap = type.getTemplateParameterMap();
-		Stream.of(parameterMap.getAllParameterPositions()).forEach(
-				it -> templateParameters.put(vf.integer(it), resolveType(parameterMap.getArgument(it).getTypeValue())));
+		Stream.of(parameterMap.getAllParameterPositions())
+				.forEach(it -> templateParameters.append(resolveType(parameterMap.getArgument(it).getTypeValue())));
 		return builder.TypeSymbol_classSpecialization(decl, templateParameters.done());
 	}
 
@@ -312,13 +320,36 @@ public class TypeResolver {
 
 	private IConstructor resolveICPPTemplateTypeParameter(ICPPTemplateTypeParameter type) {
 		if (type instanceof CPPTemplateTypeParameter)// FIXME
-			return builder.TypeSymbol_templateTypeParameter(type.getOwner().getName(), type.getName());
+			return builder.TypeSymbol_templateTypeParameter(getOwner(type).toString(), type.getName());
 		throw new RuntimeException(
 				"NYI: resolveICPPTemplateTypeParameter " + type.getClass().getSimpleName() + ": " + type);
 	}
 
 	private IConstructor resolveICPPTypeSpecialization(ICPPTypeSpecialization type) {
-		throw new RuntimeException("NYI: resolveICPPTypeSpecialization");
+		if (type instanceof ICPPClassSpecialization)
+			return resolveICPPClassSpecialization((ICPPClassSpecialization) type);
+		if (type instanceof ICPPEnumerationSpecialization)
+			return resolveICPPEnumerationSpecialization((ICPPEnumerationSpecialization) type);
+		throw new RuntimeException("resolveICPPTypeSpecialization encountered unknown subtype");
+	}
+
+	private IConstructor resolveICPPEnumerationSpecialization(ICPPEnumerationSpecialization type) {
+		ISourceLocation specializedBinding = getDecl(type.getSpecializedBinding());
+		ICPPTemplateParameterMap templateParameterMap = type.getTemplateParameterMap();
+		IListWriter templateArguments = vf.listWriter();
+		Stream.of(templateParameterMap.getAllParameterPositions()).forEach(it -> {
+			ICPPTemplateArgument arg = templateParameterMap.getArgument(it);
+			if (arg.isNonTypeValue())
+				throw new RuntimeException("Bla");
+			IType typeValue = arg.getTypeValue();
+			err("TemplateArgument " + typeValue.getClass().getSimpleName());
+			err("typeValue " + type);
+
+			// templateArguments
+			// .append(builder.TypeSymbol_templateArgument(it,
+			// getDecl(templateParameterMap.getArgument(it))));
+		});
+		return builder.TypeSymbol_enumerationSpecialization(specializedBinding, templateArguments.done());
 	}
 
 	private IConstructor resolveICPPUnaryTypeTransformation(ICPPUnaryTypeTransformation type) {
@@ -346,7 +377,10 @@ public class TypeResolver {
 		IConstructor returnType = resolveType(type.getReturnType());
 		IListWriter parameterTypes = vf.listWriter();
 		Stream.of(type.getParameterTypes()).forEach(it -> parameterTypes.append(resolveType(it)));
-		return builder.TypeSymbol_functionType(returnType, parameterTypes.done(), vf.bool(type.takesVarArgs()));
+		if (type.takesVarArgs())
+			return builder.TypeSymbol_functionTypeVarArgs(returnType, parameterTypes.done());
+		return builder.TypeSymbol_functionType(returnType, parameterTypes.done());
+
 	}
 
 	private IConstructor resolveIIndexType(IIndexType type) {
@@ -356,11 +390,11 @@ public class TypeResolver {
 	private IConstructor resolveIPointerType(IPointerType type) {
 		IListWriter modifiers = vf.listWriter();
 		if (type.isConst())
-			;// modifiers.append((builder.TypeModifier_static());)
+			modifiers.append(builder.TypeModifier_const());
 		if (type.isVolatile())
-			;// modifiers.append((builder.TypeModifier_static());)
+			modifiers.append(builder.TypeModifier_volatile());
 		if (type.isRestrict())
-			;// modifiers.append((builder.TypeModifier_static());)
+			modifiers.append(builder.TypeModifier_restrict());
 		return builder.TypeSymbol_pointerType(modifiers.done(), resolveType(type.getType()));
 	}
 
@@ -380,9 +414,9 @@ public class TypeResolver {
 		IConstructor baseType = resolveType(type.getType());
 		IListWriter modifiers = vf.listWriter();
 		if (type.isConst())
-			;// modifiers.append((builder.TM);)
+			modifiers.append(builder.TypeModifier_const());
 		if (type.isVolatile())
-			;// modifiers.append((builder.TypeModifier_static());)
+			modifiers.append(builder.TypeModifier_volatile());
 		return builder.TypeSymbol_qualifierType(modifiers.done(), baseType);
 	}
 

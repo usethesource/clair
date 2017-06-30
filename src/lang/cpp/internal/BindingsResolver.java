@@ -82,7 +82,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableTemplatePartialSpecializatio
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPTwoPhaseBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClass;
@@ -121,7 +120,7 @@ public class BindingsResolver {
 		// spaces()));
 	}
 
-	private ISourceLocation resolveOwner(IBinding binding) throws URISyntaxException {
+	ISourceLocation resolveOwner(IBinding binding) throws URISyntaxException {
 		if (binding == null)
 			return URIUtil.rootLocation("cpp");
 		IBinding owner = binding.getOwner();
@@ -293,9 +292,7 @@ public class BindingsResolver {
 				scheme = "cpp+variableTemplatePartialSpec";
 			else
 				scheme = "cpp+variableTemplate";
-		} else if (binding instanceof ICPPInternalVariable)
-			scheme = "cpp+variable";
-		else
+		} else
 			scheme = "cpp+variable";
 		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), scheme);
 	}
