@@ -346,7 +346,10 @@ public class TypeResolver {
 		IConstructor returnType = resolveType(type.getReturnType());
 		IListWriter parameterTypes = vf.listWriter();
 		Stream.of(type.getParameterTypes()).forEach(it -> parameterTypes.append(resolveType(it)));
-		return builder.TypeSymbol_functionType(returnType, parameterTypes.done(), vf.bool(type.takesVarArgs()));
+		if (type.takesVarArgs())
+			return builder.TypeSymbol_functionTypeVarArgs(returnType, parameterTypes.done());
+		return builder.TypeSymbol_functionType(returnType, parameterTypes.done());
+
 	}
 
 	private IConstructor resolveIIndexType(IIndexType type) {
