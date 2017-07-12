@@ -961,7 +961,7 @@ public class Parser extends ASTVisitor {
 
 		declaration.getDeclSpecifier().accept(this);
 		IConstructor declSpecifier = stack.pop();
-		
+
 		IListWriter declarators = vf.listWriter();
 		Stream.of(declaration.getDeclarators()).forEach(it -> {
 			it.accept(this);
