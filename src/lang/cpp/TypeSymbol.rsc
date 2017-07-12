@@ -51,6 +51,11 @@ public data TypeSymbol
   | \problemType()
   | \noType()
   
+  | \structTemplate(loc decl, list[loc] templateParameters)
+  | \unionTemplate(loc decl, list[loc] templateParameters)
+  | \classTemplate(loc decl, list[loc] templateParameters)
+  | \templateTemplate(TypeSymbol child, list[loc] templateParameters)
+  
   | \unresolved()
   | \any()
   
