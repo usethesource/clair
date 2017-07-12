@@ -129,7 +129,7 @@ data Declaration(loc src=|unknown:///|)
     ;
 
 
-data Expression(loc src = |unknown:///|)//, TypeSymbol typ = \noType())
+data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved())
     = \multiply(Expression lhs, Expression rhs)
     | \divide(Expression lhs, Expression rhs)
     | \modulo(Expression lhs, Expression rhs)

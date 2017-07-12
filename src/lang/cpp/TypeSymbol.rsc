@@ -51,6 +51,7 @@ public data TypeSymbol
   | \problemType()
   | \noType()
   
+  | \unresolved()
   | \any()
   
   ;
