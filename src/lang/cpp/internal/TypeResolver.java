@@ -106,7 +106,7 @@ public class TypeResolver {
 		return builder.TypeSymbol_any();
 	}
 
-	public IConstructor resolveIASTExpression(IASTExpression node) {
+	private IConstructor resolveIASTExpression(IASTExpression node) {
 		return resolveType(node.getExpressionType());
 	}
 
