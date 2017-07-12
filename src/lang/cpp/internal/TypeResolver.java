@@ -307,7 +307,7 @@ public class TypeResolver {
 
 	private IConstructor resolveICPPUnknownMemberClass(ICPPUnknownMemberClass type) {
 		// FIXME
-		return builder.TypeSymbol_unknownMemberClass(resolveType((IType) type.getOwner()), type.getName());
+		return builder.TypeSymbol_unknownMemberClass(getDecl(type.getOwner()), type.getName());
 	}
 
 	private IConstructor resolveICPPAliasTemplate(ICPPAliasTemplate type) {
@@ -325,7 +325,7 @@ public class TypeResolver {
 
 	private IConstructor resolveICPPTemplateTypeParameter(ICPPTemplateTypeParameter type) {
 		if (type instanceof CPPTemplateTypeParameter)// FIXME
-			return builder.TypeSymbol_templateTypeParameter(getOwner(type).toString(), type.getName());
+			return builder.TypeSymbol_templateTypeParameter(getDecl(type.getOwner()), getDecl(type));
 		throw new RuntimeException(
 				"NYI: resolveICPPTemplateTypeParameter " + type.getClass().getSimpleName() + ": " + type);
 	}

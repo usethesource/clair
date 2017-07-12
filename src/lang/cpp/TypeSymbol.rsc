@@ -42,9 +42,9 @@ public data TypeSymbol
   | \classSpecialization(loc decl, list[TypeSymbol] templateArguments)
   | \enumerationSpecialization(loc specializedBinding, list[TypeSymbol] templateArguments)
   
-  | \templateTypeParameter(str ownerName, str name)
+  | \templateTypeParameter(loc owner, loc decl)
   | \deferredClassInstance(str name)
-  | \unknownMemberClass(TypeSymbol owner, str name)
+  | \unknownMemberClass(loc owner, str name)
   
   | \typeOfDependentExpression(loc src)
   | \problemBinding()
