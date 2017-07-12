@@ -96,7 +96,7 @@ data Declaration(loc src=|unknown:///|)
     
     //| \declarationEqualsInitializer(str name, Expression initializer) //weg //Que?
     
-    | \template(list[Declaration] parameters, Declaration declaration)
+    | \template(list[Declaration] parameters, Declaration declaration, TypeSymbol \type)
     | \sttClass(Expression name, loc decl = |unknown:///|) //simpleTypeTemplateParameter    
     | \sttTypename(Expression name, loc decl = |unknown:///|) //simpleTypeTemplateParameter
     | \sttClass(Expression name, Expression defaultType, loc decl = |unknown:///|) //simpleTypeTemplateParameter    

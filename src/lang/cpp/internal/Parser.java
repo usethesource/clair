@@ -795,6 +795,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICPPASTTemplateDeclaration declaration) {
 		ISourceLocation loc = getSourceLocation(declaration);
+		IConstructor typ = tr.resolveType(declaration);
 		// The "export" keyword has been removed from the C++ standard
 		IListWriter templateParameters = vf.listWriter();
 		Stream.of(declaration.getTemplateParameters()).forEach(it -> {
@@ -802,7 +803,7 @@ public class Parser extends ASTVisitor {
 			templateParameters.append(stack.pop());
 		});
 		declaration.getDeclaration().accept(this);
-		stack.push(builder.Declaration_template(templateParameters.done(), stack.pop(), loc));
+		stack.push(builder.Declaration_template(templateParameters.done(), stack.pop(), typ, loc));
 		return PROCESS_ABORT;
 	}
 
