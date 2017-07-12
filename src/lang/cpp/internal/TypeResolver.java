@@ -91,15 +91,6 @@ public class TypeResolver {
 		}
 	}
 
-	private ISourceLocation getOwner(IBinding binding) {
-		try {
-			return br.resolveOwner(binding);
-		} catch (URISyntaxException e) {
-			err("Warning: could not resolve " + binding);
-			return br.makeBinding("ownerUnknown", null, null);
-		}
-	}
-
 	public IConstructor resolveType(IASTNode node) {
 		if (node instanceof IASTExpression)
 			return resolveIASTExpression((IASTExpression) node);
