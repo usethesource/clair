@@ -94,7 +94,42 @@ public class TypeResolver {
 	public IConstructor resolveType(IASTNode node) {
 		if (node instanceof IASTExpression)
 			return resolveIASTExpression((IASTExpression) node);
+		if (node instanceof ICPPASTTemplateDeclaration)
+			return resolveICPPASTTemplateDeclaration((ICPPASTTemplateDeclaration) node);
 		return builder.TypeSymbol_any();
+	}
+
+	private IList handleTemplateParameters(ICPPASTTemplateDeclaration declaration) {
+		IListWriter parameters = vf.listWriter();
+		parameters.append(URIUtil.rootLocation("parameter"));
+		return parameters.done();
+	}
+
+	private IConstructor resolveICPPASTTemplateDeclaration(ICPPASTTemplateDeclaration node) {
+		IASTDeclaration declaration = node.getDeclaration();
+		if (declaration instanceof IASTSimpleDeclaration) {
+			IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) node.getDeclaration()).getDeclSpecifier();
+			IBinding binding = null;
+			if (declSpec instanceof ICPPASTCompositeTypeSpecifier)
+				binding = ((ICPPASTCompositeTypeSpecifier) declSpec).getName().resolveBinding();
+			else if (declSpec instanceof ICPPASTSimpleDeclSpecifier)
+				throw new RuntimeException("ICPPASTSimpleDeclSpecifier");
+			else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier)
+				throw new RuntimeException("ICPPASTElaboratedTypeSpecifier");
+			else if (declSpec instanceof ICPPASTNamedTypeSpecifier)
+				throw new RuntimeException("ICPPASTNamedTypeSpecifier");
+			else
+				throw new RuntimeException("Unknown template declaree " + declaration.getClass().getSimpleName());
+			ISourceLocation template = binding == null ? URIUtil.rootLocation("unknown") : getDecl(binding);
+			return builder.TypeSymbol_structTemplate(template, handleTemplateParameters(node));
+		} else if (declaration instanceof ICPPASTFunctionDefinition) {
+			throw new RuntimeException("ICPPASTFunctionDefinition");
+		} else if (declaration instanceof ICPPASTTemplateDeclaration) {
+			IConstructor templatedTemplate = resolveICPPASTTemplateDeclaration(
+					(ICPPASTTemplateDeclaration) declaration);
+			return builder.TypeSymbol_templateTemplate(templatedTemplate, handleTemplateParameters(node));
+		} else
+			throw new RuntimeException();
 	}
 
 	private IConstructor resolveIASTExpression(IASTExpression node) {
