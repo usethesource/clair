@@ -6,7 +6,9 @@ import java.util.stream.Stream;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
@@ -39,7 +41,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumerationSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateArgument;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
@@ -92,6 +93,15 @@ public class TypeResolver {
 		ctx.getStdErr().println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
 
+	private ISourceLocation getSourceLocation(IASTNode node) {
+		IASTFileLocation astFileLocation = node.getFileLocation();
+		if (astFileLocation != null) {
+			return vf.sourceLocation(vf.sourceLocation(astFileLocation.getFileName()), astFileLocation.getNodeOffset(),
+					astFileLocation.getNodeLength());
+		} else
+			return vf.sourceLocation(URIUtil.assumeCorrect("unknown:///", "", ""));
+	}
+
 	private ISourceLocation getDecl(IBinding binding) {
 		try {
 			return br.resolveBinding(binding);
@@ -99,6 +109,12 @@ public class TypeResolver {
 			err("Warning: could not resolve " + binding);
 			return br.makeBinding("typUnknown", null, null);
 		}
+	}
+
+	private IList handleTemplateParameters(ICPPASTTemplateDeclaration declaration) {
+		IListWriter parameters = vf.listWriter();
+		parameters.append(URIUtil.rootLocation("parameter"));
+		return parameters.done();
 	}
 
 	public IConstructor resolveType(IASTNode node) {
@@ -109,41 +125,65 @@ public class TypeResolver {
 		return builder.TypeSymbol_any();
 	}
 
-	private IList handleTemplateParameters(ICPPASTTemplateDeclaration declaration) {
-		IListWriter parameters = vf.listWriter();
-		parameters.append(URIUtil.rootLocation("parameter"));
-		return parameters.done();
+	private IConstructor resolveIASTExpression(IASTExpression node) {
+		return resolveType(node.getExpressionType());
 	}
 
 	private IConstructor resolveICPPASTTemplateDeclaration(ICPPASTTemplateDeclaration node) {
 		IASTDeclaration declaration = node.getDeclaration();
 		if (declaration instanceof IASTSimpleDeclaration) {
 			IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) node.getDeclaration()).getDeclSpecifier();
-			IBinding binding = null;
-			if (declSpec instanceof ICPPASTCompositeTypeSpecifier)
-				binding = ((ICPPASTCompositeTypeSpecifier) declSpec).getName().resolveBinding();
-			else if (declSpec instanceof ICPPASTSimpleDeclSpecifier)
-				throw new RuntimeException("ICPPASTSimpleDeclSpecifier");
-			else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier)
-				throw new RuntimeException("ICPPASTElaboratedTypeSpecifier");
-			else if (declSpec instanceof ICPPASTNamedTypeSpecifier)
-				throw new RuntimeException("ICPPASTNamedTypeSpecifier");
-			else
+			if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
+				switch (((ICPPASTCompositeTypeSpecifier) declSpec).getKey()) {
+				case ICPPASTCompositeTypeSpecifier.k_class:
+					IBinding binding = ((ICPPASTCompositeTypeSpecifier) declSpec).getName().resolveBinding();
+					return builder.TypeSymbol_cClassTemplate(getDecl(binding), handleTemplateParameters(node));
+				case ICPPASTCompositeTypeSpecifier.k_struct:
+					binding = ((ICPPASTCompositeTypeSpecifier) declSpec).getName().resolveBinding();
+					return builder.TypeSymbol_cStructTemplate(getDecl(binding), handleTemplateParameters(node));
+				case ICPPASTCompositeTypeSpecifier.k_union:
+					binding = ((ICPPASTCompositeTypeSpecifier) declSpec).getName().resolveBinding();
+					return builder.TypeSymbol_cUnionTemplate(getDecl(binding), handleTemplateParameters(node));
+				default:
+					ctx.getStdOut().println(getSourceLocation(node).toString());
+					throw new RuntimeException("ICPPASTCompositeTypeSpecifier");
+				}
+			} else if (declSpec instanceof ICPPASTSimpleDeclSpecifier
+					|| declSpec instanceof ICPPASTNamedTypeSpecifier) {
+				IASTDeclarator[] declarators = ((IASTSimpleDeclaration) declaration).getDeclarators();
+				if (declarators.length != 1)
+					ctx.getStdOut()
+							.println("Variable template with unexpected #declarators at " + getSourceLocation(node));
+				return builder.TypeSymbol_variableTemplate(getDecl(declarators[0].getName().resolveBinding()),
+						handleTemplateParameters(node));
+			} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier) {
+				IBinding binding = ((ICPPASTElaboratedTypeSpecifier) declSpec).getName().resolveBinding();
+				switch (((ICPPASTElaboratedTypeSpecifier) declSpec).getKind()) {
+				case ICPPASTElaboratedTypeSpecifier.k_class:
+					return builder.TypeSymbol_eClassTemplate(getDecl(binding), handleTemplateParameters(node));
+				case ICPPASTElaboratedTypeSpecifier.k_struct:
+					return builder.TypeSymbol_eStructTemplate(getDecl(binding), handleTemplateParameters(node));
+				case ICPPASTElaboratedTypeSpecifier.k_enum:
+					return builder.TypeSymbol_eStructTemplate(getDecl(binding), handleTemplateParameters(node));
+				case ICPPASTElaboratedTypeSpecifier.k_union:
+					return builder.TypeSymbol_eStructTemplate(getDecl(binding), handleTemplateParameters(node));
+				default:
+					int kind = ((ICPPASTElaboratedTypeSpecifier) declSpec).getKind();
+					throw new RuntimeException(
+							"Encountered template declaration with unknown ElaboratedTypeSpecifier kind " + kind
+									+ " at " + getSourceLocation(node));
+				}
+			} else
 				throw new RuntimeException("Unknown template declaree " + declaration.getClass().getSimpleName());
-			ISourceLocation template = binding == null ? URIUtil.rootLocation("unknown") : getDecl(binding);
-			return builder.TypeSymbol_structTemplate(template, handleTemplateParameters(node));
 		} else if (declaration instanceof ICPPASTFunctionDefinition) {
-			throw new RuntimeException("ICPPASTFunctionDefinition");
+			IBinding binding = ((ICPPASTFunctionDefinition) declaration).getDeclarator().getName().resolveBinding();
+			return builder.TypeSymbol_functionTemplate(getDecl(binding), handleTemplateParameters(node));
 		} else if (declaration instanceof ICPPASTTemplateDeclaration) {
 			IConstructor templatedTemplate = resolveICPPASTTemplateDeclaration(
 					(ICPPASTTemplateDeclaration) declaration);
 			return builder.TypeSymbol_templateTemplate(templatedTemplate, handleTemplateParameters(node));
 		} else
-			throw new RuntimeException();
-	}
-
-	private IConstructor resolveIASTExpression(IASTExpression node) {
-		return resolveType(node.getExpressionType());
+			throw new RuntimeException("Unknown template declaree at " + getSourceLocation(node));
 	}
 
 	public IConstructor resolveType(IType type) {
