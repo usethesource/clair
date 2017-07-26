@@ -42,15 +42,27 @@ public data TypeSymbol
   | \classSpecialization(loc decl, list[TypeSymbol] templateArguments)
   | \enumerationSpecialization(loc specializedBinding, list[TypeSymbol] templateArguments)
   
-  | \templateTypeParameter(str ownerName, str name)
+  | \templateTypeParameter(loc owner, loc decl)
   | \deferredClassInstance(str name)
-  | \unknownMemberClass(TypeSymbol owner, str name)
+  | \unknownMemberClass(loc owner, str name)
   
   | \typeOfDependentExpression(loc src)
   | \problemBinding()
   | \problemType()
   | \noType()
   
+  | \cStructTemplate(loc decl, list[loc] templateParameters)
+  | \cUnionTemplate(loc decl, list[loc] templateParameters)
+  | \cClassTemplate(loc decl, list[loc] templateParameters)
+  | \eStructTemplate(loc decl, list[loc] templateParameters)
+  | \eUnionTemplate(loc decl, list[loc] templateParameters)
+  | \eClassTemplate(loc decl, list[loc] templateParameters)
+  | \eEnumTemplate(loc decl, list[loc] templateParameters)
+  | \templateTemplate(TypeSymbol child, list[loc] templateParameters)
+  | \functionTemplate(loc decl, list[loc] templateParameters)
+  | \variableTemplate(loc decl, list[loc] templateParameters)
+  
+  | \unresolved()
   | \any()
   
   ;
