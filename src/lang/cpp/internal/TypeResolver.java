@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
@@ -120,6 +121,10 @@ public class TypeResolver {
 				parameters.append(br.resolveBinding(((ICPPASTSimpleTypeTemplateParameter) it)));
 			else if (it instanceof ICPPASTTemplatedTypeTemplateParameter)
 				parameters.append(br.resolveBinding((ICPPASTTemplatedTypeTemplateParameter) it));
+			else if (it instanceof ICPPASTParameterDeclaration)
+				// default values needed?
+				parameters
+						.append(getDecl(((ICPPASTParameterDeclaration) it).getDeclarator().getName().resolveBinding()));
 			else
 				throw new RuntimeException(
 						"Encountered unknown template parameter type " + it.getClass().getSimpleName());
