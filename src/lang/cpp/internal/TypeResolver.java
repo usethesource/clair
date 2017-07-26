@@ -29,7 +29,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
@@ -113,7 +115,15 @@ public class TypeResolver {
 
 	private IList handleTemplateParameters(ICPPASTTemplateDeclaration declaration) {
 		IListWriter parameters = vf.listWriter();
-		parameters.append(URIUtil.rootLocation("parameter"));
+		Stream.of(declaration.getTemplateParameters()).forEach(it -> {
+			if (it instanceof ICPPASTSimpleTypeTemplateParameter)
+				parameters.append(br.resolveBinding(((ICPPASTSimpleTypeTemplateParameter) it)));
+			else if (it instanceof ICPPASTTemplatedTypeTemplateParameter)
+				parameters.append(br.resolveBinding((ICPPASTTemplatedTypeTemplateParameter) it));
+			else
+				throw new RuntimeException(
+						"Encountered unknown template parameter type " + it.getClass().getSimpleName());
+		});
 		return parameters.done();
 	}
 

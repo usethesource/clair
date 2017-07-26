@@ -221,9 +221,6 @@ public class Parser extends ASTVisitor {
 	private BindingsResolver br = new BindingsResolver();
 	private TypeResolver tr;
 
-	boolean doTypeLogging = false;
-	ISourceLocation sourceLoc;
-
 	public Parser(IValueFactory vf) {
 		super(true);
 		this.shouldVisitAmbiguousNodes = true;
@@ -264,7 +261,6 @@ public class Parser extends ASTVisitor {
 	public IValue parseCpp(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
 		try {
 			setIEvaluatorContext(ctx);
-			sourceLoc = file;
 			FileContent fc = FileContent.create(file.getAuthority() + file.getPath(),
 					((IString) new Prelude(vf).readFile(file)).getValue().toCharArray());
 
@@ -418,7 +414,6 @@ public class Parser extends ASTVisitor {
 
 	public IValue parseExpression(IString expression, IEvaluatorContext ctx) throws CoreException, IOException {
 		setIEvaluatorContext(ctx);
-		this.sourceLoc = vf.sourceLocation(URIUtil.assumeCorrect("unknown://", "", ""));
 		if (!expression.getValue().endsWith(";"))
 			expression.concat(vf.string(";"));
 		String expr = "void main() {\n\t" + expression.getValue() + "\n}";
@@ -439,7 +434,7 @@ public class Parser extends ASTVisitor {
 		return stack.pop();
 	}
 
-	public synchronized IValue convertCdtToRascal(IASTTranslationUnit translationUnit) throws CoreException {
+	public IValue convertCdtToRascal(IASTTranslationUnit translationUnit) throws CoreException {
 		translationUnit.accept(this);
 		if (stack.size() == 1)
 			return stack.pop();
