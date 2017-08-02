@@ -298,6 +298,10 @@ public class Parser extends ASTVisitor {
 			macros.put("__pragma(A)", "");
 			macros.put("__identifier(A)", "A");
 			macros.put("__declspec(A)", "");
+			macros.put("_stdcall", "");
+
+			macros.put("_USE_DECLSPECS_FOR_SAL", "0");
+			macros.put("_DLL", "1");
 
 			IScannerInfo si = new ScannerInfo(macros, null);
 
