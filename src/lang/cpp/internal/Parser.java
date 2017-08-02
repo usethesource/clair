@@ -310,6 +310,9 @@ public class Parser extends ASTVisitor {
 			macros.put("__declspec(A)", "");
 			macros.put("_stdcall", "");
 
+			macros.put("_USE_DECLSPECS_FOR_SAL", "0");
+			macros.put("_DLL", "1");
+
 			IScannerInfo si = new ScannerInfo(macros, null);
 
 			InternalFileContentProvider ifcp = new InternalFileContentProvider() {

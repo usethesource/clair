@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
@@ -137,11 +138,25 @@ public class TypeResolver {
 			return resolveIASTExpression((IASTExpression) node);
 		if (node instanceof ICPPASTTemplateDeclaration)
 			return resolveICPPASTTemplateDeclaration((ICPPASTTemplateDeclaration) node);
+		if (node instanceof ICPPASTTemplateId)
+			return resolveICPPASTTemplateId((ICPPASTTemplateId) node);
 		return builder.TypeSymbol_any();
 	}
 
 	private IConstructor resolveIASTExpression(IASTExpression node) {
 		return resolveType(node.getExpressionType());
+	}
+	
+	private IConstructor resolveICPPASTTemplateId(ICPPASTTemplateId node) {
+		ctx.getStdOut().println("Parent "+node.getParent().getParent().getClass().getSimpleName());
+		IListWriter templateArguments = vf.listWriter();
+		Stream.of(node.getTemplateArguments()).forEach(it -> {
+			ctx.getStdOut().println(it.getRawSignature());
+			templateArguments.append(resolveType(it));
+		});
+		IConstructor ret =  builder.TypeSymbol_classSpecialization(br.resolveBinding(node), templateArguments.done());
+		ctx.getStdOut().println(ret);
+		return ret;
 	}
 
 	private IConstructor resolveICPPASTTemplateDeclaration(ICPPASTTemplateDeclaration node) {
@@ -502,10 +517,7 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveIProblemType(IProblemType type) {
-		// err("Encountered IProblemType " + type.getClass().getSimpleName() +
-		// ": ");
-		// err("\t" + type.getID() + ": " + type.getMessage());
-		return builder.TypeSymbol_problemType();
+		return builder.TypeSymbol_problemType(type.getMessage());
 	}
 
 	private IConstructor resolveIQualifierType(IQualifierType type) {

@@ -48,7 +48,7 @@ public data TypeSymbol
   
   | \typeOfDependentExpression(loc src)
   | \problemBinding()
-  | \problemType()
+  | \problemType(str msg)
   | \noType()
   
   | \cStructTemplate(loc decl, list[loc] templateParameters)
