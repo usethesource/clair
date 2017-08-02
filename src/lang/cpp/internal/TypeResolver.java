@@ -502,10 +502,7 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveIProblemType(IProblemType type) {
-		// err("Encountered IProblemType " + type.getClass().getSimpleName() +
-		// ": ");
-		// err("\t" + type.getID() + ": " + type.getMessage());
-		return builder.TypeSymbol_problemType();
+		return builder.TypeSymbol_problemType(type.getMessage());
 	}
 
 	private IConstructor resolveIQualifierType(IQualifierType type) {

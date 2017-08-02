@@ -5235,6 +5235,19 @@ public class AST {
   }
     
   
+  public IConstructor TypeSymbol_problemType(String $msg) {
+      
+    if (!vf.string($msg).getType().isSubtypeOf(tf.stringType())) {
+      throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($msg).getType() + " for vf.string($msg):" + vf.string($msg));
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeSymbol_problemType_1 , vf.string($msg)).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
   public IConstructor TypeSymbol_union(ISourceLocation $decl) {
       
     if (!$decl.getType().isSubtypeOf(tf.sourceLocationType())) {
