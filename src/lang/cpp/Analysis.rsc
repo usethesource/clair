@@ -1,6 +1,8 @@
 module lang::cpp::Analysis
 
+import Exception;
 import IO;
+import List;
 import Relation;
 import Set;
 import analysis::m3::Registry;
@@ -67,6 +69,27 @@ rel[loc caller, loc callee] sees(Declaration d) = {
 rel[loc caller, loc callee] reaches(Declaration d) = sees(d)+;
 rel[loc caller, loc callee] reaches(rel[loc,loc] r) = r+;
 
+set[list[loc]] allSimplePaths(Declaration ast, loc src, loc dest) = allSimplePaths(sees(ast), src, dest);
+
+set[list[&T]] allSimplePaths(rel[&T from, &T to] relation, &T src, &T dest) = {
+  if (src notin carrier(relation))
+    throw IllegalArgument(src, "Starting node <src> not in provided relation");
+  if (dest notin carrier(relation))
+    throw IllegalArgument(src, "Destination node <dest> not in provided relation");
+  return pathsHelper(relation, relation*, [src], dest);
+};
+
+set[list[&T]] pathsHelper(rel[&T from, &T to] relation, rel[&T from, &T to] closure, list[&T] currentPath, &T dest) = {
+  &T currentNode = last(currentPath);
+  if (dest == currentNode)
+    return {currentPath};
+
+  set[list[&T]] ret = {};
+  for (&T element <- relation[currentNode], element notin currentPath, dest in closure[element])
+    ret += pathsHelper(relation, closure, currentPath+element, dest);
+
+  return ret;
+};
 
 
 lrel[loc caller, loc callee] invocations(Declaration d) 
