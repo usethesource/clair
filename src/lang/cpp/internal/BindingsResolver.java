@@ -383,9 +383,16 @@ public class BindingsResolver {
 				scheme = "cpp+method";
 		} else
 			scheme = "cpp+function";
-		ISourceLocation foo = URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()),
+
+		StringBuilder parameters = new StringBuilder("(");
+		for (ICPPParameter parameter : binding.getParameters())
+			parameters.append(parameter.getType()).append(',');
+		parameters.setCharAt(parameters.length() - 1, ')');
+
+		ISourceLocation decl = URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()),
 				scheme);
-		return foo;
+		decl = URIUtil.changePath(decl, decl.getPath() + parameters.toString());
+		return decl;
 	}
 
 	private ISourceLocation resolveICPPEnumeration(ICPPEnumeration binding) throws URISyntaxException {
