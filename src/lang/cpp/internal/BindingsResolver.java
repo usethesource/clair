@@ -3,6 +3,7 @@ package lang.cpp.internal;
 import java.net.URISyntaxException;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
@@ -25,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
@@ -361,6 +363,12 @@ public class BindingsResolver {
 		throw new RuntimeException("NYI");
 	}
 
+	private String printType(IType type) {
+		if (type instanceof ICPPBinding)
+			return ASTTypeUtil.getQualifiedName((ICPPBinding) type);
+		return type.toString();
+	}
+
 	private ISourceLocation resolveICPPFunction(ICPPFunction binding) throws URISyntaxException {
 		String scheme;
 		if (binding instanceof ICPPDeferredFunction)
@@ -383,9 +391,16 @@ public class BindingsResolver {
 				scheme = "cpp+method";
 		} else
 			scheme = "cpp+function";
-		ISourceLocation foo = URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()),
+
+		StringBuilder parameters = new StringBuilder("(");
+		for (ICPPParameter parameter : binding.getParameters())
+			parameters.append(printType(parameter.getType())).append(',');
+		parameters.setCharAt(parameters.length() - 1, ')');
+
+		ISourceLocation decl = URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()),
 				scheme);
-		return foo;
+		decl = URIUtil.changePath(decl, decl.getPath() + parameters.toString());
+		return decl;
 	}
 
 	private ISourceLocation resolveICPPEnumeration(ICPPEnumeration binding) throws URISyntaxException {
