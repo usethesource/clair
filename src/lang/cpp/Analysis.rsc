@@ -5,6 +5,7 @@ import IO;
 import List;
 import Relation;
 import Set;
+import String;
 import analysis::m3::Registry;
 import analysis::m3::Core;
 import lang::cpp::AST;
@@ -37,12 +38,24 @@ rel[Expression instance, Declaration template] findFunctionInstances(Declaration
     theTemplate.declaration is functionDefinition, theTemplate.declaration.declarator.decl.path == theInstance.decl.path};
 };
 
+str stripArguments(str path) = substring(path, 0, max({0,findFirst(path, "(")}));
+int numArguments(str path) = {
+  int parOpen = findFirst(path, "(");
+  int parClose = findLast(path, ")");
+  
+  list[int] places = findAll(substring(path, parOpen, parClose), ","); 
+  return size(places);
+};
+
+bool pathsMatch(str first, str second) =
+  (stripArguments(first) == stripArguments(second)) && (numArguments(first) == numArguments(second));
+
 rel[loc instance, loc template] instantiatedFunctions(Declaration ast) = {
   templates = extractTemplates(ast);
   instances = extractFunctionInstances(ast);
 
   return { <theInstance.decl, theTemplate.declaration.declarator.decl> | theInstance <- instances, theTemplate <- templates,
-    theTemplate.declaration is functionDefinition, theTemplate.declaration.declarator.decl.path == theInstance.decl.path };
+    theTemplate.declaration is functionDefinition, pathsMatch(theTemplate.declaration.declarator.decl.path, theInstance.decl.path) };
 };
 
 rel[loc instance, loc template] deferredFunctions(Declaration ast) = {
@@ -50,7 +63,8 @@ rel[loc instance, loc template] deferredFunctions(Declaration ast) = {
   deferred = extractDeferredFunctions(ast);
 
   return { <theDeferred.decl, theTemplate.declaration.declarator.decl> | theDeferred <- deferred, theTemplate <- templates,
-    theTemplate.declaration is functionDefinition, theTemplate.declaration.declarator.decl.path == theDeferred.decl.path };
+    theTemplate.declaration is functionDefinition,
+    stripArguments(theTemplate.declaration.declarator.decl.path) == stripArguments(theDeferred.decl.path) };
 };
 
 rel[loc caller, loc callee] sees(Declaration d, bool handleTemplates = false) = {
