@@ -53,16 +53,17 @@ rel[loc instance, loc template] deferredFunctions(Declaration ast) = {
     theTemplate.declaration is functionDefinition, theTemplate.declaration.declarator.decl.path == theDeferred.decl.path };
 };
 
-rel[loc caller, loc callee] sees(Declaration d) = {
+rel[loc caller, loc callee] sees(Declaration d, bool handleTemplates = false) = {
   rel[loc caller, loc callee] ret =
     { <caller.declarator.decl, c.decl> | /Declaration caller := d, caller has declarator, /Expression c := caller, c has decl }
     + { <caller.declarator.decl, c.decl> | /Declaration caller := d, caller has declarator, /Statement estmt := caller, estmt is expressionStatement, /Expression c := estmt, c has decl };
   
-  for (tuple[loc instance, loc template] t <- instantiatedFunctions(d))
-    ret += { <t.instance, callee> | callee <- ret[t.template] };
-  for (tuple[loc deferred, loc template] t <- deferredFunctions(d))
-    ret += { <t.deferred, callee> | callee <- ret[t.template] };
-
+  if (handleTemplates) {
+    for (tuple[loc instance, loc template] t <- instantiatedFunctions(d))
+      ret += { <t.instance, callee> | callee <- ret[t.template] };
+    for (tuple[loc deferred, loc template] t <- deferredFunctions(d))
+      ret += { <t.deferred, callee> | callee <- ret[t.template] };
+  }
   return ret;
 };
 
