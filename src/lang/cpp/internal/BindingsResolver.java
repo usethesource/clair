@@ -364,9 +364,10 @@ public class BindingsResolver {
 	}
 
 	private String printType(IType type) {
-		if (type instanceof ICPPBinding)
+		// ICPPBasicType, CPPPointerType, ICPPReferenceType, CPPQualifierType
+		if (type instanceof ICPPBinding) // ITypedef
 			return ASTTypeUtil.getQualifiedName((ICPPBinding) type);
-		return type.toString();
+		return type.toString().replace(" ", ".");
 	}
 
 	private ISourceLocation resolveICPPFunction(ICPPFunction binding) throws URISyntaxException {
@@ -393,9 +394,12 @@ public class BindingsResolver {
 			scheme = "cpp+function";
 
 		StringBuilder parameters = new StringBuilder("(");
-		for (ICPPParameter parameter : binding.getParameters())
-			parameters.append(printType(parameter.getType())).append(',');
-		parameters.setCharAt(parameters.length() - 1, ')');
+		for (ICPPParameter parameter : binding.getParameters()) {
+			if (parameters.length() > 1)
+				parameters.append(',');
+			parameters.append(printType(parameter.getType()));
+		}
+		parameters.append(')');
 
 		ISourceLocation decl = URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()),
 				scheme);
