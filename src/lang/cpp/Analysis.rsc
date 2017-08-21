@@ -51,34 +51,26 @@ bool pathsMatch(str first, str second) =
   (stripArguments(first) == stripArguments(second)) && (numArguments(first) == numArguments(second));
 
 rel[loc instance, loc template] instantiatedFunctions(Declaration ast) = {
-  templates = extractTemplates(ast);
-  instances = extractFunctionInstances(ast);
-
-  return { <theInstance.decl, theTemplate.declaration.declarator.decl> | theInstance <- instances, theTemplate <- templates,
-    theTemplate.declaration is functionDefinition, pathsMatch(theTemplate.declaration.declarator.decl.path, theInstance.decl.path) };
+  set[loc] templates = { t.declaration.declarator.decl | t <- extractTemplates(ast), t.declaration is functionDefinition };
+  set[loc] instances = { i.decl | i <- extractFunctionInstances(ast) };
+  
+  return { <theInstance, theTemplate> | loc theInstance <- instances, loc theTemplate <- templates,
+    pathsMatch(theTemplate.path, theInstance.path) };
 };
 
 rel[loc instance, loc template] deferredFunctions(Declaration ast) = {
-  templates = extractTemplates(ast);
-  deferred = extractDeferredFunctions(ast);
+  set[loc] templates = { t.declaration.declarator.decl | t <- extractTemplates(ast), t.declaration is functionDefinition };
+  set[loc] deferred = { d.decl | d <- extractDeferredFunctions(ast) };
 
-  return { <theDeferred.decl, theTemplate.declaration.declarator.decl> | theDeferred <- deferred, theTemplate <- templates,
-    theTemplate.declaration is functionDefinition,
-    stripArguments(theTemplate.declaration.declarator.decl.path) == stripArguments(theDeferred.decl.path) };
+  return { <theDeferred, theTemplate> | theDeferred <- deferred, theTemplate <- templates,
+    stripArguments(theTemplate.path) == stripArguments(theDeferred.path) };
 };
 
-rel[loc caller, loc callee] sees(Declaration d, bool handleTemplates = false) = {
+rel[loc caller, loc callee] sees(Declaration d) = {
   rel[loc caller, loc callee] ret =
     { <caller.declarator.decl, c.decl> | /Declaration caller := d, caller has declarator, /Expression c := caller, c has decl }
     + { <caller.declarator.decl, c.decl> | /Declaration caller := d, caller has declarator, /Statement estmt := caller, estmt is expressionStatement, /Expression c := estmt, c has decl };
-  
-  if (handleTemplates) {
-    for (tuple[loc instance, loc template] t <- instantiatedFunctions(d))
-      ret += { <t.instance, callee> | callee <- ret[t.template] };
-    for (tuple[loc deferred, loc template] t <- deferredFunctions(d))
-      ret += { <t.deferred, callee> | callee <- ret[t.template] };
-  }
-  return ret;
+  return ret + instantiatedFunctions(d) o ret + deferredFunctions(d) o ret;
 };
 
 rel[loc caller, loc callee] reaches(Declaration d) = sees(d)+;
@@ -99,9 +91,7 @@ set[list[&T]] pathsHelper(rel[&T from, &T to] relation, rel[&T from, &T to] clos
   if (dest == currentNode)
     return {currentPath};
 
-  set[list[&T]] ret = {};
-  for (&T element <- relation[currentNode], element notin currentPath, dest in closure[element])
-    ret += pathsHelper(relation, closure, currentPath+element, dest);
+  set[list[&T]] ret = { *pathsHelper(relation, closure, currentPath+element, dest) | &T element <- relation[currentNode], element notin currentPath, dest in closure[element] };
 
   return ret;
 };
