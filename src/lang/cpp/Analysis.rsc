@@ -68,8 +68,10 @@ rel[loc instance, loc template] deferredFunctions(Declaration ast) = {
 
 rel[loc caller, loc callee] sees(Declaration d) = {
   rel[loc caller, loc callee] ret =
-    { <caller.declarator.decl, c.decl> | /Declaration caller := d, caller has declarator, /Expression c := caller, c has decl }
-    + { <caller.declarator.decl, c.decl> | /Declaration caller := d, caller has declarator, /Statement estmt := caller, estmt is expressionStatement, /Expression c := estmt, c has decl };
+    { <caller.declarator.decl, c.decl> | /Declaration caller := d, caller has declarator, /Expression c := caller, c has decl,
+      c.decl.scheme notin {"cpp+class", "cpp+enumerator", "cpp+field", "cpp+parameter", "cpp+typedef", "cpp+variable"} }
+    + { <caller.declarator.decl, c.decl> | /Declaration caller := d, caller has declarator, /Statement estmt := caller, estmt is expressionStatement, /Expression c := estmt, c has decl, 
+      c.decl.scheme notin {"cpp+class", "cpp+enumerator", "cpp+field", "cpp+parameter", "cpp+typedef", "cpp+variable"} };
   ret = ret + instantiatedFunctions(d) o ret + deferredFunctions(d) o ret;
   return ret + ret o overloadedMethods(d);
 };
