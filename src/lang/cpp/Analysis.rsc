@@ -71,6 +71,8 @@ rel[loc caller, loc callee] sees(Declaration d) = {
     { <caller.declarator.decl, c.decl> | /Declaration caller := d, caller has declarator, /Expression c := caller, c has decl }
     + { <caller.declarator.decl, c.decl> | /Declaration caller := d, caller has declarator, /Statement estmt := caller, estmt is expressionStatement, /Expression c := estmt, c has decl };
   return ret + instantiatedFunctions(d) o ret + deferredFunctions(d) o ret;
+  ret = ret + instantiatedFunctions(d) o ret + deferredFunctions(d) o ret;
+  return ret + ret o overloadedMethods(d);
 };
 
 rel[loc caller, loc callee] reaches(Declaration d) = sees(d)+;
