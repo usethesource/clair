@@ -96,6 +96,20 @@ set[list[&T]] pathsHelper(rel[&T from, &T to] relation, rel[&T from, &T to] clos
   return ret;
 };
 
+set[loc] extractMethods(Declaration ast) = { d.decl | /Declarator d := ast, d.decl.scheme == "cpp+method" };
+
+rel[loc base, loc derived] inheritance(Declaration ast) = { <base.decl, derived.decl> | /DeclSpecifier derived := ast, derived has baseSpecifiers, base <- derived.baseSpecifiers};
+
+//set[str] methodNames(set[loc] methods) = { m.path | m <- methods};
+set[str] methodNames(set[loc] methods) = { substring(m.path, 0, findFirst(m.path,"(")) | m <- methods };
+
+rel[loc,loc] overloadedMethods(Declaration ast) = {
+  set[loc] methods = extractMethods(ast);
+  rel[loc,loc] inh = inheritance(ast);
+  set[loc] bases = inh<0>;
+  
+  return { <m,|cpp+method:///|+derived.path+substring(m.path,size(b.path))> | m <- methods, b <- bases, startsWith(m.path, b.path), derived <- inh[b] };
+};
 
 lrel[loc caller, loc callee] invocations(Declaration d) 
    = [ <caller.declarator.decl, c> | /Declaration caller := d, caller has declarator, /Expression exp := caller, c := callee(exp), c.scheme != "dunno"]
