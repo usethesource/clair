@@ -114,6 +114,18 @@ rel[loc,loc] overloadedMethods(Declaration ast) = {
   return { <m,|cpp+method:///|+derived.path+substring(m.path,size(b.path))> | m <- methods, b <- bases, startsWith(m.path, b.path), derived <- inh[b] };
 };
 
+rel[loc, loc] containment(Declaration ast) = { <ds.decl, declarator.decl> | /DeclSpecifier ds := ast , ds is struct || ds is class, Declaration d <- ds.members, d has declarators, Declarator declarator <- d.declarators }
+  + { <ds.decl, d.declarator.decl> | /DeclSpecifier ds := ast , ds is struct || ds is class, Declaration d <- ds.members, d has declarator }
+  + { <ts.decl, parameter> | /TypeSymbol ts := ast, ts has templateParameters, !(ts is templateTemplate), loc parameter <- ts.templateParameters }
+  + { <ts.child.decl, parameter> | /TypeSymbol ts := ast, ts is templateTemplate, loc parameter <- ts.templateParameters }
+  ;
+
+
+
+
+
+
+
 lrel[loc caller, loc callee] invocations(Declaration d) 
    = [ <caller.declarator.decl, c> | /Declaration caller := d, caller has declarator, /Expression exp := caller, c := callee(exp), c.scheme != "dunno"]
    ;
