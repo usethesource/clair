@@ -2,6 +2,7 @@ package lang.cpp.internal;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -204,6 +205,7 @@ import io.usethesource.vallang.ISourceLocation;
 import io.usethesource.vallang.IString;
 import io.usethesource.vallang.IValue;
 import io.usethesource.vallang.IValueFactory;
+import io.usethesource.vallang.io.StandardTextReader;
 
 @SuppressWarnings("restriction")
 public class Parser extends ASTVisitor {
@@ -254,7 +256,7 @@ public class Parser extends ASTVisitor {
 	public IValue parseCpp(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
 		try {
 			setIEvaluatorContext(ctx);
-			FileContent fc = FileContent.create(file.getAuthority() + file.getPath(),
+			FileContent fc = FileContent.create(file.toString(),
 					((IString) new Prelude(vf).readFile(file)).getValue().toCharArray());
 
 			Map<String, String> macros = new HashMap<String, String>();
@@ -449,9 +451,17 @@ public class Parser extends ASTVisitor {
 
 	public ISourceLocation getSourceLocation(IASTNode node) {
 		IASTFileLocation astFileLocation = node.getFileLocation();
+		
 		if (astFileLocation != null) {
-			return vf.sourceLocation(vf.sourceLocation(astFileLocation.getFileName()), astFileLocation.getNodeOffset(),
-					astFileLocation.getNodeLength());
+			String fileName = astFileLocation.getFileName();
+			
+			try {
+			    return (ISourceLocation) new StandardTextReader().read(vf, new StringReader(fileName)); 
+			}
+			catch (ClassCastException | IOException e) {
+			    return vf.sourceLocation(vf.sourceLocation(fileName), astFileLocation.getNodeOffset(),
+	                    astFileLocation.getNodeLength());    
+			}
 		} else
 			return vf.sourceLocation(URIUtil.assumeCorrect("unknown:///", "", ""));
 	}
