@@ -68,9 +68,12 @@ rel[loc instance, loc template] deferredFunctions(Declaration ast) = {
 
 rel[loc caller, loc callee] sees(Declaration d) = {
   rel[loc caller, loc callee] ret =
-    { <caller.declarator.decl, c.decl> | /Declaration caller := d, caller has declarator, /Expression c := caller, c has decl }
-    + { <caller.declarator.decl, c.decl> | /Declaration caller := d, caller has declarator, /Statement estmt := caller, estmt is expressionStatement, /Expression c := estmt, c has decl };
-  return ret + instantiatedFunctions(d) o ret + deferredFunctions(d) o ret;
+    { <caller.declarator.decl, c.decl> | /Declaration caller := d, caller has declarator, /Expression c := caller, c has decl,
+      c.decl.scheme notin {"cpp+class", "cpp+enumerator", "cpp+field", "cpp+parameter", "cpp+typedef", "cpp+variable"} }
+    + { <caller.declarator.decl, c.decl> | /Declaration caller := d, caller has declarator, /Statement estmt := caller, estmt is expressionStatement, /Expression c := estmt, c has decl, 
+      c.decl.scheme notin {"cpp+class", "cpp+enumerator", "cpp+field", "cpp+parameter", "cpp+typedef", "cpp+variable"} };
+  ret = ret + instantiatedFunctions(d) o ret + deferredFunctions(d) o ret;
+  return ret + ret o overloadedMethods(d);
 };
 
 rel[loc caller, loc callee] reaches(Declaration d) = sees(d)+;
@@ -95,6 +98,32 @@ set[list[&T]] pathsHelper(rel[&T from, &T to] relation, rel[&T from, &T to] clos
 
   return ret;
 };
+
+set[loc] extractMethods(Declaration ast) = { d.decl | /Declarator d := ast, d.decl.scheme == "cpp+method" };
+
+rel[loc base, loc derived] inheritance(Declaration ast) = { <base.decl, derived.decl> | /DeclSpecifier derived := ast, derived has baseSpecifiers, base <- derived.baseSpecifiers};
+
+//set[str] methodNames(set[loc] methods) = { m.path | m <- methods};
+set[str] methodNames(set[loc] methods) = { substring(m.path, 0, findFirst(m.path,"(")) | m <- methods };
+
+rel[loc,loc] overloadedMethods(Declaration ast) = {
+  set[loc] methods = extractMethods(ast);
+  rel[loc,loc] inh = inheritance(ast);
+  set[loc] bases = inh<0>;
+  
+  return { <m,|cpp+method:///|+derived.path+substring(m.path,size(b.path))> | m <- methods, b <- bases, startsWith(m.path, b.path), derived <- inh[b] };
+};
+
+rel[loc, loc] containment(Declaration ast) = { <ds.decl, declarator.decl> | /DeclSpecifier ds := ast , ds is struct || ds is class, Declaration d <- ds.members, d has declarators, Declarator declarator <- d.declarators }
+  + { <ds.decl, d.declarator.decl> | /DeclSpecifier ds := ast , ds is struct || ds is class, Declaration d <- ds.members, d has declarator }
+  + { <ts.decl, parameter> | /TypeSymbol ts := ast, ts has templateParameters, !(ts is templateTemplate), loc parameter <- ts.templateParameters }
+  + { <ts.child.decl, parameter> | /TypeSymbol ts := ast, ts is templateTemplate, loc parameter <- ts.templateParameters }
+  ;
+
+
+
+
+
 
 
 lrel[loc caller, loc callee] invocations(Declaration d) 

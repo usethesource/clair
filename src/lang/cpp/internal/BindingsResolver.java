@@ -197,7 +197,7 @@ public class BindingsResolver {
 
 	private ISourceLocation resolveIProblemBinding(IProblemBinding binding) {
 		err("IProblemBinding: " + binding.toString());
-		return makeBinding("cpp+problem", binding.getMessage(), null);
+		return makeBinding("cpp+problem", null, binding.getMessage());
 	}
 
 	private ISourceLocation resolveIMacroBinding(IMacroBinding binding) throws URISyntaxException {
