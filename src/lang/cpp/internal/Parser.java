@@ -205,6 +205,8 @@ import io.usethesource.vallang.ISourceLocation;
 import io.usethesource.vallang.IString;
 import io.usethesource.vallang.IValue;
 import io.usethesource.vallang.IValueFactory;
+import io.usethesource.vallang.exceptions.FactParseError;
+import io.usethesource.vallang.exceptions.FactTypeUseException;
 import io.usethesource.vallang.io.StandardTextReader;
 
 @SuppressWarnings("restriction")
@@ -451,19 +453,20 @@ public class Parser extends ASTVisitor {
 
 	public ISourceLocation getSourceLocation(IASTNode node) {
 		IASTFileLocation astFileLocation = node.getFileLocation();
-		
+
 		if (astFileLocation != null) {
 			String fileName = astFileLocation.getFileName();
-			
+
 			try {
-			    return (ISourceLocation) new StandardTextReader().read(vf, new StringReader(fileName)); 
+				return vf.sourceLocation(
+						(ISourceLocation) new StandardTextReader().read(vf, new StringReader(fileName)),
+						astFileLocation.getNodeOffset(), astFileLocation.getNodeLength());
+			} catch (FactParseError | FactTypeUseException | IOException e) {
 			}
-			catch (ClassCastException | IOException e) {
-			    return vf.sourceLocation(vf.sourceLocation(fileName), astFileLocation.getNodeOffset(),
-	                    astFileLocation.getNodeLength());    
-			}
-		} else
-			return vf.sourceLocation(URIUtil.assumeCorrect("unknown:///", "", ""));
+			return vf.sourceLocation(vf.sourceLocation(fileName), astFileLocation.getNodeOffset(),
+					astFileLocation.getNodeLength());
+		}
+		return vf.sourceLocation(URIUtil.assumeCorrect("unknown:///", "", ""));
 	}
 
 	IList getAttributes(IASTAttributeOwner node) {
