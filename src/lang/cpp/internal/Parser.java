@@ -393,6 +393,9 @@ public class Parser extends ASTVisitor {
 			return result;
 		} catch (CoreException e) {
 			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
+		} catch (Throwable e) {
+		    // TODO: make more specific
+		    throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
 		}
 	}
 
