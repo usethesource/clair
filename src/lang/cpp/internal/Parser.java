@@ -964,13 +964,15 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(declaration);
 		IASTProblem problem = declaration.getProblem();
 		String raw = declaration.getRawSignature();
-		if (!(raw.contains("$fail$") || raw.contains("�") || raw.contains("__int64(24)")
-				|| raw.contains("CString default"))) {
-			err("ProblemDeclaration: ");
-			prefix += 4;
-			err(Integer.toHexString(problem.getID()) + ": " + problem.getMessageWithLocation() + ", " + loc);
-			err(raw);
-			prefix -= 4;
+		if (doProblemLogging) {
+			if (!(raw.contains("$fail$") || raw.contains("�") || raw.contains("__int64(24)")
+					|| raw.contains("CString default"))) {
+				err("ProblemDeclaration: ");
+				prefix += 4;
+				err(Integer.toHexString(problem.getID()) + ": " + problem.getMessageWithLocation() + ", " + loc);
+				err(raw);
+				prefix -= 4;
+			}
 		}
 		stack.push(builder.Declaration_problemDeclaration(loc));
 		return PROCESS_ABORT;
