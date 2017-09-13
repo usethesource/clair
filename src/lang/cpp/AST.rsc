@@ -405,7 +405,12 @@ public map[str, list[loc]] classPaths =
     |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++|, |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/mingw32|],
   "mac": [|file:///usr/include|,
     |file:///usr/include/c++/4.2.1|,
-    |file:///usr/include/c++/4.2.1/tr1|]);
+    |file:///usr/include/c++/4.2.1/tr1|],
+  "mac-xcode": [|file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include/c++/4.2.1|,
+                |file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include/c++/4.2.1/tr1|,
+                |file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include|
+     ]
+    );
 
 @javaClass{lang.cpp.internal.Parser}  
 @reflect{need access to streams}   
