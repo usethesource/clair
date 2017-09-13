@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
@@ -146,15 +147,15 @@ public class TypeResolver {
 	private IConstructor resolveIASTExpression(IASTExpression node) {
 		return resolveType(node.getExpressionType());
 	}
-	
+
 	private IConstructor resolveICPPASTTemplateId(ICPPASTTemplateId node) {
-		ctx.getStdOut().println("Parent "+node.getParent().getParent().getClass().getSimpleName());
+		ctx.getStdOut().println("Parent " + node.getParent().getParent().getClass().getSimpleName());
 		IListWriter templateArguments = vf.listWriter();
 		Stream.of(node.getTemplateArguments()).forEach(it -> {
 			ctx.getStdOut().println(it.getRawSignature());
 			templateArguments.append(resolveType(it));
 		});
-		IConstructor ret =  builder.TypeSymbol_classSpecialization(br.resolveBinding(node), templateArguments.done());
+		IConstructor ret = builder.TypeSymbol_classSpecialization(br.resolveBinding(node), templateArguments.done());
 		ctx.getStdOut().println(ret);
 		return ret;
 	}
@@ -212,6 +213,9 @@ public class TypeResolver {
 			IConstructor templatedTemplate = resolveICPPASTTemplateDeclaration(
 					(ICPPASTTemplateDeclaration) declaration);
 			return builder.TypeSymbol_templateTemplate(templatedTemplate, handleTemplateParameters(node));
+		} else if (declaration instanceof ICPPASTAliasDeclaration) {
+			IBinding binding = ((ICPPASTAliasDeclaration) declaration).getAlias().resolveBinding();
+			return builder.TypeSymbol_aliasTemplate(getDecl(binding), handleTemplateParameters(node));
 		} else
 			throw new RuntimeException("Unknown template declaree at " + getSourceLocation(node));
 	}
