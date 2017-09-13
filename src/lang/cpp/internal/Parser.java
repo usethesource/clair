@@ -218,6 +218,8 @@ public class Parser extends ASTVisitor {
 	private BindingsResolver br = new BindingsResolver();
 	private TypeResolver tr;
 
+	boolean doProblemLogging = false;
+
 	public Parser(IValueFactory vf) {
 		super(true);
 		this.shouldVisitAmbiguousNodes = true;
@@ -2396,7 +2398,8 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTProblemExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		IASTProblem problem = expression.getProblem();
-		err("ProblemExpression " + expression.getRawSignature() + ":" + problem.getMessageWithLocation());
+		if (doProblemLogging)
+			err("ProblemExpression " + expression.getRawSignature() + ":" + problem.getMessageWithLocation());
 		stack.push(builder.Expression_problemExpression(loc));
 		return PROCESS_ABORT;
 	}
@@ -2809,11 +2812,13 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTProblemStatement statement) {
-		err("IASTProblemStatement:");
-		prefix += 4;
-		err(statement.getProblem().getMessageWithLocation());
-		err(statement.getRawSignature());
-		prefix -= 4;
+		if (doProblemLogging) {
+			err("IASTProblemStatement:");
+			prefix += 4;
+			err(statement.getProblem().getMessageWithLocation());
+			err(statement.getRawSignature());
+			prefix -= 4;
+		}
 		stack.push(builder.Statement_problem(statement.getRawSignature(), getSourceLocation(statement)));
 		return PROCESS_ABORT;
 	}
