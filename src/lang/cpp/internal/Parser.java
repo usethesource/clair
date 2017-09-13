@@ -351,7 +351,8 @@ public class Parser extends ASTVisitor {
 							}
 
 					}
-					throw new RuntimeException("Include " + include + " for " + currentFile + " not found");
+					err("Include " + include + " for " + currentFile + " not found");
+					return null;// TODO: restore exception here
 				}
 
 				private boolean isRightFile(String include, String toMatch) {
