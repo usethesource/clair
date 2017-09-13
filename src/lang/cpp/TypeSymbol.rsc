@@ -62,6 +62,8 @@ public data TypeSymbol
   | \functionTemplate(loc decl, list[loc] templateParameters)
   | \variableTemplate(loc decl, list[loc] templateParameters)
   
+  | \aliasTemplate(loc decl, list[loc] templateParameters)
+  
   | \unresolved()
   | \any()
   
