@@ -1813,7 +1813,7 @@ public class Parser extends ASTVisitor {
 	@Override
 	public int visit(IASTAttribute attribute) {
 		ISourceLocation src = getSourceLocation(attribute);
-		if (attribute.getArgumentClause() == null)
+		if (attribute.getArgumentClause() == null || attribute.getArgumentClause().getTokenCharImage() == null)
 			stack.push(builder.Attribute_attribute(new String(attribute.getName()), src));
 		else
 			stack.push(builder.Attribute_attribute(new String(attribute.getName()),
