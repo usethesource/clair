@@ -478,7 +478,7 @@ public class Parser extends ASTVisitor {
 	IList getAttributes(IASTAttributeOwner node) {
 		IListWriter attributeSpecifiers = vf.listWriter();
 		Stream.of(node.getAttributeSpecifiers()).forEach(it -> {
-			it.accept(this);
+			visit((IASTAttributeSpecifier) it);
 			attributeSpecifiers.append(stack.pop());
 		});
 		return attributeSpecifiers.done();
@@ -1832,13 +1832,22 @@ public class Parser extends ASTVisitor {
 	@Override
 	public int visit(IASTAttributeSpecifier specifier) {
 		ISourceLocation src = getSourceLocation(specifier);
-		IASTAttributeList list = (IASTAttributeList) specifier;
-		IListWriter attributes = vf.listWriter();
-		Stream.of(list.getAttributes()).forEach(it -> {
-			it.accept(this);
-			attributes.append(stack.pop());
-		});
-		stack.push(builder.Attribute_attributeSpecifier(attributes.done(), src));
+		if (specifier instanceof ICPPASTAlignmentSpecifier) {
+			IASTExpression expression = ((ICPPASTAlignmentSpecifier) specifier).getExpression();
+			if (expression != null)
+				expression.accept(this);
+			else
+				((ICPPASTAlignmentSpecifier) specifier).getTypeId().accept(this);
+			stack.push(builder.Attribute_alignmentSpecifier(stack.pop(), src));
+		} else {
+			IASTAttributeList list = (IASTAttributeList) specifier;
+			IListWriter attributes = vf.listWriter();
+			Stream.of(list.getAttributes()).forEach(it -> {
+				it.accept(this);
+				attributes.append(stack.pop());
+			});
+			stack.push(builder.Attribute_attributeSpecifier(attributes.done(), src));
+		}
 		return PROCESS_ABORT;
 	}
 
