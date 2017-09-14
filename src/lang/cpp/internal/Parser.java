@@ -2407,9 +2407,13 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTTypeIdInitializerExpression expression) {
-		// has typ
-		out("TypeIdInitializerExpression: " + expression.getRawSignature());
-		throw new RuntimeException("NYI");
+		ISourceLocation loc = getSourceLocation(expression);
+		IConstructor typ = tr.resolveType(expression);
+		expression.getTypeId().accept(this);
+		IConstructor typeId = stack.pop();
+		expression.getInitializer().accept(this);
+		stack.push(builder.Expression_typeIdInitializerExpression(typeId, stack.pop(), loc, typ));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTTypeIdExpression expression) {
