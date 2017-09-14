@@ -249,6 +249,8 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved())
     
     | \packExpansion(Expression pattern)
     
+    | \typeIdInitializerExpression(Expression typeId, Expression initializer)
+    
     // TypeId below
     | \typeId(DeclSpecifier declSpecifier)
     | \typeId(DeclSpecifier declSpecifier, Declarator abstractDeclarator)

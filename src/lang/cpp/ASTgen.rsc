@@ -139,7 +139,7 @@ str type2FactoryCall(Symbol t){
     "prefixIncr", "prefixDecr", "plus", "minus", "star", "amper", "tilde", "not", "sizeof", "postfixIncr",
     "postfixDecr", "bracketed", "throw", "typeid", "alignOf", "sizeofParameterPack", "noexcept", "labelReference",
     "functionCall", "fieldReference", "fieldReferencePointerDeref", "expressionList", "conditional",
-    "cast", "dynamicCast", "staticCast", "reinterpretCast", "constCast", "idExpression",
+    "cast", "dynamicCast", "staticCast", "reinterpretCast", "constCast", "idExpression", "typeIdInitializerExpression",
     
     "conversionName", "delete", "vectoredDelete", "globalDelete", "globalVectoredDelete", "lambda",
     "new", "globalNew", "newWithArgs", "globalNewWithArgs", "packExpansion", "simpleTypeConstructor",
