@@ -709,6 +709,8 @@ public class AST {
     = tf.constructor(typestore,_TypeSymbol,"problemBinding");
   
   
+  private static final Type _Attribute_alignmentSpecifier_1 
+    = tf.constructor(typestore,_Attribute,"alignmentSpecifier",_Expression,"typeIdOrExpression");
   private static final Type _Attribute_attribute_1 
     = tf.constructor(typestore,_Attribute,"attribute",tf.stringType(),"name");
   private static final Type _Attribute_attributeSpecifier_1 
@@ -5936,6 +5938,19 @@ public class AST {
     return vf.constructor(_TypeSymbol_problemBinding_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
     
+  
+  public IConstructor Attribute_alignmentSpecifier(IConstructor $typeIdOrExpression, ISourceLocation $loc) {
+      
+    if (!$typeIdOrExpression.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $typeIdOrExpression.getType() + " for $typeIdOrExpression:" + $typeIdOrExpression);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    
+    return vf.constructor(_Attribute_alignmentSpecifier_1 , $typeIdOrExpression).asWithKeywordParameters().setParameters(kwParams);
+  }
   
   public IConstructor Attribute_attribute(String $name, ISourceLocation $loc) {
       

@@ -391,6 +391,7 @@ data Attribute
     = \attribute(str name)
     | \attribute(str name, str argumentClause)
     | \attributeSpecifier(list[Attribute] attributes)
+    | \alignmentSpecifier(Expression typeIdOrExpression)
 	;
     
 public map[str, list[loc]] classPaths =
