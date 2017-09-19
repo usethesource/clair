@@ -1,3 +1,15 @@
+/** 
+ * Copyright (c) 2016-2017, Rodin Aarssen, Centrum Wiskunde & Informatica (CWI) 
+ * All rights reserved. 
+ *  
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: 
+ *  
+ * 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
+ *  
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. 
+ *  
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ */
 package lang.cpp.internal;
 
 import java.io.File;
@@ -98,6 +110,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAlignmentSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArraySubscriptExpression;
@@ -224,6 +237,8 @@ public class Parser extends ASTVisitor {
 	private Stack<IConstructor> stack = new Stack<IConstructor>();
 	private BindingsResolver br = new BindingsResolver();
 	private TypeResolver tr;
+
+	boolean doProblemLogging = false;
 
 	public Parser(IValueFactory vf) {
 		super(true);
@@ -364,7 +379,8 @@ public class Parser extends ASTVisitor {
 							}
 
 					}
-					throw new RuntimeException("Include " + include + " for " + currentFile + " not found");
+					err("Include " + include + " for " + currentFile + " not found");
+					return null;// TODO: restore exception here
 				}
 
 				private boolean isRightFile(String include, String toMatch) {
@@ -413,6 +429,9 @@ public class Parser extends ASTVisitor {
 
 			return result;
 		} catch (CoreException e) {
+			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
+		} catch (Throwable e) {
+			// TODO: make more specific
 			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
 		}
 	}
@@ -494,7 +513,7 @@ public class Parser extends ASTVisitor {
 	IList getAttributes(IASTAttributeOwner node) {
 		IListWriter attributeSpecifiers = vf.listWriter();
 		Stream.of(node.getAttributeSpecifiers()).forEach(it -> {
-			it.accept(this);
+			visit((IASTAttributeSpecifier) it);
 			attributeSpecifiers.append(stack.pop());
 		});
 		return attributeSpecifiers.done();
@@ -980,13 +999,15 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(declaration);
 		IASTProblem problem = declaration.getProblem();
 		String raw = declaration.getRawSignature();
-		if (!(raw.contains("$fail$") || raw.contains("�") || raw.contains("__int64(24)")
-				|| raw.contains("CString default"))) {
-			err("ProblemDeclaration: ");
-			prefix += 4;
-			err(Integer.toHexString(problem.getID()) + ": " + problem.getMessageWithLocation() + ", " + loc);
-			err(raw);
-			prefix -= 4;
+		if (doProblemLogging) {
+			if (!(raw.contains("$fail$") || raw.contains("�") || raw.contains("__int64(24)")
+					|| raw.contains("CString default"))) {
+				err("ProblemDeclaration: ");
+				prefix += 4;
+				err(Integer.toHexString(problem.getID()) + ": " + problem.getMessageWithLocation() + ", " + loc);
+				err(raw);
+				prefix -= 4;
+			}
 		}
 		stack.push(builder.Declaration_problemDeclaration(loc));
 		return PROCESS_ABORT;
@@ -1835,7 +1856,7 @@ public class Parser extends ASTVisitor {
 	@Override
 	public int visit(IASTAttribute attribute) {
 		ISourceLocation src = getSourceLocation(attribute);
-		if (attribute.getArgumentClause() == null)
+		if (attribute.getArgumentClause() == null || attribute.getArgumentClause().getTokenCharImage() == null)
 			stack.push(builder.Attribute_attribute(new String(attribute.getName()), src));
 		else
 			stack.push(builder.Attribute_attribute(new String(attribute.getName()),
@@ -1846,13 +1867,22 @@ public class Parser extends ASTVisitor {
 	@Override
 	public int visit(IASTAttributeSpecifier specifier) {
 		ISourceLocation src = getSourceLocation(specifier);
-		IASTAttributeList list = (IASTAttributeList) specifier;
-		IListWriter attributes = vf.listWriter();
-		Stream.of(list.getAttributes()).forEach(it -> {
-			it.accept(this);
-			attributes.append(stack.pop());
-		});
-		stack.push(builder.Attribute_attributeSpecifier(attributes.done(), src));
+		if (specifier instanceof ICPPASTAlignmentSpecifier) {
+			IASTExpression expression = ((ICPPASTAlignmentSpecifier) specifier).getExpression();
+			if (expression != null)
+				expression.accept(this);
+			else
+				((ICPPASTAlignmentSpecifier) specifier).getTypeId().accept(this);
+			stack.push(builder.Attribute_alignmentSpecifier(stack.pop(), src));
+		} else {
+			IASTAttributeList list = (IASTAttributeList) specifier;
+			IListWriter attributes = vf.listWriter();
+			Stream.of(list.getAttributes()).forEach(it -> {
+				it.accept(this);
+				attributes.append(stack.pop());
+			});
+			stack.push(builder.Attribute_attributeSpecifier(attributes.done(), src));
+		}
 		return PROCESS_ABORT;
 	}
 
@@ -2414,15 +2444,20 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTProblemExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		IASTProblem problem = expression.getProblem();
-		err("ProblemExpression " + expression.getRawSignature() + ":" + problem.getMessageWithLocation());
+		if (doProblemLogging)
+			err("ProblemExpression " + expression.getRawSignature() + ":" + problem.getMessageWithLocation());
 		stack.push(builder.Expression_problemExpression(loc));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTTypeIdInitializerExpression expression) {
-		// has typ
-		out("TypeIdInitializerExpression: " + expression.getRawSignature());
-		throw new RuntimeException("NYI");
+		ISourceLocation loc = getSourceLocation(expression);
+		IConstructor typ = tr.resolveType(expression);
+		expression.getTypeId().accept(this);
+		IConstructor typeId = stack.pop();
+		expression.getInitializer().accept(this);
+		stack.push(builder.Expression_typeIdInitializerExpression(typeId, stack.pop(), loc, typ));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTTypeIdExpression expression) {
@@ -2893,12 +2928,14 @@ public class Parser extends ASTVisitor {
 			}
 			return PROCESS_ABORT;
 		}
-		err("IASTProblemStatement:");
-		prefix += 4;
-		err(Integer.toHexString(problem.getID()) + ": " + problem.getMessageWithLocation() + ", " + loc);
-		err(raw);
-		prefix -= 4;
-		stack.push(builder.Statement_problem(raw, loc));
+		if (doProblemLogging) {
+			err("IASTProblemStatement:");
+			prefix += 4;
+			err(Integer.toHexString(problem.getID()) + ": " + problem.getMessageWithLocation() + ", " + loc);
+			err(raw);
+			prefix -= 4;
+			stack.push(builder.Statement_problem(raw, loc));
+		}
 		return PROCESS_ABORT;
 	}
 

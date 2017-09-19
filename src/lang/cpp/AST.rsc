@@ -1,3 +1,15 @@
+@license{Copyright (c) 2016-2017, Rodin Aarssen, Centrum Wiskunde & Informatica (CWI) 
+All rights reserved. 
+ 
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: 
+ 
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. 
+  
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. 
+ 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+
+}
 module lang::cpp::AST
 
 import IO;
@@ -249,6 +261,8 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved())
     
     | \packExpansion(Expression pattern)
     
+    | \typeIdInitializerExpression(Expression typeId, Expression initializer)
+    
     // TypeId below
     | \typeId(DeclSpecifier declSpecifier)
     | \typeId(DeclSpecifier declSpecifier, Declarator abstractDeclarator)
@@ -397,6 +411,7 @@ data Attribute
     = \attribute(str name)
     | \attribute(str name, str argumentClause)
     | \attributeSpecifier(list[Attribute] attributes)
+    | \alignmentSpecifier(Expression typeIdOrExpression)
 	;
     
 public map[str, list[loc]] classPaths =
@@ -413,7 +428,12 @@ public map[str, list[loc]] classPaths =
     |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++|, |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/mingw32|],
   "mac": [|file:///usr/include|,
     |file:///usr/include/c++/4.2.1|,
-    |file:///usr/include/c++/4.2.1/tr1|]);
+    |file:///usr/include/c++/4.2.1/tr1|],
+  "mac-xcode": [|file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include/c++/4.2.1|,
+                |file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include/c++/4.2.1/tr1|,
+                |file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include|
+     ]
+    );
 
 @javaClass{lang.cpp.internal.Parser}  
 @reflect{need access to streams}   
