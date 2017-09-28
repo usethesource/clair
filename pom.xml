@@ -16,13 +16,6 @@
 	<scm>
 		<developerConnection>scm:git:https://github.com/cwi-swat/clair.git</developerConnection>			
 	</scm>
-	
-	<repositories>
-		<repository>
-			<id>cdt9.2</id>
-			<url>http://nexus.usethesource.io/content/repositories/cdt9.2/</url>
-		</repository>
-	</repositories>
 
 	<build>
 		<sourceDirectory>src</sourceDirectory>
