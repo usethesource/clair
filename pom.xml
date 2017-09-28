@@ -22,10 +22,6 @@
 		<resources>
 		  <resource>
 		    <directory>src</directory>
-		    <excludes>
-		      <exclude>**/*.java</exclude>
-		      <exclude>**/*.class</exclude>
-		    </excludes>
 		  </resource>			
 		  <resource>
 		    <directory>.</directory>
@@ -40,10 +36,6 @@
 		<testResources>
 			<testResource>
 				<directory>test</directory>
-				<excludes>
-					<exclude>**/*.java</exclude>
-					<exclude>**/*.class</exclude>					
-				</excludes>
 			</testResource>
 		</testResources>
 	</build>
