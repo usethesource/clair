@@ -332,6 +332,18 @@ public class Parser extends ASTVisitor {
 			macros.put("_USE_DECLSPECS_FOR_SAL", "0");
 			macros.put("_DLL", "1");
 
+			macros.put("NDEBUG", "");
+			macros.put("WIN32", "");
+			macros.put("_WINDOWS", "");
+			macros.put("_WIN32_DCOM", "");
+			macros.put("_USRDLL", "");
+			macros.put("SSCF1_INCLUDED", "");
+			macros.put("LOGGINGTRACING_INCLUDED", "");
+			macros.put("_WINDLL", "");
+			macros.put("_UNICODE", "");
+			macros.put("UNICODE", "");
+			macros.put("_AFXDLL", "");
+
 			IScannerInfo si = new ScannerInfo(macros, null);
 
 			InternalFileContentProvider ifcp = new InternalFileContentProvider() {
@@ -365,7 +377,7 @@ public class Parser extends ASTVisitor {
 
 				@Override
 				public String findInclusion(String include, String currentFile) {
-					include = include.replace("\\", "/");
+					include = include.trim().replace("\\", "/");
 					String filePath = include.substring(0, include.lastIndexOf('/') + 1);
 					String fileName = include.substring(include.lastIndexOf('/') + 1);
 					for (String path : path) {
