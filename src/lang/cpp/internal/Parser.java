@@ -352,7 +352,7 @@ public class Parser extends ASTVisitor {
 
 				@Override
 				public String findInclusion(String include, String currentFile) {
-					include = include.replace("\\", "/");
+					include = include.trim().replace("\\", "/");
 					String filePath = include.substring(0, include.lastIndexOf('/') + 1);
 					String fileName = include.substring(include.lastIndexOf('/') + 1);
 					for (String path : path) {
