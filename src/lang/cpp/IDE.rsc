@@ -4,16 +4,21 @@ import util::IDE;
 import util::ValueUI;
 import lang::cpp::AST;
 import IO;
+import Node;
   
 void main() {
   registerNonRascalContributions("org.eclipse.cdt.ui.editor.CEditor", 
     {  
-      popup(action("Show Clair AST", showAST))
+      popup(action("Show Clair AST", showAST)),
+      popup(action("Show Clean Clair AST", showCleanAST))
     });
 }
 
 void showAST(str _, loc select) 
   = text(findNearEnoughSubTree(select, parseCpp(select.top)));
+  
+void showCleanAST(str _, loc select) 
+  = text(unsetRec(findNearEnoughSubTree(select, parseCpp(select.top))));
 
 @doc{finds the smallest tree which contains the full selection}
 node findNearEnoughSubTree(loc select, node tree) {
