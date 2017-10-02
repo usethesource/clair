@@ -1,5 +1,5 @@
 Manifest-Version: 0.0.1
 Main-Function: main
-Main-Module: Plugin
+Main-Module: lang::cpp::IDE
 Source: src
 
