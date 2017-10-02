@@ -2946,8 +2946,8 @@ public class Parser extends ASTVisitor {
 			err(Integer.toHexString(problem.getID()) + ": " + problem.getMessageWithLocation() + ", " + loc);
 			err(raw);
 			prefix -= 4;
-			stack.push(builder.Statement_problem(raw, loc));
 		}
+		stack.push(builder.Statement_problem(raw, loc));
 		return PROCESS_ABORT;
 	}
 
