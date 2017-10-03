@@ -59,19 +59,28 @@ void drawAST(str _, loc select) {
     int count = 0;
     int next() { count +=1 ; return count; }
 
+    str theDecl(loc l) = l.authority when l.scheme == "cpp+problem";
+    default str theDecl(loc l) = "<l>";
+    
+    FProperty theColor(node x) = fillColor("lightgreen") when x.decl?, loc d := x.decl, "cpp+problem" != d.scheme;
+    FProperty theColor(node x) = fillColor("red") when x.decl?, loc d := x.decl, "cpp+problem" == d.scheme;
+    default FProperty theColor(node x) = fillColor("yellow");
+     
     default str txt(node x) = getName(x);
     default str mid(node x) { return "<txt(x)>:<x.src>"; }
     
     Figure treeNode(node x) 
       = box(text(txt(x), fontSize(20)), 
-          popup(readFile(l)),
+          popup("<if (x.decl?) {><theDecl(x.decl)>
+                '<}><readFile(l)>"),
            id(mid(x)), 
            grow(1.2), 
-           fillColor("yellow") 
+           theColor(x) 
         ) when loc l := x.src;
     
-    Figure treeFig(node x) = tree(treeNode(x), [ treeFig(y) | arg <- x, (node y := arg || list[value] l := arg && node y <- l)], gap(10));
-        
+    Figure treeFig(node x) = tree(treeNode(x), [ treeFig(y) | arg <- x, (list[value] l := arg && y <- l || y := arg)], gap(10));
+    Figure treeFig([]) = point();
+    default Figure treeFig(value x) = ellipse(text("<x>", fontSize(20)));    
             
-    render(treeFig(ast));
+    render(box(treeFig(ast)));
 }
