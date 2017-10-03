@@ -62,26 +62,16 @@ void drawAST(str _, loc select) {
     default str txt(node x) = getName(x);
     default str mid(node x) { return "<txt(x)>:<x.src>"; }
     
-    nodes =
-        [ box(text(txt(x)), 
+    Figure treeNode(node x) 
+      = box(text(txt(x), fontSize(20)), 
           popup(readFile(l)),
            id(mid(x)), 
-           width(40), 
-           height(40),
-           hgap(5),
-           vgap(2), 
+           grow(1.2), 
            fillColor("yellow") 
-        ) | /node x:!TypeSymbol _ := ast, loc l := x.src
-        ]
-        ;
+        ) when loc l := x.src;
+    
+    Figure treeFig(node x) = tree(treeNode(x), [ treeFig(y) | arg <- x, (node y := arg || list[value] l := arg && node y <- l)], gap(10));
         
-    edges = 
-        [ edge(mid(x), mid(y)) 
-        | /node x:!TypeSymbol _ := ast, 
-          arg <- x,
-          (node y := arg || list[value] l := arg && node y <- l) 
-        ]
-        ;
             
-    render(graph(nodes, edges, size(400),gap(20), hint("layered")));
+    render(treeFig(ast));
 }
