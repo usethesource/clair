@@ -2,15 +2,24 @@ module lang::cpp::IDE
 
 import util::IDE;
 import util::ValueUI;
+import util::Editors;
+
 import lang::cpp::AST;
+import lang::cpp::TypeSymbol;
+
 import IO;
 import Node;
+
+import vis::Figure;
+import vis::Render;
+import vis::KeySym;
   
 void main() {
   registerNonRascalContributions("org.eclipse.cdt.ui.editor.CEditor", 
     {  
       popup(action("Show Clair AST", showAST)),
-      popup(action("Show Clean Clair AST", showCleanAST))
+      popup(action("Show Clean Clair AST", showCleanAST)),
+      popup(action("Draw Clair AST", drawAST))
     });
 }
 
@@ -40,3 +49,39 @@ default node findNearEnoughSubTree(loc _, value t) = t;
 
 private int end(loc l)   = l.offset + l.length; 
 private int begin(loc l) = l.offset;
+
+public FProperty popup(str s){
+    return mouseOver(box(text(s, fontSize(24)), grow(1.1),resizable(false)));
+}
+
+void drawAST(str _, loc select) {
+    ast = findNearEnoughSubTree(select, parseCpp(select.top));
+    int count = 0;
+    int next() { count +=1 ; return count; }
+
+    default str txt(node x) = getName(x);
+    default str mid(node x) { return "<txt(x)>:<x.src>"; }
+    
+    nodes =
+        [ box(text(txt(x)), 
+          popup(readFile(l)),
+           id(mid(x)), 
+           width(40), 
+           height(40),
+           hgap(5),
+           vgap(2), 
+           fillColor("yellow") 
+        ) | /node x:!TypeSymbol _ := ast, loc l := x.src
+        ]
+        ;
+        
+    edges = 
+        [ edge(mid(x), mid(y)) 
+        | /node x:!TypeSymbol _ := ast, 
+          arg <- x,
+          (node y := arg || list[value] l := arg && node y <- l) 
+        ]
+        ;
+            
+    render(graph(nodes, edges, size(400),gap(20), hint("layered")));
+}
