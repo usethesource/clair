@@ -50,15 +50,18 @@ default node findNearEnoughSubTree(loc _, value t) = t;
 private int end(loc l)   = l.offset + l.length; 
 private int begin(loc l) = l.offset;
 
-public FProperty popup(str s){
-    return mouseOver(box(text(s, fontSize(24)), grow(1.1),resizable(false)));
-}
+
 
 void drawAST(str _, loc select) {
     ast = findNearEnoughSubTree(select, parseCpp(select.top));
     int count = 0;
     int next() { count +=1 ; return count; }
-
+    str yield = readFile(select);
+    
+    FProperty popup(str s, str color){
+      return mouseOver(box(text(s, fontSize(24)), grow(1.1),resizable(false), fillColor(color)));
+    }
+    
     str theDecl(loc l) = l.authority when l.scheme == "cpp+problem";
     default str theDecl(loc l) = "<l>";
     
@@ -70,9 +73,11 @@ void drawAST(str _, loc select) {
     default str mid(node x) { return "<txt(x)>:<x.src>"; }
     
     Figure treeNode(node x) 
-      = box(text(txt(x), fontSize(20)), 
-          popup("<if (x.decl?) {><theDecl(x.decl)>
-                '<}><readFile(l)>"),
+      = box(vcat([text(txt(x), fontSize(20)), 
+                *[box(text(theDecl(x.decl), fontSize(15)),grow(1.1)) | x.decl?],
+                *[box(text("<x.typ>", fontSize(15)), grow(1.1)) | x.typ?]],
+                gap(5)), 
+           popup(readFile(l), "white"),
            id(mid(x)), 
            grow(1.2), 
            theColor(x) 
@@ -82,5 +87,5 @@ void drawAST(str _, loc select) {
     Figure treeFig([]) = point();
     default Figure treeFig(value x) = ellipse(text("<x>", fontSize(20)));    
             
-    render(box(treeFig(ast)));
+    render(treeFig(ast));
 }
