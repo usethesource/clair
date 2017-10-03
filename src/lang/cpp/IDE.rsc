@@ -19,7 +19,8 @@ void main() {
     {  
       popup(action("Show Clair AST", showAST)),
       popup(action("Show Clean Clair AST", showCleanAST)),
-      popup(action("Draw Clair AST", drawAST))
+      popup(action("Draw Clair AST", drawAST)),
+      popup(action("Draw Annotated Clair AST", drawAnnotatedAST))
     });
 }
 
@@ -50,9 +51,15 @@ default node findNearEnoughSubTree(loc _, value t) = t;
 private int end(loc l)   = l.offset + l.length; 
 private int begin(loc l) = l.offset;
 
+void drawAST(str x, loc select) {
+  drawASTOptions(x, select);
+}
 
+void drawAnnotatedAST(str x, loc select) {
+  drawASTOptions(x, select, withTypes=true, withNames=true);
+}
 
-void drawAST(str _, loc select) {
+void drawASTOptions(str _, loc select, bool withTypes=false, bool withNames=false) {
     ast = findNearEnoughSubTree(select, parseCpp(select.top));
     int count = 0;
     int next() { count +=1 ; return count; }
@@ -74,8 +81,8 @@ void drawAST(str _, loc select) {
     
     Figure treeNode(node x) 
       = box(vcat([text(txt(x), fontSize(20)), 
-                *[box(text(theDecl(x.decl), fontSize(15)),grow(1.1)) | x.decl?],
-                *[box(text("<x.typ>", fontSize(15)), grow(1.1)) | x.typ?]],
+                *[box(text(theDecl(x.decl), fontSize(15)),grow(1.1)) | withNames, x.decl?],
+                *[box(text("<x.typ>", fontSize(15)), grow(1.1)) | withTypes, x.typ?]],
                 gap(5)), 
            popup(readFile(l), "white"),
            id(mid(x)), 
@@ -83,8 +90,8 @@ void drawAST(str _, loc select) {
            theColor(x) 
         ) when loc l := x.src;
     
-    Figure treeFig(node x) = tree(treeNode(x), [ treeFig(y) | arg <- x, (list[value] l := arg && y <- l || y := arg)], gap(10));
-    Figure treeFig([]) = point();
+    Figure treeFig(node x) = tree(treeNode(x), [ treeFig(y) | y <- x], gap(10));
+    Figure treeFig(list[value] l) = tree(box(size(10)), [ treeFig(e) | e <- l], gap(10));
     default Figure treeFig(value x) = ellipse(text("<x>", fontSize(20)));    
             
     render(treeFig(ast));
