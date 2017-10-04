@@ -3,7 +3,7 @@ int fac(int n) {
 		return 1;
 	}
 	else {
-		return (*fac+1)(n-1) * n;
+		return fac(n-1) * n;
 	}
 }
 
