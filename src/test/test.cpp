@@ -1,9 +1,11 @@
+
 int x = 1;
 
 class C;
 
 int main() {
-	C* c = new C();
-
-	return x;
+	int* x = malloc(sizeof(int));
+    *x = 1;
+    **y = 2;
+    free(x);
 }
