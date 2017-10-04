@@ -2936,7 +2936,9 @@ public class Parser extends ASTVisitor {
 			typeId.getAbstractDeclarator().accept(this);
 			IConstructor abstractDeclarator = stack.pop();
 			if (abstractDeclarator.has("name")) {// TODO: properly fix
-				abstractDeclarator = abstractDeclarator.set("name", builder.Expression_abstractEmptyName(loc));
+				ISourceLocation declaratorLoc = getSourceLocation(typeId.getAbstractDeclarator());
+				abstractDeclarator = abstractDeclarator.set("name",
+						builder.Expression_abstractEmptyName(declaratorLoc));
 				abstractDeclarator = abstractDeclarator.asWithKeywordParameters().unsetParameter("decl");
 			}
 			stack.push(builder.Expression_typeId(declSpecifier, abstractDeclarator, loc));
