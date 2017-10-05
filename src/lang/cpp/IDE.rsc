@@ -20,9 +20,13 @@ void main() {
       popup(action("Show Clair AST", showAST)),
       popup(action("Show Clean Clair AST", showCleanAST)),
       popup(action("Draw Clair AST", drawAST)),
-      popup(action("Draw Annotated Clair AST", drawAnnotatedAST))
+      popup(action("Draw Annotated Clair AST", drawAnnotatedAST)),
+      popup(action("Show location", printLocation))
     });
 }
+
+void printLocation(str _, loc select) =
+  util::ValueUI::text(select);
 
 void showAST(str _, loc select) 
   = text(findNearEnoughSubTree(select, parseCpp(select.top)));
