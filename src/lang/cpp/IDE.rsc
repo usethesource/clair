@@ -29,7 +29,7 @@ void printLocation(str _, loc select) =
   util::ValueUI::text(select);
 
 void showAST(str _, loc select) 
-  = text(findNearEnoughSubTree(select, parseCpp(select.top)));
+  = text(findNearEnoughSubTree(select, parseCpp(select.top, includePaths=[select.top.parent])));
   
 void showCleanAST(str _, loc select) 
   = text(unsetRec(findNearEnoughSubTree(select, parseCpp(select.top))));
