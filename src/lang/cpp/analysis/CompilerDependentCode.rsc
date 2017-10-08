@@ -12,7 +12,7 @@ void mark(set[loc] positions, str message) {
    addMessageMarkers({warning(message, pos) | pos <- positions});
 }   
 
-set[loc] complexLeftHandSidesImperative(loc file) = complexLeftHandSidesOldStyle(parseCpp(file));
+set[loc] complexLeftHandSidesImperative(loc file) = complexLeftHandSidesImperative(parseCpp(file));
 set[loc] complexLeftHandSidesImperative(Declaration tu) {
   set[loc] result = {};
   
