@@ -34,7 +34,7 @@ bool isComplex(bracketed(Expression e)) = isComplex(e);
 
 default bool isComplex(Expression lhs) = true;
 
-set[loc] complexLeftHandSidesFunctional(loc file) = complexLeftHandFunctional(parseCpp(file));
+set[loc] complexLeftHandSidesFunctional(loc file) = complexLeftHandSidesFunctional(parseCpp(file));
 
 set[loc] complexLeftHandSidesFunctional(Declaration tu) 
   = {lhs.src | /assign(lhs, _) := tu, isComplex(lhs)};
@@ -47,7 +47,7 @@ set[loc] directDependents(Declaration tu) =
   { v.src | /assign(/prefixIncr(v:idExpression(_,decl=d)), /idExpression(_,decl=d))  := tu} +
   { v.src | /assign(/postfixIncr(v:idExpression(_,decl=d)), /idExpression(_,decl=d)) := tu};
 
-/* more general but less accurateL indirect dependence */
+/* more general but less accurate indirect dependence */
 
 set[loc] indirectDependents(Declaration tu) {
    brokenDeps = uses(tu) o flow(tu)+ o updates(tu);
