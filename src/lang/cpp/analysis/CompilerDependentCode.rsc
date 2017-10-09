@@ -1,18 +1,21 @@
 module lang::cpp::analysis::CompilerDependentCode
 
-import lang::cpp::AST;
-import Message;
-import util::ResourceMarkers;
-import util::Editors;
-import util::ValueUI;
 import IO;
+import Message;
+
+import util::Editors;
+import util::ResourceMarkers;
+import util::ValueUI;
+
+import lang::cpp::AST;
+import merits::Philips::Analysis;
 
 // TOOL: add some messages to Eclipse
 void mark(set[loc] positions, str message) {
    addMessageMarkers({warning(message, pos) | pos <- positions});
 }   
 
-set[loc] complexLeftHandSidesImperative(loc file) = complexLeftHandSidesOldStyle(parseCpp(file));
+set[loc] complexLeftHandSidesImperative(loc file) = complexLeftHandSidesImperative(parseCpp(file));
 set[loc] complexLeftHandSidesImperative(Declaration tu) {
   set[loc] result = {};
   
@@ -34,7 +37,7 @@ bool isComplex(bracketed(Expression e)) = isComplex(e);
 
 default bool isComplex(Expression lhs) = true;
 
-set[loc] complexLeftHandSidesFunctional(loc file) = complexLeftHandFunctional(parseCpp(file));
+set[loc] complexLeftHandSidesFunctional(loc file) = complexLeftHandSidesFunctional(parseCpp(file));
 
 set[loc] complexLeftHandSidesFunctional(Declaration tu) 
   = {lhs.src | /assign(lhs, _) := tu, isComplex(lhs)};
@@ -47,7 +50,7 @@ set[loc] directDependents(Declaration tu) =
   { v.src | /assign(/prefixIncr(v:idExpression(_,decl=d)), /idExpression(_,decl=d))  := tu} +
   { v.src | /assign(/postfixIncr(v:idExpression(_,decl=d)), /idExpression(_,decl=d)) := tu};
 
-/* more general but less accurateL indirect dependence */
+/* more general but less accurate indirect dependence */
 
 set[loc] indirectDependents(Declaration tu) {
    brokenDeps = uses(tu) o flow(tu)+ o updates(tu);
