@@ -8,7 +8,6 @@ import util::ResourceMarkers;
 import util::ValueUI;
 
 import lang::cpp::AST;
-import merits::Philips::Analysis;
 
 // TOOL: add some messages to Eclipse
 void mark(set[loc] positions, str message) {
