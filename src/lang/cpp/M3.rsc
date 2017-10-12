@@ -15,7 +15,7 @@ data M3(
 
 M3 javaAstToM3(Declaration tu) {
   M3 m3 = m3(tu.src.top);
-  m3.declarations = {<declarator.decl, declarator.src> | /Declarator declarator := tu, !(declarator.name is abstractEmptyName)};
+  m3.declarations = {<declarator.decl, declarator.src> | /Declarator declarator := tu, declarator has name, !(declarator.name is abstractEmptyName)};
   m3.uses = { <n.src,l> | /Declaration d := tu, /node n := d, n.decl?, loc l := n.decl};
   m3.modifiers = {<declarator.decl,unset(modifier)> | /Declaration d := tu, d.declarator?, Declarator declarator := d.declarator, modifier <- d.declSpecifier.modifiers}
                + {<declarator.decl,unset(modifier)> | /Declaration d := tu, d.declarators?, Declarator declarator <- d.declarators, modifier <- d.declSpecifier.modifiers}
