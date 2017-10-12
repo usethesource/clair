@@ -8,7 +8,7 @@ How to Run
 ----------
 
 1. If you haven't installed Rascal yet, follow the instructions [here](http://www.rascal-mpl.org/start/) to install Rascal.
-2. Add <http://update.rascal-mpl.org/libs> as an update site and `Help->Install New Software` select the `clair` feature
+2. Add <https://update.rascal-mpl.org/libs> as an update site and `Help->Install New Software` select the `clair` feature
 3. Create a new Rascal Project, like `myProject`
 4. Right-click the project's folder and select *Rascal Console*, or from the Rascal menu select *Start Console*. The console should open inside Eclipse's terminal window with the title "Rascal [**project: myProject**, mode: debug]". If, instead, it shows "project: none", make sure the project is open and try again.
 5. Type in the Racal console the following:  
