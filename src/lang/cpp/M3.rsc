@@ -12,6 +12,6 @@ data M3(
   rel[loc base, loc override] methodOverrides = {} 
 );
 
-M3 createM3FromAst(Declaration tu) {
+M3 javaAstToM3(Declaration tu) {
   M3 m3 = m3(tu.src.top);
 }
