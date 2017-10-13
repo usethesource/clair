@@ -464,7 +464,7 @@ public class Parser extends ASTVisitor {
 		return stack.pop();
 	}
 
-	public IValue convertCdtToRascal(IASTTranslationUnit translationUnit) throws CoreException {
+	public IValue convertCdtToRascal(IASTTranslationUnit translationUnit) {
 		translationUnit.accept(this);
 		if (stack.size() == 1)
 			return stack.pop();
