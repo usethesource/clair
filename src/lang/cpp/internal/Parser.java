@@ -431,6 +431,22 @@ public class Parser extends ASTVisitor {
 		return result;
 	}
 
+	public IValue parseCppToM3(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
+		setIEvaluatorContext(ctx);
+		IValue m3 = builder.M3_m3(file);
+		IASTTranslationUnit tu = getCdtAst(file, includePath, additionalMacros);
+		IValue result = convertCdtToRascal(tu);
+		if (result == null) {
+			throw RuntimeExceptionFactory.parseError(file, null, null);
+		}
+		IList comments = parseForComments(file, includePath, additionalMacros, ctx);
+		IList macros = parseForMacros(file, includePath, additionalMacros, ctx);
+
+		m3.asWithKeywordParameters().setParameter("comments", comments);
+		m3.asWithKeywordParameters().setParameter("macros", macros);
+		return m3;
+	}
+
 	public IList parseForComments(ISourceLocation file, IList includePath, IMap additionalMacros,
 			IEvaluatorContext ctx) {
 		setIEvaluatorContext(ctx);
