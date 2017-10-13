@@ -270,9 +270,8 @@ public class Parser extends ASTVisitor {
 		dependencies.get(from).add(to);
 	}
 
-	public IValue parseCpp(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
+	private IASTTranslationUnit getCdtAst(ISourceLocation file, IList includePath, IMap additionalMacros) {
 		try {
-			setIEvaluatorContext(ctx);
 			FileContent fc = FileContent.create(file.toString(),
 					((IString) new Prelude(vf).readFile(file)).getValue().toCharArray());
 
@@ -408,22 +407,28 @@ public class Parser extends ASTVisitor {
 			};
 
 			IASTTranslationUnit tu = GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, idx, options, log);
-			IValue result = convertCdtToRascal(tu);
-			if (result == null) {
-				throw RuntimeExceptionFactory.parseError(file, null, null);
-			}
 			// out(dependencies.toString());
 
 			scanner = new CPreprocessor(fc, si, ParserLanguage.CPP, log,
 					GPPScannerExtensionConfiguration.getInstance(si), ifcp);
 
-			return result;
+			return tu;
 		} catch (CoreException e) {
 			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
 		} catch (Throwable e) {
 			// TODO: make more specific
 			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
 		}
+	}
+
+	public IValue parseCpp(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
+		setIEvaluatorContext(ctx);
+		IASTTranslationUnit tu = getCdtAst(file, includePath, additionalMacros);
+		IValue result = convertCdtToRascal(tu);
+		if (result == null) {
+			throw RuntimeExceptionFactory.parseError(file, null, null);
+		}
+		return result;
 	}
 
 	IScanner scanner;
