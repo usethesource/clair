@@ -440,6 +440,14 @@ public class Parser extends ASTVisitor {
 		return comments.done();
 	}
 
+	public IList parseForMacros(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
+		setIEvaluatorContext(ctx);
+		IASTTranslationUnit tu = getCdtAst(file, includePath, additionalMacros);
+		IListWriter macros = vf.listWriter();
+		Stream.of(tu.getMacroExpansions()).forEach(it -> macros.append(getSourceLocation(it)));
+		return macros.done();
+	}
+
 	IScanner scanner;
 
 	public IValue parseExpression(IString expression, IEvaluatorContext ctx) throws CoreException, IOException {
