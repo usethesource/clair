@@ -10,7 +10,8 @@ data M3(
   rel[loc caller, loc callee] methodInvocations = {},
   rel[loc field, loc accesser] fieldAccess = {},
   rel[loc caller, loc typeName] typeDependency = {},
-  rel[loc base, loc override] methodOverrides = {} 
+  rel[loc base, loc override] methodOverrides = {},
+  rel[loc file, loc macro] macros = {}
 );
 
 M3 javaAstToM3(Declaration tu) {
