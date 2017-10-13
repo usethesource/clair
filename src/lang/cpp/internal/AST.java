@@ -41,6 +41,7 @@ public class AST {
   private static final Type _TypeSymbol = tf.abstractDataType(typestore, "TypeSymbol");
   private static final Type _Attribute = tf.abstractDataType(typestore, "Attribute");
   private static final Type _TypeModifier = tf.abstractDataType(typestore, "TypeModifier");
+  private static final Type _M3 = tf.abstractDataType(typestore, "M3");
    
   
   
@@ -754,6 +755,10 @@ public class AST {
     = tf.constructor(typestore,_TypeModifier,"restrict");
   private static final Type _TypeModifier_signed_0 
     = tf.constructor(typestore,_TypeModifier,"signed");
+  
+  
+  private static final Type _M3_m3_1 
+    = tf.constructor(typestore,_M3,"m3",tf.sourceLocationType(),"id");
   
    
   
@@ -6106,6 +6111,20 @@ public class AST {
     
     
     return vf.constructor(_TypeModifier_signed_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+    
+  
+  public IConstructor M3_m3(ISourceLocation $id) {
+      
+    if (!$id.getType().isSubtypeOf(tf.sourceLocationType())) {
+      throw new IllegalArgumentException("Expected " + tf.sourceLocationType() + " but got " + $id.getType() + " for $id:" + $id);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_M3_m3_1 , $id).asWithKeywordParameters().setParameters(kwParams);
   }
    
   
