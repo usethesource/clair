@@ -431,6 +431,7 @@ public class Parser extends ASTVisitor {
 		return result;
 	}
 
+	public IList parseForComments(ISourceLocation file, IList includePath, IMap additionalMacros,
 	IScanner scanner;
 
 	public IValue parseExpression(IString expression, IEvaluatorContext ctx) throws CoreException, IOException {
