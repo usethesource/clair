@@ -432,6 +432,14 @@ public class Parser extends ASTVisitor {
 	}
 
 	public IList parseForComments(ISourceLocation file, IList includePath, IMap additionalMacros,
+			IEvaluatorContext ctx) {
+		setIEvaluatorContext(ctx);
+		IASTTranslationUnit tu = getCdtAst(file, includePath, additionalMacros);
+		IListWriter comments = vf.listWriter();
+		Stream.of(tu.getComments()).forEach(it -> comments.append(getSourceLocation(it)));
+		return comments.done();
+	}
+
 	IScanner scanner;
 
 	public IValue parseExpression(IString expression, IEvaluatorContext ctx) throws CoreException, IOException {
