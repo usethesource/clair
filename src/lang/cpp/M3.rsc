@@ -5,7 +5,7 @@ extend analysis::m3::Core;
 import Node;
 import lang::cpp::AST;
 
-data M3(
+public data M3(
   rel[loc base, loc derived] extends = {},
   rel[loc caller, loc callee] methodInvocations = {},
   rel[loc field, loc accesser] fieldAccess = {},
@@ -24,3 +24,7 @@ M3 javaAstToM3(Declaration tu) {
   m3.extends = {<base.decl,derived.decl> | /DeclSpecifier derived := tu, derived.baseSpecifiers?, base <- derived.baseSpecifiers};
   return m3;
 }
+
+@javaClass{lang.cpp.internal.Parser}
+@reflect{need access to streams}
+java M3 parseCppToM3(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ());
