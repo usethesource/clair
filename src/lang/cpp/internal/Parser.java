@@ -442,8 +442,8 @@ public class Parser extends ASTVisitor {
 		IList comments = parseForComments(file, includePath, additionalMacros, ctx);
 		IList macros = parseForMacros(file, includePath, additionalMacros, ctx);
 
-		m3.asWithKeywordParameters().setParameter("comments", comments);
-		m3.asWithKeywordParameters().setParameter("macros", macros);
+		m3 = m3.asWithKeywordParameters().setParameter("comments", comments);
+		m3 = m3.asWithKeywordParameters().setParameter("macros", macros);
 		return m3;
 	}
 
