@@ -439,29 +439,37 @@ public class Parser extends ASTVisitor {
 		if (result == null) {
 			throw RuntimeExceptionFactory.parseError(file, null, null);
 		}
-		IList comments = parseForComments(file, includePath, additionalMacros, ctx);
-		IList macros = parseForMacros(file, includePath, additionalMacros, ctx);
+		IList comments = getCommentsFromTranslationUnit(tu);
+		IList macros = getMacrosFromTranslationUnit(tu);
 
 		m3 = m3.asWithKeywordParameters().setParameter("comments", comments);
 		m3 = m3.asWithKeywordParameters().setParameter("macros", macros);
 		return m3;
 	}
 
-	public IList parseForComments(ISourceLocation file, IList includePath, IMap additionalMacros,
-			IEvaluatorContext ctx) {
-		setIEvaluatorContext(ctx);
-		IASTTranslationUnit tu = getCdtAst(file, includePath, additionalMacros);
+	public IList getCommentsFromTranslationUnit(IASTTranslationUnit tu) {
 		IListWriter comments = vf.listWriter();
 		Stream.of(tu.getComments()).forEach(it -> comments.append(getSourceLocation(it)));
 		return comments.done();
 	}
 
-	public IList parseForMacros(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
+	public IList parseForComments(ISourceLocation file, IList includePath, IMap additionalMacros,
+			IEvaluatorContext ctx) {
 		setIEvaluatorContext(ctx);
 		IASTTranslationUnit tu = getCdtAst(file, includePath, additionalMacros);
+		return getCommentsFromTranslationUnit(tu);
+	}
+
+	public IList getMacrosFromTranslationUnit(IASTTranslationUnit tu) {
 		IListWriter macros = vf.listWriter();
 		Stream.of(tu.getMacroExpansions()).forEach(it -> macros.append(getSourceLocation(it)));
 		return macros.done();
+	}
+
+	public IList parseForMacros(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
+		setIEvaluatorContext(ctx);
+		IASTTranslationUnit tu = getCdtAst(file, includePath, additionalMacros);
+		return getMacrosFromTranslationUnit(tu);
 	}
 
 	IScanner scanner;
