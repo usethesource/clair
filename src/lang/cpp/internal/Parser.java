@@ -216,6 +216,7 @@ import io.usethesource.vallang.IMap;
 import io.usethesource.vallang.IMapWriter;
 import io.usethesource.vallang.ISourceLocation;
 import io.usethesource.vallang.IString;
+import io.usethesource.vallang.ITuple;
 import io.usethesource.vallang.IValue;
 import io.usethesource.vallang.IValueFactory;
 import io.usethesource.vallang.exceptions.FactParseError;
@@ -431,7 +432,8 @@ public class Parser extends ASTVisitor {
 		return result;
 	}
 
-	public IValue parseCppToM3(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
+	public ITuple parseCppToM3AndAst(ISourceLocation file, IList includePath, IMap additionalMacros,
+			IEvaluatorContext ctx) {
 		setIEvaluatorContext(ctx);
 		IValue m3 = builder.M3_m3(file);
 		IASTTranslationUnit tu = getCdtAst(file, includePath, additionalMacros);
@@ -444,7 +446,7 @@ public class Parser extends ASTVisitor {
 
 		m3 = m3.asWithKeywordParameters().setParameter("comments", comments);
 		m3 = m3.asWithKeywordParameters().setParameter("macros", macros);
-		return m3;
+		return vf.tuple(m3, result);
 	}
 
 	public IList getCommentsFromTranslationUnit(IASTTranslationUnit tu) {

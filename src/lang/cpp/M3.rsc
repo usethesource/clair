@@ -25,11 +25,10 @@ M3 javaAstToM3(Declaration tu, M3 model = m3(tu.src.top)) {
 }
 
 M3 createM3FromCppFile(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ()) {
-  M3 model = parseCppToM3(file, includePaths = includePaths, additionalMacros = additionalMacros);
-  Declaration ast = parseCpp(file, includePaths = includePaths, additionalMacros = additionalMacros);
-  return javaAstToM3(ast, model = model);
+  tuple[M3,Declaration] m3AndAst = parseCppToM3AndAst(file, includePaths = includePaths, additionalMacros = additionalMacros);
+  return javaAstToM3(m3AndAst<1>, model = m3AndAst<0>);
 }
 
 @javaClass{lang.cpp.internal.Parser}
 @reflect{need access to streams}
-java M3 parseCppToM3(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ());
+java tuple[M3, Declaration] parseCppToM3AndAst(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ());
