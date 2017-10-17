@@ -445,10 +445,10 @@ public class Parser extends ASTVisitor {
 			throw RuntimeExceptionFactory.parseError(file, null, null);
 		}
 		IList comments = getCommentsFromTranslationUnit(tu);
-		ISet macros = getMacrosFromTranslationUnit(tu);
+		ISet macros = getMacroExpansionsFromTranslationUnit(tu);
 
 		m3 = m3.asWithKeywordParameters().setParameter("comments", comments);
-		m3 = m3.asWithKeywordParameters().setParameter("macros", macros);
+		m3 = m3.asWithKeywordParameters().setParameter("macroExpansions", macros);
 		return vf.tuple(m3, result);
 	}
 
@@ -465,7 +465,7 @@ public class Parser extends ASTVisitor {
 		return getCommentsFromTranslationUnit(tu);
 	}
 
-	public ISet getMacrosFromTranslationUnit(IASTTranslationUnit tu) {
+	public ISet getMacroExpansionsFromTranslationUnit(IASTTranslationUnit tu) {
 		ISetWriter macros = vf.setWriter();
 		Stream.of(tu.getMacroExpansions()).forEach(it -> {
 			ISourceLocation decl;
@@ -482,7 +482,7 @@ public class Parser extends ASTVisitor {
 	public ISet parseForMacros(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
 		setIEvaluatorContext(ctx);
 		IASTTranslationUnit tu = getCdtAst(file, includePath, additionalMacros);
-		return getMacrosFromTranslationUnit(tu);
+		return getMacroExpansionsFromTranslationUnit(tu);
 	}
 
 	IScanner scanner;
