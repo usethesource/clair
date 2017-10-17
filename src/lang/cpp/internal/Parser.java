@@ -445,10 +445,10 @@ public class Parser extends ASTVisitor {
 			throw RuntimeExceptionFactory.parseError(file, null, null);
 		}
 		IList comments = getCommentsFromTranslationUnit(tu);
-		ISet macros = getMacroExpansionsFromTranslationUnit(tu);
+		ISet macroExpansions = getMacroExpansionsFromTranslationUnit(tu);
 
 		m3 = m3.asWithKeywordParameters().setParameter("comments", comments);
-		m3 = m3.asWithKeywordParameters().setParameter("macroExpansions", macros);
+		m3 = m3.asWithKeywordParameters().setParameter("macroExpansions", macroExpansions);
 		return vf.tuple(m3, result);
 	}
 
