@@ -15,6 +15,7 @@ package lang.cpp.internal;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -214,6 +215,8 @@ import io.usethesource.vallang.IList;
 import io.usethesource.vallang.IListWriter;
 import io.usethesource.vallang.IMap;
 import io.usethesource.vallang.IMapWriter;
+import io.usethesource.vallang.ISet;
+import io.usethesource.vallang.ISetWriter;
 import io.usethesource.vallang.ISourceLocation;
 import io.usethesource.vallang.IString;
 import io.usethesource.vallang.ITuple;
@@ -442,7 +445,7 @@ public class Parser extends ASTVisitor {
 			throw RuntimeExceptionFactory.parseError(file, null, null);
 		}
 		IList comments = getCommentsFromTranslationUnit(tu);
-		IList macros = getMacrosFromTranslationUnit(tu);
+		ISet macros = getMacrosFromTranslationUnit(tu);
 
 		m3 = m3.asWithKeywordParameters().setParameter("comments", comments);
 		m3 = m3.asWithKeywordParameters().setParameter("macros", macros);
@@ -462,13 +465,21 @@ public class Parser extends ASTVisitor {
 		return getCommentsFromTranslationUnit(tu);
 	}
 
-	public IList getMacrosFromTranslationUnit(IASTTranslationUnit tu) {
-		IListWriter macros = vf.listWriter();
-		Stream.of(tu.getMacroExpansions()).forEach(it -> macros.append(getSourceLocation(it)));
+	public ISet getMacrosFromTranslationUnit(IASTTranslationUnit tu) {
+		ISetWriter macros = vf.setWriter();
+		Stream.of(tu.getMacroExpansions()).forEach(it -> {
+			ISourceLocation decl;
+			try {
+				decl = br.resolveBinding(it.getMacroReference().resolveBinding());
+			} catch (URISyntaxException e) {
+				decl = vf.sourceLocation(URIUtil.rootScheme("unknown"));
+			}
+			macros.insert(vf.tuple(getSourceLocation(it), decl));
+		});
 		return macros.done();
 	}
 
-	public IList parseForMacros(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
+	public ISet parseForMacros(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
 		setIEvaluatorContext(ctx);
 		IASTTranslationUnit tu = getCdtAst(file, includePath, additionalMacros);
 		return getMacrosFromTranslationUnit(tu);
