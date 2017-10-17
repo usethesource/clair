@@ -446,10 +446,26 @@ public class Parser extends ASTVisitor {
 		}
 		IList comments = getCommentsFromTranslationUnit(tu);
 		ISet macroExpansions = getMacroExpansionsFromTranslationUnit(tu);
+		ISet macroDefinitions = getMacroDefinitionsFromTranslationUnit(tu);
 
 		m3 = m3.asWithKeywordParameters().setParameter("comments", comments);
 		m3 = m3.asWithKeywordParameters().setParameter("macroExpansions", macroExpansions);
+		m3 = m3.asWithKeywordParameters().setParameter("macroDefinitions", macroDefinitions);
 		return vf.tuple(m3, result);
+	}
+
+	public ISet getMacroDefinitionsFromTranslationUnit(IASTTranslationUnit tu) {
+		ISetWriter macros = vf.setWriter();
+		Stream.of(tu.getMacroDefinitions()).forEach(it -> {
+			ISourceLocation decl;
+			try {
+				decl = br.resolveBinding(it.getName().resolveBinding());
+			} catch (URISyntaxException e) {
+				decl = vf.sourceLocation(URIUtil.rootScheme("null"));
+			}
+			macros.insert(vf.tuple(decl, getSourceLocation(it)));
+		});
+		return macros.done();
 	}
 
 	public IList getCommentsFromTranslationUnit(IASTTranslationUnit tu) {

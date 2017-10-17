@@ -11,7 +11,8 @@ public data M3(
   rel[loc field, loc accesser] fieldAccess = {},
   rel[loc caller, loc typeName] typeDependency = {},
   rel[loc base, loc override] methodOverrides = {},
-  rel[loc file, loc macro] macroExpansions = {}
+  rel[loc file, loc macro] macroExpansions = {},
+  rel[loc macro, loc src] macroDefinitions = {}
 );
 
 M3 javaAstToM3(Declaration tu, M3 model = m3(tu.src.top)) {
