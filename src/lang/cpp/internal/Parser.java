@@ -15,6 +15,7 @@ package lang.cpp.internal;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -221,8 +222,11 @@ import io.usethesource.vallang.IList;
 import io.usethesource.vallang.IListWriter;
 import io.usethesource.vallang.IMap;
 import io.usethesource.vallang.IMapWriter;
+import io.usethesource.vallang.ISet;
+import io.usethesource.vallang.ISetWriter;
 import io.usethesource.vallang.ISourceLocation;
 import io.usethesource.vallang.IString;
+import io.usethesource.vallang.ITuple;
 import io.usethesource.vallang.IValue;
 import io.usethesource.vallang.IValueFactory;
 import io.usethesource.vallang.exceptions.FactParseError;
@@ -277,9 +281,8 @@ public class Parser extends ASTVisitor {
 		dependencies.get(from).add(to);
 	}
 
-	public IValue parseCpp(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
+	private IASTTranslationUnit getCdtAst(ISourceLocation file, IList includePath, IMap additionalMacros) {
 		try {
-			setIEvaluatorContext(ctx);
 			FileContent fc = FileContent.create(file.toString(),
 					((IString) new Prelude(vf).readFile(file)).getValue().toCharArray());
 
@@ -433,13 +436,12 @@ public class Parser extends ASTVisitor {
 			}
 
 			IASTTranslationUnit tu = GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, idx, options, log);
-			IValue result = convertCdtToRascal(tu);
-			if (result == null) {
-				throw RuntimeExceptionFactory.parseError(file, null, null);
-			}
 			// out(dependencies.toString());
 
-			return result;
+			scanner = new CPreprocessor(fc, si, ParserLanguage.CPP, log,
+					GPPScannerExtensionConfiguration.getInstance(si), ifcp);
+
+			return tu;
 		} catch (CoreException e) {
 			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
 		} catch (Throwable e) {
@@ -449,6 +451,84 @@ public class Parser extends ASTVisitor {
 	}
 
 	private ArrayList<IToken> tokens = new ArrayList<IToken>();
+
+	public IValue parseCpp(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
+		setIEvaluatorContext(ctx);
+		IASTTranslationUnit tu = getCdtAst(file, includePath, additionalMacros);
+		IValue result = convertCdtToRascal(tu);
+		if (result == null) {
+			throw RuntimeExceptionFactory.parseError(file, null, null);
+		}
+		return result;
+	}
+
+	public ITuple parseCppToM3AndAst(ISourceLocation file, IList includePath, IMap additionalMacros,
+			IEvaluatorContext ctx) {
+		setIEvaluatorContext(ctx);
+		IValue m3 = builder.M3_m3(file);
+		IASTTranslationUnit tu = getCdtAst(file, includePath, additionalMacros);
+		IValue result = convertCdtToRascal(tu);
+		if (result == null) {
+			throw RuntimeExceptionFactory.parseError(file, null, null);
+		}
+		IList comments = getCommentsFromTranslationUnit(tu);
+		ISet macroExpansions = getMacroExpansionsFromTranslationUnit(tu);
+		ISet macroDefinitions = getMacroDefinitionsFromTranslationUnit(tu);
+
+		m3 = m3.asWithKeywordParameters().setParameter("comments", comments);
+		m3 = m3.asWithKeywordParameters().setParameter("macroExpansions", macroExpansions);
+		m3 = m3.asWithKeywordParameters().setParameter("macroDefinitions", macroDefinitions);
+		return vf.tuple(m3, result);
+	}
+
+	public ISet getMacroDefinitionsFromTranslationUnit(IASTTranslationUnit tu) {
+		ISetWriter macros = vf.setWriter();
+		Stream.of(tu.getMacroDefinitions()).forEach(it -> {
+			ISourceLocation decl;
+			try {
+				decl = br.resolveBinding(it.getName().resolveBinding());
+			} catch (URISyntaxException e) {
+				decl = vf.sourceLocation(URIUtil.rootScheme("null"));
+			}
+			macros.insert(vf.tuple(decl, getSourceLocation(it)));
+		});
+		return macros.done();
+	}
+
+	public IList getCommentsFromTranslationUnit(IASTTranslationUnit tu) {
+		IListWriter comments = vf.listWriter();
+		Stream.of(tu.getComments()).forEach(it -> comments.append(getSourceLocation(it)));
+		return comments.done();
+	}
+
+	public IList parseForComments(ISourceLocation file, IList includePath, IMap additionalMacros,
+			IEvaluatorContext ctx) {
+		setIEvaluatorContext(ctx);
+		IASTTranslationUnit tu = getCdtAst(file, includePath, additionalMacros);
+		return getCommentsFromTranslationUnit(tu);
+	}
+
+	public ISet getMacroExpansionsFromTranslationUnit(IASTTranslationUnit tu) {
+		ISetWriter macros = vf.setWriter();
+		Stream.of(tu.getMacroExpansions()).forEach(it -> {
+			ISourceLocation decl;
+			try {
+				decl = br.resolveBinding(it.getMacroReference().resolveBinding());
+			} catch (URISyntaxException e) {
+				decl = vf.sourceLocation(URIUtil.rootScheme("unknown"));
+			}
+			macros.insert(vf.tuple(getSourceLocation(it), decl));
+		});
+		return macros.done();
+	}
+
+	public ISet parseForMacros(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
+		setIEvaluatorContext(ctx);
+		IASTTranslationUnit tu = getCdtAst(file, includePath, additionalMacros);
+		return getMacroExpansionsFromTranslationUnit(tu);
+	}
+
+	IScanner scanner;
 
 	public IValue parseExpression(IString expression, IEvaluatorContext ctx) throws CoreException, IOException {
 		setIEvaluatorContext(ctx);
@@ -472,7 +552,7 @@ public class Parser extends ASTVisitor {
 		return stack.pop();
 	}
 
-	public IValue convertCdtToRascal(IASTTranslationUnit translationUnit) throws CoreException {
+	public IValue convertCdtToRascal(IASTTranslationUnit translationUnit) {
 		translationUnit.accept(this);
 		if (stack.size() == 1)
 			return stack.pop();

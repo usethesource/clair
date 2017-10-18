@@ -439,6 +439,14 @@ public map[str, list[loc]] classPaths =
 @reflect{need access to streams}   
 java Declaration parseCpp(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ());
 
+@javaClass{lang.cpp.internal.Parser}
+@reflect{need access to streams}
+java list[loc] parseForComments(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ());
+
+@javaClass{lang.cpp.internal.Parser}
+@reflect{need access to streams}
+java list[loc] parseForMacros(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ());
+
 @javaClass{lang.cpp.internal.Parser}  
 @reflect{need access to streams}   
 java Expression parseExpression(str expression);
