@@ -104,6 +104,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
@@ -183,6 +184,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
@@ -203,7 +205,9 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode.NameCollector;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
@@ -474,11 +478,31 @@ public class Parser extends ASTVisitor {
 		IList comments = getCommentsFromTranslationUnit(tu);
 		ISet macroExpansions = getMacroExpansionsFromTranslationUnit(tu);
 		ISet macroDefinitions = getMacroDefinitionsFromTranslationUnit(tu);
+		ISet methodOverrides = getMethodOverrides(tu);
 
 		m3 = m3.asWithKeywordParameters().setParameter("comments", comments);
 		m3 = m3.asWithKeywordParameters().setParameter("macroExpansions", macroExpansions);
 		m3 = m3.asWithKeywordParameters().setParameter("macroDefinitions", macroDefinitions);
+		m3 = m3.asWithKeywordParameters().setParameter("overridedMethods", methodOverrides);
 		return vf.tuple(m3, result);
+	}
+
+	public ISet getMethodOverrides(IASTTranslationUnit tu) {
+		NameCollector anc = new NameCollector();
+		tu.accept(anc);
+		Set<IBinding> bindings = new HashSet<>();
+		Stream.of(anc.getNames()).forEach(it -> bindings.add(it.resolveBinding()));
+		ISetWriter methodOverrides = vf.setWriter();
+		bindings.stream().filter(ICPPMethod.class::isInstance).forEach(override -> {
+			Stream.of(ClassTypeHelper.findOverridden((ICPPMethod) override, tu)).forEach(base -> {
+				try {
+					methodOverrides.insert(vf.tuple(br.resolveBinding(base), br.resolveBinding(override)));
+				} catch (FactTypeUseException | URISyntaxException e) {
+					err("Got FactTypeUseException\n" + e.getMessage());
+				}
+			});
+		});
+		return methodOverrides.done();
 	}
 
 	public ISet getMacroDefinitionsFromTranslationUnit(IASTTranslationUnit tu) {
