@@ -21,7 +21,7 @@
 		<dependency>
 			<groupId>org.rascalmpl</groupId>
 			<artifactId>rascal_eclipse</artifactId>
-			<version>0.8.4-SNAPSHOT</version>
+			<version>0.9.0</version>
 		</dependency>
 	</dependencies>
 
