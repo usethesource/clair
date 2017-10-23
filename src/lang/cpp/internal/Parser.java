@@ -456,7 +456,7 @@ public class Parser extends ASTVisitor {
 		m3 = m3.asWithKeywordParameters().setParameter("comments", comments);
 		m3 = m3.asWithKeywordParameters().setParameter("macroExpansions", macroExpansions);
 		m3 = m3.asWithKeywordParameters().setParameter("macroDefinitions", macroDefinitions);
-		m3 = m3.asWithKeywordParameters().setParameter("overridedMethods", methodOverrides);
+		m3 = m3.asWithKeywordParameters().setParameter("methodOverrides", methodOverrides);
 		return vf.tuple(m3, result);
 	}
 
