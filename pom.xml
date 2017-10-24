@@ -16,13 +16,4 @@
 	<scm>
 		<developerConnection>scm:git:https://github.com/cwi-swat/clair.git</developerConnection>			
 	</scm>
-
-	<dependencies>
-		<dependency>
-			<groupId>org.rascalmpl</groupId>
-			<artifactId>rascal_eclipse</artifactId>
-			<version>0.8.4-SNAPSHOT</version>
-		</dependency>
-	</dependencies>
-
 </project>
