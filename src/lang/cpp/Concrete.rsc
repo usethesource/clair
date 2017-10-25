@@ -8,6 +8,10 @@ import lang::cpp::AST;
 import lang::rascal::\syntax::Rascal;
 import util::ValueUI;
 
+public &T <: node unsetRec(&T <: node x, str label) = visit(x) { 
+  case node n => unset(n, label) 
+};
+
 Statement parseStmt(str code) {
   str context = "void parse() {
                 '  <code>
@@ -26,17 +30,20 @@ Statement parseStmt(str code) {
 
 Expression parseExpr(str code) {
   str context = "void parse() {
-                '  sizeof(<code>);
+                '  decltype(<code>) x;
                 '}";
   Declaration tu = parseString(context);
   if (translationUnit([functionDefinition([],
         declSpecifier([],[],\void()),
-        functionDeclarator([],[],[],name("parse"),[],[],decl=loc d),
-        [],
+        functionDeclarator([],[],[],name("parse"),[],[],decl=loc d1),[],
         compoundStatement([],
-          [expressionStatement([],
-            sizeof(bracketed(Expression e)))]))]) := tu && d == |cpp+function:///parse()|)
+          [declarationStatement([],
+            simpleDeclaration([],
+              declSpecifier([],[],decltype(),
+                Expression e),
+              [declarator([],[],name("x"),decl=loc d2)]))]))]) := tu
+      && d1 == |cpp+function:///parse()| && d2 == |cpp+variable:///parse()/x|)
     return unsetRec(e);
-  throw "Unexpected AST in parseExpr: <tu.declarations[0]>";
+  throw "Unexpected AST in parseExpr: <tu>";
 }
 
