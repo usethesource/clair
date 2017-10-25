@@ -431,6 +431,10 @@ public map[str, list[loc]] classPaths =
 @reflect{need access to streams}   
 java Declaration parseCpp(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ());
 
+@javaClass{lang.cpp.internal.Parser}  
+@reflect{need access to streams}   
+java Declaration parseString(str file);
+
 @javaClass{lang.cpp.internal.Parser}
 @reflect{need access to streams}
 java list[loc] parseForComments(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ());
@@ -442,8 +446,6 @@ java list[loc] parseForMacros(loc file, list[loc] includePaths = classPaths["vs1
 @javaClass{lang.cpp.internal.Parser}  
 @reflect{need access to streams}   
 java Expression parseExpression(str expression);
-
-Expression parseExpr(str expression) = unsetRec(parseExpression(expression));
 
 map[loc,Declaration] parseDir(loc dir, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ())
   = parseFiles([dir + file|file <- listEntries(dir)], includePaths = includePaths, additionalMacros = additionalMacros);
