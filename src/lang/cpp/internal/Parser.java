@@ -527,6 +527,18 @@ public class Parser extends ASTVisitor {
 
 	IScanner scanner;
 
+	public IValue parseString(IString code, IEvaluatorContext ctx) throws CoreException {
+		setIEvaluatorContext(ctx);
+		FileContent fc = FileContent.create("", code.getValue().toCharArray());
+		IScannerInfo si = new ScannerInfo();
+		IncludeFileContentProvider ifcp = IncludeFileContentProvider.getEmptyFilesProvider();
+		int options = ILanguage.OPTION_PARSE_INACTIVE_CODE;
+		IParserLogService log = new DefaultLogService();
+		IASTTranslationUnit tu = GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, null, options, log);
+		tu.accept(this);
+		return stack.pop();
+	}
+
 	public IValue parseExpression(IString expression, IEvaluatorContext ctx) throws CoreException, IOException {
 		setIEvaluatorContext(ctx);
 		if (!expression.getValue().endsWith(";"))
