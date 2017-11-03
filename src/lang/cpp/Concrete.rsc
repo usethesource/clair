@@ -48,3 +48,10 @@ Expression parseExpr(str code) {
   throw "Unexpected AST in parseExpr: <tu>";
 }
 
+@concreteSyntax
+Declaration parseDecl(str code) {
+  Declaration tu = parseString(code);
+  if (translationUnit([Declaration d]) := tu) return unsetRec(d);
+  throw "Unexpected AST in parseDecl: <tu>"; 
+}
+
