@@ -5,13 +5,13 @@ import List;
 import Node;
 
 import lang::cpp::AST;
-import lang::rascal::\syntax::Rascal;
 import util::ValueUI;
 
 public &T <: node unsetRec(&T <: node x, str label) = visit(x) { 
   case node n => unset(n, label) 
 };
 
+@concreteSyntax
 Statement parseStmt(str code) {
   str context = "void parse() {
                 '  <code>
@@ -28,6 +28,7 @@ Statement parseStmt(str code) {
   throw "Unexpected AST in parseStmt: <tu>"; 
 }
 
+@concreteSyntax
 Expression parseExpr(str code) {
   str context = "void parse() {
                 '  decltype(<code>) x;
