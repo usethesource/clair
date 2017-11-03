@@ -55,3 +55,16 @@ Declaration parseDecl(str code) {
   throw "Unexpected AST in parseDecl: <tu>"; 
 }
 
+@concreteSyntax
+Expression parseType(str code) {
+  str context = "auto fun() -\> <code>;";
+  Declaration tu = parseString(context);
+  if (translationUnit([simpleDeclaration([],
+      declSpecifier([],[],auto()),
+      [functionDeclarator([],[],[],name("fun"),[],[],
+          Expression t,
+          decl=loc d)])]) := tu && t is typeId && d == |cpp+function:///fun()|) 
+    return unsetRec(t);
+  throw "Unexpected AST in parseType: <tu>";
+}
+
