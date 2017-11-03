@@ -29,6 +29,22 @@ Statement parseStmt(str code) {
 }
 
 @concreteSyntax
+list[Statement] parseStmts(str code) {
+  str context = "void parse() {
+                '  <code>
+                '}";
+  Declaration tu = parseString(context);
+  if (translationUnit([functionDefinition(
+        [],
+        declSpecifier([],[],\void()),
+        functionDeclarator([],[],[],name("parse"),[],[],decl=loc d),
+        [],
+        compoundStatement(_,list[Statement] statements))]) := tu && d == |cpp+function:///parse()|)
+    return [unsetRec(s) | s <- statements];
+  throw "Unexpected AST in parseStmts: <tu>";
+}
+
+@concreteSyntax
 Expression parseExpr(str code) {
   str context = "void parse() {
                 '  decltype(<code>) x;
