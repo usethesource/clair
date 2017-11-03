@@ -433,7 +433,7 @@ java Declaration parseCpp(loc file, list[loc] includePaths = classPaths["vs12"],
 
 @javaClass{lang.cpp.internal.Parser}  
 @reflect{need access to streams}   
-java Declaration parseString(str file);
+java Declaration parseString(str code);
 
 @javaClass{lang.cpp.internal.Parser}
 @reflect{need access to streams}
