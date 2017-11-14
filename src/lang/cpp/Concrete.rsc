@@ -23,7 +23,7 @@ Statement parseStmt(str code) {
         //functionDeclarator([],[],[],name("parse"),[],[],decl=|cpp+function:///parse()|), gives error
         functionDeclarator([],[],[],name("parse"),[],[],decl=loc d),
         [],
-        compoundStatement(_,[Statement s]))]) := tu && d == |cpp+function:///parse()|)
+        compoundStatement([],[Statement s]))]) := tu && d == |cpp+function:///parse()|)
     return unsetRec(s);
   throw "Unexpected AST in parseStmt: <tu>"; 
 }
@@ -39,7 +39,7 @@ list[Statement] parseStmts(str code) {
         declSpecifier([],[],\void()),
         functionDeclarator([],[],[],name("parse"),[],[],decl=loc d),
         [],
-        compoundStatement(_,list[Statement] statements))]) := tu && d == |cpp+function:///parse()|)
+        compoundStatement([],list[Statement] statements))]) := tu && d == |cpp+function:///parse()|)
     return [unsetRec(s) | s <- statements];
   throw "Unexpected AST in parseStmts: <tu>";
 }
