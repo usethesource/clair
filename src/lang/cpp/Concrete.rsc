@@ -84,3 +84,35 @@ Expression parseType(str code) {
   throw "Unexpected AST in parseType: <tu>";
 }
 
+@concreteAntiquoteToHole
+str createHoleForAntiquote(Expr _, str id) = "$$$$$clairExpr$<id>$$$$$";
+
+@concreteAntiquoteToHole
+str createHoleForAntiquote(Stmt _, str id) = "$$$$$clairStmt$<id>$$$$$()";
+
+void foo(Declaration ast) {
+  list[Statement] stmts = {s | /s:expressionStatement(
+            [],
+            functionCall(
+              idExpression(
+                name(
+                  "$$$$$clairStmt$1$$$$$",
+                  src=|file:///|(13,21)),
+                src=|file:///|(13,21),
+                decl=|cpp+problem://Attempt%20to%20use%20symbol%20failed:%20$$$$$clairStmt$1$$$$$|,
+                typ=problemType("Failure to determine type of expression")),
+              [],
+              src=|file:///|(13,23),
+              typ=problemBinding()),
+            src=|file:///|(13,24)) := ast };
+}
+
+void bar(Declaration ast) {
+  list[Expression] exprs = {e | /e:idExpression(
+              name(
+                "$$$$$clairExpr$1$$$$$",
+                src=|project://clair/src/test/test.cpp|(485,21)),
+              src=|project://clair/src/test/test.cpp|(485,21),
+              decl=|cpp+problem://Attempt%20to%20use%20symbol%20failed:%20$$$$$clairExpr$1$$$$$|,
+              typ=problemType("Failure to determine type of expression")) := ast};
+}
