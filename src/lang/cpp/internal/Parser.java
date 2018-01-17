@@ -369,8 +369,13 @@ public class Parser extends ASTVisitor {
 			IIncludeFileResolutionHeuristics ifrh = new IIncludeFileResolutionHeuristics() {
 				List<String> path = new ArrayList<String>();
 				{
-					path.add(ResourcesPlugin.getWorkspace().getRoot().getProject("clair").getLocation().toString()
-							+ "/includes");
+					try {
+						path.add(ResourcesPlugin.getWorkspace().getRoot().getProject("clair").getLocation().toString()
+								+ "/includes");
+					} catch (Throwable t) {
+						ctx.getStdErr().println(
+								"WARNING: ResourcesPlugin was null, can't get workspace; not overriding include files");
+					}
 
 					for (IValue include : includePath)
 						path.add(locToPath((ISourceLocation) include));
@@ -553,6 +558,18 @@ public class Parser extends ASTVisitor {
 	}
 
 	IScanner scanner;
+
+	public IValue parseString(IString code, IEvaluatorContext ctx) throws CoreException {
+		setIEvaluatorContext(ctx);
+		FileContent fc = FileContent.create("", code.getValue().toCharArray());
+		IScannerInfo si = new ScannerInfo();
+		IncludeFileContentProvider ifcp = IncludeFileContentProvider.getEmptyFilesProvider();
+		int options = ILanguage.OPTION_PARSE_INACTIVE_CODE;
+		IParserLogService log = new DefaultLogService();
+		IASTTranslationUnit tu = GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, null, options, log);
+		tu.accept(this);
+		return stack.pop();
+	}
 
 	public IValue parseExpression(IString expression, IEvaluatorContext ctx) throws CoreException, IOException {
 		setIEvaluatorContext(ctx);
