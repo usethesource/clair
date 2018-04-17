@@ -76,6 +76,9 @@ public data TypeSymbol
   
   | \aliasTemplate(loc decl, list[loc] templateParameters)
   
+  | \functionSetType(loc decl, list[TypeSymbol] templateArguments)
+  | \functionSetTypePointer(loc decl, list[TypeSymbol] templateArguments)
+  
   | \unresolved()
   | \any()
   
