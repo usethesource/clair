@@ -214,8 +214,19 @@ public class BindingsResolver {
 
 	private ISourceLocation resolveIMacroBinding(IMacroBinding binding) throws URISyntaxException {
 		if (binding.isDynamic()) {
+			String className = binding.getClass().getSimpleName();
+			if ("CounterMacro".equals(className))
+				return makeBinding("cpp+dynamicMacro", null, "counter");
+			if ("DateMacro".equals(className))
+				return makeBinding("cpp+dynamicMacro", null, "date");
+			if ("FileMacro".equals(className))
+				return makeBinding("cpp+dynamicMacro", null, "file");
+			if ("LineMacro".equals(className))
+				return makeBinding("cpp+dynamicMacro", null, "line");
+			if ("TimeMacro".equals(className))
+				return makeBinding("cpp+dynamicMacro", null, "time");
 			err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
-			throw new RuntimeException("Encountered dynamic MacroBinding");
+			throw new RuntimeException("Encountered unknown dynamic MacroBinding " + className);
 		}
 		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), "cpp+macro");
 	}
