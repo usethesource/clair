@@ -405,8 +405,8 @@ public class TypeResolver {
 		Stream.of(_bases).forEach(it -> baseClassTypes.append(resolveType(it.getBaseClassType())));
 		switch (type.getKey()) {
 		case ICPPClassTemplate.k_struct:
-			// out("ICPPClassTemplate struct");
-			break;
+			// TODO: make internal struct type?
+			return resolveICPPClassType((ICPPClassType) type);
 		case ICPPClassTemplate.k_union:
 			// out("ICPPClassTemplate union");
 			break;
