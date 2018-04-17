@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -68,6 +69,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClass;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPFunctionSet;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.FunctionSetType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExpression;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.IPDOMCPPClassType;
@@ -271,6 +274,10 @@ public class TypeResolver {
 			return resolveITypeContainer((ITypeContainer) type);
 		if (type instanceof ITypedef)
 			return resolveITypedef((ITypedef) type);
+		// end of sub-interfaces; next are accidental types encountered
+		if (type instanceof FunctionSetType)
+			return resolveFunctionSetType((FunctionSetType) type);
+
 		throw new RuntimeException("TypeResolver encountered unknown type " + type.getClass().getSimpleName());
 	}
 
@@ -553,5 +560,20 @@ public class TypeResolver {
 	private IConstructor resolveITypedef(ITypedef type) {
 		IType _type = type.getType();
 		throw new RuntimeException("NYI: resolveITypedef");
+	}
+
+	// Accidental type encounters below
+	private IConstructor resolveFunctionSetType(FunctionSetType type) {
+		CPPFunctionSet functionSet = type.getFunctionSet();
+		ISourceLocation binding = getDecl(functionSet.getBindings()[0]);
+		IListWriter templateArguments = vf.listWriter();
+		if (functionSet.getTemplateArguments() != null)
+			Stream.of(functionSet.getTemplateArguments()).forEach(it -> {
+				templateArguments.append(resolveType(it.getTypeValue()));
+			});
+
+		if (ValueCategory.LVALUE.equals(type.getValueCategory()))
+			return builder.TypeSymbol_functionSetType(binding, templateArguments.done());
+		return builder.TypeSymbol_functionSetTypePointer(binding, templateArguments.done());
 	}
 }
