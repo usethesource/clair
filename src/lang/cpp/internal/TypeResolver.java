@@ -271,7 +271,7 @@ public class TypeResolver {
 			return resolveITypeContainer((ITypeContainer) type);
 		if (type instanceof ITypedef)
 			return resolveITypedef((ITypedef) type);
-		return null;
+		throw new RuntimeException("TypeResolver encountered unknown type " + type.getClass().getSimpleName());
 	}
 
 	private IConstructor resolveIArrayType(IArrayType type) {
