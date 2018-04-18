@@ -240,6 +240,9 @@ public class Parser extends ASTVisitor {
 	private BindingsResolver br = new BindingsResolver();
 	private TypeResolver tr;
 
+	// The list to store the name of the headers
+	private List<String> headerList;
+
 	boolean doProblemLogging = false;
 
 	public Parser(IValueFactory vf) {
@@ -381,6 +384,15 @@ public class Parser extends ASTVisitor {
 				@Override
 				public String findInclusion(String include, String currentFile) {
 					include = include.trim().replace("\\", "/");
+
+					/* To extract each headerName, for full header name */
+					// Only when it is null, instantiate it
+					if (headerList == null) {
+						headerList = new ArrayList<String>();
+					}
+					headerList.add(include);
+					/* End of modification */
+
 					String filePath = include.substring(0, include.lastIndexOf('/') + 1);
 					String fileName = include.substring(include.lastIndexOf('/') + 1);
 					for (String path : path) {
@@ -392,7 +404,6 @@ public class Parser extends ASTVisitor {
 								addDependency(currentFile, include);
 								return f.getAbsolutePath();
 							}
-
 					}
 					err("Include " + include + " for " + currentFile + " not found");
 					return null;// TODO: restore exception here
@@ -461,12 +472,23 @@ public class Parser extends ASTVisitor {
 		ISet macroExpansions = getMacroExpansionsFromTranslationUnit(tu);
 		ISet macroDefinitions = getMacroDefinitionsFromTranslationUnit(tu);
 		ISet methodOverrides = getMethodOverrides(tu);
+		IList headers = getHeaderList(headerList);
+		headerList = null; // After get the Rascal type List, set this to null for next time use
 
 		m3 = m3.asWithKeywordParameters().setParameter("comments", comments);
 		m3 = m3.asWithKeywordParameters().setParameter("macroExpansions", macroExpansions);
 		m3 = m3.asWithKeywordParameters().setParameter("macroDefinitions", macroDefinitions);
 		m3 = m3.asWithKeywordParameters().setParameter("methodOverrides", methodOverrides);
+		m3 = m3.asWithKeywordParameters().setParameter("headers", headers);
 		return vf.tuple(m3, result);
+	}
+
+	public IList getHeaderList(List<String> headerList) {
+		IListWriter listWriter = vf.listWriter();
+		for (String s : headerList) {
+			listWriter.append(vf.string(s));
+		}
+		return listWriter.done();
 	}
 
 	public ISet getMethodOverrides(IASTTranslationUnit tu) {
