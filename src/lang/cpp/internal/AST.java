@@ -627,8 +627,6 @@ public class AST {
     = tf.constructor(typestore,_TypeSymbol,"unspecified");
   private static final Type _TypeSymbol_eUnionTemplate_2 
     = tf.constructor(typestore,_TypeSymbol,"eUnionTemplate",tf.sourceLocationType(),"decl",tf.listType(tf.sourceLocationType()),"templateParameters");
-  private static final Type _TypeSymbol_cUnionTemplate_2 
-    = tf.constructor(typestore,_TypeSymbol,"cUnionTemplate",tf.sourceLocationType(),"decl",tf.listType(tf.sourceLocationType()),"templateParameters");
   private static final Type _TypeSymbol_class_1 
     = tf.constructor(typestore,_TypeSymbol,"class",tf.sourceLocationType(),"decl");
   private static final Type _TypeSymbol_eClassTemplate_2 
@@ -683,12 +681,18 @@ public class AST {
     = tf.constructor(typestore,_TypeSymbol,"void");
   private static final Type _TypeSymbol_char_0 
     = tf.constructor(typestore,_TypeSymbol,"char");
+  private static final Type _TypeSymbol_functionSetTypePointer_2 
+    = tf.constructor(typestore,_TypeSymbol,"functionSetTypePointer",tf.sourceLocationType(),"decl",tf.listType(_TypeSymbol),"templateArguments");
   private static final Type _TypeSymbol_referenceType_1 
     = tf.constructor(typestore,_TypeSymbol,"referenceType",_TypeSymbol,"type");
   private static final Type _TypeSymbol_boolean_0 
     = tf.constructor(typestore,_TypeSymbol,"boolean");
   private static final Type _TypeSymbol_int128_0 
     = tf.constructor(typestore,_TypeSymbol,"int128");
+  private static final Type _TypeSymbol_cUnionTemplate_2 
+    = tf.constructor(typestore,_TypeSymbol,"cUnionTemplate",tf.sourceLocationType(),"decl",tf.listType(tf.sourceLocationType()),"templateParameters");
+  private static final Type _TypeSymbol_functionSetType_2 
+    = tf.constructor(typestore,_TypeSymbol,"functionSetType",tf.sourceLocationType(),"decl",tf.listType(_TypeSymbol),"templateArguments");
   private static final Type _TypeSymbol_pointerType_2 
     = tf.constructor(typestore,_TypeSymbol,"pointerType",tf.listType(_TypeModifier),"modifiers",_TypeSymbol,"type");
   private static final Type _TypeSymbol_eEnumTemplate_2 
@@ -5337,23 +5341,6 @@ public class AST {
     return vf.constructor(_TypeSymbol_eUnionTemplate_2 , $decl, $templateParameters).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor TypeSymbol_cUnionTemplate(ISourceLocation $decl, IList $templateParameters) {
-      
-    if (!$decl.getType().isSubtypeOf(tf.sourceLocationType())) {
-      throw new IllegalArgumentException("Expected " + tf.sourceLocationType() + " but got " + $decl.getType() + " for $decl:" + $decl);
-    }
-      
-    if (!$templateParameters.getType().isSubtypeOf(tf.listType(tf.sourceLocationType()))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(tf.sourceLocationType()) + " but got " + $templateParameters.getType() + " for $templateParameters:" + $templateParameters);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    
-    
-    return vf.constructor(_TypeSymbol_cUnionTemplate_2 , $decl, $templateParameters).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
   public IConstructor TypeSymbol_class(ISourceLocation $decl) {
       
     if (!$decl.getType().isSubtypeOf(tf.sourceLocationType())) {
@@ -5721,6 +5708,23 @@ public class AST {
     return vf.constructor(_TypeSymbol_char_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
+  public IConstructor TypeSymbol_functionSetTypePointer(ISourceLocation $decl, IList $templateArguments) {
+      
+    if (!$decl.getType().isSubtypeOf(tf.sourceLocationType())) {
+      throw new IllegalArgumentException("Expected " + tf.sourceLocationType() + " but got " + $decl.getType() + " for $decl:" + $decl);
+    }
+      
+    if (!$templateArguments.getType().isSubtypeOf(tf.listType(_TypeSymbol))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_TypeSymbol) + " but got " + $templateArguments.getType() + " for $templateArguments:" + $templateArguments);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeSymbol_functionSetTypePointer_2 , $decl, $templateArguments).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
   public IConstructor TypeSymbol_referenceType(IConstructor $type) {
       
     if (!$type.getType().isSubtypeOf(_TypeSymbol)) {
@@ -5750,6 +5754,40 @@ public class AST {
     
     
     return vf.constructor(_TypeSymbol_int128_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeSymbol_cUnionTemplate(ISourceLocation $decl, IList $templateParameters) {
+      
+    if (!$decl.getType().isSubtypeOf(tf.sourceLocationType())) {
+      throw new IllegalArgumentException("Expected " + tf.sourceLocationType() + " but got " + $decl.getType() + " for $decl:" + $decl);
+    }
+      
+    if (!$templateParameters.getType().isSubtypeOf(tf.listType(tf.sourceLocationType()))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(tf.sourceLocationType()) + " but got " + $templateParameters.getType() + " for $templateParameters:" + $templateParameters);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeSymbol_cUnionTemplate_2 , $decl, $templateParameters).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeSymbol_functionSetType(ISourceLocation $decl, IList $templateArguments) {
+      
+    if (!$decl.getType().isSubtypeOf(tf.sourceLocationType())) {
+      throw new IllegalArgumentException("Expected " + tf.sourceLocationType() + " but got " + $decl.getType() + " for $decl:" + $decl);
+    }
+      
+    if (!$templateArguments.getType().isSubtypeOf(tf.listType(_TypeSymbol))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_TypeSymbol) + " but got " + $templateArguments.getType() + " for $templateArguments:" + $templateArguments);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeSymbol_functionSetType_2 , $decl, $templateArguments).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeSymbol_pointerType(IList $modifiers, IConstructor $type) {
