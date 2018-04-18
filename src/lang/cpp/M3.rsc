@@ -12,7 +12,8 @@ public data M3(
   rel[loc caller, loc typeName] typeDependency = {},
   rel[loc base, loc override] methodOverrides = {},
   rel[loc file, loc macro] macroExpansions = {},		//not in included files
-  rel[loc macro, loc src] macroDefinitions = {}
+  rel[loc macro, loc src] macroDefinitions = {}, 
+  list[str] headers = []
 );
 
 /* methodInvocations: functionName is bracketed, !functionName.expression.decl?, !(getName(functionName.expression) in {"pmArrow","pmDot","star"}) : empty
@@ -40,6 +41,11 @@ M3 createM3FromCppFile(loc file, list[loc] includePaths = classPaths["vs12"], ma
   return javaAstToM3(m3AndAst<1>, model = m3AndAst<0>);
 }
 
+//M3 createM3FromCppFile(loc file, list[loc] includePaths = classPaths["tos"], map[str,str] additionalMacros = ()) {
+//  tuple[M3,Declaration] m3AndAst = parseCppToM3AndAst(file, includePaths = includePaths, additionalMacros = additionalMacros);
+//  return javaAstToM3(m3AndAst<1>, model = m3AndAst<0>);
+//}
+
 tuple[M3, Declaration] createM3AndAstFromCppFile(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ()) {
   tuple[M3,Declaration] m3AndAst = parseCppToM3AndAst(file, includePaths = includePaths, additionalMacros = additionalMacros);
   return <javaAstToM3(m3AndAst<1>, model = m3AndAst<0>),m3AndAst<1>>;
@@ -47,4 +53,4 @@ tuple[M3, Declaration] createM3AndAstFromCppFile(loc file, list[loc] includePath
 
 @javaClass{lang.cpp.internal.Parser}
 @reflect{need access to streams}
-java tuple[M3, Declaration] parseCppToM3AndAst(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ());
+java tuple[M3, Declaration] parseCppToM3AndAst(loc file, list[loc] includePaths = classPaths["tos"], map[str,str] additionalMacros = ());

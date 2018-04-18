@@ -424,12 +424,27 @@ public map[str, list[loc]] classPaths =
   "mac-xcode": [|file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include/c++/4.2.1|,
                 |file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include/c++/4.2.1/tr1|,
                 |file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include|
-     ]
+     ], 
+  "tos": [|file://c:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2011.0/VC/include|,
+    |file://c:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2011.0/VC/atlmfc/include|,
+    |file://c:/Program%20Files%20(x86)/Windows%20Kits/8.0/Include/um|,
+    |file://c:/Program%20Files%20(x86)/Windows%20Kits/8.0/Include/shared|, 
+    |file://Y:/PosCore/GeoCVEmb/bb/inc|,
+    |file://Y:/PosCore/tools/gcc/h|, 
+    |file://Y:/PosCore/GeoCVEmb/FactoryTooling/GeoGatewayDll/pub|, 
+    |file://Y:/PosCore/GeoCVEmb/imh/inc|, 
+    |file://Y:/PosCore/GeoCommon/StringMap/pub|, 
+    |file://Y:/PosCore/GeoInterface/Inc|,
+    |file://Y:/PosCore/GeoCVEmb/cle/inc|, 
+    |file://Y:/PosCore/GeoCVEmb/plg/inc|, 
+    |file://Y:/PosCore/GeoCVEmb/tnt/inc|, 
+    |file://Y:/PosCore/GeoCVEmb/tvx/inc|, 
+    |file://Y:/PosCore/GeoCVEmb/tnt/src|]
     );
 
 @javaClass{lang.cpp.internal.Parser}  
 @reflect{need access to streams}   
-java Declaration parseCpp(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ());
+java Declaration parseCpp(loc file, list[loc] includePaths = classPaths["tos"], map[str,str] additionalMacros = ());
 
 @javaClass{lang.cpp.internal.Parser}  
 @reflect{need access to streams}   
