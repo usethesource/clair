@@ -240,6 +240,7 @@ public class Parser extends ASTVisitor {
 	private BindingsResolver br = new BindingsResolver();
 	private TypeResolver tr;
 
+	// The list to store the name of the headers
 	private List<String> headerList;
 
 	boolean doProblemLogging = false;
@@ -383,13 +384,15 @@ public class Parser extends ASTVisitor {
 				@Override
 				public String findInclusion(String include, String currentFile) {
 					include = include.trim().replace("\\", "/");
+
 					/* To extract each headerName, for full header name */
-					// headerWriter.append(vf.string(include));
+					// Only when it is null, instantiate it
 					if (headerList == null) {
 						headerList = new ArrayList<String>();
 					}
 					headerList.add(include);
-					/* Modification ends here */
+					/* End of modification */
+
 					String filePath = include.substring(0, include.lastIndexOf('/') + 1);
 					String fileName = include.substring(include.lastIndexOf('/') + 1);
 					for (String path : path) {
@@ -469,9 +472,8 @@ public class Parser extends ASTVisitor {
 		ISet macroExpansions = getMacroExpansionsFromTranslationUnit(tu);
 		ISet macroDefinitions = getMacroDefinitionsFromTranslationUnit(tu);
 		ISet methodOverrides = getMethodOverrides(tu);
-		// IList headerList = headerWriter.done();
 		IList headers = getHeaderList(headerList);
-		headerList = null;
+		headerList = null; // After get the Rascal type List, set this to null for next time use
 
 		m3 = m3.asWithKeywordParameters().setParameter("comments", comments);
 		m3 = m3.asWithKeywordParameters().setParameter("macroExpansions", macroExpansions);
@@ -481,7 +483,6 @@ public class Parser extends ASTVisitor {
 		return vf.tuple(m3, result);
 	}
 
-	// TODO: Encapuslate the method
 	public IList getHeaderList(List<String> headerList) {
 		IListWriter listWriter = vf.listWriter();
 		for (String s : headerList) {

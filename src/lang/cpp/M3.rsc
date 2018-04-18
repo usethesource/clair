@@ -13,7 +13,7 @@ public data M3(
   rel[loc base, loc override] methodOverrides = {},
   rel[loc file, loc macro] macroExpansions = {},		//not in included files
   rel[loc macro, loc src] macroDefinitions = {}, 
-  list[str] headers = []
+  list[str] headers = [] //Store the name of headers
 );
 
 /* methodInvocations: functionName is bracketed, !functionName.expression.decl?, !(getName(functionName.expression) in {"pmArrow","pmDot","star"}) : empty
