@@ -189,7 +189,6 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTArrayRangeDesignator;
-import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -197,11 +196,9 @@ import org.eclipse.cdt.core.parser.DefaultLogService;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IParserLogService;
-import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
-import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
@@ -211,7 +208,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
 import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
-import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -432,25 +428,7 @@ public class Parser extends ASTVisitor {
 
 			};
 
-			boolean saveTokens = false;
-			if (saveTokens) {
-				IScanner scanner = new CPreprocessor(fc, si, ParserLanguage.CPP, log,
-						GPPScannerExtensionConfiguration.getInstance(si), ifcp);
-				try {
-					while (true)
-						tokens.add(scanner.nextToken());
-				} catch (EndOfFileException e) {
-					out("Got " + tokens.size() + " tokens");
-				}
-			}
-
-			IASTTranslationUnit tu = GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, idx, options, log);
-			// out(dependencies.toString());
-
-			scanner = new CPreprocessor(fc, si, ParserLanguage.CPP, log,
-					GPPScannerExtensionConfiguration.getInstance(si), ifcp);
-
-			return tu;
+			return GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, idx, options, log);
 		} catch (CoreException e) {
 			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
 		} catch (Throwable e) {
@@ -476,10 +454,6 @@ public class Parser extends ASTVisitor {
 		setIEvaluatorContext(ctx);
 		IValue m3 = builder.M3_m3(file);
 		IASTTranslationUnit tu = getCdtAst(file, includePath, additionalMacros);
-		IValue result = convertCdtToRascal(tu);
-		if (result == null) {
-			throw RuntimeExceptionFactory.parseError(file, null, null);
-		}
 		IList comments = getCommentsFromTranslationUnit(tu);
 		ISet macroExpansions = getMacroExpansionsFromTranslationUnit(tu);
 		ISet macroDefinitions = getMacroDefinitionsFromTranslationUnit(tu);
@@ -489,6 +463,9 @@ public class Parser extends ASTVisitor {
 		m3 = m3.asWithKeywordParameters().setParameter("macroExpansions", macroExpansions);
 		m3 = m3.asWithKeywordParameters().setParameter("macroDefinitions", macroDefinitions);
 		m3 = m3.asWithKeywordParameters().setParameter("methodOverrides", methodOverrides);
+		m3 = setM3IncludeInformationFromTranslationUnit(tu, m3);
+
+		IValue result = convertCdtToRascal(tu);
 		return vf.tuple(m3, result);
 	}
 
@@ -537,6 +514,33 @@ public class Parser extends ASTVisitor {
 		return getCommentsFromTranslationUnit(tu);
 	}
 
+	public IValue setM3IncludeInformationFromTranslationUnit(IASTTranslationUnit tu, IValue m3) {
+		ISetWriter includeDirectives = vf.setWriter();
+		ISetWriter inactiveIncludes = vf.setWriter();
+		ISetWriter includeResolution = vf.setWriter();
+		Stream.of(tu.getIncludeDirectives()).forEach(it -> {
+			ISourceLocation include = vf.sourceLocation(URIUtil.rootScheme("unknown"));
+			try {
+				include = vf.sourceLocation(it.isSystemInclude() ? "cpp+systemInclude" : "cpp+include", null,
+						it.getName().toString());
+			} catch (URISyntaxException e) {
+				// Shouldn't happen
+			}
+			if (it.isActive())
+				includeDirectives.insert(vf.tuple(include, getSourceLocation(it)));
+			else
+				inactiveIncludes.insert(vf.tuple(include, getSourceLocation(it)));
+			ISourceLocation path = "" == it.getPath() ? vf.sourceLocation(URIUtil.rootScheme("unresolved"))
+					: vf.sourceLocation(it.getPath());
+			includeResolution.insert(vf.tuple(include, path));
+		});
+
+		m3 = m3.asWithKeywordParameters().setParameter("includeDirectives", includeDirectives.done());
+		m3 = m3.asWithKeywordParameters().setParameter("inactiveIncludes", inactiveIncludes.done());
+		m3 = m3.asWithKeywordParameters().setParameter("includeResolution", includeResolution.done());
+		return m3;
+	}
+
 	public ISet getMacroExpansionsFromTranslationUnit(IASTTranslationUnit tu) {
 		ISetWriter macros = vf.setWriter();
 		Stream.of(tu.getMacroExpansions()).forEach(it -> {
@@ -556,8 +560,6 @@ public class Parser extends ASTVisitor {
 		IASTTranslationUnit tu = getCdtAst(file, includePath, additionalMacros);
 		return getMacroExpansionsFromTranslationUnit(tu);
 	}
-
-	IScanner scanner;
 
 	public IValue parseString(IString code, IEvaluatorContext ctx) throws CoreException {
 		setIEvaluatorContext(ctx);
