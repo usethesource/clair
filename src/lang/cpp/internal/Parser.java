@@ -466,6 +466,7 @@ public class Parser extends ASTVisitor {
 		m3 = m3.asWithKeywordParameters().setParameter("macroExpansions", macroExpansions);
 		m3 = m3.asWithKeywordParameters().setParameter("macroDefinitions", macroDefinitions);
 		m3 = m3.asWithKeywordParameters().setParameter("methodOverrides", methodOverrides);
+		m3 = setM3IncludeInformationFromTranslationUnit(tu, m3);
 		return vf.tuple(m3, result);
 	}
 
@@ -512,6 +513,33 @@ public class Parser extends ASTVisitor {
 		setIEvaluatorContext(ctx);
 		IASTTranslationUnit tu = getCdtAst(file, includePath, additionalMacros);
 		return getCommentsFromTranslationUnit(tu);
+	}
+
+	public IValue setM3IncludeInformationFromTranslationUnit(IASTTranslationUnit tu, IValue m3) {
+		ISetWriter includeDirectives = vf.setWriter();
+		ISetWriter inactiveIncludes = vf.setWriter();
+		ISetWriter includeResolution = vf.setWriter();
+		Stream.of(tu.getIncludeDirectives()).forEach(it -> {
+			ISourceLocation include = vf.sourceLocation(URIUtil.rootScheme("unknown"));
+			try {
+				include = vf.sourceLocation(it.isSystemInclude() ? "cpp+systemInclude" : "cpp+include", null,
+						it.getName().toString());
+			} catch (URISyntaxException e) {
+				// Shouldn't happen
+			}
+			if (it.isActive())
+				includeDirectives.insert(vf.tuple(include, getSourceLocation(it)));
+			else
+				inactiveIncludes.insert(vf.tuple(include, getSourceLocation(it)));
+			ISourceLocation path = "" == it.getPath() ? vf.sourceLocation(URIUtil.rootScheme("unresolved"))
+					: vf.sourceLocation(it.getPath());
+			includeResolution.insert(vf.tuple(include, path));
+		});
+
+		m3 = m3.asWithKeywordParameters().setParameter("includeDirectives", includeDirectives.done());
+		m3 = m3.asWithKeywordParameters().setParameter("inactiveIncludes", inactiveIncludes.done());
+		m3 = m3.asWithKeywordParameters().setParameter("includeResolution", includeResolution.done());
+		return m3;
 	}
 
 	public ISet getMacroExpansionsFromTranslationUnit(IASTTranslationUnit tu) {
