@@ -193,7 +193,6 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.DefaultLogService;
-import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
