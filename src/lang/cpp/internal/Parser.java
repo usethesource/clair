@@ -2317,7 +2317,7 @@ public class Parser extends ASTVisitor {
 
 		expression.getOperand1().accept(this);
 		IConstructor lhs = stack.pop();
-		expression.getOperand2().accept(this);
+		expression.getInitOperand2().accept(this);
 		IConstructor rhs = stack.pop();
 
 		switch (expression.getOperator()) {
