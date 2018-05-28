@@ -365,6 +365,11 @@ public class Parser extends ASTVisitor {
 				List<String> path = new ArrayList<String>();
 				{
 					try {
+						path.add(locToPath(URIUtil.getParentLocation(file)));
+					} catch (IllegalArgumentException e) {
+						// Do nothing, will not lookup parent of non-file loc
+					}
+					try {
 						path.add(ResourcesPlugin.getWorkspace().getRoot().getProject("clair").getLocation().toString()
 								+ "/includes");
 					} catch (Throwable t) {
