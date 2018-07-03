@@ -399,10 +399,14 @@ public class TypeResolver {
 		ICPPTemplateParameterMap parameterMap = type.getTemplateParameterMap();
 		Stream.of(parameterMap.getAllParameterPositions()).forEach(it -> {
 			ICPPTemplateArgument arg = parameterMap.getArgument(it);
-			if (arg.isTypeValue())
-				templateParameters.append(resolveType(arg.getTypeValue()));
-			else
-				templateParameters.append(resolveType(arg.getNonTypeEvaluation().getType(null)));
+			if (arg != null) {
+				if (arg.isTypeValue())
+					templateParameters.append(resolveType(arg.getTypeValue()));
+				else
+					templateParameters.append(resolveType(arg.getNonTypeEvaluation().getType(null)));
+			} else {
+
+			}
 		});
 		return builder.TypeSymbol_classSpecialization(decl, templateParameters.done());
 	}
