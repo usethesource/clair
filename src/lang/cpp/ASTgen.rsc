@@ -40,7 +40,7 @@ str license = "/**
               ' */";
 
 public void generate()  {
-  code = generate("AST", [#Declarator, #DeclSpecifier, #Declaration, #Expression, #Type, #Statement, #Modifier, #TypeSymbol, #Attribute, #TypeModifier, #M3]);
+  code = generate("AST", [#Declarator, #DeclSpecifier, #Declaration, #Expression, #Type, #Statement, #Modifier, #TypeSymbol, #Attribute, #TypeModifier, #M3, #Name]);
   
   writeFile(|project://clair/src/lang/cpp/internal/AST.java|, code);
 }
@@ -153,8 +153,9 @@ str type2FactoryCall(Symbol t){
   bool hasDecl("Declaration", str cname)
     = cname in {"enumerator", "usingDirective", "sttClass", "sttTypename", "tttParameter", "baseSpecifier", "namespaceDefinition", "namespaceDefinitionInline", "usingDeclaration", "namespaceAlias", "alias"};
   bool hasDecl("Expression", str cname)
-    = cname in {"qualifiedName", "idExpression", "fieldReference", "fieldReferencePointerDeref", "templateId", "constructorChainInitializer", "capture", "captureByRef"};
+    = cname in {"idExpression", "fieldReference", "fieldReferencePointerDeref", "templateId", "constructorChainInitializer", "capture", "captureByRef"};
   bool hasDecl("Statement", str cname) = cname in {"label", "goto"};
+  bool hasDecl("Name", "qualifiedName") = true;
   bool hasDecl(str _, str _) = false;
   
   bool hasTyp("Expression", str cname) = cname in
@@ -169,10 +170,11 @@ str type2FactoryCall(Symbol t){
     "functionCall", "fieldReference", "fieldReferencePointerDeref", "expressionList", "conditional",
     "cast", "dynamicCast", "staticCast", "reinterpretCast", "constCast", "idExpression", "typeIdInitializerExpression",
     
-    "conversionName", "delete", "vectoredDelete", "globalDelete", "globalVectoredDelete", "lambda",
+    "delete", "vectoredDelete", "globalDelete", "globalVectoredDelete", "lambda",
     "new", "globalNew", "newWithArgs", "globalNewWithArgs", "packExpansion", "simpleTypeConstructor",
     "integerConstant", "floatConstant", "charConstant", "stringLiteral", "this", "true", "false", "nullptr"
     };
+  bool hasTyp("Name", "conversionName") = true;
   default bool hasTyp(str _, str _) = false;
   
   str declareMaker(Production::cons(label(str cname, Symbol typ:adt(str typeName, list[Symbol] ps)), list[Symbol] args, list[Symbol] kwTypes,set[Attr] _)) 

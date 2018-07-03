@@ -19,20 +19,20 @@ import lang::cpp::TypeSymbol;
 //extend analysis::m3::AST;
 
 data Declarator(loc src = |unknown:///|, loc decl = |unknown:///|)
-    = \declarator(list[Attribute] attributes, list[Declaration] pointerOperators, Expression name)
-    | \declarator(list[Attribute] attributes, list[Declaration] pointerOperators, Expression name, Expression initializer)
-    | \fieldDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, Expression name, Expression bitFieldSize)
-    | \fieldDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, Expression name, Expression bitFieldSize, Expression initializer)
-    | \functionDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, Expression name, list[Declaration] parameters)  //superfluous?
-    | \functionDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, list[Modifier] modifiers, Expression name, list[Declaration] parameters, list[Declaration] virtSpecifiers)
-    | \functionDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, list[Modifier] modifiers, Expression name, list[Declaration] parameters, list[Declaration] virtSpecifiers, Expression trailingReturnType)
+    = \declarator(list[Attribute] attributes, list[Declaration] pointerOperators, Name name)
+    | \declarator(list[Attribute] attributes, list[Declaration] pointerOperators, Name name, Expression initializer)
+    | \fieldDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, Name name, Expression bitFieldSize)
+    | \fieldDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, Name name, Expression bitFieldSize, Expression initializer)
+    | \functionDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, Name name, list[Declaration] parameters)  //superfluous?
+    | \functionDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, list[Modifier] modifiers, Name name, list[Declaration] parameters, list[Declaration] virtSpecifiers)
+    | \functionDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, list[Modifier] modifiers, Name name, list[Declaration] parameters, list[Declaration] virtSpecifiers, Expression trailingReturnType)
     | \functionDeclaratorNested(list[Attribute] attributes, list[Declaration] pointerOperators, list[Modifier] modifiers, Declarator declarator, list[Declaration] parameters, list[Declaration] virtSpecifiers)
     | \functionDeclaratorNested(list[Attribute] attributes, list[Declaration] pointerOperators, list[Modifier] modifiers, Declarator declarator, list[Declaration] parameters, list[Declaration] virtSpecifiers, Expression initializer)
-    | \functionDeclaratorNoexcept(list[Attribute] attributes, list[Declaration] pointerOperators, list[Modifier] modifiers, Expression name, list[Declaration] parameters, list[Declaration] virtSpecifiers, Expression noexceptExpression)
-    | \functionDeclaratorWithES(list[Attribute] attributes, list[Declaration] pointerOperators, list[Modifier] modifiers, Expression name, list[Declaration] parameters, list[Declaration] virtSpecifiers) //empty exception specification
-    | \functionDeclaratorWithES(list[Attribute] attributes, list[Declaration] pointerOperators, list[Modifier] modifiers, Expression name, list[Declaration] parameters, list[Declaration] virtSpecifiers, list[Expression] exceptionSpecification)
-    | \arrayDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, Expression name, list[Expression] arrayModifier)
-    | \arrayDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, Expression name, list[Expression] arrayModifier, Expression initializer)
+    | \functionDeclaratorNoexcept(list[Attribute] attributes, list[Declaration] pointerOperators, list[Modifier] modifiers, Name name, list[Declaration] parameters, list[Declaration] virtSpecifiers, Expression noexceptExpression)
+    | \functionDeclaratorWithES(list[Attribute] attributes, list[Declaration] pointerOperators, list[Modifier] modifiers, Name name, list[Declaration] parameters, list[Declaration] virtSpecifiers) //empty exception specification
+    | \functionDeclaratorWithES(list[Attribute] attributes, list[Declaration] pointerOperators, list[Modifier] modifiers, Name name, list[Declaration] parameters, list[Declaration] virtSpecifiers, list[Expression] exceptionSpecification)
+    | \arrayDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, Name name, list[Expression] arrayModifier)
+    | \arrayDeclarator(list[Attribute] attributes, list[Declaration] pointerOperators, Name name, list[Expression] arrayModifier, Expression initializer)
     | \arrayDeclaratorNested(list[Attribute] attributes, list[Declaration] pointerOperators, Declarator declarator, list[Expression] arrayModifier)
     | \arrayDeclaratorNested(list[Attribute] attributes, list[Declaration] pointerOperators, Declarator declarator, list[Expression] arrayModifier, Expression initializer)
     
@@ -43,29 +43,29 @@ data Declarator(loc src = |unknown:///|, loc decl = |unknown:///|)
 data DeclSpecifier(loc src = |unknown:///|)
     = \declSpecifier(list[Attribute] attributes, list[Modifier] modifiers, Type \type)
     | \declSpecifier(list[Attribute] attributes, list[Modifier] modifiers, Type \type, Expression expression) //decltype and type_of
-    | \etsEnum(list[Modifier] modifiers, Expression name, loc decl = |unknown:///|)
-    | \etsStruct(list[Modifier] modifiers, Expression name, loc decl = |unknown:///|) //ElaboratedTypeSpecifier
-    | \etsUnion(list[Modifier] modifiers, Expression name, loc decl = |unknown:///|)
-    | \etsClass(list[Modifier] modifiers, Expression name, loc decl = |unknown:///|)
-    | \namedTypeSpecifier(list[Modifier] modifiers, Expression name, loc decl = |unknown:///|)
+    | \etsEnum(list[Modifier] modifiers, Name name, loc decl = |unknown:///|)
+    | \etsStruct(list[Modifier] modifiers, Name name, loc decl = |unknown:///|) //ElaboratedTypeSpecifier
+    | \etsUnion(list[Modifier] modifiers, Name name, loc decl = |unknown:///|)
+    | \etsClass(list[Modifier] modifiers, Name name, loc decl = |unknown:///|)
+    | \namedTypeSpecifier(list[Modifier] modifiers, Name name, loc decl = |unknown:///|)
     
-    | \struct(list[Modifier] modifiers, Expression name, list[Declaration] members, loc decl = |unknown:///|)  //c
-    | \union(list[Modifier] modifiers, Expression name, list[Declaration] members, loc decl = |unknown:///|)   //c
-    | \class(list[Modifier] modifiers, Expression name, list[Declaration] members, loc decl = |unknown:///|)   //c
-    | \struct(list[Attribute] attributes, list[Modifier] modifiers, Expression name, list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
-    | \union(list[Attribute] attributes, list[Modifier] modifiers, Expression name, list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
-    | \class(list[Attribute] attributes, list[Modifier] modifiers, Expression name, list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
-    | \structFinal(list[Attribute] attributes, list[Modifier] modifiers, Expression name, list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
-    | \unionFinal(list[Attribute] attributes, list[Modifier] modifiers, Expression name, list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
-    | \classFinal(list[Attribute] attributes, list[Modifier] modifiers, Expression name, list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
+    | \struct(list[Modifier] modifiers, Name name, list[Declaration] members, loc decl = |unknown:///|)  //c
+    | \union(list[Modifier] modifiers, Name name, list[Declaration] members, loc decl = |unknown:///|)   //c
+    | \class(list[Modifier] modifiers, Name name, list[Declaration] members, loc decl = |unknown:///|)   //c
+    | \struct(list[Attribute] attributes, list[Modifier] modifiers, Name name, list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
+    | \union(list[Attribute] attributes, list[Modifier] modifiers, Name name, list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
+    | \class(list[Attribute] attributes, list[Modifier] modifiers, Name name, list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
+    | \structFinal(list[Attribute] attributes, list[Modifier] modifiers, Name name, list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
+    | \unionFinal(list[Attribute] attributes, list[Modifier] modifiers, Name name, list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
+    | \classFinal(list[Attribute] attributes, list[Modifier] modifiers, Name name, list[Declaration] baseSpecifiers, list[Declaration] members, loc decl = |unknown:///|)
     
-    | \enum(list[Attribute] attributes, list[Modifier] modifiers, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
-    | \enum(list[Attribute] attributes, list[Modifier] modifiers, DeclSpecifier baseType, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
-    | \enumOpaque(list[Attribute] attributes, list[Modifier] modifiers, DeclSpecifier baseType, Expression name, loc decl = |unknown:///|)
-    | \enumScoped(list[Attribute] attributes, list[Modifier] modifiers, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
-    | \enumScoped(list[Attribute] attributes, list[Modifier] modifiers, DeclSpecifier baseType, Expression name, list[Declaration] enumerators, loc decl = |unknown:///|)
-    | \enumScopedOpaque(list[Attribute] attributes, list[Modifier] modifiers, Expression name, loc decl = |unknown:///|)
-    | \enumScopedOpaque(list[Attribute] attributes, list[Modifier] modifiers, DeclSpecifier baseType, Expression name, loc decl = |unknown:///|)
+    | \enum(list[Attribute] attributes, list[Modifier] modifiers, Name name, list[Declaration] enumerators, loc decl = |unknown:///|)
+    | \enum(list[Attribute] attributes, list[Modifier] modifiers, DeclSpecifier baseType, Name name, list[Declaration] enumerators, loc decl = |unknown:///|)
+    | \enumOpaque(list[Attribute] attributes, list[Modifier] modifiers, DeclSpecifier baseType, Name name, loc decl = |unknown:///|)
+    | \enumScoped(list[Attribute] attributes, list[Modifier] modifiers, Name name, list[Declaration] enumerators, loc decl = |unknown:///|)
+    | \enumScoped(list[Attribute] attributes, list[Modifier] modifiers, DeclSpecifier baseType, Name name, list[Declaration] enumerators, loc decl = |unknown:///|)
+    | \enumScopedOpaque(list[Attribute] attributes, list[Modifier] modifiers, Name name, loc decl = |unknown:///|)
+    | \enumScopedOpaque(list[Attribute] attributes, list[Modifier] modifiers, DeclSpecifier baseType, Name name, loc decl = |unknown:///|)
     
      // Non-standard MSVC throw ellipsis
     | \msThrowEllipsis()
@@ -82,16 +82,16 @@ data Declaration(loc src=|unknown:///|)
     
     | \asmDeclaration(str assembly)
     
-    | \enumerator(Expression name, Expression \value, loc decl = |unknown:///|)
-    | \enumerator(Expression name, loc decl = |unknown:///|)
+    | \enumerator(Name name, Expression \value, loc decl = |unknown:///|)
+    | \enumerator(Name name, loc decl = |unknown:///|)
     
     | \usingDirective(list[Attribute] attributes, Expression qualifiedName, loc decl = |unknown:///|)
     | \visibilityLabel(Modifier visibility)
     
-    //| \etsEnum(Expression name)
-    //| \etsStruct(Expression name) //ElaboratedTypeSpecifier
-    //| \etsUnion(Expression name)
-    //| \etsClass(Expression name)
+    //| \etsEnum(Name name)
+    //| \etsStruct(Name name) //ElaboratedTypeSpecifier
+    //| \etsUnion(Name name)
+    //| \etsClass(Name name)
     
     | \pointer(list[Attribute] attributes, list[Modifier] modifiers)    // *
     | \pointerToMember(list[Attribute] attributes, list[Modifier] modifiers, Expression nestedName)
@@ -109,21 +109,21 @@ data Declaration(loc src=|unknown:///|)
     //| \declarationEqualsInitializer(str name, Expression initializer) //weg //Que?
     
     | \template(list[Declaration] parameters, Declaration declaration, TypeSymbol \type)
-    | \sttClass(Expression name, loc decl = |unknown:///|) //simpleTypeTemplateParameter    
-    | \sttTypename(Expression name, loc decl = |unknown:///|) //simpleTypeTemplateParameter
-    | \sttClass(Expression name, Expression defaultType, loc decl = |unknown:///|) //simpleTypeTemplateParameter    
-    | \sttTypename(Expression name, Expression defaultType, loc decl = |unknown:///|) //simpleTypeTemplateParameter
+    | \sttClass(Name name, loc decl = |unknown:///|) //simpleTypeTemplateParameter    
+    | \sttTypename(Name name, loc decl = |unknown:///|) //simpleTypeTemplateParameter
+    | \sttClass(Name name, Expression defaultType, loc decl = |unknown:///|) //simpleTypeTemplateParameter    
+    | \sttTypename(Name name, Expression defaultType, loc decl = |unknown:///|) //simpleTypeTemplateParameter
     
-    | \tttParameter(list[Declaration] nestedParameters, Expression name, loc decl = |unknown:///|) //templatedTypeTemplateParameter
+    | \tttParameter(list[Declaration] nestedParameters, Name name, loc decl = |unknown:///|) //templatedTypeTemplateParameter
     
     | \baseSpecifier(list[Modifier] modifiers, loc decl = |unknown:///|)
-    | \baseSpecifier(list[Modifier] modifiers, Expression name, loc decl = |unknown:///|)
+    | \baseSpecifier(list[Modifier] modifiers, Name name, loc decl = |unknown:///|)
     
     | \virtSpecifier(Modifier modifier)
     
-    | \namespaceDefinition(list[Attribute] attributes, Expression name, list[Declaration] declarations, loc decl = |unknown:///|)
-    | \namespaceDefinitionInline(list[Attribute] attributes, Expression name, list[Declaration] declarations, loc decl = |unknown:///|)
-    | \usingDeclaration(list[Attribute] attributes, list[Modifier] modifiers, Expression name, loc decl = |unknown:///|)
+    | \namespaceDefinition(list[Attribute] attributes, Name name, list[Declaration] declarations, loc decl = |unknown:///|)
+    | \namespaceDefinitionInline(list[Attribute] attributes, Name name, list[Declaration] declarations, loc decl = |unknown:///|)
+    | \usingDeclaration(list[Attribute] attributes, list[Modifier] modifiers, Name name, loc decl = |unknown:///|)
     | \namespaceAlias(Expression \alias, Expression mapping, loc decl = |unknown:///|)
     
     | \linkageSpecification(str literal, list[Declaration] declarations)
@@ -204,13 +204,7 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved())
     | \reinterpretCast(Expression typeId, Expression expression)
     | \constCast(Expression typeId, Expression expression)
     
-    | \name(str \value)
-    | \qualifiedName(list[Expression] qualifiers, Expression lastName, loc decl = |unknown:///|)
-    | \operatorName(str \value)
-    | \conversionName(str \value, Expression typeId)
-    | \abstractEmptyName()
-
-    | \idExpression(Expression name, loc decl = |unknown:///|)
+    | \idExpression(Name name, loc decl = |unknown:///|)
     | \integerLiteral(int number)
     | \conditional(Expression condition, Expression positive, Expression negative)
     
@@ -223,12 +217,12 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved())
     | \false()
     | \nullptr()
     
-    //| \namedTypeSpecifier(list[Modifier] modifiers, Expression name)
+    //| \namedTypeSpecifier(list[Modifier] modifiers, Name name)
     
     | \functionCall(Expression functionName, list[Expression] arguments)
     
-    | \fieldReference(Expression fieldOwner, Expression name, loc decl = |unknown:///|)
-    | \fieldReferencePointerDeref(Expression fieldOnwer, Expression name, loc decl = |unknown:///|)
+    | \fieldReference(Expression fieldOwner, Name name, loc decl = |unknown:///|)
+    | \fieldReferencePointerDeref(Expression fieldOnwer, Name name, loc decl = |unknown:///|)
     //| \constructorInitializer(list[Expression] arguments)
     | \new(Expression typeId)
     | \new(Expression typeId, Expression initializer)
@@ -252,7 +246,7 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved())
     
     | \expressionList(list[Expression] expressions)
     
-    | \templateId(Expression name, list[Expression] argumentTypes, loc decl = |unknown:///|)
+    | \templateId(Name name, list[Expression] argumentTypes, loc decl = |unknown:///|)
 
     | \empty()    
     | \nyi(str raw)
@@ -270,7 +264,7 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved())
     // Initializers below
     | \equalsInitializer(Expression initializer)
     | \initializerList(list[Expression] clauses) //initializerClause?
-    | \constructorChainInitializer(Expression name, Expression initializer, loc decl = |unknown:///|)
+    | \constructorChainInitializer(Name name, Expression initializer, loc decl = |unknown:///|)
     | \constructorInitializer(list[Expression] arguments)
     
     // DesignatedInitializers below
@@ -282,15 +276,22 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved())
     | \arrayRangeDesignator(Expression rangeFloor, Expression rangeCeiling) //gcc-only
     
     // Captures
-    | \capture(Expression name, loc decl = |unknown:///|)
-    | \captureByRef(Expression name, loc decl = |unknown:///|)
+    | \capture(Name name, loc decl = |unknown:///|)
+    | \captureByRef(Name name, loc decl = |unknown:///|)
     | \captureThisPtr()
     
     | \problemExpression()
     
     ;                       
  
-
+data Name(loc src = |unknown:///|)
+    = \name(str \value)
+    | \qualifiedName(list[Name] qualifiers, Name lastName, loc decl = |unknown:///|)
+    | \operatorName(str \value)
+    | \conversionName(str \value, Expression typeId)
+    | \abstractEmptyName()
+    ;
+ 
 data Statement(loc src = |unknown:///|)
     = \compoundStatement(list[Attribute] attributes, list[Statement] statements)
     | \declarationStatement(list[Attribute] attributes, Declaration declaration)
@@ -315,8 +316,8 @@ data Statement(loc src = |unknown:///|)
     | \return(list[Attribute] attributes, Expression expression) //note: also with initializerClause, which currently is an Expression
     | \return(list[Attribute] attributes)
     | \nullStatement(list[Attribute] attributes)
-    | \label(list[Attribute] attributes, Expression name, Statement nestedStatement, loc decl = |unknown:///|)
-    | \goto(list[Attribute] attributes, Expression name, loc decl = |unknown:///|)
+    | \label(list[Attribute] attributes, Name name, Statement nestedStatement, loc decl = |unknown:///|)
+    | \goto(list[Attribute] attributes, Name name, loc decl = |unknown:///|)
     
     | \tryBlock(list[Attribute] attributes, Statement tryBody, list[Statement] catchHandlers)
     | \catch(list[Attribute] attributes, Declaration declaration, Statement body)
@@ -350,9 +351,9 @@ data Type(loc src = |unknown:///|)
     | \basicType(Type \type, list[Modifier] modifiers)
     | \nullptr()
     
-    | \structType(Expression name)
-    | \unionType(Expression name)
-    | \classType(Expression name)
+    | \structType(Name name)
+    | \unionType(Name name)
+    | \classType(Name name)
 
     ;
   
