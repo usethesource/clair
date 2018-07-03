@@ -47,6 +47,7 @@ public data TypeSymbol
   | \functionType(TypeSymbol returnType, list[TypeSymbol] parameterTypes)
   | \functionTypeVarArgs(TypeSymbol returnType, list[TypeSymbol] parameterTypes)
   | \typeContainer(TypeSymbol \type)
+  | \typedef(TypeSymbol \type)
   | \enumeration(loc decl)
   | \referenceType(TypeSymbol \type)
   | \parameterPackType(TypeSymbol \type)

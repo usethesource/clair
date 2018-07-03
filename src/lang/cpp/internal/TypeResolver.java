@@ -49,6 +49,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
@@ -270,10 +271,10 @@ public class TypeResolver {
 			return resolveIProblemType((IProblemType) type);
 		if (type instanceof IQualifierType)
 			return resolveIQualifierType((IQualifierType) type);
-		if (type instanceof ITypeContainer)
-			return resolveITypeContainer((ITypeContainer) type);
 		if (type instanceof ITypedef)
 			return resolveITypedef((ITypedef) type);
+		if (type instanceof ITypeContainer)
+			return resolveITypeContainer((ITypeContainer) type);
 		// end of sub-interfaces; next are accidental types encountered
 		if (type instanceof FunctionSetType)
 			return resolveFunctionSetType((FunctionSetType) type);
@@ -558,8 +559,9 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveITypedef(ITypedef type) {
-		IType _type = type.getType();
-		throw new RuntimeException("NYI: resolveITypedef");
+		if (type instanceof ICPPAliasTemplateInstance)
+			throw new RuntimeException("NYI: ICPPAliasTemplateInstance");
+		return builder.TypeSymbol_typedef(resolveType(type.getType()));
 	}
 
 	// Accidental type encounters below
