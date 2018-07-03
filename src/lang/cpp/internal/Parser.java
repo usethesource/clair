@@ -338,6 +338,8 @@ public class Parser extends ASTVisitor {
 			macros.put("UNICODE", "");
 			macros.put("_AFXDLL", "");
 
+			// macros.put("__INTELLISENSE__", "1");
+
 			IScannerInfo si = new ScannerInfo(macros, null);
 
 			InternalFileContentProvider ifcp = new InternalFileContentProvider() {
@@ -3170,8 +3172,9 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTTemplateParameter templateParameter) {
 		ISourceLocation loc = getSourceLocation(templateParameter);
 		boolean isParameterPack = templateParameter.isParameterPack();
-		if (isParameterPack)
-			err("WARNING: ICPPASTTemplateParameter has isParameterPack=true, unimplemented");
+		// if (isParameterPack)
+		// err("WARNING: ICPPASTTemplateParameter has isParameterPack=true,
+		// unimplemented");
 		if (templateParameter instanceof ICPPASTParameterDeclaration) {
 			// TODO: duplicate, never reached, remove
 			((ICPPASTParameterDeclaration) templateParameter).getDeclSpecifier().accept(this);
