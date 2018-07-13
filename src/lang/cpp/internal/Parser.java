@@ -472,7 +472,7 @@ public class Parser extends ASTVisitor {
 		Stream.of(anc.getNames()).forEach(it -> bindings.add(it.resolveBinding()));
 		ISetWriter methodOverrides = vf.setWriter();
 		bindings.stream().filter(ICPPMethod.class::isInstance).forEach(override -> {
-			Stream.of(ClassTypeHelper.findOverridden((ICPPMethod) override, tu)).forEach(base -> {
+			Stream.of(ClassTypeHelper.findOverridden((ICPPMethod) override)).forEach(base -> {
 				try {
 					methodOverrides.insert(vf.tuple(br.resolveBinding(base), br.resolveBinding(override)));
 				} catch (FactTypeUseException | URISyntaxException e) {

@@ -403,7 +403,7 @@ public class TypeResolver {
 				if (arg.isTypeValue())
 					templateParameters.append(resolveType(arg.getTypeValue()));
 				else
-					templateParameters.append(resolveType(arg.getNonTypeEvaluation().getType(null)));
+					templateParameters.append(resolveType(arg.getNonTypeEvaluation().getType()));
 			} else {
 
 			}
