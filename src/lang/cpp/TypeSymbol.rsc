@@ -1,4 +1,4 @@
-@license{Copyright (c) 2016-2017, Rodin Aarssen, Centrum Wiskunde & Informatica (CWI) 
+@license{Copyright (c) 2016-2018, Rodin Aarssen, Centrum Wiskunde & Informatica (CWI) 
 All rights reserved. 
  
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: 
@@ -47,6 +47,7 @@ public data TypeSymbol
   | \functionType(TypeSymbol returnType, list[TypeSymbol] parameterTypes)
   | \functionTypeVarArgs(TypeSymbol returnType, list[TypeSymbol] parameterTypes)
   | \typeContainer(TypeSymbol \type)
+  | \typedef(TypeSymbol \type)
   | \enumeration(loc decl)
   | \referenceType(TypeSymbol \type)
   | \parameterPackType(TypeSymbol \type)

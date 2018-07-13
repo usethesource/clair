@@ -346,6 +346,8 @@ public class Parser extends ASTVisitor {
 			macros.put("UNICODE", "");
 			macros.put("_AFXDLL", "");
 
+			// macros.put("__INTELLISENSE__", "1");
+
 			IScannerInfo si = new ScannerInfo(macros, null);
 
 			InternalFileContentProvider ifcp = new InternalFileContentProvider() {
@@ -814,7 +816,7 @@ public class Parser extends ASTVisitor {
 		else if (name instanceof ICPPASTTemplateId)
 			visit((ICPPASTTemplateId) name);
 		else {
-			stack.push(builder.Expression_name(new String(name.toCharArray()), loc));
+			stack.push(builder.Name_name(new String(name.toCharArray()), loc));
 		}
 		return PROCESS_ABORT;
 	}
@@ -823,13 +825,13 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(name);
 		IConstructor typ = tr.resolveType(name);
 		name.getTypeId().accept(this);
-		stack.push(builder.Expression_conversionName(name.toString(), stack.pop(), loc, typ));
+		stack.push(builder.Name_conversionName(name.toString(), stack.pop(), loc, typ));
 		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTOperatorName name) {
 		ISourceLocation loc = getSourceLocation(name);
-		stack.push(builder.Expression_operatorName(name.toString(), loc));
+		stack.push(builder.Name_operatorName(name.toString(), loc));
 		return PROCESS_ABORT;
 	}
 
@@ -849,7 +851,7 @@ public class Parser extends ASTVisitor {
 		if (name.isFullyQualified())
 			;
 		// err("WARNING: ICPPASTQualifiedName has fullyQualified=true");
-		stack.push(builder.Expression_qualifiedName(qualifier.done(), lastName, loc, decl));
+		stack.push(builder.Name_qualifiedName(qualifier.done(), lastName, loc, decl));
 		return PROCESS_ABORT;
 	}
 
@@ -1521,7 +1523,7 @@ public class Parser extends ASTVisitor {
 		ICPPASTExpression _noexceptExpression = declarator.getNoexceptExpression();
 
 		// TODO: fix when name == null
-		IConstructor name = builder.Expression_name("", loc);
+		IConstructor name = builder.Name_name("", loc);
 		IASTName _name = declarator.getName();
 		if (_name != null) {
 			_name.accept(this);
@@ -3152,8 +3154,7 @@ public class Parser extends ASTVisitor {
 			IConstructor abstractDeclarator = stack.pop();
 			if (abstractDeclarator.has("name")) {// TODO: properly fix
 				ISourceLocation declaratorLoc = getSourceLocation(typeId.getAbstractDeclarator());
-				abstractDeclarator = abstractDeclarator.set("name",
-						builder.Expression_abstractEmptyName(declaratorLoc));
+				abstractDeclarator = abstractDeclarator.set("name", builder.Name_abstractEmptyName(declaratorLoc));
 				abstractDeclarator = abstractDeclarator.asWithKeywordParameters().unsetParameter("decl");
 			}
 			stack.push(builder.Expression_typeId(declSpecifier, abstractDeclarator, loc));
@@ -3247,8 +3248,9 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTTemplateParameter templateParameter) {
 		ISourceLocation loc = getSourceLocation(templateParameter);
 		boolean isParameterPack = templateParameter.isParameterPack();
-		if (isParameterPack)
-			err("WARNING: ICPPASTTemplateParameter has isParameterPack=true, unimplemented");
+		// if (isParameterPack)
+		// err("WARNING: ICPPASTTemplateParameter has isParameterPack=true,
+		// unimplemented");
 		if (templateParameter instanceof ICPPASTParameterDeclaration) {
 			// TODO: duplicate, never reached, remove
 			((ICPPASTParameterDeclaration) templateParameter).getDeclSpecifier().accept(this);
