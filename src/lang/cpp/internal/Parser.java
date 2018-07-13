@@ -856,7 +856,7 @@ public class Parser extends ASTVisitor {
 			it.accept(this);
 			templateArguments.append(stack.pop());
 		});
-		stack.push(builder.Expression_templateId(templateName, templateArguments.done(), loc, decl));
+		stack.push(builder.Name_templateId(templateName, templateArguments.done(), loc, decl));
 		return PROCESS_ABORT;
 	}
 

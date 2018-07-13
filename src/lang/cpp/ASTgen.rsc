@@ -156,6 +156,7 @@ str type2FactoryCall(Symbol t){
     = cname in {"idExpression", "fieldReference", "fieldReferencePointerDeref", "templateId", "constructorChainInitializer", "capture", "captureByRef"};
   bool hasDecl("Statement", str cname) = cname in {"label", "goto"};
   bool hasDecl("Name", "qualifiedName") = true;
+  bool hasDecl("Name", "templateId") = true;
   bool hasDecl(str _, str _) = false;
   
   bool hasTyp("Expression", str cname) = cname in

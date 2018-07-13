@@ -94,7 +94,7 @@ data Declaration(loc src=|unknown:///|)
     //| \etsClass(Name name)
     
     | \pointer(list[Attribute] attributes, list[Modifier] modifiers)    // *
-    | \pointerToMember(list[Attribute] attributes, list[Modifier] modifiers, Expression nestedName)
+    | \pointerToMember(list[Attribute] attributes, list[Modifier] modifiers, Name nestedName)
     | \reference(list[Attribute] attributes)  // &
     | \rvalueReference(list[Attribute] attributes) // &&
     
@@ -246,8 +246,6 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved())
     
     | \expressionList(list[Expression] expressions)
     
-    | \templateId(Name name, list[Expression] argumentTypes, loc decl = |unknown:///|)
-
     | \empty()    
     | \nyi(str raw)
     
@@ -289,6 +287,9 @@ data Name(loc src = |unknown:///|)
     | \qualifiedName(list[Name] qualifiers, Name lastName, loc decl = |unknown:///|)
     | \operatorName(str \value)
     | \conversionName(str \value, Expression typeId)
+    
+    | \templateId(Name name, list[Expression] argumentTypes, loc decl = |unknown:///|)
+
     | \abstractEmptyName()
     ;
  
