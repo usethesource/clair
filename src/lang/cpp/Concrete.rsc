@@ -69,5 +69,4 @@ DeclSpecifier parseDeclSpecifier(str code) {
 }
 
 @concreteHole{DeclSpecifier}
-str makeTypeHole(int id) = "myType<id>EndType";
-
+str makeDeclSpecifierHole(int id) = "myType<id>EndType";
