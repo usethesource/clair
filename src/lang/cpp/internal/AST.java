@@ -151,7 +151,7 @@ public class AST {
   private static final Type _Declaration_reference_1 
     = tf.constructor(typestore,_Declaration,"reference",tf.listType(_Attribute),"attributes");
   private static final Type _Declaration_namespaceAlias_2 
-    = tf.constructor(typestore,_Declaration,"namespaceAlias",_Expression,"alias",_Expression,"mapping");
+    = tf.constructor(typestore,_Declaration,"namespaceAlias",_Name,"alias",_Name,"mapping");
   private static final Type _Declaration_enumerator_1 
     = tf.constructor(typestore,_Declaration,"enumerator",_Name,"name");
   private static final Type _Declaration_parameter_1 
@@ -187,15 +187,15 @@ public class AST {
   private static final Type _Declaration_baseSpecifier_2 
     = tf.constructor(typestore,_Declaration,"baseSpecifier",tf.listType(_Modifier),"modifiers",_Name,"name");
   private static final Type _Declaration_alias_3 
-    = tf.constructor(typestore,_Declaration,"alias",tf.listType(_Attribute),"attributes",_Expression,"alias",_Expression,"mappingTypeId");
+    = tf.constructor(typestore,_Declaration,"alias",tf.listType(_Attribute),"attributes",_Name,"alias",_Expression,"mappingTypeId");
   private static final Type _Declaration_deletedFunctionDefinition_4 
     = tf.constructor(typestore,_Declaration,"deletedFunctionDefinition",tf.listType(_Attribute),"attributes",_DeclSpecifier,"declSpecifier",tf.listType(_Expression),"memberInitializer",_Declarator,"declarator");
   private static final Type _Declaration_sttTypename_2 
     = tf.constructor(typestore,_Declaration,"sttTypename",_Name,"name",_Expression,"defaultType");
-  private static final Type _Declaration_usingDirective_2 
-    = tf.constructor(typestore,_Declaration,"usingDirective",tf.listType(_Attribute),"attributes",_Expression,"qualifiedName");
   private static final Type _Declaration_explicitTemplateInstantiation_1 
     = tf.constructor(typestore,_Declaration,"explicitTemplateInstantiation",_Declaration,"declaration");
+  private static final Type _Declaration_usingDirective_2 
+    = tf.constructor(typestore,_Declaration,"usingDirective",tf.listType(_Attribute),"attributes",_Name,"qualifiedName");
   private static final Type _Declaration_linkageSpecification_2 
     = tf.constructor(typestore,_Declaration,"linkageSpecification",tf.stringType(),"literal",tf.listType(_Declaration),"declarations");
   private static final Type _Declaration_simpleDeclaration_3 
@@ -1977,12 +1977,12 @@ public class AST {
   
   public IConstructor Declaration_namespaceAlias(IConstructor $alias, IConstructor $mapping, ISourceLocation $loc, ISourceLocation $decl) {
       
-    if (!$alias.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $alias.getType() + " for $alias:" + $alias);
+    if (!$alias.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $alias.getType() + " for $alias:" + $alias);
     }
       
-    if (!$mapping.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $mapping.getType() + " for $mapping:" + $mapping);
+    if (!$mapping.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $mapping.getType() + " for $mapping:" + $mapping);
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
@@ -2279,8 +2279,8 @@ public class AST {
       throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
     }
       
-    if (!$alias.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $alias.getType() + " for $alias:" + $alias);
+    if (!$alias.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $alias.getType() + " for $alias:" + $alias);
     }
       
     if (!$mappingTypeId.getType().isSubtypeOf(_Expression)) {
@@ -2336,23 +2336,6 @@ public class AST {
     return vf.constructor(_Declaration_sttTypename_2 , $name, $defaultType).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declaration_usingDirective(IList $attributes, IConstructor $qualifiedName, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
-    }
-      
-    if (!$qualifiedName.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $qualifiedName.getType() + " for $qualifiedName:" + $qualifiedName);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_Declaration_usingDirective_2 , $attributes, $qualifiedName).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
   public IConstructor Declaration_explicitTemplateInstantiation(IConstructor $declaration, ISourceLocation $loc) {
       
     if (!$declaration.getType().isSubtypeOf(_Declaration)) {
@@ -2364,6 +2347,23 @@ public class AST {
     
     
     return vf.constructor(_Declaration_explicitTemplateInstantiation_1 , $declaration).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_usingDirective(IList $attributes, IConstructor $qualifiedName, ISourceLocation $loc, ISourceLocation $decl) {
+      
+    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
+    }
+      
+    if (!$qualifiedName.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $qualifiedName.getType() + " for $qualifiedName:" + $qualifiedName);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    return vf.constructor(_Declaration_usingDirective_2 , $attributes, $qualifiedName).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_linkageSpecification(String $literal, IList $declarations, ISourceLocation $loc) {

@@ -85,7 +85,7 @@ data Declaration(loc src=|unknown:///|)
     | \enumerator(Name name, Expression \value, loc decl = |unknown:///|)
     | \enumerator(Name name, loc decl = |unknown:///|)
     
-    | \usingDirective(list[Attribute] attributes, Expression qualifiedName, loc decl = |unknown:///|)
+    | \usingDirective(list[Attribute] attributes, Name qualifiedName, loc decl = |unknown:///|)
     | \visibilityLabel(Modifier visibility)
     
     //| \etsEnum(Name name)
@@ -124,10 +124,10 @@ data Declaration(loc src=|unknown:///|)
     | \namespaceDefinition(list[Attribute] attributes, Name name, list[Declaration] declarations, loc decl = |unknown:///|)
     | \namespaceDefinitionInline(list[Attribute] attributes, Name name, list[Declaration] declarations, loc decl = |unknown:///|)
     | \usingDeclaration(list[Attribute] attributes, list[Modifier] modifiers, Name name, loc decl = |unknown:///|)
-    | \namespaceAlias(Expression \alias, Expression mapping, loc decl = |unknown:///|)
+    | \namespaceAlias(Name \alias, Name mapping, loc decl = |unknown:///|)
     
     | \linkageSpecification(str literal, list[Declaration] declarations)
-    | \alias(list[Attribute] attributes, Expression \alias, Expression mappingTypeId, loc decl = |unknown:///|)
+    | \alias(list[Attribute] attributes, Name \alias, Expression mappingTypeId, loc decl = |unknown:///|)
     
     | \staticAssert(Expression condition, Expression message)
     
