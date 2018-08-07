@@ -429,6 +429,8 @@ public class Parser extends ASTVisitor {
 			return GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, idx, options, log);
 		} catch (CoreException e) {
 			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
+		} catch (StackOverflowError e) {
+			throw RuntimeExceptionFactory.stackOverflow(null, null);
 		} catch (Throwable e) {
 			// TODO: make more specific
 			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
