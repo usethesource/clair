@@ -783,7 +783,7 @@ public class Parser extends ASTVisitor {
 			visit((ICPPASTName) name);
 		else {
 			err("No sub-interfaced IASTName? " + name.getClass().getName() + ": " + name.getRawSignature());
-			throw new RuntimeException("NYI");
+			throw new RuntimeException("NYI at " + getSourceLocation(name));
 		}
 
 		return PROCESS_ABORT;
@@ -794,7 +794,7 @@ public class Parser extends ASTVisitor {
 		boolean alternate = name.isAlternate();
 		boolean operator = name.isOperator();
 		IASTName _lastName = name.getLastName();
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(name));
 	}
 
 	public int visit(ICPPASTName name) {
@@ -899,8 +899,8 @@ public class Parser extends ASTVisitor {
 			// should not happen
 			visit((IASTProblemDeclaration) declaration);
 		else {
-			throw new RuntimeException(
-					"Declaration: encountered non-implemented subtype " + declaration.getClass().getName());
+			throw new RuntimeException("Declaration: encountered non-implemented subtype "
+					+ declaration.getClass().getName() + " at " + getSourceLocation(declaration));
 		}
 
 		return PROCESS_ABORT;
@@ -940,8 +940,8 @@ public class Parser extends ASTVisitor {
 					builder.Declaration_explicitTemplateInstantiation(builder.Modifier_extern(loc), stack.pop(), loc));
 			break;
 		default:
-			throw new RuntimeException(
-					"ICPPASTExplicitTemplateInstantiation encountered unknown modifier " + declaration.getModifier());
+			throw new RuntimeException("ICPPASTExplicitTemplateInstantiation encountered unknown modifier "
+					+ declaration.getModifier() + " at " + getSourceLocation(declaration));
 		}
 		return PROCESS_ABORT;
 	}
@@ -1033,7 +1033,8 @@ public class Parser extends ASTVisitor {
 			stack.push(builder.Declaration_visibilityLabel(builder.Modifier_private(loc), loc));
 			break;
 		default:
-			throw new RuntimeException("Unknown CPPVisibilityLabel code " + declaration.getVisibility() + ". Exiting");
+			throw new RuntimeException("Unknown CPPVisibilityLabel code " + declaration.getVisibility() + " at "
+					+ getSourceLocation(declaration) + ". Exiting");
 		}
 		return PROCESS_ABORT;
 	}
@@ -1065,7 +1066,7 @@ public class Parser extends ASTVisitor {
 			if (isDefaulted && isDeleted)
 				err("WARNING: IASTFunctionDefinition both deleted and defaulted");
 			if ((isDefaulted || isDeleted) && definition instanceof ICPPASTFunctionWithTryBlock)
-				throw new RuntimeException("IASTFunctionDefinition defaulted/deleted and with try?");
+				throw new RuntimeException("IASTFunctionDefinition defaulted/deleted and with try? at " + loc);
 			if (isDefaulted)
 				stack.push(builder.Declaration_defaultedFunctionDefinition(attributes, declSpecifier,
 						memberInitializers.done(), declarator, loc));
@@ -1088,7 +1089,7 @@ public class Parser extends ASTVisitor {
 			}
 		} else { // C Function definition
 			if (true)
-				throw new RuntimeException("Encountered C function definition, NYI");
+				throw new RuntimeException("Encountered C function definition at " + loc + ", NYI");
 			definition.getDeclSpecifier().accept(this);
 			IConstructor declSpecifier = stack.pop();
 			definition.getDeclarator().accept(this);
@@ -1179,8 +1180,8 @@ public class Parser extends ASTVisitor {
 		else if (initializer instanceof ICPPASTDesignatedInitializer)
 			visit((ICPPASTDesignatedInitializer) initializer);
 		else {
-			throw new RuntimeException(
-					"Initializer: encountered unknown subtype " + initializer.getClass().getSimpleName());
+			throw new RuntimeException("Initializer: encountered unknown subtype "
+					+ initializer.getClass().getSimpleName() + " at " + getSourceLocation(initializer));
 		}
 		return PROCESS_ABORT;
 	}
@@ -1206,7 +1207,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICASTDesignatedInitializer initializer) {
 		err("ICASTDesignatedInitializer: " + initializer.getRawSignature());
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(initializer));
 	}
 
 	public int visit(ICPPASTConstructorChainInitializer initializer) {
@@ -1263,13 +1264,14 @@ public class Parser extends ASTVisitor {
 			visit((ICPPASTInitializerClause) initializerClause);
 		else
 			throw new RuntimeException(
-					"Unknown IASTInitializerClause subclass " + initializerClause.getClass().getName() + ". Exiting");
+					"Unknown IASTInitializerClause subclass " + initializerClause.getClass().getName() + " at "
+							+ getSourceLocation(initializerClause) + ". Exiting");
 		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTInitializerClause initializer) {
 		err("ICPPASTInitializerClause: " + initializer.getRawSignature());
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(initializer));
 	}
 
 	// Declarators
@@ -1306,7 +1308,7 @@ public class Parser extends ASTVisitor {
 				initializer = stack.pop();
 			}
 
-			throw new RuntimeException("NYI");
+			throw new RuntimeException("NYI at " + getSourceLocation(declarator));
 		}
 		return PROCESS_ABORT;
 	}
@@ -1364,7 +1366,7 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTFieldDeclarator declarator) {
 		// TODO: implement
 		err("FieldDeclarator: " + declarator.getRawSignature());
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(declarator));
 	}
 
 	public int visit(IASTFunctionDeclarator declarator) {
@@ -1373,8 +1375,8 @@ public class Parser extends ASTVisitor {
 		else if (declarator instanceof ICASTKnRFunctionDeclarator)
 			visit((ICASTKnRFunctionDeclarator) declarator);
 		else
-			throw new RuntimeException(
-					"Unknown FunctionDeclarator subtype " + declarator.getClass().getName() + ". Exiting");
+			throw new RuntimeException("Unknown FunctionDeclarator subtype " + declarator.getClass().getName() + " at "
+					+ getSourceLocation(declarator) + ". Exiting");
 		return PROCESS_ABORT;
 	}
 
@@ -1422,7 +1424,7 @@ public class Parser extends ASTVisitor {
 		// TODO: implement
 		// check add getDeclarator, getParameterNames, getParameterDeclarations
 
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(declarator));
 	}
 
 	public int visit(ICPPASTDeclarator declarator) {
@@ -1544,7 +1546,7 @@ public class Parser extends ASTVisitor {
 
 		if (_nestedDeclarator != null) {
 			if (_trailingReturnType != null)
-				throw new RuntimeException("FunctionDeclarator: Trailing return type and nested declarator?");
+				throw new RuntimeException("FunctionDeclarator: Trailing return type and nested declarator? at " + loc);
 			_nestedDeclarator.accept(this);
 			IConstructor nestedDeclarator = stack.pop();
 			if (_initializer == null)
@@ -1570,20 +1572,23 @@ public class Parser extends ASTVisitor {
 			}
 		} else if (_exceptionSpecification.equals(IASTTypeId.EMPTY_TYPEID_ARRAY)) {
 			if (_trailingReturnType != null)
-				throw new RuntimeException("FunctionDeclarator: Trailing return type and exception specification?");
+				throw new RuntimeException(
+						"FunctionDeclarator: Trailing return type and exception specification? at " + loc);
 			stack.push(builder.Declarator_functionDeclaratorWithES(attributes, pointerOperators.done(), modifiers, name,
 					parameters.done(), virtSpecifiers.done(), loc, decl));
 		} else if (_noexceptExpression != null) {
 			if (_trailingReturnType != null)
-				throw new RuntimeException("FunctionDeclarator: Trailing return type and noexceptExpression?");
+				throw new RuntimeException(
+						"FunctionDeclarator: Trailing return type and noexceptExpression? at " + loc);
 			if (_initializer != null)
-				throw new RuntimeException("FunctionDeclarator: Initializer and noexceptExpression?");
+				throw new RuntimeException("FunctionDeclarator: Initializer and noexceptExpression? at " + loc);
 			_noexceptExpression.accept(this);
 			stack.push(builder.Declarator_functionDeclaratorNoexcept(attributes, pointerOperators.done(), modifiers,
 					name, parameters.done(), virtSpecifiers.done(), stack.pop(), loc, decl));
 		} else {
 			if (_trailingReturnType != null)
-				throw new RuntimeException("FunctionDeclarator: Trailing return type and exception specification?");
+				throw new RuntimeException(
+						"FunctionDeclarator: Trailing return type and exception specification? at " + loc);
 			IListWriter exceptionSpecification = vf.listWriter();
 			Stream.of(_exceptionSpecification).forEach(it -> {
 				it.accept(this);
@@ -1617,7 +1622,8 @@ public class Parser extends ASTVisitor {
 		// else if (declSpec instanceof IGPPASTDeclSpecifier) Deprecated
 		// visit((IGPPASTDeclSpecifier) declSpec);
 		else
-			throw new RuntimeException("Unknown sub-class encountered: " + declSpec.getClass().getName() + ". Exiting");
+			throw new RuntimeException("Unknown sub-class encountered: " + declSpec.getClass().getName() + " at "
+					+ getSourceLocation(declSpec) + ". Exiting");
 		return PROCESS_ABORT;
 	}
 
@@ -1627,8 +1633,8 @@ public class Parser extends ASTVisitor {
 		else if (declSpec instanceof ICPPASTCompositeTypeSpecifier)
 			visit((ICPPASTCompositeTypeSpecifier) declSpec);
 		else
-			throw new RuntimeException(
-					"Unknown IASTCompositeTypeSpecifier subinterface " + declSpec.getClass().getName());
+			throw new RuntimeException("Unknown IASTCompositeTypeSpecifier subinterface "
+					+ declSpec.getClass().getName() + " at " + getSourceLocation(declSpec));
 		return PROCESS_ABORT;
 	}
 
@@ -1673,7 +1679,8 @@ public class Parser extends ASTVisitor {
 
 		ICPPASTClassVirtSpecifier virtSpecifier = declSpec.getVirtSpecifier();
 		if (virtSpecifier != null && !(virtSpecifier.getKind().equals(ICPPASTClassVirtSpecifier.SpecifierKind.Final)))
-			throw new RuntimeException("ICPPASTCompositeTypeSpecifier encountered unknown classVirtSpecifier type");
+			throw new RuntimeException(
+					"ICPPASTCompositeTypeSpecifier encountered unknown classVirtSpecifier type at " + loc);
 
 		declSpec.getName().accept(this);
 		IConstructor name = stack.pop();
@@ -1716,7 +1723,8 @@ public class Parser extends ASTVisitor {
 						members.done(), loc, decl));
 			break;
 		default:
-			throw new RuntimeException("Unknown IASTCompositeTypeSpecifier code " + declSpec.getKey() + ". Exiting");
+			throw new RuntimeException(
+					"Unknown IASTCompositeTypeSpecifier code " + declSpec.getKey() + "at" + loc + ". Exiting");
 		}
 
 		return PROCESS_ABORT;
@@ -1725,7 +1733,7 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTElaboratedTypeSpecifier declSpec) {
 		if (declSpec instanceof ICASTElaboratedTypeSpecifier) {
 			out("ElaboratedTypeSpecifier: " + declSpec.getRawSignature());
-			throw new RuntimeException("NYI");
+			throw new RuntimeException("NYI at " + getSourceLocation(declSpec));
 		} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier) {
 			ISourceLocation loc = getSourceLocation(declSpec);
 			ISourceLocation decl = br.resolveBinding(declSpec);
@@ -1747,7 +1755,7 @@ public class Parser extends ASTVisitor {
 				break;
 			default:
 				throw new RuntimeException(
-						"IASTElaboratedTypeSpecifier encountered unknown kind " + declSpec.getKind());
+						"IASTElaboratedTypeSpecifier encountered unknown kind " + declSpec.getKind() + " at " + loc);
 			}
 		}
 		return PROCESS_ABORT;
@@ -1757,7 +1765,7 @@ public class Parser extends ASTVisitor {
 		if (declSpec instanceof ICPPASTEnumerationSpecifier)
 			visit((ICPPASTEnumerationSpecifier) declSpec);
 		else
-			throw new RuntimeException("NYI");
+			throw new RuntimeException("NYI at " + getSourceLocation(declSpec));
 		return PROCESS_ABORT;
 	}
 
@@ -1780,7 +1788,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICASTDeclSpecifier declSpec) {
 		out("CDeclSpecifier: " + declSpec.getRawSignature());
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(declSpec));
 	}
 
 	public int visit(ICPPASTDeclSpecifier declSpec) {
@@ -1797,14 +1805,14 @@ public class Parser extends ASTVisitor {
 		else if (declSpec instanceof ICPPASTTypeTransformationSpecifier)
 			visit((ICPPASTTypeTransformationSpecifier) declSpec);
 		else {
-			throw new RuntimeException("NYI");
+			throw new RuntimeException("NYI at " + getSourceLocation(declSpec));
 		}
 		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTElaboratedTypeSpecifier declSpec) {
 		out("CPPElaboratedTypeSpecifier: " + declSpec.getRawSignature());
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(declSpec));
 	}
 
 	public int visit(ICPPASTEnumerationSpecifier declSpec) {
@@ -1855,7 +1863,7 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICPPASTNamedTypeSpecifier declSpec) {
 		out("CPPNamedTypeSpecifier: " + declSpec.getRawSignature());
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(declSpec));
 	}
 
 	public int visit(ICPPASTSimpleDeclSpecifier declSpec) {
@@ -1924,7 +1932,8 @@ public class Parser extends ASTVisitor {
 			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_decimal128(loc), loc));
 			break;
 		default:
-			throw new RuntimeException("Unknown IASTSimpleDeclSpecifier kind " + declSpec.getType() + ". Exiting");
+			throw new RuntimeException(
+					"Unknown IASTSimpleDeclSpecifier kind " + declSpec.getType() + " at " + loc + ". Exiting");
 		}
 		return PROCESS_ABORT;
 	}
@@ -1932,13 +1941,13 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTTypeTransformationSpecifier declSpec) {
 		// TODO: implement, check operator and operand
 		err("ICPPASTTypeTransformationSpecifier: " + declSpec.getRawSignature());
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(declSpec));
 	}
 
 	@Override
 	public int visit(IASTArrayModifier arrayModifier) {
 		if (arrayModifier instanceof ICASTArrayModifier)
-			throw new RuntimeException("NYI");
+			throw new RuntimeException("NYI at " + getSourceLocation(arrayModifier));
 		ISourceLocation loc = getSourceLocation(arrayModifier);
 		IList attributes = getAttributes(arrayModifier);
 
@@ -1959,8 +1968,8 @@ public class Parser extends ASTVisitor {
 		else if (ptrOperator instanceof ICPPASTReferenceOperator)
 			visit((ICPPASTReferenceOperator) ptrOperator);
 		else
-			throw new RuntimeException(
-					"Unknown IASTPointerOperator subtype +" + ptrOperator.getClass().getName() + ". Exiting");
+			throw new RuntimeException("Unknown IASTPointerOperator subtype +" + ptrOperator.getClass().getName()
+					+ " at " + getSourceLocation(ptrOperator) + ". Exiting");
 		return PROCESS_ABORT;
 	}
 
@@ -2022,7 +2031,7 @@ public class Parser extends ASTVisitor {
 	@Override
 	public int visit(IASTToken token) {
 		err("Token: " + new String(token.getTokenCharImage()));
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(token));
 	}
 
 	@Override
@@ -2088,8 +2097,8 @@ public class Parser extends ASTVisitor {
 			// Should not happen
 			visit((IASTProblemExpression) expression);
 		else {
-			throw new RuntimeException(
-					"Expression: encountered non-implemented subtype " + expression.getClass().getName());
+			throw new RuntimeException("Expression: encountered non-implemented subtype "
+					+ expression.getClass().getName() + " at " + getSourceLocation(expression));
 		}
 		return PROCESS_ABORT;
 	}
@@ -2109,12 +2118,12 @@ public class Parser extends ASTVisitor {
 
 	public int visit(ICPPASTBinaryExpression expression) {
 		out("CPPBinaryExpression: " + expression.getRawSignature());
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(expression));
 	}
 
 	public int visit(ICPPASTCastExpression expression) {
 		out("CPPCastExpression: " + expression.getRawSignature());
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(expression));
 	}
 
 	public int visit(ICPPASTDeleteExpression expression) {
@@ -2138,20 +2147,20 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTExpressionList expression) {
 		// has typ
 		out("CPPExpressionList: " + expression.getRawSignature());
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(expression));
 	}
 
 	public int visit(ICPPASTFieldReference expression) {
 		// TODO: Implement
 		// has typ
 		out("CPPFieldReference: " + expression.getRawSignature());
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(expression));
 	}
 
 	public int visit(ICPPASTFunctionCallExpression expression) {
 		// has typ
 		out("CPPFunctionCallExpression: " + expression.getRawSignature());
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(expression));
 	}
 
 	public int visit(ICPPASTLambdaExpression expression) {
@@ -2201,7 +2210,8 @@ public class Parser extends ASTVisitor {
 					body, loc, typ));
 			break;
 		default:
-			throw new RuntimeException("Unknown default capture type " + captureDefault + " encountered, exiting");
+			throw new RuntimeException("Unknown default capture type " + captureDefault + " encountered at "
+					+ getSourceLocation(expression) + ", exiting");
 		}
 
 		return PROCESS_ABORT;
@@ -2216,7 +2226,7 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTNaryTypeIdExpression expression) {
 		// has typ
 		out("CPPNaryTypeIdExpression: " + expression.getRawSignature());
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(expression));
 	}
 
 	public int visit(ICPPASTNewExpression expression) {
@@ -2294,19 +2304,19 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTTypeIdExpression expression) {
 		// has typ
 		out("CPPTypeIdExpression: " + expression.getRawSignature());
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(expression));
 	}
 
 	public int visit(ICPPASTUnaryExpression expression) {
 		out("CPPUnaryExpression: " + expression.getRawSignature());
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(expression));
 	}
 
 	public int visit(IASTArraySubscriptExpression expression) {
 		if (expression instanceof ICPPASTArraySubscriptExpression)
 			visit((ICPPASTArraySubscriptExpression) expression);
 		else
-			throw new RuntimeException("NYI");
+			throw new RuntimeException("NYI at " + getSourceLocation(expression));
 		return PROCESS_ABORT;
 	}
 
@@ -2423,7 +2433,7 @@ public class Parser extends ASTVisitor {
 			stack.push(builder.Expression_ellipses(lhs, rhs, loc, typ));
 			break;
 		default:
-			throw new RuntimeException("Operator " + expression.getOperator() + " unknown, exiting");
+			throw new RuntimeException("Operator " + expression.getOperator() + " unknown at " + loc + ", exiting");
 		}
 		return PROCESS_ABORT;
 	}
@@ -2431,7 +2441,7 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTBinaryTypeIdExpression expression) {
 		// has typ
 		out("BinaryTypeIdExpression: " + expression.getRawSignature());
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(expression));
 	}
 
 	public int visit(IASTCastExpression expression) {
@@ -2460,7 +2470,7 @@ public class Parser extends ASTVisitor {
 			stack.push(builder.Expression_constCast(type, operand, loc, typ));
 			break;
 		default:
-			throw new RuntimeException("Unknown cast type " + expression.getOperator());
+			throw new RuntimeException("Unknown cast type " + expression.getOperator() + " at " + loc);
 		}
 		return PROCESS_ABORT;
 	}
@@ -2493,9 +2503,9 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTFieldReference expression) {
+		ISourceLocation loc = getSourceLocation(expression);
 		if (expression instanceof ICPPASTFieldReference) {
 			// TODO: implement isTemplate
-			ISourceLocation loc = getSourceLocation(expression);
 			ISourceLocation decl = br.resolveBinding(expression);
 			IConstructor typ = tr.resolveType(expression);
 
@@ -2509,7 +2519,7 @@ public class Parser extends ASTVisitor {
 			else
 				stack.push(builder.Expression_fieldReference(fieldOwner, fieldName, loc, decl, typ));
 		} else
-			throw new RuntimeException("IASTFieldReference: NYI");
+			throw new RuntimeException("IASTFieldReference: NYI at " + loc);
 		return PROCESS_ABORT;
 	}
 
@@ -2569,7 +2579,8 @@ public class Parser extends ASTVisitor {
 			stack.push(builder.Expression_nullptr(loc, typ));
 			break;
 		default:
-			throw new RuntimeException("Encountered unknown literal kind " + expression.getKind() + ". Exiting");
+			throw new RuntimeException(
+					"Encountered unknown literal kind " + expression.getKind() + " at " + loc + ". Exiting");
 		}
 		return PROCESS_ABORT;
 	}
@@ -2613,7 +2624,7 @@ public class Parser extends ASTVisitor {
 			break;
 		default:
 			throw new RuntimeException("ERROR: IASTTypeIdExpression called with unimplemented/unknown operator "
-					+ expression.getOperator());
+					+ expression.getOperator() + " at " + loc);
 		}
 		return PROCESS_ABORT;
 	}
@@ -2688,7 +2699,8 @@ public class Parser extends ASTVisitor {
 			stack.push(builder.Expression_labelReference(operand, loc, typ));
 			break;
 		default:
-			throw new RuntimeException("Unknown unary operator " + expression.getOperator() + ". Exiting");
+			throw new RuntimeException(
+					"Unknown unary operator " + expression.getOperator() + " at " + loc + ". Exiting");
 		}
 
 		return PROCESS_ABORT;
@@ -2741,8 +2753,8 @@ public class Parser extends ASTVisitor {
 		else if (statement instanceof IASTProblemStatement)
 			visit((IASTProblemStatement) statement);
 		else {
-			throw new RuntimeException(
-					"Statement: encountered non-implemented subtype " + statement.getClass().getName());
+			throw new RuntimeException("Statement: encountered non-implemented subtype "
+					+ statement.getClass().getName() + " at " + getSourceLocation(statement));
 		}
 		return PROCESS_ABORT;
 	}
@@ -2750,7 +2762,7 @@ public class Parser extends ASTVisitor {
 	public int visit(IGNUASTGotoStatement statement) {
 		// requires decl keyword parameter
 		err("IGNUAstGotoStatement: " + statement.getRawSignature());
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(statement));
 	}
 
 	public int visit(ICPPASTCatchHandler statement) {
@@ -2813,7 +2825,7 @@ public class Parser extends ASTVisitor {
 			statements.append(stack.pop());
 		});
 		prefix -= 4;
-		throw new RuntimeException("Encountered Ambiguous statement");
+		throw new RuntimeException("Encountered Ambiguous statement at " + loc);
 	}
 
 	public int visit(IASTBreakStatement statement) {
@@ -3070,7 +3082,7 @@ public class Parser extends ASTVisitor {
 						builder.DeclSpecifier_msThrowEllipsis(loc, vf.sourceLocation("unknown:///")), loc));
 			else {
 				out("ProblemTypeId " + typeId.getClass().getSimpleName() + ": " + typeId.getRawSignature());
-				throw new RuntimeException("IASTProblemTypeId encountered! "
+				throw new RuntimeException("IASTProblemTypeId encountered at " + loc + "! "
 						+ ((IASTProblemTypeId) typeId).getProblem().getMessageWithLocation());
 			}
 		} else {
@@ -3109,7 +3121,7 @@ public class Parser extends ASTVisitor {
 	@Override
 	public int visit(IASTProblem problem) {
 		err("Problem: " + problem.getMessage());
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(problem));
 	}
 
 	@Override
@@ -3133,7 +3145,8 @@ public class Parser extends ASTVisitor {
 			modifiers.append(builder.Modifier_unspecifiedInheritance(loc));
 			break;
 		default:
-			throw new RuntimeException("Unknown BaseSpecifier visibility code " + baseSpecifier.getVisibility());
+			throw new RuntimeException(
+					"Unknown BaseSpecifier visibility code " + baseSpecifier.getVisibility() + " at " + loc);
 		}
 		if (baseSpecifier.isVirtual())
 			modifiers.append(builder.Modifier_virtual(loc));
@@ -3207,7 +3220,7 @@ public class Parser extends ASTVisitor {
 					break;
 				default:
 					throw new RuntimeException("ICPPASTTemplateParameter encountered non-implemented parameter type "
-							+ parameter.getParameterType());
+							+ parameter.getParameterType() + " at " + loc);
 				}
 			} else {
 				switch (parameter.getParameterType()) {
@@ -3219,7 +3232,7 @@ public class Parser extends ASTVisitor {
 					break;
 				default:
 					throw new RuntimeException("ICPPASTTemplateParameter encountered non-implemented parameter type "
-							+ parameter.getParameterType());
+							+ parameter.getParameterType() + " at " + loc);
 				}
 			}
 		} else if (templateParameter instanceof ICPPASTTemplatedTypeTemplateParameter) {
@@ -3233,10 +3246,10 @@ public class Parser extends ASTVisitor {
 			((ICPPASTTemplatedTypeTemplateParameter) templateParameter).getName().accept(this);
 			stack.push(builder.Declaration_tttParameter(templateParameters.done(), stack.pop(), loc, decl));
 			if (((ICPPASTTemplatedTypeTemplateParameter) templateParameter).getDefaultValue() != null)
-				err("ICPPASTTemplatedTypeTemplateParameter has defaultType, unimplemented");
+				err("ICPPASTTemplatedTypeTemplateParameter has defaultType at " + loc + ", unimplemented");
 		} else
 			throw new RuntimeException("ICPPASTTemplateParameter encountered unknown subtype "
-					+ templateParameter.getClass().getName() + ". Exiting");
+					+ templateParameter.getClass().getName() + " at " + loc + ". Exiting");
 		return PROCESS_ABORT;
 	}
 
@@ -3260,7 +3273,7 @@ public class Parser extends ASTVisitor {
 	@Override
 	public int visit(ICASTDesignator designator) {
 		err("Designator: " + designator.getRawSignature());
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(designator));
 	}
 
 	@Override
@@ -3279,7 +3292,7 @@ public class Parser extends ASTVisitor {
 			IConstructor rangeCeiling = stack.pop();
 			stack.push(builder.Expression_arrayRangeDesignator(rangeFloor, rangeCeiling, loc));
 		} else
-			throw new RuntimeException("ICPPASTDesignator encountered unknown subclass, exiting");
+			throw new RuntimeException("ICPPASTDesignator encountered unknown subclass at " + loc + ", exiting");
 		return PROCESS_ABORT;
 	}
 
@@ -3294,8 +3307,8 @@ public class Parser extends ASTVisitor {
 			stack.push(builder.Declaration_virtSpecifier(builder.Modifier_override(loc), loc));
 			break;
 		default:
-			throw new RuntimeException(
-					"ICPPASTVirtSpecifier encountered unknown SpecifierKind " + virtSpecifier.getKind().name());
+			throw new RuntimeException("ICPPASTVirtSpecifier encountered unknown SpecifierKind "
+					+ virtSpecifier.getKind().name() + " at " + loc);
 		}
 		return PROCESS_ABORT;
 	}
@@ -3303,20 +3316,20 @@ public class Parser extends ASTVisitor {
 	@Override
 	public int visit(ICPPASTClassVirtSpecifier classVirtSpecifier) {
 		err("ClassVirtSpecifier: " + classVirtSpecifier.getRawSignature());
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(classVirtSpecifier));
 	}
 
 	@Override
 	public int visit(ICPPASTDecltypeSpecifier decltypeSpecifier) {
 		// has typ
 		err("DecltypeSpecifier: " + decltypeSpecifier.getRawSignature());
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(decltypeSpecifier));
 	}
 
 	@Override
 	public int visit(ASTAmbiguousNode astAmbiguousNode) {
 		err("AstAmbiguousNode: " + astAmbiguousNode.getRawSignature());
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI at " + getSourceLocation(astAmbiguousNode));
 	}
 
 }
