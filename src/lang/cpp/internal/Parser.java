@@ -2178,16 +2178,6 @@ public class Parser extends ASTVisitor {
 			captures.append(stack.pop());
 		});
 
-		// TODO: check to remove closureType and functionCallOperatorName
-		IASTImplicitName _closureTypeName = expression.getClosureTypeName();
-		IASTImplicitName _functionCallOperatorName = expression.getFunctionCallOperatorName();
-		if (!_closureTypeName.getRawSignature().equals("["))
-			err("ICPPASTLambdaExpression has closureTypeName " + _closureTypeName.getRawSignature()
-					+ ", not implemented");
-		if (!_functionCallOperatorName.getRawSignature().equals("{"))
-			err("ICPPASTLambdaExpression has functionCallOperatorName " + _functionCallOperatorName.getRawSignature()
-					+ ", not implemented");
-
 		IConstructor declarator;
 		if (expression.getDeclarator() == null)
 			declarator = builder.Declarator_missingDeclarator(loc, decl);
