@@ -246,6 +246,8 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved())
     
     | \expressionList(list[Expression] expressions)
     
+    | \compoundStatementExpression(Statement compoundStatement)
+    
     | \empty()    
     | \nyi(str raw)
     

@@ -198,6 +198,7 @@ import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode.NameCollector;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
@@ -2096,6 +2097,8 @@ public class Parser extends ASTVisitor {
 		else if (expression instanceof IASTProblemExpression)
 			// Should not happen
 			visit((IASTProblemExpression) expression);
+		else if (expression instanceof CPPASTCompoundStatementExpression)
+			visit((CPPASTCompoundStatementExpression) expression);
 		else {
 			throw new RuntimeException("Expression: encountered non-implemented subtype "
 					+ expression.getClass().getName() + " at " + getSourceLocation(expression));
@@ -2310,6 +2313,21 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTUnaryExpression expression) {
 		out("CPPUnaryExpression: " + expression.getRawSignature());
 		throw new RuntimeException("NYI at " + getSourceLocation(expression));
+	}
+
+	public int visit(CPPASTCompoundStatementExpression expression) {
+		ISourceLocation loc = getSourceLocation(expression);
+		IConstructor typ;
+		try {
+			typ = tr.resolveType(expression);
+		} catch (Throwable t) {
+			err("CPPASTCompoundStatement couldn't get type at " + loc);
+			t.printStackTrace(ctx.getStdErr());
+			typ = builder.TypeSymbol_any();
+		}
+		expression.getCompoundStatement().accept(this);
+		stack.push(builder.Expression_compoundStatementExpression(stack.pop(), loc, typ));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTArraySubscriptExpression expression) {
