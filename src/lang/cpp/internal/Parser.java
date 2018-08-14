@@ -382,21 +382,34 @@ public class Parser extends ASTVisitor {
 					return loc.getAuthority() + loc.getPath();
 				}
 
+				String checkDirectory(File dir, String fileName) {
+					if (!dir.isDirectory()) {
+						return null;
+					}
+					for (File f : dir.listFiles()) {
+						if (isRightFile(f.getName(), fileName)) {
+							return f.getAbsolutePath();
+						}
+					}
+					return null;
+				}
+
 				@Override
 				public String findInclusion(String include, String currentFile) {
 					include = include.trim().replace("\\", "/");
 					String filePath = include.substring(0, include.lastIndexOf('/') + 1);
 					String fileName = include.substring(include.lastIndexOf('/') + 1);
+					String found = checkDirectory(new File(new File(currentFile).getParentFile(), filePath), fileName);
+					if (found != null) {
+						addDependency(currentFile, include);
+						return found;
+					}
 					for (String path : path) {
-						File[] files = new File(path, filePath).listFiles();
-						if (files == null)
-							continue;
-						for (File f : files)
-							if (isRightFile(f.getName(), fileName)) {
-								addDependency(currentFile, include);
-								return f.getAbsolutePath();
-							}
-
+						found = checkDirectory(new File(path, filePath), fileName);
+						if (found != null) {
+							addDependency(currentFile, include);
+							return found;
+						}
 					}
 					err("Include " + include + " for " + currentFile + " not found");
 					return null;// TODO: restore exception here
