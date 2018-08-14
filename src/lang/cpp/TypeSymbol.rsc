@@ -56,6 +56,7 @@ public data TypeSymbol
   | \enumerationSpecialization(loc specializedBinding, list[TypeSymbol] templateArguments)
   
   | \templateTypeParameter(loc owner, loc decl)
+  | \implicitTemplateTypeParameter(loc owner, int position) //no decl?
   | \deferredClassInstance(str name)
   | \unknownMemberClass(loc owner, str name)
   

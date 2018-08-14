@@ -66,6 +66,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation.Operator;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClass;
@@ -460,6 +461,10 @@ public class TypeResolver {
 	private IConstructor resolveICPPTemplateTypeParameter(ICPPTemplateTypeParameter type) {
 		if (type instanceof CPPTemplateTypeParameter)// FIXME
 			return builder.TypeSymbol_templateTypeParameter(getDecl(type.getOwner()), getDecl(type));
+		if (type instanceof CPPImplicitTemplateTypeParameter) {
+			return builder.TypeSymbol_implicitTemplateTypeParameter(getDecl(type.getOwner()),
+					vf.integer(type.getParameterPosition()));
+		}
 		throw new RuntimeException(
 				"NYI: resolveICPPTemplateTypeParameter " + type.getClass().getSimpleName() + ": " + type);
 	}
