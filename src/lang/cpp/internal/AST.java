@@ -222,8 +222,6 @@ public class AST {
     = tf.constructor(typestore,_Expression,"sizeofParameterPack",_Expression,"expression");
   private static final Type _Expression_assign_2 
     = tf.constructor(typestore,_Expression,"assign",_Expression,"lhs",_Expression,"rhs");
-  private static final Type _Expression_arrayDesignator_1 
-    = tf.constructor(typestore,_Expression,"arrayDesignator",_Expression,"subscript");
   private static final Type _Expression_modulo_2 
     = tf.constructor(typestore,_Expression,"modulo",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_binaryAnd_2 
@@ -404,6 +402,10 @@ public class AST {
     = tf.constructor(typestore,_Expression,"idExpression",_Name,"name");
   private static final Type _Expression_typeIdInitializerExpression_2 
     = tf.constructor(typestore,_Expression,"typeIdInitializerExpression",_Expression,"typeId",_Expression,"initializer");
+  private static final Type _Expression_arrayDesignator_1 
+    = tf.constructor(typestore,_Expression,"arrayDesignator",_Expression,"subscript");
+  private static final Type _Expression_compoundStatementExpression_1 
+    = tf.constructor(typestore,_Expression,"compoundStatementExpression",_Statement,"compoundStatement");
   private static final Type _Expression_equalsInitializer_1 
     = tf.constructor(typestore,_Expression,"equalsInitializer",_Expression,"initializer");
   private static final Type _Expression_integerLiteral_1 
@@ -540,6 +542,8 @@ public class AST {
   
   private static final Type _Modifier_override_0 
     = tf.constructor(typestore,_Modifier,"override");
+  private static final Type _Modifier_captDefByCopy_0 
+    = tf.constructor(typestore,_Modifier,"captDefByCopy");
   private static final Type _Modifier_public_0 
     = tf.constructor(typestore,_Modifier,"public");
   private static final Type _Modifier_typename_0 
@@ -556,14 +560,8 @@ public class AST {
     = tf.constructor(typestore,_Modifier,"unsigned");
   private static final Type _Modifier_final_0 
     = tf.constructor(typestore,_Modifier,"final");
-  private static final Type _Modifier_captDefByReference_0 
-    = tf.constructor(typestore,_Modifier,"captDefByReference");
   private static final Type _Modifier_complex_0 
     = tf.constructor(typestore,_Modifier,"complex");
-  private static final Type _Modifier_auto_0 
-    = tf.constructor(typestore,_Modifier,"auto");
-  private static final Type _Modifier_captDefByCopy_0 
-    = tf.constructor(typestore,_Modifier,"captDefByCopy");
   private static final Type _Modifier_protected_0 
     = tf.constructor(typestore,_Modifier,"protected");
   private static final Type _Modifier_static_0 
@@ -600,6 +598,10 @@ public class AST {
     = tf.constructor(typestore,_Modifier,"explicit");
   private static final Type _Modifier_captDefUnspecified_0 
     = tf.constructor(typestore,_Modifier,"captDefUnspecified");
+  private static final Type _Modifier_modAuto_0 
+    = tf.constructor(typestore,_Modifier,"modAuto");
+  private static final Type _Modifier_captDefByReference_0 
+    = tf.constructor(typestore,_Modifier,"captDefByReference");
   private static final Type _Modifier_unspecifiedInheritance_0 
     = tf.constructor(typestore,_Modifier,"unspecifiedInheritance");
   private static final Type _Modifier_pureVirtual_0 
@@ -684,6 +686,8 @@ public class AST {
     = tf.constructor(typestore,_TypeSymbol,"cUnionTemplate",tf.sourceLocationType(),"decl",tf.listType(tf.sourceLocationType()),"templateParameters");
   private static final Type _TypeSymbol_functionSetType_2 
     = tf.constructor(typestore,_TypeSymbol,"functionSetType",tf.sourceLocationType(),"decl",tf.listType(_TypeSymbol),"templateArguments");
+  private static final Type _TypeSymbol_implicitTemplateTypeParameter_2 
+    = tf.constructor(typestore,_TypeSymbol,"implicitTemplateTypeParameter",tf.sourceLocationType(),"owner",tf.integerType(),"position");
   private static final Type _TypeSymbol_pointerType_2 
     = tf.constructor(typestore,_TypeSymbol,"pointerType",tf.listType(_TypeModifier),"modifiers",_TypeSymbol,"type");
   private static final Type _TypeSymbol_eEnumTemplate_2 
@@ -2559,19 +2563,6 @@ public class AST {
     return vf.constructor(_Expression_assign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_arrayDesignator(IConstructor $subscript, ISourceLocation $loc) {
-      
-    if (!$subscript.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $subscript.getType() + " for $subscript:" + $subscript);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Expression_arrayDesignator_1 , $subscript).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
   public IConstructor Expression_modulo(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
@@ -3918,6 +3909,32 @@ public class AST {
     return vf.constructor(_Expression_typeIdInitializerExpression_2 , $typeId, $initializer).asWithKeywordParameters().setParameters(kwParams);
   }
   
+  public IConstructor Expression_arrayDesignator(IConstructor $subscript, ISourceLocation $loc) {
+      
+    if (!$subscript.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $subscript.getType() + " for $subscript:" + $subscript);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    
+    return vf.constructor(_Expression_arrayDesignator_1 , $subscript).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Expression_compoundStatementExpression(IConstructor $compoundStatement, ISourceLocation $loc, IConstructor $typ) {
+      
+    if (!$compoundStatement.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $compoundStatement.getType() + " for $compoundStatement:" + $compoundStatement);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    kwParams.put("typ", $typ);
+    return vf.constructor(_Expression_compoundStatementExpression_1 , $compoundStatement).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
   public IConstructor Expression_equalsInitializer(IConstructor $initializer, ISourceLocation $loc) {
       
     if (!$initializer.getType().isSubtypeOf(_Expression)) {
@@ -4910,6 +4927,15 @@ public class AST {
     return vf.constructor(_Modifier_override_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
+  public IConstructor Modifier_captDefByCopy(ISourceLocation $loc) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    
+    return vf.constructor(_Modifier_captDefByCopy_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
   public IConstructor Modifier_public(ISourceLocation $loc) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
@@ -4982,15 +5008,6 @@ public class AST {
     return vf.constructor(_Modifier_final_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_captDefByReference(ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Modifier_captDefByReference_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
   public IConstructor Modifier_complex(ISourceLocation $loc) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
@@ -4998,24 +5015,6 @@ public class AST {
     
     
     return vf.constructor(_Modifier_complex_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Modifier_auto(ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Modifier_auto_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Modifier_captDefByCopy(ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Modifier_captDefByCopy_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_protected(ISourceLocation $loc) {
@@ -5178,6 +5177,24 @@ public class AST {
     
     
     return vf.constructor(_Modifier_captDefUnspecified_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Modifier_modAuto(ISourceLocation $loc) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    
+    return vf.constructor(_Modifier_modAuto_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Modifier_captDefByReference(ISourceLocation $loc) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    kwParams.put("src", $loc);
+    
+    
+    return vf.constructor(_Modifier_captDefByReference_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Modifier_unspecifiedInheritance(ISourceLocation $loc) {
@@ -5720,6 +5737,23 @@ public class AST {
     
     
     return vf.constructor(_TypeSymbol_functionSetType_2 , $decl, $templateArguments).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeSymbol_implicitTemplateTypeParameter(ISourceLocation $owner, IValue $position) {
+      
+    if (!$owner.getType().isSubtypeOf(tf.sourceLocationType())) {
+      throw new IllegalArgumentException("Expected " + tf.sourceLocationType() + " but got " + $owner.getType() + " for $owner:" + $owner);
+    }
+      
+    if (!$position.getType().isSubtypeOf(tf.integerType())) {
+      throw new IllegalArgumentException("Expected " + tf.integerType() + " but got " + $position.getType() + " for $position:" + $position);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    return vf.constructor(_TypeSymbol_implicitTemplateTypeParameter_2 , $owner, $position).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeSymbol_pointerType(IList $modifiers, IConstructor $type) {
