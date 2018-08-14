@@ -362,7 +362,7 @@ data Modifier(loc src = |unknown:///|)
     = typedef()
     | \extern()
     | \static()
-    | \auto()
+    | \modAuto()
     | \register()
     | \mutable()
     

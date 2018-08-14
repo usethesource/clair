@@ -688,7 +688,7 @@ public class Parser extends ASTVisitor {
 				modifiers.append(builder.Modifier_static(loc));
 				break;
 			case IASTDeclSpecifier.sc_auto:
-				modifiers.append(builder.Modifier_auto(loc));
+				modifiers.append(builder.Modifier_modAuto(loc));
 				break;
 			case IASTDeclSpecifier.sc_register:
 				modifiers.append(builder.Modifier_register(loc));
