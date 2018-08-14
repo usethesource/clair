@@ -16,6 +16,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -453,8 +455,15 @@ public class Parser extends ASTVisitor {
 
 	public IValue parseCpp(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
 		setIEvaluatorContext(ctx);
+		Instant begin = Instant.now();
+		out("Beginning at " + begin.toString());
 		IASTTranslationUnit tu = getCdtAst(file, includePath, additionalMacros);
+		Instant between = Instant.now();
+		out("CDT took " + new Double(Duration.between(begin, between).toMillis()).doubleValue() / 1000 + "seconds");
 		IValue result = convertCdtToRascal(tu);
+		Instant done = Instant.now();
+		out("Converting took " + new Double(Duration.between(between, done).toMillis()).doubleValue() / 1000
+				+ "seconds");
 		if (result == null) {
 			throw RuntimeExceptionFactory.parseError(file, null, null);
 		}
