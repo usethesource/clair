@@ -944,7 +944,7 @@ public class Parser extends ASTVisitor {
 		IConstructor alias = stack.pop();
 		declaration.getMappingTypeId().accept(this);
 		IConstructor mappingTypeId = stack.pop();
-		stack.push(builder.Declaration_alias(attributes, alias, mappingTypeId, loc, decl));
+		stack.push(builder.Declaration_alias(alias, mappingTypeId, attributes, loc, decl));
 		return PROCESS_ABORT;
 	}
 
@@ -1034,7 +1034,7 @@ public class Parser extends ASTVisitor {
 		IList attributes = getAttributes(declaration);
 		IList modifiers = getModifiers(declaration);
 		declaration.getName().accept(this);
-		stack.push(builder.Declaration_usingDeclaration(attributes, modifiers, stack.pop(), loc, decl));
+		stack.push(builder.Declaration_usingDeclaration(modifiers, stack.pop(), attributes, loc, decl));
 		return PROCESS_ABORT;
 	}
 
@@ -1044,7 +1044,7 @@ public class Parser extends ASTVisitor {
 		IList attributes = getAttributes(declaration);
 		IASTName qualifiedName = declaration.getQualifiedName();
 		qualifiedName.accept(this);
-		stack.push(builder.Declaration_usingDirective(attributes, stack.pop(), loc, decl));
+		stack.push(builder.Declaration_usingDirective(stack.pop(), attributes, loc, decl));
 		return PROCESS_ABORT;
 	}
 
@@ -1096,11 +1096,11 @@ public class Parser extends ASTVisitor {
 			if ((isDefaulted || isDeleted) && definition instanceof ICPPASTFunctionWithTryBlock)
 				throw new RuntimeException("IASTFunctionDefinition defaulted/deleted and with try? at " + loc);
 			if (isDefaulted)
-				stack.push(builder.Declaration_defaultedFunctionDefinition(attributes, declSpecifier,
-						memberInitializers.done(), declarator, loc));
+				stack.push(builder.Declaration_defaultedFunctionDefinition(declSpecifier, memberInitializers.done(),
+						declarator, attributes, loc));
 			else if (isDeleted)
-				stack.push(builder.Declaration_deletedFunctionDefinition(attributes, declSpecifier,
-						memberInitializers.done(), declarator, loc));
+				stack.push(builder.Declaration_deletedFunctionDefinition(declSpecifier, memberInitializers.done(),
+						declarator, attributes, loc));
 			else if (definition instanceof ICPPASTFunctionWithTryBlock) {
 				IListWriter catchHandlers = vf.listWriter();
 				Stream.of(((ICPPASTFunctionWithTryBlock) definition).getCatchHandlers()).forEach(it -> {
@@ -1108,23 +1108,23 @@ public class Parser extends ASTVisitor {
 					catchHandlers.append(stack.pop());
 				});
 				definition.getBody().accept(this);
-				stack.push(builder.Declaration_functionWithTryBlockDefinition(attributes, declSpecifier, declarator,
-						memberInitializers.done(), stack.pop(), catchHandlers.done(), loc));
+				stack.push(builder.Declaration_functionWithTryBlockDefinition(declSpecifier, declarator,
+						memberInitializers.done(), stack.pop(), catchHandlers.done(), attributes, loc));
 			} else {
 				definition.getBody().accept(this);
-				stack.push(builder.Declaration_functionDefinition(attributes, declSpecifier, declarator,
-						memberInitializers.done(), stack.pop(), loc));
+				stack.push(builder.Declaration_functionDefinition(declSpecifier, declarator, memberInitializers.done(),
+						stack.pop(), attributes, loc));
 			}
 		} else { // C Function definition
 			if (true)
 				throw new RuntimeException("Encountered C function definition at " + loc + ", NYI");
-			definition.getDeclSpecifier().accept(this);
-			IConstructor declSpecifier = stack.pop();
-			definition.getDeclarator().accept(this);
-			IConstructor declarator = stack.pop();
-			definition.getBody().accept(this);
-			IConstructor body = stack.pop();
-			stack.push(builder.Declaration_functionDefinition(declSpecifier, declarator, body, loc));
+//			definition.getDeclSpecifier().accept(this);
+//			IConstructor declSpecifier = stack.pop();
+//			definition.getDeclarator().accept(this);
+//			IConstructor declarator = stack.pop();
+//			definition.getBody().accept(this);
+//			IConstructor body = stack.pop();
+//			stack.push(builder.Declaration_functionDefinition(declSpecifier, declarator, body, loc));
 		}
 		return PROCESS_ABORT;
 	}
@@ -1187,7 +1187,7 @@ public class Parser extends ASTVisitor {
 			it.accept(this);
 			declarators.append(stack.pop());
 		});
-		stack.push(builder.Declaration_simpleDeclaration(attributes, declSpecifier, declarators.done(), loc));
+		stack.push(builder.Declaration_simpleDeclaration(declSpecifier, declarators.done(), attributes, loc));
 		return PROCESS_ABORT;
 	}
 
@@ -1368,23 +1368,23 @@ public class Parser extends ASTVisitor {
 
 		if (declarator.getNestedDeclarator() == null) {
 			if (declarator.getInitializer() == null)
-				stack.push(builder.Declarator_arrayDeclarator(attributes, pointerOperators.done(), name,
-						arrayModifiers.done(), loc, decl));
+				stack.push(builder.Declarator_arrayDeclarator(pointerOperators.done(), name, arrayModifiers.done(),
+						attributes, loc, decl));
 			else {
 				declarator.getInitializer().accept(this);
-				stack.push(builder.Declarator_arrayDeclarator(attributes, pointerOperators.done(), name,
-						arrayModifiers.done(), stack.pop(), loc, decl));
+				stack.push(builder.Declarator_arrayDeclarator(pointerOperators.done(), name, arrayModifiers.done(),
+						stack.pop(), attributes, loc, decl));
 			}
 		} else {
 			declarator.getNestedDeclarator().accept(this);
 			IConstructor nestedDeclarator = stack.pop();
 			if (declarator.getInitializer() == null)
-				stack.push(builder.Declarator_arrayDeclaratorNested(attributes, pointerOperators.done(),
-						nestedDeclarator, arrayModifiers.done(), loc, decl));
+				stack.push(builder.Declarator_arrayDeclaratorNested(pointerOperators.done(), nestedDeclarator,
+						arrayModifiers.done(), attributes, loc, decl));
 			else {
 				declarator.getInitializer().accept(this);
-				stack.push(builder.Declarator_arrayDeclaratorNested(attributes, pointerOperators.done(),
-						nestedDeclarator, arrayModifiers.done(), stack.pop(), loc, decl));
+				stack.push(builder.Declarator_arrayDeclaratorNested(pointerOperators.done(), nestedDeclarator,
+						arrayModifiers.done(), stack.pop(), attributes, loc, decl));
 			}
 		}
 
@@ -1436,8 +1436,8 @@ public class Parser extends ASTVisitor {
 				parameters.append(stack.pop());
 			});
 
-			stack.push(builder.Declarator_functionDeclarator(attributes, pointerOperators.done(), name,
-					parameters.done(), loc, decl));
+			stack.push(builder.Declarator_functionDeclarator(pointerOperators.done(), name, parameters.done(),
+					attributes, loc, decl));
 		}
 		return PROCESS_ABORT;
 	}
@@ -1482,10 +1482,10 @@ public class Parser extends ASTVisitor {
 
 			IASTInitializer initializer = declarator.getInitializer();
 			if (initializer == null) {
-				stack.push(builder.Declarator_declarator(attributes, pointerOperators.done(), name, loc, decl));
+				stack.push(builder.Declarator_declarator(pointerOperators.done(), name, attributes, loc, decl));
 			} else {
 				initializer.accept(this);
-				stack.push(builder.Declarator_declarator(attributes, pointerOperators.done(), name, stack.pop(), loc,
+				stack.push(builder.Declarator_declarator(pointerOperators.done(), name, stack.pop(), attributes, loc,
 						decl));
 			}
 		}
@@ -1519,12 +1519,12 @@ public class Parser extends ASTVisitor {
 
 		IASTInitializer initializer = declarator.getInitializer();
 		if (initializer == null) {
-			stack.push(builder.Declarator_fieldDeclarator(attributes, pointerOperators.done(), name, bitFieldSize, loc,
+			stack.push(builder.Declarator_fieldDeclarator(pointerOperators.done(), name, bitFieldSize, attributes, loc,
 					decl));
 		} else {
 			initializer.accept(this);
-			stack.push(builder.Declarator_fieldDeclarator(attributes, pointerOperators.done(), name, bitFieldSize,
-					stack.pop(), loc, decl));
+			stack.push(builder.Declarator_fieldDeclarator(pointerOperators.done(), name, bitFieldSize, stack.pop(),
+					attributes, loc, decl));
 		}
 
 		return PROCESS_ABORT;
@@ -1578,12 +1578,13 @@ public class Parser extends ASTVisitor {
 			_nestedDeclarator.accept(this);
 			IConstructor nestedDeclarator = stack.pop();
 			if (_initializer == null)
-				stack.push(builder.Declarator_functionDeclaratorNested(attributes, pointerOperators.done(), modifiers,
-						nestedDeclarator, parameters.done(), virtSpecifiers.done(), loc, decl));
+				stack.push(builder.Declarator_functionDeclaratorNested(pointerOperators.done(), modifiers,
+						nestedDeclarator, parameters.done(), virtSpecifiers.done(), attributes, loc, decl));
 			else {
 				_initializer.accept(this);
-				stack.push(builder.Declarator_functionDeclaratorNested(attributes, pointerOperators.done(), modifiers,
-						nestedDeclarator, parameters.done(), virtSpecifiers.done(), stack.pop(), loc, decl));
+				stack.push(builder.Declarator_functionDeclaratorNested(pointerOperators.done(), modifiers,
+						nestedDeclarator, parameters.done(), virtSpecifiers.done(), stack.pop(), attributes, loc,
+						decl));
 			}
 			// if
 			// (!(_exceptionSpecification.equals(ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION)))
@@ -1591,19 +1592,19 @@ public class Parser extends ASTVisitor {
 			// also exceptionSpecification");
 		} else if (_exceptionSpecification.equals(ICPPASTFunctionDeclarator.NO_EXCEPTION_SPECIFICATION)) {
 			if (_trailingReturnType == null)
-				stack.push(builder.Declarator_functionDeclarator(attributes, pointerOperators.done(), modifiers, name,
-						parameters.done(), virtSpecifiers.done(), loc, decl));
+				stack.push(builder.Declarator_functionDeclarator(pointerOperators.done(), modifiers, name,
+						parameters.done(), virtSpecifiers.done(), attributes, loc, decl));
 			else {
 				_trailingReturnType.accept(this);
-				stack.push(builder.Declarator_functionDeclarator(attributes, pointerOperators.done(), modifiers, name,
-						parameters.done(), virtSpecifiers.done(), stack.pop(), loc, decl));
+				stack.push(builder.Declarator_functionDeclarator(pointerOperators.done(), modifiers, name,
+						parameters.done(), virtSpecifiers.done(), stack.pop(), attributes, loc, decl));
 			}
 		} else if (_exceptionSpecification.equals(IASTTypeId.EMPTY_TYPEID_ARRAY)) {
 			if (_trailingReturnType != null)
 				throw new RuntimeException(
 						"FunctionDeclarator: Trailing return type and exception specification? at " + loc);
-			stack.push(builder.Declarator_functionDeclaratorWithES(attributes, pointerOperators.done(), modifiers, name,
-					parameters.done(), virtSpecifiers.done(), loc, decl));
+			stack.push(builder.Declarator_functionDeclaratorWithES(pointerOperators.done(), modifiers, name,
+					parameters.done(), virtSpecifiers.done(), attributes, loc, decl));
 		} else if (_noexceptExpression != null) {
 			if (_trailingReturnType != null)
 				throw new RuntimeException(
@@ -1611,8 +1612,8 @@ public class Parser extends ASTVisitor {
 			if (_initializer != null)
 				throw new RuntimeException("FunctionDeclarator: Initializer and noexceptExpression? at " + loc);
 			_noexceptExpression.accept(this);
-			stack.push(builder.Declarator_functionDeclaratorNoexcept(attributes, pointerOperators.done(), modifiers,
-					name, parameters.done(), virtSpecifiers.done(), stack.pop(), loc, decl));
+			stack.push(builder.Declarator_functionDeclaratorNoexcept(pointerOperators.done(), modifiers, name,
+					parameters.done(), virtSpecifiers.done(), stack.pop(), attributes, loc, decl));
 		} else {
 			if (_trailingReturnType != null)
 				throw new RuntimeException(
@@ -1622,8 +1623,8 @@ public class Parser extends ASTVisitor {
 				it.accept(this);
 				exceptionSpecification.append(stack.pop());
 			});
-			stack.push(builder.Declarator_functionDeclaratorWithES(attributes, pointerOperators.done(), modifiers, name,
-					parameters.done(), virtSpecifiers.done(), exceptionSpecification.done(), loc, decl));
+			stack.push(builder.Declarator_functionDeclaratorWithES(pointerOperators.done(), modifiers, name,
+					parameters.done(), virtSpecifiers.done(), exceptionSpecification.done(), attributes, loc, decl));
 		}
 
 		return PROCESS_ABORT;
@@ -1667,35 +1668,36 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICASTCompositeTypeSpecifier declSpec) {
-		ISourceLocation loc = getSourceLocation(declSpec);
-		ISourceLocation decl = br.resolveBinding(declSpec);
-		IList modifiers = getModifiers(declSpec);
-
-		IASTName _name = declSpec.getName();
-		_name.accept(this);
-		IConstructor name = stack.pop();
-
-		IListWriter members = vf.listWriter();
-		Stream.of(declSpec.getMembers()).forEach(it -> {
-			it.accept(this);
-			members.append(stack.pop());
-		});
-
-		if (true)
-			throw new RuntimeException("Unfinished");
-
-		switch (declSpec.getKey()) {
-		case IASTCompositeTypeSpecifier.k_struct:
-			stack.push(builder.DeclSpecifier_struct(modifiers, name, members.done(), loc, decl));
-			break;
-		case IASTCompositeTypeSpecifier.k_union:
-			stack.push(builder.DeclSpecifier_union(modifiers, name, members.done(), loc, decl));
-			break;
-		default:
-			throw new RuntimeException("Unknown IASTCompositeTypeSpecifier code " + declSpec.getKey() + ". Exiting");
-		}
-
-		return PROCESS_ABORT;
+		throw new RuntimeException("C-style CompositeTypeSpecifier encountered at " + getSourceLocation(declSpec));
+//		ISourceLocation loc = getSourceLocation(declSpec);
+//		ISourceLocation decl = br.resolveBinding(declSpec);
+//		IList modifiers = getModifiers(declSpec);
+//
+//		IASTName _name = declSpec.getName();
+//		_name.accept(this);
+//		IConstructor name = stack.pop();
+//
+//		IListWriter members = vf.listWriter();
+//		Stream.of(declSpec.getMembers()).forEach(it -> {
+//			it.accept(this);
+//			members.append(stack.pop());
+//		});
+//
+//		if (true)
+//			throw new RuntimeException("Unfinished");
+//
+//		switch (declSpec.getKey()) {
+//		case IASTCompositeTypeSpecifier.k_struct:
+//			stack.push(builder.DeclSpecifier_struct(modifiers, name, members.done(), loc, decl));
+//			break;
+//		case IASTCompositeTypeSpecifier.k_union:
+//			stack.push(builder.DeclSpecifier_union(modifiers, name, members.done(), loc, decl));
+//			break;
+//		default:
+//			throw new RuntimeException("Unknown IASTCompositeTypeSpecifier code " + declSpec.getKey() + ". Exiting");
+//		}
+//
+//		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTCompositeTypeSpecifier declSpec) {
@@ -1728,27 +1730,27 @@ public class Parser extends ASTVisitor {
 		switch (declSpec.getKey()) {
 		case ICPPASTCompositeTypeSpecifier.k_struct:
 			if (virtSpecifier == null)
-				stack.push(builder.DeclSpecifier_struct(attributes, modifiers, name, baseSpecifiers.done(),
-						members.done(), loc, decl));
+				stack.push(builder.DeclSpecifier_struct(modifiers, name, baseSpecifiers.done(), members.done(),
+						attributes, loc, decl));
 			else
-				stack.push(builder.DeclSpecifier_structFinal(attributes, modifiers, name, baseSpecifiers.done(),
-						members.done(), loc, decl));
+				stack.push(builder.DeclSpecifier_structFinal(modifiers, name, baseSpecifiers.done(), members.done(),
+						attributes, loc, decl));
 			break;
 		case ICPPASTCompositeTypeSpecifier.k_union:
 			if (virtSpecifier == null)
-				stack.push(builder.DeclSpecifier_union(attributes, modifiers, name, baseSpecifiers.done(),
-						members.done(), loc, decl));
+				stack.push(builder.DeclSpecifier_union(modifiers, name, baseSpecifiers.done(), members.done(),
+						attributes, loc, decl));
 			else
-				stack.push(builder.DeclSpecifier_unionFinal(attributes, modifiers, name, baseSpecifiers.done(),
-						members.done(), loc, decl));
+				stack.push(builder.DeclSpecifier_unionFinal(modifiers, name, baseSpecifiers.done(), members.done(),
+						attributes, loc, decl));
 			break;
 		case ICPPASTCompositeTypeSpecifier.k_class:
 			if (virtSpecifier == null)
-				stack.push(builder.DeclSpecifier_class(attributes, modifiers, name, baseSpecifiers.done(),
-						members.done(), loc, decl));
+				stack.push(builder.DeclSpecifier_class(modifiers, name, baseSpecifiers.done(), members.done(),
+						attributes, loc, decl));
 			else
-				stack.push(builder.DeclSpecifier_classFinal(attributes, modifiers, name, baseSpecifiers.done(),
-						members.done(), loc, decl));
+				stack.push(builder.DeclSpecifier_classFinal(modifiers, name, baseSpecifiers.done(), members.done(),
+						attributes, loc, decl));
 			break;
 		default:
 			throw new RuntimeException(
@@ -1863,26 +1865,26 @@ public class Parser extends ASTVisitor {
 		if (baseType == null) {
 			if (declSpec.isScoped()) {
 				if (declSpec.isOpaque())
-					stack.push(builder.DeclSpecifier_enumScopedOpaque(attributes, modifiers, name, loc, decl));
+					stack.push(builder.DeclSpecifier_enumScopedOpaque(modifiers, name, attributes, loc, decl));
 				else
-					stack.push(builder.DeclSpecifier_enumScoped(attributes, modifiers, name, enumerators.done(), loc,
+					stack.push(builder.DeclSpecifier_enumScoped(modifiers, name, enumerators.done(), attributes, loc,
 							decl));
 			} else
-				stack.push(builder.DeclSpecifier_enum(attributes, modifiers, name, enumerators.done(), loc, decl));
+				stack.push(builder.DeclSpecifier_enum(modifiers, name, enumerators.done(), attributes, loc, decl));
 		} else {
 			baseType.accept(this);
 			if (declSpec.isScoped()) {
 				if (declSpec.isOpaque())
-					stack.push(builder.DeclSpecifier_enumScopedOpaque(attributes, modifiers, stack.pop(), name, loc,
+					stack.push(builder.DeclSpecifier_enumScopedOpaque(modifiers, stack.pop(), name, attributes, loc,
 							decl));
 				else
-					stack.push(builder.DeclSpecifier_enumScoped(attributes, modifiers, stack.pop(), name,
-							enumerators.done(), loc, decl));
+					stack.push(builder.DeclSpecifier_enumScoped(modifiers, stack.pop(), name, enumerators.done(),
+							attributes, loc, decl));
 			} else {
 				if (declSpec.isOpaque())
-					stack.push(builder.DeclSpecifier_enumOpaque(attributes, modifiers, stack.pop(), name, loc, decl));
+					stack.push(builder.DeclSpecifier_enumOpaque(modifiers, stack.pop(), name, attributes, loc, decl));
 				else
-					stack.push(builder.DeclSpecifier_enum(attributes, modifiers, stack.pop(), name, enumerators.done(),
+					stack.push(builder.DeclSpecifier_enum(modifiers, stack.pop(), name, enumerators.done(), attributes,
 							loc, decl));
 			}
 		}
@@ -1902,62 +1904,62 @@ public class Parser extends ASTVisitor {
 
 		switch (declSpec.getType()) {
 		case IASTSimpleDeclSpecifier.t_unspecified:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_unspecified(loc), loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_unspecified(loc), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_void:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_void(loc), loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_void(loc), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_char:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_char(loc), loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_char(loc), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_int:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_integer(loc), loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_integer(loc), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_float:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_float(loc), loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_float(loc), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_double:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_double(loc), loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_double(loc), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_bool:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_bool(loc), loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_bool(loc), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_wchar_t:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_wchar_t(loc), loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_wchar_t(loc), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_typeof:
 			declSpec.getDeclTypeExpression().accept(this);
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_typeof(loc), stack.pop(),
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_typeof(loc), stack.pop(), attributes,
 					loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_decltype:
 			declSpec.getDeclTypeExpression().accept(this);
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_decltype(loc),
-					stack.pop(), loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_decltype(loc), stack.pop(),
+					attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_auto:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_auto(loc), loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_auto(loc), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_char16_t:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_char16_t(loc), loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_char16_t(loc), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_char32_t:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_char32_t(loc), loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_char32_t(loc), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_int128:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_int128(loc), loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_int128(loc), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_float128:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_float128(loc), loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_float128(loc), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_decimal32:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_decimal128(loc), loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_decimal128(loc), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_decimal64:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_decimal64(loc), loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_decimal64(loc), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_decimal128:
-			stack.push(builder.DeclSpecifier_declSpecifier(attributes, modifiers, builder.Type_decimal128(loc), loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_decimal128(loc), attributes, loc));
 			break;
 		default:
 			throw new RuntimeException(
@@ -1984,7 +1986,7 @@ public class Parser extends ASTVisitor {
 			stack.push(builder.Expression_arrayModifier(attributes, loc));
 		else {
 			constantExpression.accept(this);
-			stack.push(builder.Expression_arrayModifier(attributes, stack.pop(), loc));
+			stack.push(builder.Expression_arrayModifier(stack.pop(), attributes, loc));
 		}
 		return PROCESS_ABORT;
 	}
@@ -2007,7 +2009,7 @@ public class Parser extends ASTVisitor {
 		IList modifiers = getModifiers(pointer);
 		if (pointer instanceof ICPPASTPointerToMember) {
 			((ICPPASTPointerToMember) pointer).getName().accept(this);
-			stack.push(builder.Declaration_pointerToMember(attributes, modifiers, stack.pop(), loc));
+			stack.push(builder.Declaration_pointerToMember(modifiers, stack.pop(), attributes, loc));
 		} else
 			stack.push(builder.Declaration_pointer(attributes, modifiers, loc));
 		return PROCESS_ABORT;
@@ -2808,10 +2810,10 @@ public class Parser extends ASTVisitor {
 		IConstructor catchBody = stack.pop();
 
 		if (statement.isCatchAll())
-			stack.push(builder.Statement_catchAll(attributes, catchBody, loc));
+			stack.push(builder.Statement_catchAll(catchBody, attributes, loc));
 		else {
 			statement.getDeclaration().accept(this);
-			stack.push(builder.Statement_catch(attributes, stack.pop(), catchBody, loc));
+			stack.push(builder.Statement_catch(stack.pop(), catchBody, attributes, loc));
 		}
 		return PROCESS_ABORT;
 	}
@@ -2827,7 +2829,7 @@ public class Parser extends ASTVisitor {
 		statement.getBody().accept(this);
 		IConstructor body = stack.pop();
 
-		stack.push(builder.Statement_rangeBasedFor(attributes, declaration, initializerClause, body, loc));
+		stack.push(builder.Statement_rangeBasedFor(declaration, initializerClause, body, attributes, loc));
 		return PROCESS_ABORT;
 	}
 
@@ -2844,7 +2846,7 @@ public class Parser extends ASTVisitor {
 			catchHandlers.append(stack.pop());
 		});
 
-		stack.push(builder.Statement_tryBlock(attributes, tryBody, catchHandlers.done(), loc));
+		stack.push(builder.Statement_tryBlock(tryBody, catchHandlers.done(), attributes, loc));
 		return PROCESS_ABORT;
 	}
 
@@ -2875,7 +2877,7 @@ public class Parser extends ASTVisitor {
 		IList attributes = getAttributes(statement);
 		statement.getExpression().accept(this);
 		IConstructor expression = stack.pop();
-		stack.push(builder.Statement_case(attributes, expression, loc));
+		stack.push(builder.Statement_case(expression, attributes, loc));
 		return PROCESS_ABORT;
 	}
 
@@ -2902,7 +2904,7 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(statement);
 		IList attributes = getAttributes(statement);
 		statement.getDeclaration().accept(this);
-		stack.push(builder.Statement_declarationStatement(attributes, stack.pop(), loc));
+		stack.push(builder.Statement_declarationStatement(stack.pop(), attributes, loc));
 		return PROCESS_ABORT;
 	}
 
@@ -2921,7 +2923,7 @@ public class Parser extends ASTVisitor {
 		IConstructor body = stack.pop();
 		statement.getCondition().accept(this);
 		IConstructor condition = stack.pop();
-		stack.push(builder.Statement_do(attributes, body, condition, loc));
+		stack.push(builder.Statement_do(body, condition, attributes, loc));
 
 		return PROCESS_ABORT;
 	}
@@ -2930,7 +2932,7 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(statement);
 		IList attributes = getAttributes(statement);
 		statement.getExpression().accept(this);
-		stack.push(builder.Statement_expressionStatement(attributes, stack.pop(), loc));
+		stack.push(builder.Statement_expressionStatement(stack.pop(), attributes, loc));
 		return PROCESS_ABORT;
 	}
 
@@ -2972,11 +2974,11 @@ public class Parser extends ASTVisitor {
 			IASTDeclaration _conditionDeclaration = ((ICPPASTForStatement) statement).getConditionDeclaration();
 			if (_conditionDeclaration != null) {
 				_conditionDeclaration.accept(this);
-				stack.push(builder.Statement_forWithDecl(attributes, initializer, stack.pop(), iteration, body, loc));
+				stack.push(builder.Statement_forWithDecl(initializer, stack.pop(), iteration, body, attributes, loc));
 				return PROCESS_ABORT;
 			}
 		}
-		stack.push(builder.Statement_for(attributes, initializer, condition, iteration, body, loc));
+		stack.push(builder.Statement_for(initializer, condition, iteration, body, attributes, loc));
 		return PROCESS_ABORT;
 	}
 
@@ -2985,7 +2987,7 @@ public class Parser extends ASTVisitor {
 		ISourceLocation decl = br.resolveBinding(statement);
 		IList attributes = getAttributes(statement);
 		statement.getName().accept(this);
-		stack.push(builder.Statement_goto(attributes, stack.pop(), loc, decl));
+		stack.push(builder.Statement_goto(stack.pop(), attributes, loc, decl));
 		return PROCESS_ABORT;
 	}
 
@@ -3005,16 +3007,16 @@ public class Parser extends ASTVisitor {
 		if (statement.getConditionExpression() == null && statement instanceof ICPPASTIfStatement) {
 			((ICPPASTIfStatement) statement).getConditionDeclaration().accept(this);
 			if (elseClause == null) {
-				stack.push(builder.Statement_ifWithDecl(attributes, stack.pop(), thenClause, loc));
+				stack.push(builder.Statement_ifWithDecl(stack.pop(), thenClause, attributes, loc));
 			} else {
-				stack.push(builder.Statement_ifWithDecl(attributes, stack.pop(), thenClause, elseClause, loc));
+				stack.push(builder.Statement_ifWithDecl(stack.pop(), thenClause, elseClause, attributes, loc));
 			}
 		} else {
 			statement.getConditionExpression().accept(this);
 			if (elseClause == null) {
-				stack.push(builder.Statement_if(attributes, stack.pop(), thenClause, loc));
+				stack.push(builder.Statement_if(stack.pop(), thenClause, attributes, loc));
 			} else {
-				stack.push(builder.Statement_if(attributes, stack.pop(), thenClause, elseClause, loc));
+				stack.push(builder.Statement_if(stack.pop(), thenClause, elseClause, attributes, loc));
 			}
 		}
 		return PROCESS_ABORT;
@@ -3030,7 +3032,7 @@ public class Parser extends ASTVisitor {
 		statement.getNestedStatement().accept(this);
 		IConstructor nestedStatement = stack.pop();
 
-		stack.push(builder.Statement_label(attributes, name, nestedStatement, loc, decl));
+		stack.push(builder.Statement_label(name, nestedStatement, attributes, loc, decl));
 		return PROCESS_ABORT;
 	}
 
@@ -3062,11 +3064,11 @@ public class Parser extends ASTVisitor {
 			stack.push(builder.Statement_return(attributes, loc));
 		else if (returnValue != null) {
 			returnValue.accept(this);
-			stack.push(builder.Statement_return(attributes, stack.pop(), loc));
+			stack.push(builder.Statement_return(stack.pop(), attributes, loc));
 		} else {
 			returnArgument.accept(this);
 			// Note: InitializerClause is currently mapped on Expression
-			stack.push(builder.Statement_return(attributes, stack.pop(), loc));
+			stack.push(builder.Statement_return(stack.pop(), attributes, loc));
 		}
 		return PROCESS_ABORT;
 	}
@@ -3081,12 +3083,12 @@ public class Parser extends ASTVisitor {
 		IASTExpression _controller = statement.getControllerExpression();
 		if (_controller == null && statement instanceof ICPPASTSwitchStatement) {
 			((ICPPASTSwitchStatement) statement).getControllerDeclaration().accept(this);
-			stack.push(builder.Statement_switchWithDecl(attributes, stack.pop(), body, loc));
+			stack.push(builder.Statement_switchWithDecl(stack.pop(), body, attributes, loc));
 			return PROCESS_ABORT;
 		}
 
 		_controller.accept(this);
-		stack.push(builder.Statement_switch(attributes, stack.pop(), body, loc));
+		stack.push(builder.Statement_switch(stack.pop(), body, attributes, loc));
 		return PROCESS_ABORT;
 	}
 
@@ -3100,11 +3102,11 @@ public class Parser extends ASTVisitor {
 		IASTExpression _condition = statement.getCondition();
 		if (_condition == null && statement instanceof ICPPASTWhileStatement) {
 			((ICPPASTWhileStatement) statement).getConditionDeclaration().accept(this);
-			stack.push(builder.Statement_whileWithDecl(attributes, stack.pop(), body, loc));
+			stack.push(builder.Statement_whileWithDecl(stack.pop(), body, attributes, loc));
 			return PROCESS_ABORT;
 		}
 		_condition.accept(this);
-		stack.push(builder.Statement_while(attributes, stack.pop(), body, loc));
+		stack.push(builder.Statement_while(stack.pop(), body, attributes, loc));
 		return PROCESS_ABORT;
 	}
 
@@ -3212,9 +3214,9 @@ public class Parser extends ASTVisitor {
 		});
 
 		if (namespaceDefinition.isInline())
-			stack.push(builder.Declaration_namespaceDefinitionInline(attributes, name, declarations.done(), loc, decl));
+			stack.push(builder.Declaration_namespaceDefinitionInline(name, declarations.done(), attributes, loc, decl));
 		else
-			stack.push(builder.Declaration_namespaceDefinition(attributes, name, declarations.done(), loc, decl));
+			stack.push(builder.Declaration_namespaceDefinition(name, declarations.done(), attributes, loc, decl));
 		return PROCESS_ABORT;
 	}
 
