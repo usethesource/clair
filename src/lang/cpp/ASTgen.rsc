@@ -178,14 +178,27 @@ str type2FactoryCall(Symbol t){
   bool hasTyp("Name", "conversionName") = true;
   default bool hasTyp(str _, str _) = false;
   
+  bool hasAttrs("Declarator", str cname) = cname != "missingDeclarator";
+  bool hasAttrs("DeclSpecifier", str cname) = cname notin
+    {"etsEnum", "etsStruct", "etsUnion", "etsClass", "namedTypeSpecifier", /*"struct", "union", "class",*/ "msThrowEllipsis" };
+  bool hasAttrs("Declaration", str cname) = cname notin
+    {"translationUnit", /*"functionDefinition", */ "asmDeclaration", "enumerator", "visibilityLabel",
+    "parameter", "template", "sttClass", "sttTypename", "tttParameter", "baseSpecifier", "virtSpecifier",
+    "namespaceAlias", "linkageSpecification", "staticAssert", "explicitTemplateInstantiation", "explicitTemplateSpecialization",
+    "varArgs", "problemDeclaration"};
+  bool hasAttrs("Expression", "arrayModifier") = true;
+  bool hasAttrs("Statement", str cname) = cname != "problem";
+  default bool hasAttrs(_, _) = false;
+  
   str declareMaker(Production::cons(label(str cname, Symbol typ:adt(str typeName, list[Symbol] ps)), list[Symbol] args, list[Symbol] kwTypes,set[Attr] _)) 
-     = "public <typeToJavaType(typ)> <typeName>_<cname>(<(declareConsArgs(args)+((typeName=="TypeSymbol"||typeName=="TypeModifier"||typeName=="M3")?"":", ISourceLocation $loc"+(hasDecl(typeName, cname)?", ISourceLocation $decl":"")+(hasTyp(typeName, cname)?", IConstructor $typ":"")))[2..]>) {
+     = "public <typeToJavaType(typ)> <typeName>_<cname>(<(declareConsArgs(args)+(hasAttrs(typeName,cname)?", IList $attributes":"")+((typeName=="TypeSymbol"||typeName=="TypeModifier"||typeName=="M3")?"":", ISourceLocation $loc"+(hasDecl(typeName, cname)?", ISourceLocation $decl":"")+(hasTyp(typeName, cname)?", IConstructor $typ":"")))[2..]>) {
        '  <for (label(str l, Symbol t) <- args) { str argName = argToSimpleJavaArg(l, t); str argType = type2FactoryCall(t);>  
        '  if (!<argName>.getType().isSubtypeOf(<argType>)) {
        '    throw new IllegalArgumentException(\"Expected \" + <argType> + \" but got \" + <argName>.getType() + \" for <argName>:\" + <argName>);
        '  }
        '  <}>
        '  Map\<String, IValue\> kwParams = new HashMap\<String, IValue\>();
+       '  <(hasAttrs(typeName, cname)?"kwParams.put(\"attributes\", $attributes);":"")>
        '  <((typeName=="TypeSymbol"||typeName=="TypeModifier"||typeName=="M3")?"":"kwParams.put(\"src\", $loc);")>
        '  <(hasDecl(typeName, cname)?"kwParams.put(\"decl\", $decl);":"")>
        '  <(hasTyp(typeName, cname)?"kwParams.put(\"typ\", $typ);":"")>
