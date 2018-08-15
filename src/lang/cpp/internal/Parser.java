@@ -792,6 +792,8 @@ public class Parser extends ASTVisitor {
 						.Declaration_problemDeclaration(vf.sourceLocation(URIUtil.assumeCorrect("interrupted:///"))));
 				break;
 			}
+			declaration.accept(this);
+			declarations.append(stack.pop());
 		}
 
 		IConstructor translationUnit = builder.Declaration_translationUnit(declarations.done(), loc);
