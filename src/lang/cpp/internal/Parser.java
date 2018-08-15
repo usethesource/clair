@@ -786,10 +786,13 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTTranslationUnit tu) {
 		ISourceLocation loc = getSourceLocation(tu);
 		IListWriter declarations = vf.listWriter();
-		Stream.of(tu.getDeclarations()).forEach(it -> {
-			it.accept(this);
-			declarations.append(stack.pop());
-		});
+		for (IASTDeclaration declaration : tu.getDeclarations()) {
+			if (ctx.isInterrupted()) {
+				declarations.append(builder
+						.Declaration_problemDeclaration(vf.sourceLocation(URIUtil.assumeCorrect("interrupted:///"))));
+				break;
+			}
+		}
 
 		IConstructor translationUnit = builder.Declaration_translationUnit(declarations.done(), loc);
 		stack.push(translationUnit);
