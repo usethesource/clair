@@ -2011,7 +2011,7 @@ public class Parser extends ASTVisitor {
 			((ICPPASTPointerToMember) pointer).getName().accept(this);
 			stack.push(builder.Declaration_pointerToMember(modifiers, stack.pop(), attributes, loc));
 		} else
-			stack.push(builder.Declaration_pointer(attributes, modifiers, loc));
+			stack.push(builder.Declaration_pointer(modifiers, attributes, loc));
 		return PROCESS_ABORT;
 	}
 
@@ -2889,7 +2889,7 @@ public class Parser extends ASTVisitor {
 			it.accept(this);
 			statements.append(stack.pop());
 		});
-		stack.push(builder.Statement_compoundStatement(attributes, statements.done(), loc));
+		stack.push(builder.Statement_compoundStatement(statements.done(), attributes, loc));
 		return PROCESS_ABORT;
 	}
 
