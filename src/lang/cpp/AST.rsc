@@ -447,13 +447,5 @@ java list[loc] parseForComments(loc file, list[loc] includePaths = classPaths["v
 @reflect{need access to streams}
 java list[loc] parseForMacros(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ());
 
-@javaClass{lang.cpp.internal.Parser}  
-@reflect{need access to streams}   
-java Expression parseExpression(str expression);
-
 map[loc,Declaration] parseDir(loc dir, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ())
   = parseFiles([dir + file|file <- listEntries(dir)], includePaths = includePaths, additionalMacros = additionalMacros);
-
-@javaClass{lang.cpp.internal.Parser}
-@reflect{need access to streams}
-java map[loc,Declaration] parseFiles(list[loc] files, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ());

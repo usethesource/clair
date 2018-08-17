@@ -218,7 +218,6 @@ import io.usethesource.vallang.IConstructor;
 import io.usethesource.vallang.IList;
 import io.usethesource.vallang.IListWriter;
 import io.usethesource.vallang.IMap;
-import io.usethesource.vallang.IMapWriter;
 import io.usethesource.vallang.ISet;
 import io.usethesource.vallang.ISetWriter;
 import io.usethesource.vallang.ISourceLocation;
@@ -251,23 +250,6 @@ public class Parser extends ASTVisitor {
 		this.vf = vf;
 		this.builder = new AST(vf);
 		this.tr = new TypeResolver(builder, vf);
-	}
-
-	public IMap parseFiles(IList files, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
-		setIEvaluatorContext(ctx);
-		IMapWriter map = vf.mapWriter();
-		out("Converting " + files.length() + " files");
-		int c = 0;
-		for (IValue _file : files) {
-			if (c++ > 5) // FIXME
-				continue;
-			ISourceLocation file = (ISourceLocation) _file;
-			out("Converting " + file.toString());
-			IValue ast = new Parser(vf).parseCpp(file, includePath, additionalMacros, ctx);
-			map.put(file, ast);
-		}
-		out("Done converting!");
-		return map.done();
 	}
 
 	Map<String, Set<String>> dependencies = new HashMap<String, Set<String>>();
@@ -591,28 +573,6 @@ public class Parser extends ASTVisitor {
 		IParserLogService log = new DefaultLogService();
 		IASTTranslationUnit tu = GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, null, options, log);
 		tu.accept(this);
-		return stack.pop();
-	}
-
-	public IValue parseExpression(IString expression, IEvaluatorContext ctx) throws CoreException, IOException {
-		setIEvaluatorContext(ctx);
-		if (!expression.getValue().endsWith(";"))
-			expression.concat(vf.string(";"));
-		String expr = "void main() {\n\t" + expression.getValue() + "\n}";
-		FileContent fc = FileContent.create("", expr.toCharArray());
-		Map<String, String> macroDefinitions = new HashMap<String, String>();
-		String[] includeSearchPaths = new String[0];
-		IScannerInfo si = new ScannerInfo(macroDefinitions, includeSearchPaths);
-		IncludeFileContentProvider ifcp = IncludeFileContentProvider.getEmptyFilesProvider();
-		IIndex idx = null;
-		int options = ILanguage.OPTION_PARSE_INACTIVE_CODE;
-		IParserLogService log = new DefaultLogService();
-		IASTTranslationUnit tu = GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, idx, options, log);
-
-		IASTFunctionDefinition main = (IASTFunctionDefinition) tu.getDeclarations()[0];
-		IASTCompoundStatement body = (IASTCompoundStatement) main.getBody();
-		IASTExpression ex = ((IASTExpressionStatement) body.getStatements()[0]).getExpression();
-		ex.accept(this);
 		return stack.pop();
 	}
 
