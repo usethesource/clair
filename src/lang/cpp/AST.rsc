@@ -411,17 +411,17 @@ data Attribute //no attributes
 	;
     
 public map[str, list[loc]] classPaths =
-  ("vs14": [|file://c:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2014.0/VC/include/|],
-  "vs12": [|file://c:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2011.0/VC/include|,
-    |file://c:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2011.0/VC/atlmfc/include|,
-    |file://c:/Program%20Files%20(x86)/Windows%20Kits/8.0/Include/um|,
-    |file://c:/Program%20Files%20(x86)/Windows%20Kits/8.0/Include/shared|],
-  "vs13": [|file:///c:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2012.0/VC/include|,
-    |file:///c:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2012.0/VC/atlmfc/include|,
-    |file:///c:/Program%20Files%20(x86)/Windows%20Kits/8.1/Include/um|,
-    |file:///c:/Program%20Files%20(x86)/Windows%20Kits/8.1/Include/shared|],
-  "mingw": [|file://c:/MinGW/include|, |file://c:/MinGW/include/sys|, |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include|,
-    |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++|, |file://c:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/mingw32|],
+  ("vs14": [|file:///C:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2014.0/VC/include/|],
+  "vs12": [|file:///C:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2011.0/VC/include|,
+    |file:///C:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2011.0/VC/atlmfc/include|,
+    |file:///C:/Program%20Files%20(x86)/Windows%20Kits/8.0/Include/um|,
+    |file:///C:/Program%20Files%20(x86)/Windows%20Kits/8.0/Include/shared|],
+  "vs13": [|file:///C:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2012.0/VC/include|,
+    |file:///C:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2012.0/VC/atlmfc/include|,
+    |file:///C:/Program%20Files%20(x86)/Windows%20Kits/8.1/Include/um|,
+    |file:///C:/Program%20Files%20(x86)/Windows%20Kits/8.1/Include/shared|],
+  "mingw": [|file:///C:/MinGW/include|, |file:///C:/MinGW/include/sys|, |file:///C:/MinGW/lib/gcc/mingw32/5.3.0/include|,
+    |file:///C:/MinGW/lib/gcc/mingw32/5.3.0/include/c++|, |file:///C:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/mingw32|],
   "mac": [|file:///usr/include|,
     |file:///usr/include/c++/4.2.1|,
     |file:///usr/include/c++/4.2.1/tr1|],
@@ -433,7 +433,7 @@ public map[str, list[loc]] classPaths =
 
 @javaClass{lang.cpp.internal.Parser}  
 @reflect{need access to streams}   
-java Declaration parseCpp(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ());
+java Declaration parseCpp(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false);
 
 @javaClass{lang.cpp.internal.Parser}  
 @reflect{need access to streams}   

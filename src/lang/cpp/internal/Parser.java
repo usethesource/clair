@@ -214,6 +214,7 @@ import org.rascalmpl.interpreter.utils.RuntimeExceptionFactory;
 import org.rascalmpl.library.Prelude;
 import org.rascalmpl.uri.URIUtil;
 
+import io.usethesource.vallang.IBool;
 import io.usethesource.vallang.IConstructor;
 import io.usethesource.vallang.IList;
 import io.usethesource.vallang.IListWriter;
@@ -239,6 +240,8 @@ public class Parser extends ASTVisitor {
 	private TypeResolver tr;
 
 	boolean doProblemLogging = false;
+	private boolean includeStdLib = false;
+	private IList stdLib;
 
 	public Parser(IValueFactory vf) {
 		super(true);
@@ -435,11 +438,17 @@ public class Parser extends ASTVisitor {
 		}
 	}
 
-	public IValue parseCpp(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
+	public IValue parseCpp(ISourceLocation file, IList stdLib, IList includeDirs, IMap additionalMacros,
+			IBool includeStdLib, IEvaluatorContext ctx) {
 		setIEvaluatorContext(ctx);
+		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
+		this.stdLib = stdLib;
 		Instant begin = Instant.now();
 		out("Beginning at " + begin.toString());
-		IASTTranslationUnit tu = getCdtAst(file, includePath, additionalMacros);
+		IListWriter allIncludes = vf.listWriter();
+		allIncludes.appendAll(includeDirs);
+		allIncludes.appendAll(stdLib);
+		IASTTranslationUnit tu = getCdtAst(file, allIncludes.done(), additionalMacros);
 		Instant between = Instant.now();
 		out("CDT took " + new Double(Duration.between(begin, between).toMillis()).doubleValue() / 1000 + "seconds");
 		IValue result = convertCdtToRascal(tu);
@@ -566,6 +575,7 @@ public class Parser extends ASTVisitor {
 
 	public IValue parseString(IString code, IEvaluatorContext ctx) throws CoreException {
 		setIEvaluatorContext(ctx);
+		stdLib = vf.listWriter().done();
 		FileContent fc = FileContent.create("", code.getValue().toCharArray());
 		IScannerInfo si = new ScannerInfo();
 		IncludeFileContentProvider ifcp = IncludeFileContentProvider.getEmptyFilesProvider();
@@ -750,11 +760,20 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTTranslationUnit tu) {
 		ISourceLocation loc = getSourceLocation(tu);
 		IListWriter declarations = vf.listWriter();
-		for (IASTDeclaration declaration : tu.getDeclarations()) {
+		declLoop: for (IASTDeclaration declaration : tu.getDeclarations()) {
 			if (ctx.isInterrupted()) {
 				declarations.append(builder
 						.Declaration_problemDeclaration(vf.sourceLocation(URIUtil.assumeCorrect("interrupted:///"))));
 				break;
+			}
+			ISourceLocation declLoc = getSourceLocation(declaration);
+			if (!includeStdLib) {
+				for (IValue it : stdLib) {
+					ISourceLocation l = (ISourceLocation) it;
+					if (l.getScheme().equals(declLoc.getScheme()) && declLoc.getPath().startsWith(l.getPath())) {
+						continue declLoop;
+					}
+				}
 			}
 			declaration.accept(this);
 			declarations.append(stack.pop());
