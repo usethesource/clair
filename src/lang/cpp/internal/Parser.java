@@ -613,6 +613,10 @@ public class Parser extends ASTVisitor {
 
 		if (astFileLocation != null) {
 			String fileName = astFileLocation.getFileName();
+			fileName = fileName.replace('\\', '/');
+			if (!fileName.startsWith("/")) {
+				fileName = "/" + fileName;
+			}
 
 			try {
 				return vf.sourceLocation(
