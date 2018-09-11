@@ -198,7 +198,9 @@ str type2FactoryCall(Symbol t){
        '  }
        '  <}>
        '  Map\<String, IValue\> kwParams = new HashMap\<String, IValue\>();
-       '  <(hasAttrs(typeName, cname)?"kwParams.put(\"attributes\", $attributes);":"")>
+       '  <(hasAttrs(typeName, cname)?"if (!$attributes.isEmpty()) {
+                                      '  kwParams.put(\"attributes\", $attributes);
+                                      '}":"")>
        '  <((typeName=="TypeSymbol"||typeName=="TypeModifier"||typeName=="M3")?"":"kwParams.put(\"src\", $loc);")>
        '  <(hasDecl(typeName, cname)?"kwParams.put(\"decl\", $decl);":"")>
        '  <(hasTyp(typeName, cname)?"kwParams.put(\"typ\", $typ);":"")>

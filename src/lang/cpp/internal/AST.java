@@ -802,7 +802,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -824,7 +826,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -854,7 +858,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -888,7 +894,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -910,7 +918,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -944,7 +954,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -966,7 +978,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -992,7 +1006,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1010,7 +1026,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1054,7 +1072,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1076,7 +1096,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1098,7 +1120,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1128,7 +1152,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1154,7 +1180,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1184,7 +1212,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1210,7 +1240,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1237,7 +1269,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1281,7 +1315,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1303,7 +1339,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1329,7 +1367,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1351,7 +1391,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1373,7 +1415,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1391,7 +1435,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -1417,7 +1463,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1457,7 +1505,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -1489,7 +1539,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1511,7 +1563,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1555,7 +1609,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1599,7 +1655,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1625,7 +1683,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1661,7 +1721,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1687,7 +1749,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1709,7 +1773,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1731,7 +1797,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1764,7 +1832,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -1788,7 +1858,9 @@ public class AST {
   public IConstructor Declaration_reference(IList $attributes, ISourceLocation $loc) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -1854,7 +1926,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -1872,7 +1946,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -1950,7 +2026,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -2004,7 +2082,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -2078,7 +2158,9 @@ public class AST {
   public IConstructor Declaration_rvalueReference(IList $attributes, ISourceLocation $loc) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -2146,7 +2228,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -2190,7 +2274,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -2254,7 +2340,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -2272,7 +2360,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -2286,7 +2376,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -2300,7 +2392,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -2322,7 +2416,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -2344,7 +2440,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -2749,7 +2847,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -3729,7 +3829,9 @@ public class AST {
   public IConstructor Expression_arrayModifier(IList $attributes, ISourceLocation $loc) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4421,7 +4523,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4435,7 +4539,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4461,7 +4567,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4471,7 +4579,9 @@ public class AST {
   public IConstructor Statement_nullStatement(IList $attributes, ISourceLocation $loc) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4489,7 +4599,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4499,7 +4611,9 @@ public class AST {
   public IConstructor Statement_return(IList $attributes, ISourceLocation $loc) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4509,7 +4623,9 @@ public class AST {
   public IConstructor Statement_defaultCase(IList $attributes, ISourceLocation $loc) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4527,7 +4643,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -4537,7 +4655,9 @@ public class AST {
   public IConstructor Statement_continue(IList $attributes, ISourceLocation $loc) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4569,7 +4689,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4583,7 +4705,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4597,7 +4721,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4615,7 +4741,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4629,7 +4757,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4643,7 +4773,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4665,7 +4797,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4679,7 +4813,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
@@ -4693,7 +4829,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4711,7 +4849,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4733,7 +4873,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4743,7 +4885,9 @@ public class AST {
   public IConstructor Statement_break(IList $attributes, ISourceLocation $loc) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4765,7 +4909,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4783,7 +4929,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4801,7 +4949,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4819,7 +4969,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4837,7 +4989,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
@@ -4855,7 +5009,9 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    kwParams.put("attributes", $attributes);
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
