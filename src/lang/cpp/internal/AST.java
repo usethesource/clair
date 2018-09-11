@@ -218,6 +218,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"empty");
   private static final Type _Expression_postfixIncr_1 
     = tf.constructor(typestore,_Expression,"postfixIncr",_Expression,"expression");
+  private static final Type _Expression_newWithArgs_3 
+    = tf.constructor(typestore,_Expression,"newWithArgs",tf.listType(_Expression),"arguments",_Expression,"typeId",_Expression,"initializer");
   private static final Type _Expression_sizeofParameterPack_1 
     = tf.constructor(typestore,_Expression,"sizeofParameterPack",_Expression,"expression");
   private static final Type _Expression_assign_2 
@@ -290,8 +292,6 @@ public class AST {
     = tf.constructor(typestore,_Expression,"typeId",_DeclSpecifier,"declSpecifier");
   private static final Type _Expression_labelReference_1 
     = tf.constructor(typestore,_Expression,"labelReference",_Expression,"expression");
-  private static final Type _Expression_greaterEqual_2 
-    = tf.constructor(typestore,_Expression,"greaterEqual",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_shiftRight_2 
     = tf.constructor(typestore,_Expression,"shiftRight",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_captureThisPtr_0 
@@ -304,6 +304,10 @@ public class AST {
     = tf.constructor(typestore,_Expression,"plus",_Expression,"lhs",_Expression,"rhs");
   private static final Type _Expression_binaryXor_2 
     = tf.constructor(typestore,_Expression,"binaryXor",_Expression,"lhs",_Expression,"rhs");
+  private static final Type _Expression_greaterEqual_2 
+    = tf.constructor(typestore,_Expression,"greaterEqual",_Expression,"lhs",_Expression,"rhs");
+  private static final Type _Expression_fieldReferencePointerDeref_2 
+    = tf.constructor(typestore,_Expression,"fieldReferencePointerDeref",_Expression,"fieldOwner",_Name,"name");
   private static final Type _Expression_arraySubscriptExpression_2 
     = tf.constructor(typestore,_Expression,"arraySubscriptExpression",_Expression,"array",_Expression,"argument");
   private static final Type _Expression_lessThan_2 
@@ -364,10 +368,6 @@ public class AST {
     = tf.constructor(typestore,_Expression,"conditional",_Expression,"condition",_Expression,"positive",_Expression,"negative");
   private static final Type _Expression_packExpansion_1 
     = tf.constructor(typestore,_Expression,"packExpansion",_Expression,"pattern");
-  private static final Type _Expression_newWithArgs_3 
-    = tf.constructor(typestore,_Expression,"newWithArgs",tf.listType(_Expression),"arguments",_Expression,"typeId",_Expression,"initializer");
-  private static final Type _Expression_fieldReferencePointerDeref_2 
-    = tf.constructor(typestore,_Expression,"fieldReferencePointerDeref",_Expression,"fieldOnwer",_Name,"name");
   private static final Type _Expression_expressionList_1 
     = tf.constructor(typestore,_Expression,"expressionList",tf.listType(_Expression),"expressions");
   private static final Type _Expression_globalNewWithArgs_3 
@@ -2534,6 +2534,28 @@ public class AST {
     return vf.constructor(_Expression_postfixIncr_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
+  public IConstructor Expression_newWithArgs(IList $arguments, IConstructor $typeId, IConstructor $initializer, ISourceLocation $loc, IConstructor $typ) {
+      
+    if (!$arguments.getType().isSubtypeOf(tf.listType(_Expression))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $arguments.getType() + " for $arguments:" + $arguments);
+    }
+      
+    if (!$typeId.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $typeId.getType() + " for $typeId:" + $typeId);
+    }
+      
+    if (!$initializer.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    kwParams.put("typ", $typ);
+    return vf.constructor(_Expression_newWithArgs_3 , $arguments, $typeId, $initializer).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
   public IConstructor Expression_sizeofParameterPack(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
@@ -3092,24 +3114,6 @@ public class AST {
     return vf.constructor(_Expression_labelReference_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_greaterEqual(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
-      
-    if (!$lhs.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
-    }
-      
-    if (!$rhs.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    kwParams.put("typ", $typ);
-    return vf.constructor(_Expression_greaterEqual_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
   public IConstructor Expression_shiftRight(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
@@ -3200,6 +3204,42 @@ public class AST {
     
     kwParams.put("typ", $typ);
     return vf.constructor(_Expression_binaryXor_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Expression_greaterEqual(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+      
+    if (!$lhs.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
+    }
+      
+    if (!$rhs.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rhs.getType() + " for $rhs:" + $rhs);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    kwParams.put("typ", $typ);
+    return vf.constructor(_Expression_greaterEqual_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Expression_fieldReferencePointerDeref(IConstructor $fieldOwner, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl, IConstructor $typ) {
+      
+    if (!$fieldOwner.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $fieldOwner.getType() + " for $fieldOwner:" + $fieldOwner);
+    }
+      
+    if (!$name.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    kwParams.put("typ", $typ);
+    return vf.constructor(_Expression_fieldReferencePointerDeref_2 , $fieldOwner, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_arraySubscriptExpression(IConstructor $array, IConstructor $argument, ISourceLocation $loc, IConstructor $typ) {
@@ -3692,46 +3732,6 @@ public class AST {
     
     kwParams.put("typ", $typ);
     return vf.constructor(_Expression_packExpansion_1 , $pattern).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Expression_newWithArgs(IList $arguments, IConstructor $typeId, IConstructor $initializer, ISourceLocation $loc, IConstructor $typ) {
-      
-    if (!$arguments.getType().isSubtypeOf(tf.listType(_Expression))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $arguments.getType() + " for $arguments:" + $arguments);
-    }
-      
-    if (!$typeId.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $typeId.getType() + " for $typeId:" + $typeId);
-    }
-      
-    if (!$initializer.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    kwParams.put("typ", $typ);
-    return vf.constructor(_Expression_newWithArgs_3 , $arguments, $typeId, $initializer).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Expression_fieldReferencePointerDeref(IConstructor $fieldOnwer, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl, IConstructor $typ) {
-      
-    if (!$fieldOnwer.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $fieldOnwer.getType() + " for $fieldOnwer:" + $fieldOnwer);
-    }
-      
-    if (!$name.getType().isSubtypeOf(_Name)) {
-      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    kwParams.put("typ", $typ);
-    return vf.constructor(_Expression_fieldReferencePointerDeref_2 , $fieldOnwer, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_expressionList(IList $expressions, ISourceLocation $loc, IConstructor $typ) {
