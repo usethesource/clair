@@ -271,7 +271,7 @@ public class Parser extends ASTVisitor {
 			Map<String, String> macros = new HashMap<String, String>();
 			Iterator<Entry<IValue, IValue>> it = additionalMacros.entryIterator();
 			while (it.hasNext()) {
-				Entry<IValue, IValue> entry = (Entry<IValue, IValue>) it.next();
+				Entry<IValue, IValue> entry = it.next();
 				macros.put(entry.getKey().toString().replace("\"", ""), entry.getValue().toString().replace("\"", ""));
 			}
 
