@@ -461,11 +461,16 @@ public class Parser extends ASTVisitor {
 		return result;
 	}
 
-	public ITuple parseCppToM3AndAst(ISourceLocation file, IList includePath, IMap additionalMacros,
-			IEvaluatorContext ctx) {
+	public ITuple parseCppToM3AndAst(ISourceLocation file, IList stdLib, IList includeDirs, IMap additionalMacros,
+			IBool includeStdLib, IEvaluatorContext ctx) {
 		setIEvaluatorContext(ctx);
+		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
+		this.stdLib = stdLib;
 		IValue m3 = builder.M3_m3(file);
-		IASTTranslationUnit tu = getCdtAst(file, includePath, additionalMacros);
+		IListWriter allIncludes = vf.listWriter();
+		allIncludes.appendAll(includeDirs);
+		allIncludes.appendAll(stdLib);
+		IASTTranslationUnit tu = getCdtAst(file, allIncludes.done(), additionalMacros);
 		IList comments = getCommentsFromTranslationUnit(tu);
 		ISet macroExpansions = getMacroExpansionsFromTranslationUnit(tu);
 		ISet macroDefinitions = getMacroDefinitionsFromTranslationUnit(tu);
