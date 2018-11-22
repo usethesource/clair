@@ -629,10 +629,15 @@ public class Parser extends ASTVisitor {
 		if (astFileLocation != null) {
 			String fileName = astFileLocation.getFileName();
 			fileName = fileName.replace('\\', '/');
+			try {
+				return vf.sourceLocation(
+						(ISourceLocation) new StandardTextReader().read(vf, new StringReader(fileName)),
+						astFileLocation.getNodeOffset(), astFileLocation.getNodeLength());
+			} catch (FactParseError | FactTypeUseException | IOException e) {
+			}
 			if (!fileName.startsWith("/")) {
 				fileName = "/" + fileName;
 			}
-
 			try {
 				return vf.sourceLocation(
 						(ISourceLocation) new StandardTextReader().read(vf, new StringReader(fileName)),
