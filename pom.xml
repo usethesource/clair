@@ -17,7 +17,7 @@
 		<repository>
 			<id>cdt</id>
 			<layout>p2</layout>
-			<url>http://nexus.usethesource.io/content/repositories/cdt9.2/</url>
+			<url>http://nexus.usethesource.io/content/repositories/cdt9.5/</url>
 		</repository>
 	</repositories>
 
