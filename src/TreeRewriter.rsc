@@ -64,7 +64,6 @@ Edits concreteDiff(&T <: node pattern, &T <: node instance) {
     return [];
   }
   if (!pattern.src? && !instance.src?) { //literal from concrete syntax
-    //TODO
     return [];
   }
   if (pattern.src == instance.src) {//check children
@@ -75,11 +74,7 @@ Edits concreteDiff(&T <: node pattern, &T <: node instance) {
   throw "Unexpected arguments in concreteDiff: <pattern> vs <instance>";
 }
 
-Edits concreteDiff(list[value] pattern, list[value] instance) {
-  //TODO
-  return [];
-}
-
+Edits concreteDiff(list[value] pattern, list[value] instance) = [*concreteDiff(pattern[i], instance[i]) | i <- [0..size(pattern)]];
 Edits concreteDiff(str _, str _) = [];
 Edits concreteDiff(int _, int _) = [];
 
@@ -98,26 +93,7 @@ Edits diff(&T <: node old, &T <: node new) {
   return [replaceLoc(oldLoc, newLoc) | loc oldLoc := old.src, loc newLoc := new.src];
 }
 
-Edits diff(list[value] old, list[value] new) {
-  bool nEq(&T <: node l, &T <: node r) = l.src == r.src;
-  mx = lcsMatrix(old, new, nEq);
-  ds = getDiff(mx, old, new, size(old), size(new), nEq);
-  
-  Edits ret = [];
-  for (d <- ds) {
-    switch(d) {
-      case same(l, r): ret += diff(l,r);
-      case add(t, i): {
-        ret += ins(old[i].src, t.src);
-      }
-      case rremove(t, i): {
-        ret += del(old[i].src);
-      }
-    }
-  }
-  return ret;
-}
-
+Edits diff(list[value] old, list[value] new) = [*diff(old[i], new[i])|i<-[0..size(old)]];
 Edits diff(str old, str new) = [];
 Edits diff(int old, int new) = [];
 
