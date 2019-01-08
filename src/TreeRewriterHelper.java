@@ -1,3 +1,4 @@
+import java.util.Collections;
 import java.util.Map;
 
 import org.rascalmpl.interpreter.IEvaluatorContext;
@@ -15,7 +16,11 @@ public class TreeRewriterHelper {
 	}
 
 	private Map<ISourceLocation, INode> getExternalConcretePatterns(ISourceLocation loc, IEvaluatorContext ctx) {
-		return ctx.getHeap().getModule(ctx.getHeap().getModuleForURI(loc.getURI())).getExternalConcretePatterns();
+		String module = ctx.getHeap().getModuleForURI(loc.getURI());
+		if (module == null) {
+			return Collections.emptyMap();
+		}
+		return ctx.getHeap().getModule(module).getExternalConcretePatterns();
 	}
 
 	public INode getConcreteSyntaxImage(ISourceLocation loc, IEvaluatorContext ctx) {
