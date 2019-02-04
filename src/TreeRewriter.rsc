@@ -57,8 +57,8 @@ void saveDiffs(Edits edits) {
 }
 
 Edits concreteDiff(Tree pattern, node instance) {
-  if (loc where := pattern@\loc && loc what := instance.src) {
-    return [metaVar(where, what)];
+  if (loc what := instance.src) {
+    return [metaVar(pattern@\loc, what)];
   }
   throw "Unexpected arguments in concreteDiff: <pattern> vs <instance>";
 }
