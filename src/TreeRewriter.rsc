@@ -35,10 +35,14 @@ void saveDiffs(Edits edits) {
         } else {
           str lex = readFile(edit.what);
           for (Edit edit <- sort(metaVars, bool(Edit e1, Edit e2) { return e1.where.offset > e2.where.offset; })) {
-            if (metaVar(loc metaWhere, loc metaWhat) := edit) {
+            if (metaVar(loc metaWhere, value metaWhat) := edit) {
               int startPos = metaWhere.offset - what.offset;
               int endPos = startPos + metaWhere.length;
-              lex = lex[0..startPos] + readFile(metaWhat) + lex[endPos..];
+              if (loc l := metaWhat) {
+                lex = lex[0..startPos] + readFile(l) + lex[endPos..];
+              } else if (str s := metaWhat) {
+                lex = lex[0..startPos] + s + lex[endPos..];
+              }
             } else {
               throw "Unexpected edit <edit>";
             }
