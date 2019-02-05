@@ -124,57 +124,88 @@ Edits concreteDiff(list[node] pattern, list[node] instance) {
   assert l != |error:///|;
   set[map[str, value]] matchBindings = getMatchBindings(l.top);
   variables = getVariableNames(pattern);
-  matchBindings = {m | m <- matchBindings, (true | it && var <- m | var <- variables)};
   
-  //Instantiate pattern with bindings from `matchBindings` and match on instance
-  for (matchBinding <- matchBindings) {
-    list[node] asList(value v) {
-      if (list[node] n := v) {
-        return n;
-      }
-      throw "Unexpected value in asNode: <v>";
+  list[node] skip(list[node] lst, list[int] skipIndices, int skipFrom) = [lst[i] | i <- [0..size(lst)], i notin skipIndices, i < skipFrom];
+  
+  tuple[set[map[str, value]] bindings, list[node] pattern] bindAndMatch(list[node] currentPattern, list[node] instance, set[map[str, value]] bindings, set[map[str, value]] actualBindings, list[int] skipOnMatch, int skipFrom) {
+    if (currentPattern == []) {
+      return [];
     }
-    
-    list[node] replaceIfHole(node elem) = isVariable(elem) ? asList(matchBinding[getVariableName(elem)]) : [elem];
-    patternOpt = [*replaceIfHole(elem) | elem <- pattern];
-    if (size(instance) == size(patternOpt)) {
-      edits = [];
-      n = 0;
-      for (i <- [0..size(pattern)]) {
-        elem = pattern[i];
-        if (isListVariable(elem)) {
-          boundElement = asList(matchBinding[getVariableName(elem)]);
-          for (j <- [0..size(boundElement)]) {
-            if (boundElement[j] != instance[n+j]) {
-              foo1 = boundElement[j];
-              foo2 = instance[n+j];
-              println("Unequal??");
-            }
-          }
-          value vloc = getAnnotations(elem)["loc"];
-          println(vloc);
-          loc holeLoc = asLoc(vloc);
-          println(holeLoc);
-          if (size(boundElement) == 0) {
-            edits += metaVar(holeLoc, "");
-          } else {
-            loc srcLoc = asLoc(boundElement[0].src);
-            println(srcLoc);
-            if (tail(boundElement) != [] && loc last := boundElement[-1].src) {
-              srcLoc.length = last.offset - srcLoc.offset + last.length;
-              //TODO: check for trailing whitespace/delimiter when we're not in the last list element
-            }
-            edits += metaVar(holeLoc, srcLoc);
-          }
-          //edits += replaceStr(
-          n += size(boundElement);
-        } else {
-          edits += concreteDiff(elem, instance[n]);
-        }
+    if (!hasListVariables(currentPattern)) {
+      if (size(currentPattern) != size(instance)) {
+        throw "Backtrack";
       }
-      return edits;
+      skippedPattern = skip(currentPattern, skipOnMatch, skipFrom);
+      skippedInstance = skip(instance, skipOnMatch, skipFrom);
+      if (skippedPattern := skippedInstance) {
+        return <actualBindings, currentPattern>;
+      }
+      throw "Backtrack";
+    }
+    //println("Variables: <getVariableNames(currentPattern)>");
+    for (i <- [0..size(currentPattern)]) {
+      if (isVariable(currentPattern[i])) {
+        //println("Trying variable <currentPattern[i]>");
+        variableName = getVariableName(currentPattern[i]);
+        optionalBindings = {m | m <- matchBindings, variableName <- m};
+        //println("\t<size(optionalBindings)> options");
+        //k = 1;
+        for (binding <- optionalBindings) {
+          //println("\tOption <k>");
+          //k = k + 1;
+          try {
+            if (list[node] var := binding[variableName]) {
+              list[node] nextTry = currentPattern[0..i] + var + currentPattern[i+1..];
+              return bindAndMatch(nextTry, instance, bindings, actualBindings + binding, skipOnMatch, skipFrom + size(var));
+            } else  {
+              throw "Unexpected";
+            }
+          } catch "Backtrack": {
+            println("Backtracking");
+          }
+        }
+        throw "Match failed";
+      } else {
+        skipOnMatch += i;
+        skipFrom += 1;
+      }
+    }
+    throw "Shouldn not reach here";
+  }
+  
+  <actualBindings, boundPattern> = bindAndMatch(pattern, instance, matchBindings, {}, [], 0);
+  
+  list[node] asList(value v) {
+    if (list[node] n := v) {
+      return n;
+    }
+    throw "Unexpected value in asList: <v>";
+  }
+  
+  edits = [];
+  offset = 0;
+  for (i <- [0..size(pattern)]) {
+    patVar = pattern[i];
+    if (isListVariable(patVar)) {
+      holeLoc = getAnnotations(patVar)["loc"];
+      varImage = [*asList(binding[varName]) | binding <- actualBindings, str varName := getVariableName(patVar), varName <- binding];
+      if (size(varImage) == 0) {
+        edits += metaVar(holeLoc, "");
+        offset -= 1;
+      } else {
+        loc srcLoc = asLoc(varImage[0].src);
+        if (tail(varImage) != [] && loc last := varImage[-1].src) {
+          srcLoc.length = last.offset - srcLoc.offset + last.length;
+          //TODO: check for trailing whitespace/delimiter when we're not in the last list element
+        }
+        edits += metaVar(holeLoc, srcLoc);
+        offset += size(varImage) - 1;
+      }
+    } else {
+      edits += concreteDiff(patVar, instance[i+offset]);
     }
   }
+  return edits;
 }
 
 Edits concreteDiff(str _, str _) = [];

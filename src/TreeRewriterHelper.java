@@ -2,9 +2,13 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.rascalmpl.interpreter.IEvaluatorContext;
+import org.rascalmpl.interpreter.env.ModuleEnvironment;
 
 import io.usethesource.vallang.IBool;
+import io.usethesource.vallang.IMapWriter;
 import io.usethesource.vallang.INode;
+import io.usethesource.vallang.ISet;
+import io.usethesource.vallang.ISetWriter;
 import io.usethesource.vallang.ISourceLocation;
 import io.usethesource.vallang.IValueFactory;
 
@@ -30,4 +34,16 @@ public class TreeRewriterHelper {
 	public IBool isConcreteSyntaxPattern(ISourceLocation loc, IEvaluatorContext ctx) {
 		return vf.bool(getExternalConcretePatterns(loc, ctx).containsKey(loc));
 	}
+
+	public ISet getMatchBindings(ISourceLocation loc, IEvaluatorContext ctx) {
+		ModuleEnvironment me = ctx.getHeap().getModule(ctx.getHeap().getModuleForURI(loc.top().getURI()));
+		ISetWriter bindings = vf.setWriter();
+		me.getMatchBindings().forEach(it -> {
+			IMapWriter binding = vf.mapWriter();
+			it.forEach((key, value) -> binding.put(vf.string(key), value));
+			bindings.insert(binding.done());
+		});
+		return bindings.done();
+	}
+
 }
