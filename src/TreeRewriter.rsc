@@ -77,15 +77,6 @@ Edits concreteDiff(&T <: node pattern, &T <: node instance) {
     assert size(patternChildren) == size(instanceChildren);
     return [*concreteDiff(patternChildren[i], instanceChildren[i]) | i <- [0..size(patternChildren)]];
   }
-  if (!pattern.src? && instance.src?) {
-    //println("<pattern>");
-    //println();
-    //println(instance);
-    //println("----");
-    //println("patternName: <getName(pattern)>");
-    //println("instanceName: <getName(instance)>");
-    ;
-  }
   if (pattern.src == instance.src) { //check children of original source code fragment
     patternChildren = getChildren(pattern);
     instanceChildren = getChildren(instance);
