@@ -208,9 +208,7 @@ Edits diff(&T <: node old, &T <: node new) {
   }
   if (loc newSrc := new.src && isConcreteSyntaxPattern(newSrc)) { //new node is concrete syntax pattern
     return [replaceLoc(oldSrc, newSrc, metaVariables=concreteDiff(getConcreteSyntaxImage(newSrc), new)) | loc oldSrc := old.src];
-  } //new node is regular node
-  //TODO: does this happen?
-  return [replaceLoc(oldLoc, newLoc) | loc oldLoc := old.src, loc newLoc := new.src];
+  }
 }
 
 Edits diff(list[value] old, list[value] new) = [*diff(old[i], new[i])|i<-[0..size(old)]];
