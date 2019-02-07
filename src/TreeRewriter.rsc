@@ -69,9 +69,7 @@ Edits concreteDiff(&T <: node pattern, &T <: node instance) {
     return [];
   }
   if (!pattern.src? && !instance.src?) {
-    if (/Tree _ !:= pattern) { //literal from concrete syntax
-      return [];
-    } //check children of concrete syntax fragment
+    //check children of concrete syntax fragment
     patternChildren = getChildren(pattern);
     instanceChildren = getChildren(instance);
     assert size(patternChildren) == size(instanceChildren);
