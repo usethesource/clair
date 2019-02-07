@@ -26,6 +26,7 @@ data Edit
 
 alias Edits = list[Edit];
 
+//TODO: remove characters between \n and ' when printing and escape characters
 void saveDiffs(Edits edits) {
   edits = sort(edits, bool(Edit e1, Edit e2) { return e1.where.file == e2.where.file? e1.where.offset > e2.where.offset : e1.where > e2.where; });
   for (Edit edit <- edits) {
