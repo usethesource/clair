@@ -6,6 +6,7 @@ import Map;
 import Node;
 import ParseTree;
 import Set;
+import String;
 
 import util::Math;
 import util::ValueUI;
