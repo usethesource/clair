@@ -193,9 +193,6 @@ Edits concreteDiff(list[node] pattern, list[node] instance) {
   return edits;
 }
 
-Edits concreteDiff(str _, str _) = [];
-Edits concreteDiff(int _, int _) = [];
-
 Edits diff(&T <: node old, &T <: node new) {
   if (old == new) {//trees are equal, no diff
     return [];
@@ -211,8 +208,6 @@ Edits diff(&T <: node old, &T <: node new) {
 }
 
 Edits diff(list[value] old, list[value] new) = [*diff(old[i], new[i])|i<-[0..size(old)]];
-Edits diff(str old, str new) = [];
-Edits diff(int old, int new) = [];
 
 @javaClass{TreeRewriterHelper}
 @reflect{Need access to environment}
