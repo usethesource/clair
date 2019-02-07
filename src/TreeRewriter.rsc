@@ -131,10 +131,11 @@ Edits concreteDiff(list[node] pattern, list[node] instance) {
   
   list[node] skip(list[node] lst, list[int] skipIndices, int skipFrom) = [lst[i] | i <- [0..size(lst)], i notin skipIndices, i < skipFrom];
   
-  tuple[set[map[str, value]] bindings, list[node] pattern] bindAndMatch(list[node] currentPattern, list[node] instance, set[map[str, value]] bindings, set[map[str, value]] actualBindings, list[int] skipOnMatch, int skipFrom) {
     if (currentPattern == []) {
       return [];
     }
+  //utility function to recursively try and find appropriate match bindings for pattern variables
+  tuple[set[map[str, value]] bindings, list[node] pattern] bindAndMatch(list[node] currentPattern, list[node] instance, set[map[str, value]] bindings, set[map[str, value]] actualBindings, list[int] doMatch) {
     if (!hasListVariables(currentPattern)) {
       if (size(currentPattern) != size(instance)) {
         throw "Backtrack";
@@ -160,7 +161,7 @@ Edits concreteDiff(list[node] pattern, list[node] instance) {
           try {
             if (list[node] var := binding[variableName]) {
               list[node] nextTry = currentPattern[0..i] + var + currentPattern[i+1..];
-              return bindAndMatch(nextTry, instance, bindings, actualBindings + binding, skipOnMatch, skipFrom + size(var));
+              return bindAndMatch(nextTry, instance, bindings, actualBindings + binding, doMatch + [i..i+size(var)]);
             } else  {
               throw "Unexpected";
             }
@@ -177,7 +178,7 @@ Edits concreteDiff(list[node] pattern, list[node] instance) {
     throw "Shouldn not reach here";
   }
   
-  <actualBindings, boundPattern> = bindAndMatch(pattern, instance, matchBindings, {}, [], 0);
+  <actualBindings, boundPattern> = bindAndMatch(pattern, instance, matchBindings, {}, []);
   
   list[node] asList(value v) {
     if (list[node] n := v) {
