@@ -177,7 +177,6 @@ Edits concreteDiff(list[node] pattern, list[node] instance) {
       varImage = [*asList(binding[varName]) | binding <- actualBindings, str varName := getVariableName(patVar), varName <- binding];
       if (size(varImage) == 0) {
         edits += metaVar(holeLoc, "");
-        offset -= 1;
       } else {
         loc srcLoc = asLoc(varImage[0].src);
         if (tail(varImage) != [] && loc last := varImage[-1].src) {
@@ -185,8 +184,8 @@ Edits concreteDiff(list[node] pattern, list[node] instance) {
           //TODO: check for trailing whitespace/delimiter when we're not in the last list element
         }
         edits += metaVar(holeLoc, srcLoc);
-        offset += size(varImage) - 1;
       }
+      offset += size(varImage) - 1;
     } else {
       edits += concreteDiff(patVar, instance[i+offset]);
     }
