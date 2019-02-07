@@ -120,12 +120,8 @@ Edits concreteDiff(list[node] pattern, list[node] instance) {
   //utility function to recursively try and find appropriate match bindings for pattern variables
   tuple[set[map[str, value]] bindings, list[node] pattern] bindAndMatch(list[node] currentPattern, list[node] instance, set[map[str, value]] bindings, set[map[str, value]] actualBindings, list[int] doMatch) {
     if (!hasListVariables(currentPattern)) {
-      if (size(currentPattern) == size(instance)) {
-        skippedPattern = filt(currentPattern, doMatch);
-        skippedInstance = filt(instance, doMatch);
-        if (skippedPattern := skippedInstance) {
-          return <actualBindings, currentPattern>;
-        }
+      if (size(currentPattern) == size(instance) && filt(currentPattern, doMatch) == filt(instance, doMatch)) { //TODO: == or :=
+        return <actualBindings, currentPattern>;
       }
       throw "Backtrack";
     }
