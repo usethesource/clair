@@ -129,7 +129,8 @@ Edits concreteDiff(list[node] pattern, list[node] instance) {
   set[map[str, value]] matchBindings = getMatchBindings(l.top);
   variables = getVariableNames(pattern);
   
-  list[node] skip(list[node] lst, list[int] skipIndices, int skipFrom) = [lst[i] | i <- [0..size(lst)], i notin skipIndices, i < skipFrom];
+  //utility function to get a sublist skipping certain elements
+  list[node] filt(list[node] lst, list[int] doMatch) = [lst[i] | i <- [0..size(lst)], i in doMatch];
   
     if (currentPattern == []) {
       return [];
@@ -140,8 +141,8 @@ Edits concreteDiff(list[node] pattern, list[node] instance) {
       if (size(currentPattern) != size(instance)) {
         throw "Backtrack";
       }
-      skippedPattern = skip(currentPattern, skipOnMatch, skipFrom);
-      skippedInstance = skip(instance, skipOnMatch, skipFrom);
+      skippedPattern = filt(currentPattern, doMatch);
+      skippedInstance = filt(instance, doMatch);
       if (skippedPattern := skippedInstance) {
         return <actualBindings, currentPattern>;
       }
