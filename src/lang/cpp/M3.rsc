@@ -15,7 +15,8 @@ public data M3(
   rel[loc macro, loc src] macroDefinitions = {},
   rel[loc directive, loc occurrence] includeDirectives = {},
   rel[loc directive, loc occurrence] inactiveIncludes = {},
-  rel[loc directive, loc resolved] includeResolution = {}
+  rel[loc directive, loc resolved] includeResolution = {},
+  list[loc] comments = []
 );
 
 /* methodInvocations: functionName is bracketed, !functionName.expression.decl?, !(getName(functionName.expression) in {"pmArrow","pmDot","star"}) : empty
