@@ -112,17 +112,20 @@ loc asLoc(value v) {
   throw "No loc: <v>";
 }
 
+loc extractLocFromPattern(list[node] pattern) {
+  if (v <- pattern, isListVariable(v), loc l := getAnnotations(v)["loc"]) {
+    return l;
+  }
+  throw "Did not find loc in pattern";
+}
+
 Edits concreteDiff(list[node] pattern, list[node] instance) {
   if (!hasListVariables(pattern)) {//No list variables, recurse on children
     return [*concreteDiff(pattern[i], instance[i]) | i <- [0..size(pattern)]];
   }
   
-  //Get match bindings having variables of the right names
-  loc l = |error:///|;
-  if (v <- pattern, isListVariable(v), loc f := getAnnotations(v)["loc"]) {
-    l = f;
-  }
-  assert l != |error:///|;
+  //Get match bindings for corresponding module
+  loc l = extractLocFromPattern(pattern);
   set[map[str, value]] matchBindings = getMatchBindings(l.top);
   variables = getVariableNames(pattern);
   
