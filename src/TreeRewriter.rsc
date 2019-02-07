@@ -149,7 +149,13 @@ Edits concreteDiff(list[node] pattern, list[node] instance) {
     for (i <- [0..size(currentPattern)]) {
       if (isVariable(currentPattern[i])) {
         //println("Trying variable <currentPattern[i]>");
+      currentVar = currentPattern[i];
+      if (isVariable(currentVar)) {
         variableName = getVariableName(currentPattern[i]);
+        if (b <- {b | b <- actualBindings, variableName <- b}, list[node] var := b[variableName]) {
+          list[node] nextTry = currentPattern[0..i] + var + currentPattern[i+1..];
+          return bindAndMatch(nextTry, instance, bindings, actualBindings, doMatch + [i..i+size(var)]);
+        }
         optionalBindings = {m | m <- matchBindings, variableName <- m};
         //println("\t<size(optionalBindings)> options");
         //k = 1;
