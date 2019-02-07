@@ -30,9 +30,9 @@ M3 javaAstToM3(Declaration tu, M3 model = m3(tu.src.top)) {
                + {<d.decl,unset(modifier)> | /DeclSpecifier d := tu, d.baseSpecifiers?, bs <- d.baseSpecifiers, modifier <- bs.modifiers};
   model.extends = {<base.decl,derived.decl> | /DeclSpecifier derived := tu, derived.baseSpecifiers?, base <- derived.baseSpecifiers};
   model.methodInvocations
-    = {<declarator.decl, functionName.decl> | /functionDefinition(_, _, Declarator declarator, _, Statement body) := tu, /functionCall(Expression functionName,_) := body,
+    = {<declarator.decl, functionName.decl> | /functionDefinition(_, Declarator declarator, _, Statement body) := tu, /functionCall(Expression functionName,_) := body,
       functionName.decl?}
-    + {<declarator.decl, functionName.expression.decl> | /functionDefinition(_, _, Declarator declarator, _, Statement body) := tu, /functionCall(Expression functionName,_) := body,
+    + {<declarator.decl, functionName.expression.decl> | /functionDefinition(_, Declarator declarator, _, Statement body) := tu, /functionCall(Expression functionName,_) := body,
       functionName is bracketed, functionName.expression.decl?}
     ;
   return model;
