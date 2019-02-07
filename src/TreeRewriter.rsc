@@ -127,7 +127,6 @@ Edits concreteDiff(list[node] pattern, list[node] instance) {
   //Get match bindings for corresponding module
   loc l = extractLocFromPattern(pattern);
   set[map[str, value]] matchBindings = getMatchBindings(l.top);
-  variables = getVariableNames(pattern);
   
   //utility function to get a sublist skipping certain elements
   list[node] filt(list[node] lst, list[int] doMatch) = [lst[i] | i <- [0..size(lst)], i in doMatch];
@@ -145,10 +144,7 @@ Edits concreteDiff(list[node] pattern, list[node] instance) {
       }
       throw "Backtrack";
     }
-    //println("Variables: <getVariableNames(currentPattern)>");
     for (i <- [0..size(currentPattern)]) {
-      if (isVariable(currentPattern[i])) {
-        //println("Trying variable <currentPattern[i]>");
       currentVar = currentPattern[i];
       if (isVariable(currentVar)) {
         variableName = getVariableName(currentPattern[i]);
@@ -157,11 +153,7 @@ Edits concreteDiff(list[node] pattern, list[node] instance) {
           return bindAndMatch(nextTry, instance, bindings, actualBindings, doMatch + [i..i+size(var)]);
         }
         optionalBindings = {m | m <- matchBindings, variableName <- m};
-        //println("\t<size(optionalBindings)> options");
-        //k = 1;
         for (binding <- optionalBindings) {
-          //println("\tOption <k>");
-          //k = k + 1;
           try {
             if (list[node] var := binding[variableName]) {
               list[node] nextTry = currentPattern[0..i] + var + currentPattern[i+1..];
@@ -169,14 +161,9 @@ Edits concreteDiff(list[node] pattern, list[node] instance) {
             } else  {
               throw "Unexpected";
             }
-          } catch "Backtrack": {
-            println("Backtracking");
-          }
+          } catch "Backtrack":;
         }
         throw "Match failed";
-      } else {
-        skipOnMatch += i;
-        skipFrom += 1;
       }
     }
     throw "Shouldn not reach here";
