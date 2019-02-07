@@ -89,9 +89,6 @@ bool isListVariable(node n) = isVariable(n) && contains("<n>", "*");
 
 str getVariableName(str holeLit) = trim(substring(holeLit, findFirst(holeLit, "*") + 1, findFirst(holeLit, "\>")));
 str getVariableName(node n) = getVariableName("<n>");
-
-list[str] getListVariables(list[node] pattern) =  [getVariableName("<element>") | element <- pattern, isListVariable(element)];
-list[str] getVariableNames(list[node] pattern) = [getVariableName("<element>") | element <- pattern, isVariable(element)];
 bool hasListVariables(list[node] pattern) = (false | it || isListVariable(n) | n <- pattern);
 
 loc asLoc(value v) {
