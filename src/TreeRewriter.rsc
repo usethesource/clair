@@ -68,20 +68,10 @@ Edits concreteDiff(&T <: node pattern, &T <: node instance) {
   if (pattern == instance) { //trees are equal
     return [];
   }
-  if (!pattern.src? && !instance.src?) {
-    //check children of concrete syntax fragment
-    patternChildren = getChildren(pattern);
-    instanceChildren = getChildren(instance);
-    assert size(patternChildren) == size(instanceChildren);
-    return [*concreteDiff(patternChildren[i], instanceChildren[i]) | i <- [0..size(patternChildren)]];
-  }
-  if (pattern.src == instance.src) { //check children of original source code fragment
-    patternChildren = getChildren(pattern);
-    instanceChildren = getChildren(instance);
-    assert size(patternChildren) == size(instanceChildren);
-    return [*concreteDiff(patternChildren[i], instanceChildren[i]) | i <- [0..size(patternChildren)]];
-  }
-  throw "Unexpected arguments in concreteDiff:\n\n<pattern>\n\nvs\n\n<instance>";
+  patternChildren = getChildren(pattern);
+  instanceChildren = getChildren(instance);
+  assert size(patternChildren) == size(instanceChildren);
+  return [*concreteDiff(patternChildren[i], instanceChildren[i]) | i <- [0..size(patternChildren)]];
 }
 
 bool isVariable(node n) = "loc" in getAnnotations(n);
