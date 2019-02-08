@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
@@ -36,9 +37,11 @@ import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
@@ -158,6 +161,22 @@ public class TypeResolver {
 			return resolveICPPASTTemplateDeclaration((ICPPASTTemplateDeclaration) node);
 		if (node instanceof ICPPASTTemplateId)
 			return resolveICPPASTTemplateId((ICPPASTTemplateId) node);
+		if (node instanceof ICPPASTDeclarator)
+			return resolveICPPASTDeclarator((ICPPASTDeclarator) node);
+		return builder.TypeSymbol_any();
+	}
+
+	private IConstructor resolveICPPASTDeclarator(ICPPASTDeclarator node) {
+		IBinding binding = node.getName().resolveBinding();
+		if (binding instanceof IVariable) {
+			return resolveType(((IVariable) binding).getType());
+		}
+		if (binding instanceof IFunction) {
+			return resolveType(((IFunction) binding).getType());
+		}
+		if (binding instanceof ITypedef) {
+			return resolveType(((ITypedef) binding).getType());
+		}
 		return builder.TypeSymbol_any();
 	}
 

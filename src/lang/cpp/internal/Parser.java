@@ -243,6 +243,8 @@ public class Parser extends ASTVisitor {
 	private boolean includeStdLib = false;
 	private IList stdLib;
 
+	private ISetWriter declaredType;
+
 	public Parser(IValueFactory vf) {
 		super(true);
 		this.shouldVisitAmbiguousNodes = true;
@@ -253,6 +255,7 @@ public class Parser extends ASTVisitor {
 		this.vf = vf;
 		this.builder = new AST(vf);
 		this.tr = new TypeResolver(builder, vf);
+		this.declaredType = vf.setWriter();
 	}
 
 	Map<String, Set<String>> dependencies = new HashMap<String, Set<String>>();
@@ -482,7 +485,10 @@ public class Parser extends ASTVisitor {
 		m3 = m3.asWithKeywordParameters().setParameter("methodOverrides", methodOverrides);
 		m3 = setM3IncludeInformationFromTranslationUnit(tu, m3);
 
+		declaredType = vf.setWriter();
 		IValue result = convertCdtToRascal(tu);
+		m3 = m3.asWithKeywordParameters().setParameter("declaredType", declaredType.done());
+
 		return vf.tuple(m3, result);
 	}
 
@@ -570,6 +576,10 @@ public class Parser extends ASTVisitor {
 			macros.insert(vf.tuple(getSourceLocation(it), decl));
 		});
 		return macros.done();
+	}
+
+	private void addDeclaredType(ISourceLocation decl, IConstructor typ) {
+		declaredType.insert(vf.tuple(decl, typ));
 	}
 
 	public ISet parseForMacros(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
@@ -1108,6 +1118,7 @@ public class Parser extends ASTVisitor {
 				stack.push(builder.Declaration_functionDefinition(declSpecifier, declarator, memberInitializers.done(),
 						stack.pop(), attributes, loc));
 			}
+			addDeclaredType(br.resolveBinding(definition.getDeclarator()), tr.resolveType(definition.getDeclarator()));
 		} else { // C Function definition
 			if (true)
 				throw new RuntimeException("Encountered C function definition at " + loc + ", NYI");
@@ -1179,6 +1190,7 @@ public class Parser extends ASTVisitor {
 		Stream.of(declaration.getDeclarators()).forEach(it -> {
 			it.accept(this);
 			declarators.append(stack.pop());
+			addDeclaredType(br.resolveBinding(it), tr.resolveType(it));
 		});
 		stack.push(builder.Declaration_simpleDeclaration(declSpecifier, declarators.done(), attributes, loc));
 		return PROCESS_ABORT;

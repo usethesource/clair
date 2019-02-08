@@ -4,6 +4,7 @@ extend analysis::m3::Core;
 
 import Node;
 import lang::cpp::AST;
+import lang::cpp::TypeSymbol;
 
 public data M3(
   rel[loc base, loc derived] extends = {},
@@ -16,6 +17,7 @@ public data M3(
   rel[loc directive, loc occurrence] includeDirectives = {},
   rel[loc directive, loc occurrence] inactiveIncludes = {},
   rel[loc directive, loc resolved] includeResolution = {},
+  rel[loc decl, TypeSymbol typ] declaredType = {},
   list[loc] comments = []
 );
 
