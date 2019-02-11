@@ -28,6 +28,15 @@ Statement parseStatement(str code) {
   return unsetRec(tu.declarations[0].body.statements[0]); 
 }
 
+@concreteSyntax{Statement*}
+list[Statement] parseStatements(str code) {
+  str context = "void parse() {
+                '  <code>
+                '}";
+  Declaration tu = parseString(context);
+  return [unsetRec(s) | s <- tu.declarations[0].body.statements];
+}
+
 @concreteHole{Statement}
 str makeStatementHole(int id) = "$$$$$clairStmt$<id>$$$$$();";
 
@@ -56,7 +65,10 @@ str makeNameHole(int id) = "_name$$<id>$$end";
 @concreteSyntax{Declaration}
 Declaration parseDeclaration(str code) {
   Declaration tu = parseString("class C { <code> };");
-  return unsetRec(tu.declarations[0].declSpecifier.members[0]);
+  Declaration ret = tu.declarations[0].declSpecifier.members[0];
+  if (ret is problemDeclaration)
+    throw "Invalid input for external parser";
+  return unsetRec(ret);
 }
 
 @concreteHole{Declaration}
