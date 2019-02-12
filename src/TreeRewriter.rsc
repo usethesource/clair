@@ -135,7 +135,7 @@ Edits concreteDiff(list[node] pattern, list[node] instance) {
             }
           } catch "Backtrack":;
         }
-        throw "Match failed";
+        throw "Backtrack";
       }
     }
     throw "Shouldn not reach here";
