@@ -6,10 +6,10 @@ import org.rascalmpl.interpreter.env.ModuleEnvironment;
 
 import io.usethesource.vallang.IBool;
 import io.usethesource.vallang.IMapWriter;
-import io.usethesource.vallang.INode;
 import io.usethesource.vallang.ISet;
 import io.usethesource.vallang.ISetWriter;
 import io.usethesource.vallang.ISourceLocation;
+import io.usethesource.vallang.IValue;
 import io.usethesource.vallang.IValueFactory;
 
 public class TreeRewriterHelper {
@@ -19,7 +19,7 @@ public class TreeRewriterHelper {
 		this.vf = vf;
 	}
 
-	private Map<ISourceLocation, INode> getExternalConcretePatterns(ISourceLocation loc, IEvaluatorContext ctx) {
+	private Map<ISourceLocation, IValue> getExternalConcretePatterns(ISourceLocation loc, IEvaluatorContext ctx) {
 		String module = ctx.getHeap().getModuleForURI(loc.getURI());
 		if (module == null) {
 			return Collections.emptyMap();
@@ -27,7 +27,7 @@ public class TreeRewriterHelper {
 		return ctx.getHeap().getModule(module).getExternalConcretePatterns();
 	}
 
-	public INode getConcreteSyntaxImage(ISourceLocation loc, IEvaluatorContext ctx) {
+	public IValue getConcreteSyntaxImage(ISourceLocation loc, IEvaluatorContext ctx) {
 		return getExternalConcretePatterns(loc, ctx).get(loc);
 	}
 
