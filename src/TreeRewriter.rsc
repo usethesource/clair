@@ -197,7 +197,7 @@ java bool isConcreteSyntaxPattern(loc l);
 
 @javaClass{TreeRewriterHelper}
 @reflect{Need access to environment}
-java node getConcreteSyntaxImage(loc l);
+java value getConcreteSyntaxImage(loc l);
 
 @javaClass{TreeRewriterHelper}
 @reflect{Need access to environment}
