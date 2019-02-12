@@ -26,6 +26,19 @@ data Edit
 
 alias Edits = list[Edit];
 
+str unescape(str raw) {
+  solve(raw) {
+    singleQuote = findFirst(raw, "\'");
+    if (singleQuote != -1) {
+      newLine = findLast(raw[0..singleQuote], "\n");
+      raw = raw[0..newLine+1] + raw[singleQuote+1..size(raw)];
+    }
+  }
+  raw = replaceAll(raw, "\\\<", "\<");
+  raw = replaceAll(raw, "\\\>", "\>");
+  return raw;
+}
+
 //TODO: remove characters between \n and ' when printing and escape characters
 void saveDiffs(Edits edits) {
   edits = sort(edits, bool(Edit e1, Edit e2) { return e1.where.file == e2.where.file? e1.where.offset > e2.where.offset : e1.where > e2.where; });
@@ -49,7 +62,7 @@ void saveDiffs(Edits edits) {
               throw "Unexpected edit <edit>";
             }
           }
-          writeFile(where, lex);
+          writeFile(where, unescape(lex));
         }
       }
       default:
