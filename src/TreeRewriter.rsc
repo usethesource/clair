@@ -39,22 +39,29 @@ str unescape(str raw) {
   return raw;
 }
 
-//TODO: remove characters between \n and ' when printing and escape characters
+
 void saveDiffs(Edits edits) {
+  for (<where, what> <- processEdits(readCode(edits), edits)) {
+    writeFile(where, what);
+  }
+}
+
+lrel[loc, str] processEdits(map[loc, str] fragments, Edits edits) {
+  ret = [];
   edits = sort(edits, bool(Edit e1, Edit e2) { return e1.where.file == e2.where.file? e1.where.offset > e2.where.offset : e1.where > e2.where; });
   for (Edit edit <- edits) {
     switch(edit) {
       case replaceLoc(where, what, metaVariables = metaVars): {
         if (size(metaVars) == 0) {
-          writeFile(where, readFile(edit.what));
+          ret += <where, fragments[edit.what]>;
         } else {
-          str lex = readFile(edit.what);
+          str lex = fragments[edit.what];
           for (Edit edit <- sort(metaVars, bool(Edit e1, Edit e2) { return e1.where.offset > e2.where.offset; })) {
             if (metaVar(loc metaWhere, value metaWhat) := edit) {
               int startPos = metaWhere.offset - what.offset;
               int endPos = startPos + metaWhere.length;
               if (loc l := metaWhat) {
-                lex = lex[0..startPos] + readFile(l) + lex[endPos..];
+                lex = lex[0..startPos] + fragments[l] + lex[endPos..];
               } else if (str s := metaWhat) {
                 lex = lex[0..startPos] + s + lex[endPos..];
               }
@@ -62,14 +69,17 @@ void saveDiffs(Edits edits) {
               throw "Unexpected edit <edit>";
             }
           }
-          writeFile(where, unescape(lex));
+          ret += <where, unescape(lex)>;
         }
       }
       default:
         throw "NYI: <edit>";
     }
   }
+  return ret;
 }
+
+map[loc, str] readCode(Edits edits) = (l:readFile(l) | /loc l := edits);
 
 Edits concreteDiff(Tree pattern, node instance) {
   if (loc what := instance.src) {
