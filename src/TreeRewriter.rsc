@@ -203,9 +203,8 @@ Edits diff(&T <: node old, &T <: node new) {
 }
 
 Edits diff(list[value] old, list[value] new) {
-  if (node elem <- new, loc elemSrc := elem.src, isConcreteSyntaxPattern(elemSrc), image := getConcreteSyntaxImage(elemSrc)){
+  if (node elem <- new, loc elemSrc := elem.src, isConcreteSyntaxPattern(elemSrc), list[node] image := getConcreteSyntaxImage(elemSrc)){
     //Found a list element originating from a concrete syntax pattern (assumption: whole list is a concrete syntax pattern)
-    difff = concreteDiff(image, new);
     if (node hd := old[0] && loc toReplace := hd.src) {
       if (tail(old) != [] && node lst := tail(old)[-1] && loc lstLoc := lst.src ) {
         toReplace.length = lstLoc.offset - toReplace.offset + lstLoc.length;
