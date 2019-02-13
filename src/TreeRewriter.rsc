@@ -200,6 +200,7 @@ Edits diff(&T <: node old, &T <: node new) {
   if (loc newSrc := new.src && isConcreteSyntaxPattern(newSrc)) { //new node is concrete syntax pattern
     return [replaceLoc(oldSrc, newSrc, metaVariables=concreteDiff(getConcreteSyntaxImage(newSrc), new)) | loc oldSrc := old.src];
   }
+  throw "Unsuppored rewrite";
 }
 
 Edits diff(list[value] old, list[value] new) {
