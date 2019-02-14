@@ -168,7 +168,7 @@ Edits concreteDiff(list[node] pattern, list[node] instance) {
         throw "Backtrack";
       }
     }
-    throw "Shouldn not reach here";
+    throw "Matching failed";
   }
   
   <actualBindings, boundPattern> = bindAndMatch(pattern, instance, matchBindings, {}, []);
