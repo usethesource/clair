@@ -218,16 +218,15 @@ Edits diff(&T <: node old, &T <: node new) {
 }
 
 Edits diff(list[value] old, list[value] new) {
-  if (node elem <- new, loc elemSrc := elem.src, isConcreteSyntaxPattern(elemSrc)){
+  if (node elem <- new, elemSrc := asLoc(elem.src), isConcreteSyntaxPattern(elemSrc), img := getConcreteSyntaxImage(elemSrc), hasListVariables(img)){
     //Found a list element originating from a list variable in a concrete syntax pattern (assumption: whole list is a concrete syntax pattern)
-    image = asList(getConcreteSyntaxImage(elemSrc));
     toReplace = asLoc(asNode(old[0]).src);
     if (tail(old) != []) {
       lst = asNode(tail(old)[-1]);
       lstLoc = asLoc(lst.src);
       toReplace.length = lstLoc.offset - toReplace.offset + lstLoc.length;
     }
-    return [replaceLoc(toReplace, elemSrc, metaVariables=concreteDiff(image, new))];
+    return [replaceLoc(toReplace, elemSrc, metaVariables=concreteDiff(asList(img), new))];
   }
   return [*diff(old[i], new[i])|i<-[0..size(old)]];
 }
