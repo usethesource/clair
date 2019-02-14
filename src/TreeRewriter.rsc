@@ -122,8 +122,8 @@ list[node] asList(value v) {
 }
   
 loc extractLocFromPattern(list[node] pattern) {
-  if (v <- pattern, isListVariable(v), loc l := getAnnotations(v)["loc"]) {
-    return l;
+  if (v <- pattern, isListVariable(v)) {
+    return asLoc(getAnnotations(v)["loc"]);
   }
   throw "Did not find loc in pattern";
 }
@@ -152,19 +152,17 @@ Edits concreteDiff(list[node] pattern, list[node] instance) {
       currentVar = currentPattern[i];
       if (isVariable(currentVar)) {
         variableName = getVariableName(currentPattern[i]);
-        if (b <- {b | b <- actualBindings, variableName <- b}, list[node] var := b[variableName]) {
+        if (b <- {b | b <- actualBindings, variableName <- b}) {
+          var = asList(b[variableName]);
           list[node] nextTry = currentPattern[0..i] + var + currentPattern[i+1..];
           return bindAndMatch(nextTry, instance, bindings, actualBindings, doMatch + [i..i+size(var)]);
         }
         optionalBindings = {m | m <- matchBindings, variableName <- m};
         for (binding <- optionalBindings) {
           try {
-            if (list[node] var := binding[variableName]) {
-              list[node] nextTry = currentPattern[0..i] + var + currentPattern[i+1..];
-              return bindAndMatch(nextTry, instance, bindings, actualBindings + binding, doMatch + [i..i+size(var)]);
-            } else  {
-              throw "Unexpected";
-            }
+            var = asList(binding[variableName]);
+            list[node] nextTry = currentPattern[0..i] + var + currentPattern[i+1..];
+            return bindAndMatch(nextTry, instance, bindings, actualBindings + binding, doMatch + [i..i+size(var)]);
           } catch "Backtrack":;
         }
         throw "Backtrack";
@@ -209,23 +207,25 @@ Edits diff(&T <: node old, &T <: node new) {
     newChildren = getChildren(new);
     return [*diff(oldChildren[i], newChildren[i]) | i <- [0..size(oldChildren)]];
   }
-  if (loc newSrc := new.src && isConcreteSyntaxPattern(newSrc)) { //new node is concrete syntax pattern
+  newSrc = asLoc(new.src);
+  if (isConcreteSyntaxPattern(newSrc)) { //new node is concrete syntax pattern
     return [replaceLoc(oldSrc, newSrc, metaVariables=concreteDiff(getConcreteSyntaxImage(newSrc), new)) | loc oldSrc := old.src];
   }
   throw "Unsuppored rewrite";
 }
 
 Edits diff(list[value] old, list[value] new) {
-  if (node elem <- new, loc elemSrc := elem.src, isConcreteSyntaxPattern(elemSrc), list[node] image := getConcreteSyntaxImage(elemSrc)){
-    //Found a list element originating from a concrete syntax pattern (assumption: whole list is a concrete syntax pattern)
-    if (node hd := old[0] && loc toReplace := hd.src) {
-      if (tail(old) != [] && node lst := tail(old)[-1] && loc lstLoc := lst.src ) {
-        toReplace.length = lstLoc.offset - toReplace.offset + lstLoc.length;
-      }
-      return [replaceLoc(toReplace, elemSrc, metaVariables=concreteDiff(image, new))];
-    } else {
-      throw "Cannot happen";
+  if (node elem <- new, loc elemSrc := elem.src, isConcreteSyntaxPattern(elemSrc)){
+    //Found a list element originating from a list variable in a concrete syntax pattern (assumption: whole list is a concrete syntax pattern)
+    image = asList(getConcreteSyntaxImage(elemSrc));
+    hd = asNode(old[0]);
+    toReplace = asLoc(hd.src);
+    if (tail(old) != []) {
+      lst = asNode(tail(old)[-1]);
+      lstLoc = asLoc(lst.src);
+      toReplace.length = lstLoc.offset - toReplace.offset + lstLoc.length;
     }
+    return [replaceLoc(toReplace, elemSrc, metaVariables=concreteDiff(image, new))];
   }
   return [*diff(old[i], new[i])|i<-[0..size(old)]];
 }
