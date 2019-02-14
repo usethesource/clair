@@ -39,7 +39,6 @@ str unescape(str raw) {
   return raw;
 }
 
-
 void saveDiffs(Edits edits) {
   for (<where, what> <- processEdits(readCode(edits), edits)) {
     writeFile(where, what);
@@ -81,18 +80,6 @@ lrel[loc, str] processEdits(map[loc, str] fragments, Edits edits) {
 
 map[loc, str] readCode(Edits edits) = (l:readFile(l) | /loc l := edits);
 
-Edits concreteDiff(Tree pattern, node instance) = [metaVar(pattern@\loc, asLoc(instance.src))];
-
-Edits concreteDiff(&T <: node pattern, &T <: node instance) {
-  if (pattern == instance) { //trees are equal
-    return [];
-  }
-  patternChildren = getChildren(pattern);
-  instanceChildren = getChildren(instance);
-  assert size(patternChildren) == size(instanceChildren);
-  return [*concreteDiff(patternChildren[i], instanceChildren[i]) | i <- [0..size(patternChildren)]];
-}
-
 bool isVariable(node n) = "loc" in getAnnotations(n);
 bool isListVariable(node n) = isVariable(n) && contains("<n>", "*");
 
@@ -127,6 +114,18 @@ loc extractLocFromPattern(list[node] pattern) {
     return asLoc(getAnnotations(v)["loc"]);
   }
   throw "Did not find loc in pattern";
+}
+
+Edits concreteDiff(Tree pattern, node instance) = [metaVar(pattern@\loc, asLoc(instance.src))];
+
+Edits concreteDiff(&T <: node pattern, &T <: node instance) {
+  if (pattern == instance) { //trees are equal
+    return [];
+  }
+  patternChildren = getChildren(pattern);
+  instanceChildren = getChildren(instance);
+  assert size(patternChildren) == size(instanceChildren);
+  return [*concreteDiff(patternChildren[i], instanceChildren[i]) | i <- [0..size(patternChildren)]];
 }
 
 Edits concreteDiff(list[node] pattern, list[node] instance) {
