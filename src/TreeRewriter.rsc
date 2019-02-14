@@ -99,6 +99,7 @@ bool isListVariable(node n) = isVariable(n) && contains("<n>", "*");
 str getVariableName(str holeLit) = trim(substring(holeLit, findFirst(holeLit, "*") + 1, findFirst(holeLit, "\>")));
 str getVariableName(node n) = getVariableName("<n>");
 bool hasListVariables(list[node] pattern) = (false | it || isListVariable(n) | n <- pattern);
+default bool hasListVariables(value _) = false;
 
 loc asLoc(value v) {
   if (loc l := v) {
