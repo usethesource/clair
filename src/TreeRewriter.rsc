@@ -222,13 +222,12 @@ Edits diff(list[value] old, list[value] new) {
     //Found a list element originating from a list variable in a concrete syntax pattern (assumption: whole list is a concrete syntax pattern)
     toReplace = asLoc(asNode(old[0]).src);
     if (tail(old) != []) {
-      lst = asNode(tail(old)[-1]);
-      lstLoc = asLoc(lst.src);
+      lstLoc = asLoc(asNode(tail(old)[-1]).src);
       toReplace.length = lstLoc.offset - toReplace.offset + lstLoc.length;
     }
     return [replaceLoc(toReplace, elemSrc, metaVariables=concreteDiff(asList(img), new))];
   }
-  return [*diff(old[i], new[i])|i<-[0..size(old)]];
+  return [*diff(old[i], new[i]) | i <- [0..size(old)]];
 }
 
 @javaClass{TreeRewriterHelper}
