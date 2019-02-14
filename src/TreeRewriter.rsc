@@ -214,7 +214,7 @@ Edits diff(&T <: node old, &T <: node new) {
   if (isConcreteSyntaxPattern(newSrc)) { //new node is concrete syntax pattern
     return [replaceLoc(oldSrc, newSrc, metaVariables=concreteDiff(getConcreteSyntaxImage(newSrc), new))];
   }
-  throw "Unsuppored rewrite";
+  return [replaceLoc(oldSrc, newSrc)];
 }
 
 Edits diff(list[value] old, list[value] new) {
