@@ -81,12 +81,7 @@ lrel[loc, str] processEdits(map[loc, str] fragments, Edits edits) {
 
 map[loc, str] readCode(Edits edits) = (l:readFile(l) | /loc l := edits);
 
-Edits concreteDiff(Tree pattern, node instance) {
-  if (loc what := instance.src) {
-    return [metaVar(pattern@\loc, what)];
-  }
-  throw "Unexpected arguments in concreteDiff: <pattern> vs <instance>";
-}
+Edits concreteDiff(Tree pattern, node instance) = [metaVar(pattern@\loc, asLoc(instance.src))];
 
 Edits concreteDiff(&T <: node pattern, &T <: node instance) {
   if (pattern == instance) { //trees are equal
