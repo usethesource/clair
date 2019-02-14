@@ -31,7 +31,7 @@ str unescape(str raw) {
     singleQuote = findFirst(raw, "\'");
     if (singleQuote != -1) {
       newLine = findLast(raw[0..singleQuote], "\n");
-      raw = raw[0..newLine+1] + raw[singleQuote+1..size(raw)];
+      raw = raw[0..newLine+1] + raw[singleQuote+1..];
     }
   }
   raw = replaceAll(raw, "\\\<", "\<");
@@ -218,8 +218,7 @@ Edits diff(list[value] old, list[value] new) {
   if (node elem <- new, loc elemSrc := elem.src, isConcreteSyntaxPattern(elemSrc)){
     //Found a list element originating from a list variable in a concrete syntax pattern (assumption: whole list is a concrete syntax pattern)
     image = asList(getConcreteSyntaxImage(elemSrc));
-    hd = asNode(old[0]);
-    toReplace = asLoc(hd.src);
+    toReplace = asLoc(asNode(old[0]).src);
     if (tail(old) != []) {
       lst = asNode(tail(old)[-1]);
       lstLoc = asLoc(lst.src);
