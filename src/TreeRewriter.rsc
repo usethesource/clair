@@ -107,6 +107,20 @@ loc asLoc(value v) {
   throw "No loc: <v>";
 }
 
+node asNode(value v) {
+  if (node n := v) {
+    return n;
+  }
+  throw "No node: <v>";
+}
+
+list[node] asList(value v) {
+  if (list[node] lst := v) {
+    return lst;
+  }
+  throw "Unexpected value in asList: <v>";
+}
+  
 loc extractLocFromPattern(list[node] pattern) {
   if (v <- pattern, isListVariable(v), loc l := getAnnotations(v)["loc"]) {
     return l;
@@ -160,13 +174,6 @@ Edits concreteDiff(list[node] pattern, list[node] instance) {
   }
   
   <actualBindings, boundPattern> = bindAndMatch(pattern, instance, matchBindings, {}, []);
-  
-  list[node] asList(value v) {
-    if (list[node] n := v) {
-      return n;
-    }
-    throw "Unexpected value in asList: <v>";
-  }
   
   edits = [];
   offset = 0;
