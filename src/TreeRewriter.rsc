@@ -208,9 +208,11 @@ Edits diff(&T <: node old, &T <: node new) {
     newChildren = getChildren(new);
     return [*diff(oldChildren[i], newChildren[i]) | i <- [0..size(oldChildren)]];
   }
+  oldSrc = asLoc(old.src);
   newSrc = asLoc(new.src);
+  
   if (isConcreteSyntaxPattern(newSrc)) { //new node is concrete syntax pattern
-    return [replaceLoc(oldSrc, newSrc, metaVariables=concreteDiff(getConcreteSyntaxImage(newSrc), new)) | loc oldSrc := old.src];
+    return [replaceLoc(oldSrc, newSrc, metaVariables=concreteDiff(getConcreteSyntaxImage(newSrc), new))];
   }
   throw "Unsuppored rewrite";
 }
