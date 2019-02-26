@@ -88,6 +88,13 @@ str getVariableName(node n) = getVariableName("<n>");
 bool hasListVariables(list[node] pattern) = (false | it || isListVariable(n) | n <- pattern);
 default bool hasListVariables(value _) = false;
 
+//bool sameLocs(loc l, loc r) = l.scheme == r.scheme && l.authority == r.authority && l.path == r.path && l.offset == r.offset && l.length == r.length;
+bool sameLocs(loc l, loc r) {
+  loc tmp = l;
+  tmp.fragment = r.fragment;
+  return tmp == r;
+}
+
 loc asLoc(value v) {
   if (loc l := v) {
     return l;
@@ -202,7 +209,7 @@ Edits diff(&T <: node old, &T <: node new) {
   if (old == new) {//trees are equal, no diff
     return [];
   }
-  if (old.src == new.src) {//same node, checking children
+  if (sameLocs(old.src, new.src)) {//same node, checking children
     oldChildren = getChildren(old);
     newChildren = getChildren(new);
     return [*diff(oldChildren[i], newChildren[i]) | i <- [0..size(oldChildren)]];
