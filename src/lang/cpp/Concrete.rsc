@@ -49,6 +49,15 @@ Expression parseExpression(str code) {
   return unsetRec(tu.declarations[0].body.statements[0].declaration.declSpecifier.expression);
 }
 
+@concreteSyntax{Expression*}
+list[Expression] parseExpressions(str code) {
+  str context = "void parse() {
+                '  x = f(<code>);
+                '}";
+  Declaration tu = parseString(context);
+  return [unsetRec(e) | e <- tu.declarations[0].body.statements[0].expression.rhs.arguments];
+}
+
 @concreteHole{Expression}
 str makeExpressionHole(int id) = "$$$$$clairExpr$<id>$$$$$";
 
