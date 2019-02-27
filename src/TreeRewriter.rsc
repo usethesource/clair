@@ -78,10 +78,10 @@ lrel[loc, str] processEdits(map[loc, str] fragments, Edits edits) {
 
 map[loc, str] readCode(Edits edits) = (l:readFile(l) | /loc l := edits);
 
-bool isListVariable(node n) = "loc" in getAnnotations(n) && contains("<n>", "*");
-
 str getVariableName(str holeLit) = trim(substring(holeLit, findFirst(holeLit, "*") + 1, findFirst(holeLit, "\>")));
 str getVariableName(node n) = getVariableName("<n>");
+
+bool isListVariable(node n) = "loc" in getAnnotations(n) && contains("<n>", "*");
 bool hasListVariables(list[node] pattern) = (false | it || isListVariable(n) | n <- pattern);
 default bool hasListVariables(value _) = false;
 
