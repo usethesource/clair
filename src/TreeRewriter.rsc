@@ -123,7 +123,7 @@ loc extractLocFromPattern(list[node] pattern) {
   throw "Did not find loc in pattern";
 }
 
-Edits concreteDiff(Tree pattern, node instance) = [metaVar(pattern@\loc, asLoc(instance.src))];
+Edits concreteDiff(Tree pattern, node instance, map[str, int] listVarLengths) = [metaVar(pattern@\loc, asLoc(instance.src))];
 
 Edits concreteDiff(&T <: node pattern, &T <: node instance, map[str, int] listVarLengths) {
   if (pattern == instance) { //trees are equal
@@ -132,12 +132,12 @@ Edits concreteDiff(&T <: node pattern, &T <: node instance, map[str, int] listVa
   patternChildren = getChildren(pattern);
   instanceChildren = getChildren(instance);
   assert size(patternChildren) == size(instanceChildren);
-  return [*concreteDiff(patternChildren[i], instanceChildren[i]) | i <- [0..size(patternChildren)]];
+  return [*concreteDiff(patternChildren[i], instanceChildren[i], listVarLengths) | i <- [0..size(patternChildren)]];
 }
 
 Edits concreteDiff(list[node] pattern, list[node] instance, map[str, int] listVarLengths) {
   if (!hasListVariables(pattern)) {//No list variables, recurse on children
-    return [*concreteDiff(pattern[i], instance[i]) | i <- [0..size(pattern)]];
+    return [*concreteDiff(pattern[i], instance[i], listVarLengths) | i <- [0..size(pattern)]];
   }
   
   //Get match bindings for corresponding module
