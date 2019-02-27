@@ -86,6 +86,8 @@ str getVariableName(node n) = getVariableName("<n>");
 bool hasListVariables(list[node] pattern) = (false | it || isListVariable(n) | n <- pattern);
 default bool hasListVariables(value _) = false;
 
+map[str, int] decodeFragment(str fragment) = (elems[0]:toInt(elems[1]) | s <- split(",", fragment), elems := split(":", s), size(elems) == 2);
+
 //bool sameLocs(loc l, loc r) = l.scheme == r.scheme && l.authority == r.authority && l.path == r.path && l.offset == r.offset && l.length == r.length;
 bool sameLocs(loc l, loc r) {
   loc tmp = l;
