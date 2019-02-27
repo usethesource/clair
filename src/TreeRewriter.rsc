@@ -212,7 +212,7 @@ Edits diff(&T <: node old, &T <: node new, map[str, int] listVarLenghts) {
   if (sameLocs(old.src, new.src)) {//same node, checking children
     oldChildren = getChildren(old);
     newChildren = getChildren(new);
-    return [*diff(oldChildren[i], newChildren[i]) | i <- [0..size(oldChildren)]];
+    return [*diff(oldChildren[i], newChildren[i], decodeFragment(asLoc(new.src).fragment)) | i <- [0..size(oldChildren)]];
   }
   oldSrc = asLoc(old.src);
   newSrc = asLoc(new.src);
