@@ -140,53 +140,13 @@ Edits concreteDiff(list[node] pattern, list[node] instance, map[str, int] listVa
     return [*concreteDiff(pattern[i], instance[i], listVarLengths) | i <- [0..size(pattern)]];
   }
   
-  //Get match bindings for corresponding module
-  loc l = extractLocFromPattern(pattern);
-  set[map[str, value]] matchBindings = getMatchBindings(l.top);
-  
-  //utility function to get a sublist skipping certain elements
-  list[node] filt(list[node] lst, list[int] doMatch) = [lst[i] | i <- [0..size(lst)], i in doMatch];
-  
-  //utility function to recursively try and find appropriate match bindings for pattern variables
-  tuple[set[map[str, value]] bindings, list[node] pattern] bindAndMatch(list[node] currentPattern, list[node] instance, set[map[str, value]] bindings, set[map[str, value]] actualBindings, list[int] doMatch) {
-    if (!hasListVariables(currentPattern)) {
-      if (size(currentPattern) == size(instance) && filt(currentPattern, doMatch) == filt(instance, doMatch)) { //TODO: == or :=
-        return <actualBindings, currentPattern>;
-      }
-      throw "Backtrack";
-    }
-    for (i <- [0..size(currentPattern)]) {
-      currentVar = currentPattern[i];
-      if (isVariable(currentVar)) {
-        variableName = getVariableName(currentPattern[i]);
-        if (b <- {b | b <- actualBindings, variableName <- b}) {
-          var = asList(b[variableName]);
-          list[node] nextTry = currentPattern[0..i] + var + currentPattern[i+1..];
-          return bindAndMatch(nextTry, instance, bindings, actualBindings, doMatch + [i..i+size(var)]);
-        }
-        optionalBindings = {m | m <- matchBindings, variableName <- m};
-        for (binding <- optionalBindings) {
-          try {
-            var = asList(binding[variableName]);
-            list[node] nextTry = currentPattern[0..i] + var + currentPattern[i+1..];
-            return bindAndMatch(nextTry, instance, bindings, actualBindings + binding, doMatch + [i..i+size(var)]);
-          } catch "Backtrack":;
-        }
-        throw "Backtrack";
-      }
-    }
-    throw "Matching failed";
-  }
-  
-  <actualBindings, boundPattern> = bindAndMatch(pattern, instance, matchBindings, {}, []);
-  
   edits = [];
   offset = 0;
   for (i <- [0..size(pattern)]) {
     patVar = pattern[i];
     if (isListVariable(patVar)) {
       holeLoc = getAnnotations(patVar)["loc"];
-      varImage = [*asList(binding[varName]) | binding <- actualBindings, str varName := getVariableName(patVar), varName <- binding];
+      varImage = instance[i+offset..i+offset+listVarLengths[getVariableName(patVar)]];
       if (size(varImage) == 0) {
         edits += metaVar(holeLoc, "");
       } else {
