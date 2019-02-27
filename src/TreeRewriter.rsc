@@ -8,11 +8,9 @@ import ParseTree;
 import Set;
 import String;
 
-import util::Math;
 import util::ValueUI;
 
 import lang::cpp::AST;
-import lang::cpp::Concrete;
 
 data Edit
   = del(loc where)
