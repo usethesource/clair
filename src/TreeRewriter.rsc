@@ -125,7 +125,7 @@ loc extractLocFromPattern(list[node] pattern) {
 
 Edits concreteDiff(Tree pattern, node instance) = [metaVar(pattern@\loc, asLoc(instance.src))];
 
-Edits concreteDiff(&T <: node pattern, &T <: node instance) {
+Edits concreteDiff(&T <: node pattern, &T <: node instance, map[str, int] listVarLengths) {
   if (pattern == instance) { //trees are equal
     return [];
   }
@@ -135,7 +135,7 @@ Edits concreteDiff(&T <: node pattern, &T <: node instance) {
   return [*concreteDiff(patternChildren[i], instanceChildren[i]) | i <- [0..size(patternChildren)]];
 }
 
-Edits concreteDiff(list[node] pattern, list[node] instance) {
+Edits concreteDiff(list[node] pattern, list[node] instance, map[str, int] listVarLengths) {
   if (!hasListVariables(pattern)) {//No list variables, recurse on children
     return [*concreteDiff(pattern[i], instance[i]) | i <- [0..size(pattern)]];
   }
@@ -199,13 +199,13 @@ Edits concreteDiff(list[node] pattern, list[node] instance) {
       }
       offset += size(varImage) - 1;
     } else {
-      edits += concreteDiff(patVar, instance[i+offset]);
+      edits += concreteDiff(patVar, instance[i+offset], listVarLengths);
     }
   }
   return edits;
 }
 
-Edits diff(&T <: node old, &T <: node new) {
+Edits diff(&T <: node old, &T <: node new, map[str, int] listVarLenghts) {
   if (old == new) {//trees are equal, no diff
     return [];
   }
@@ -223,7 +223,7 @@ Edits diff(&T <: node old, &T <: node new) {
   return [replaceLoc(oldSrc, newSrc)];
 }
 
-Edits diff(list[value] old, list[value] new) {
+Edits diff(list[value] old, list[value] new, map[str, int] listVarLengths) {
   if (node elem <- new, elemSrc := asLoc(elem.src), isConcreteSyntaxPattern(elemSrc), img := getConcreteSyntaxImage(elemSrc), hasListVariables(img)){
     //Found a list element originating from a list variable in a concrete syntax pattern (assumption: whole list is a concrete syntax pattern)
     toReplace = asLoc(asNode(old[0]).src);
@@ -231,9 +231,9 @@ Edits diff(list[value] old, list[value] new) {
       lstLoc = asLoc(asNode(tail(old)[-1]).src);
       toReplace.length = lstLoc.offset - toReplace.offset + lstLoc.length;
     }
-    return [replaceLoc(toReplace, elemSrc, metaVariables=concreteDiff(asList(img), new))];
+    return [replaceLoc(toReplace, elemSrc, metaVariables=concreteDiff(asList(img), new, listVarLengths))];
   }
-  return [*diff(old[i], new[i]) | i <- [0..size(old)]];
+  return [*diff(old[i], new[i], listVarLengths) | i <- [0..size(old)]];
 }
 
 @javaClass{TreeRewriterHelper}
