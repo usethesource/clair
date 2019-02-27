@@ -78,8 +78,7 @@ lrel[loc, str] processEdits(map[loc, str] fragments, Edits edits) {
 
 map[loc, str] readCode(Edits edits) = (l:readFile(l) | /loc l := edits);
 
-bool isVariable(node n) = "loc" in getAnnotations(n);
-bool isListVariable(node n) = isVariable(n) && contains("<n>", "*");
+bool isListVariable(node n) = "loc" in getAnnotations(n) && contains("<n>", "*");
 
 str getVariableName(str holeLit) = trim(substring(holeLit, findFirst(holeLit, "*") + 1, findFirst(holeLit, "\>")));
 str getVariableName(node n) = getVariableName("<n>");
@@ -116,13 +115,6 @@ list[node] asList(value v) {
   throw "Unexpected value in asList: <v>";
 }
   
-loc extractLocFromPattern(list[node] pattern) {
-  if (v <- pattern, isListVariable(v)) {
-    return asLoc(getAnnotations(v)["loc"]);
-  }
-  throw "Did not find loc in pattern";
-}
-
 Edits concreteDiff(Tree pattern, node instance, map[str, int] listVarLengths) = [metaVar(pattern@\loc, asLoc(instance.src))];
 
 Edits concreteDiff(&T <: node pattern, &T <: node instance, map[str, int] listVarLengths) {
@@ -203,8 +195,3 @@ java bool isConcreteSyntaxPattern(loc l);
 @javaClass{TreeRewriterHelper}
 @reflect{Need access to environment}
 java value getConcreteSyntaxImage(loc l);
-
-@javaClass{TreeRewriterHelper}
-@reflect{Need access to environment}
-java set[map[str, value]] getMatchBindings(loc l);
-
