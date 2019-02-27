@@ -165,7 +165,7 @@ Edits concreteDiff(list[node] pattern, list[node] instance, map[str, int] listVa
   return edits;
 }
 
-Edits diff(&T <: node old, &T <: node new, map[str, int] listVarLenghts) {
+Edits diff(&T <: node old, &T <: node new, map[str, int] listVarLengths) {
   if (old == new) {//trees are equal, no diff
     return [];
   }
@@ -178,7 +178,7 @@ Edits diff(&T <: node old, &T <: node new, map[str, int] listVarLenghts) {
   newSrc = asLoc(new.src);
   
   if (isConcreteSyntaxPattern(newSrc)) { //new node is concrete syntax pattern
-    return [replaceLoc(oldSrc, newSrc, metaVariables=concreteDiff(getConcreteSyntaxImage(newSrc), new))];
+    return [replaceLoc(oldSrc, newSrc, metaVariables=concreteDiff(getConcreteSyntaxImage(newSrc), new, listVarLengths))];
   }
   return [replaceLoc(oldSrc, newSrc)];
 }
