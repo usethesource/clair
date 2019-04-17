@@ -88,11 +88,7 @@ default bool hasListVariables(value _) = false;
 map[str, int] decodeFragment(str fragment) = (elems[0]:toInt(elems[1]) | s <- split(",", fragment), elems := split(":", s), size(elems) == 2);
 
 //bool sameLocs(loc l, loc r) = l.scheme == r.scheme && l.authority == r.authority && l.path == r.path && l.offset == r.offset && l.length == r.length;
-bool sameLocs(loc l, loc r) {
-  loc tmp = l;
-  tmp.fragment = r.fragment;
-  return tmp == r;
-}
+bool sameLocs(loc l, loc r) = l[fragment=""]==r[fragment=""];
 
 loc asLoc(value v) {
   if (loc l := v) {
