@@ -2,13 +2,10 @@ module TreeRewriter
 
 import IO;
 import List;
-import Map;
 import Node;
 import ParseTree;
-import Set;
 import String;
 
-import util::ValueUI;
 
 import lang::cpp::AST;
 
