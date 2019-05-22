@@ -19,12 +19,12 @@ data Edit
 
 alias Edits = list[Edit];
 
-str unescape(str raw) {
+str unescape(str raw, str prefix) {
   solve(raw) {
     singleQuote = findFirst(raw, "\'");
     if (singleQuote != -1) {
       newLine = findLast(raw[0..singleQuote], "\n");
-      raw = raw[0..newLine+1] + raw[singleQuote+1..];
+      raw = raw[0..newLine+1] + prefix + raw[singleQuote+1..];
     }
   }
   raw = replaceAll(raw, "\\\<", "\<");
@@ -38,7 +38,7 @@ void saveDiffs(Edits edits) {
   }
 }
 
-lrel[loc, str] processEdits(map[loc, str] fragments, Edits edits) {
+lrel[loc, str] processEdits_old(map[loc, str] fragments, Edits edits) {
   ret = [];
   edits = sort(edits, bool(Edit e1, Edit e2) { return e1.where.file == e2.where.file? e1.where.offset > e2.where.offset : e1.where > e2.where; });
   for (Edit edit <- edits) {
@@ -69,6 +69,29 @@ lrel[loc, str] processEdits(map[loc, str] fragments, Edits edits) {
     }
   }
   return ret;
+}
+
+lrel[loc, str] processEdits(map[loc, str] fragments, Edits edits)
+  = [<edit.where, processEdit(fragments, edit)> | edit <- sort(edits, bool(Edit e1, Edit e2) { return e1.where.offset > e2.where.offset; })];
+
+str readPrefix(loc l) {
+  str file = readFile(l.top);
+  i = findLast(file[..l.offset], "\n");
+  return file[i+1..l.offset];
+}
+
+str processEdit(map[loc, str] fragments, delete(loc where)) = "";
+str processEdit(map[loc, str] fragments, edit(loc where, loc what, Edits edits)) {
+  ret = fragments[what];
+  if (size(edits) == 0) {
+    return ret;
+  }
+  for (e <- sort(edits, bool(Edit e1, Edit e2) { return e1.where.offset > e2.where.offset; })) {
+    ins = processEdit(fragments, e);
+    offset = e.where.offset - what.offset;
+    ret = ret[..offset] + ins + ret[offset + e.where.length..];
+  }
+  return unescape(ret, readPrefix(where));
 }
 
 map[loc, str] readCode(Edits edits) = (l:readFile(l) | /loc l := edits);
