@@ -38,39 +38,6 @@ void saveDiffs(Edits edits) {
   }
 }
 
-lrel[loc, str] processEdits_old(map[loc, str] fragments, Edits edits) {
-  ret = [];
-  edits = sort(edits, bool(Edit e1, Edit e2) { return e1.where.file == e2.where.file? e1.where.offset > e2.where.offset : e1.where > e2.where; });
-  for (Edit edit <- edits) {
-    switch(edit) {
-      case edit(where, what, metaVars): {
-        if (size(metaVars) == 0) {
-          ret += <where, fragments[edit.what]>;
-        } else {
-          str lex = fragments[edit.what];
-          for (Edit edit <- sort(metaVars, bool(Edit e1, Edit e2) { return e1.where.offset > e2.where.offset; })) {
-            if (edit(loc metaWhere, loc metaWhat, Edits _edits) := edit) {
-              int startPos = metaWhere.offset - what.offset;
-              int endPos = startPos + metaWhere.length;
-              if (loc l := metaWhat) {
-                lex = lex[0..startPos] + fragments[l] + lex[endPos..];
-              } else if (str s := metaWhat) {
-                lex = lex[0..startPos] + s + lex[endPos..];
-              }
-            } else {
-              throw "Unexpected edit <edit>";
-            }
-          }
-          ret += <where, unescape(lex)>;
-        }
-      }
-      default:
-        throw "NYI: <edit>";
-    }
-  }
-  return ret;
-}
-
 lrel[loc, str] processEdits(map[loc, str] fragments, Edits edits)
   = [<edit.where, processEdit(fragments, edit)> | edit <- sort(edits, bool(Edit e1, Edit e2) { return e1.where.offset > e2.where.offset; })];
 
