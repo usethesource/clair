@@ -13,13 +13,8 @@ import util::ValueUI;
 import lang::cpp::AST;
 
 data Edit
-  = del(loc where)
-  | ins(loc where, loc what)
-  | ins(loc where, str lex)
-  | replaceLoc(loc where, loc what, Edits metaVariables= [])
-  | replaceStr(loc where, str lex, str prefix =  "", str postfix = "")
-  | metaVar(loc where, loc what)
-  | metaVar(loc where, str lex)
+  = delete(loc where)
+  | edit(loc where, loc what, Edits edits)
   ;
 
 alias Edits = list[Edit];
@@ -48,13 +43,13 @@ lrel[loc, str] processEdits(map[loc, str] fragments, Edits edits) {
   edits = sort(edits, bool(Edit e1, Edit e2) { return e1.where.file == e2.where.file? e1.where.offset > e2.where.offset : e1.where > e2.where; });
   for (Edit edit <- edits) {
     switch(edit) {
-      case replaceLoc(where, what, metaVariables = metaVars): {
+      case edit(where, what, metaVars): {
         if (size(metaVars) == 0) {
           ret += <where, fragments[edit.what]>;
         } else {
           str lex = fragments[edit.what];
           for (Edit edit <- sort(metaVars, bool(Edit e1, Edit e2) { return e1.where.offset > e2.where.offset; })) {
-            if (metaVar(loc metaWhere, value metaWhat) := edit) {
+            if (edit(loc metaWhere, loc metaWhat, Edits _edits) := edit) {
               int startPos = metaWhere.offset - what.offset;
               int endPos = startPos + metaWhere.length;
               if (loc l := metaWhat) {
@@ -136,14 +131,14 @@ Edits concreteDiff(list[node] pattern, list[node] instance, map[str, int] listVa
       holeLoc = getAnnotations(patVar)["loc"];
       varImage = instance[i+offset..i+offset+listVarLengths[getVariableName(patVar)]];
       if (size(varImage) == 0) {
-        edits += metaVar(holeLoc, "");
+        edits += delete(holeLoc);
       } else {
         loc srcLoc = asLoc(varImage[0].src);
         if (tail(varImage) != [] && loc last := varImage[-1].src) {
           srcLoc.length = last.offset - srcLoc.offset + last.length;
           //TODO: check for trailing whitespace/delimiter when we're not in the last list element
         }
-        edits += metaVar(holeLoc, srcLoc);
+        edits += edit(holeLoc, srcLoc, []);
       }
       offset += size(varImage) - 1;
     } else {
@@ -166,9 +161,9 @@ Edits diff(&T <: node old, &T <: node new, map[str, int] listVarLengths) {
   newSrc = asLoc(new.src);
   
   if (isConcreteSyntaxPattern(newSrc)) { //new node is concrete syntax pattern
-    return [replaceLoc(oldSrc, newSrc, metaVariables=concreteDiff(getConcreteSyntaxImage(newSrc), new, listVarLengths))];
+    return [edit(oldSrc, newSrc, concreteDiff(getConcreteSyntaxImage(newSrc), new, listVarLengths))];
   }
-  return [replaceLoc(oldSrc, newSrc)];
+  return [edit(oldSrc, newSrc, [])];
 }
 
 Edits diff(list[value] old, list[value] new, map[str, int] listVarLengths) {
@@ -179,7 +174,7 @@ Edits diff(list[value] old, list[value] new, map[str, int] listVarLengths) {
       lstLoc = asLoc(asNode(tail(old)[-1]).src);
       toReplace.length = lstLoc.offset - toReplace.offset + lstLoc.length;
     }
-    return [replaceLoc(toReplace, elemSrc, metaVariables=concreteDiff(asList(img), new, listVarLengths))];
+    return [edit(toReplace, elemSrc, concreteDiff(asList(img), new, listVarLengths))];
   }
   return [*diff(old[i], new[i], listVarLengths) | i <- [0..size(old)]];
 }
