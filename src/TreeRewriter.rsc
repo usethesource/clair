@@ -10,7 +10,7 @@ import String;
 import lang::cpp::AST;
 
 data Edit
-  = delete(loc where)
+  = delete(loc where, loc prev = |unset:///|, loc post = |unset:///|)
   | edit(loc where, loc what, Edits edits)
   ;
 
@@ -92,6 +92,8 @@ list[node] asList(value v) {
   }
   throw "Unexpected value in asList: <v>";
 }
+
+loc getLocation(node n) = asLoc(getAnnotations(n)["loc"]?n.src);
   
 Edits concreteDiff(Tree pattern, node instance, map[str, int] listVarLengths) = [metaVar(pattern@\loc, asLoc(instance.src))];
 
@@ -112,13 +114,24 @@ Edits concreteDiff(list[node] pattern, list[node] instance, map[str, int] listVa
   
   edits = [];
   offset = 0;
+  removeLeadingChars = false;//do not remove layout before first list element
   for (i <- [0..size(pattern)]) {
     patVar = pattern[i];
     if (isListVariable(patVar)) {
-      holeLoc = getAnnotations(patVar)["loc"];
+      holeLoc = getLocation(patVar);
       varImage = instance[i+offset..i+offset+listVarLengths[getVariableName(patVar)]];
-      if (size(varImage) == 0) {
-        edits += delete(holeLoc);
+      if (size(varImage) == 0) {//list variable bound to [], fix surrounding layout (separators/whitespace)
+        //edits += delete(holeLoc);
+        if (i < size(pattern) - 1) {//non-final list element, remove trailing layout
+          edits += delete(holeLoc, post = getLocation(pattern[i+1]));
+        } else {//last list element, remove leading layout if not removed already
+          if (removeLeadingChars) {
+            edits += delete(holeLoc, prev = getLocation(pattern[i-1]));
+          } else {
+            edits += delete(holeLoc);
+          }
+        }
+        removeLeadingChars = false;
       } else {
         loc srcLoc = asLoc(varImage[0].src);
         if (tail(varImage) != [] && loc last := varImage[-1].src) {
@@ -126,6 +139,7 @@ Edits concreteDiff(list[node] pattern, list[node] instance, map[str, int] listVa
           //TODO: check for trailing whitespace/delimiter when we're not in the last list element
         }
         edits += edit(holeLoc, srcLoc, []);
+        removeLeadingChars = true;
       }
       offset += size(varImage) - 1;
     } else {
