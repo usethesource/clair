@@ -20,7 +20,7 @@ public class TreeRewriterHelper {
 		if (module == null) {
 			return Collections.emptyMap();
 		}
-		return ctx.getHeap().getModule(module).getExternalConcretePatterns();
+		return Collections.emptyMap();
 	}
 
 	public IValue getConcreteSyntaxImage(ISourceLocation loc, IEvaluatorContext ctx) {
