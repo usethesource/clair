@@ -439,6 +439,10 @@ java Declaration parseCpp(loc file, list[loc] stdLib = classPaths["vs12"], list[
 @reflect{need access to streams}   
 java Declaration parseString(str code);
 
+@javaClass{lang.cpp.internal.Parser}  
+@reflect{need access to streams}   
+java Declaration parseString(str code, loc l);
+
 @javaClass{lang.cpp.internal.Parser}
 @reflect{need access to streams}
 java list[loc] parseForComments(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ());
@@ -447,5 +451,3 @@ java list[loc] parseForComments(loc file, list[loc] includePaths = classPaths["v
 @reflect{need access to streams}
 java list[loc] parseForMacros(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ());
 
-map[loc,Declaration] parseDir(loc dir, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ())
-  = parseFiles([dir + file|file <- listEntries(dir)], includePaths = includePaths, additionalMacros = additionalMacros);

@@ -589,9 +589,13 @@ public class Parser extends ASTVisitor {
 	}
 
 	public IValue parseString(IString code, IEvaluatorContext ctx) throws CoreException {
+		return parseString(code, null, ctx);
+	}
+
+	public IValue parseString(IString code, ISourceLocation loc, IEvaluatorContext ctx) throws CoreException {
 		setIEvaluatorContext(ctx);
 		stdLib = vf.listWriter().done();
-		FileContent fc = FileContent.create("", code.getValue().toCharArray());
+		FileContent fc = FileContent.create(loc == null ? "" : loc.toString(), code.getValue().toCharArray());
 		IScannerInfo si = new ScannerInfo();
 		IncludeFileContentProvider ifcp = IncludeFileContentProvider.getEmptyFilesProvider();
 		int options = ILanguage.OPTION_PARSE_INACTIVE_CODE;
