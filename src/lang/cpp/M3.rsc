@@ -18,6 +18,7 @@ public data M3(
   rel[loc directive, loc occurrence] inactiveIncludes = {},
   rel[loc directive, loc resolved] includeResolution = {},
   rel[loc decl, TypeSymbol typ] declaredType = {},
+  rel[loc decl, loc visiblity] memberAccessModifiers = {},
   list[loc] comments = []
 );
 
@@ -38,7 +39,57 @@ M3 javaAstToM3(Declaration tu, M3 model = m3(tu.src.top)) {
     + {<declarator.decl, functionName.expression.decl> | /functionDefinition(_, Declarator declarator, _, Statement body) := tu, /functionCall(Expression functionName,_) := body,
       functionName is bracketed, functionName.expression.decl?}
     ;
+  model.memberAccessModifiers = deriveAccessModifiers(tu);
   return model;
+}
+
+rel[loc, loc] deriveAccessModifiers(Declaration tu) {
+  result = {};
+  for (/class(_, _, _, members) := tu) {
+    result += deriveAccessModifiers(members, false);
+  }
+  for (/classFinal(_, _, _, members) := tu) {
+    result += deriveAccessModifiers(members, false);
+  }
+  for (/struct(_, _, _, members) := tu) {
+    result += deriveAccessModifiers(members, true);
+  }
+  for (/structFinal(_, _, _, members) := tu) {
+    result += deriveAccessModifiers(members, true);
+  }
+  return result;
+}
+rel[loc, loc] deriveAccessModifiers(list[Declaration] declarations, bool isStruct) {
+  result = {};
+  current = isStruct? |public:///| : |private:///|;
+  for (declaration <- declarations) {
+    if (declaration is visibilityLabel) {
+      switch (declaration.visibility) {
+        case \public(): current = |public:///|;
+        case \protected(): current = |protected:///|;
+        case \private(): current = |private:///|;
+      }
+    } else if (declaration is template) {
+      result += makeEntry(declaration.declaration, current);
+    } else {
+      result += makeEntry(declaration, current);
+    }
+  }
+  return result;
+}
+
+rel[loc, loc] makeEntry(Declaration declaration, loc current) {
+  if (declaration has declarators) {
+    return {<declarator.decl, current> | declarator <- declaration.declarators};
+  } else if (declaration has declarator) {
+    return {<declaration.declarator.decl, current>};
+  } else {
+    if (!(declaration is staticAssert)) {
+      println("Missed entry for member visibility?");
+      iprintln(declaration);
+    }
+    return {};
+  }
 }
 
 M3 createM3FromCppFile(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false) {
