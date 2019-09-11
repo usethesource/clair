@@ -449,5 +449,5 @@ java list[loc] parseForComments(loc file, list[loc] includePaths = classPaths["v
 
 @javaClass{lang.cpp.internal.Parser}
 @reflect{need access to streams}
-java list[loc] parseForMacros(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ());
+java set[loc] parseForMacros(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ());
 
