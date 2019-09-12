@@ -5,7 +5,7 @@ ClaiR provides a mapping from the Eclipse CDT open C and C++ front-end to a Rasc
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.891122.svg)](https://doi.org/10.5281/zenodo.891122)
 
 ## Required software
-* Eclipse Photon with CDT (C/C++ Development Tools) (see [here](https://www.eclipse.org/downloads/packages/release/2019-06/r/eclipse-ide-cc-developers)).
+* Eclipse 2019-06 with CDT (C/C++ Development Tools) (see [here](https://www.eclipse.org/downloads/packages/release/2019-06/r/eclipse-ide-cc-developers)).
 * Rascal (see [here](https://www.rascal-mpl.org/start/)).
 
 ## How to install ClaiR into Eclipse
