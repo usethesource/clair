@@ -3232,7 +3232,7 @@ public class Parser extends ASTVisitor {
 					"Unknown BaseSpecifier visibility code " + baseSpecifier.getVisibility() + " at " + loc);
 		}
 		if (baseSpecifier.isVirtual())
-			modifiers.append(builder.Modifier_virtual(loc));
+			modifiers.append(builder.Modifier_virtual(getTokenSourceLocation(baseSpecifier, "virtual")));
 
 		ICPPASTNameSpecifier nameSpecifier = baseSpecifier.getNameSpecifier();
 		if (nameSpecifier == null)
