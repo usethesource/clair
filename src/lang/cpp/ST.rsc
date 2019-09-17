@@ -7,8 +7,6 @@ import Node;
 import Type;
 import util::Math;
 
-import lang::cpp::AST;
-
 data MyList[&T] = lval(list[&T] elts, list[str] seps = [], str sep = "");
 
 data SDeclarator(MyList[SAttribute] attributes = lval([]), loc src = |unknown:///|, loc decl = |unknown:///|, list[str] seps = [])
