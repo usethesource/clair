@@ -3213,13 +3213,13 @@ public class Parser extends ASTVisitor {
 		IListWriter modifiers = vf.listWriter();
 		switch (baseSpecifier.getVisibility()) {
 		case ICPPASTBaseSpecifier.v_public:
-			modifiers.append(builder.Modifier_public(loc));
+			modifiers.append(builder.Modifier_public(getTokenSourceLocation(baseSpecifier, "public")));
 			break;
 		case ICPPASTBaseSpecifier.v_protected:
-			modifiers.append(builder.Modifier_protected(loc));
+			modifiers.append(builder.Modifier_protected(getTokenSourceLocation(baseSpecifier, "protected")));
 			break;
 		case ICPPASTBaseSpecifier.v_private:
-			modifiers.append(builder.Modifier_private(loc));
+			modifiers.append(builder.Modifier_private(getTokenSourceLocation(baseSpecifier, "private")));
 			break;
 		case 0:
 			modifiers.append(builder.Modifier_unspecifiedInheritance(loc));
