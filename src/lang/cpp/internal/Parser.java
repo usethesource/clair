@@ -1931,62 +1931,78 @@ public class Parser extends ASTVisitor {
 
 		switch (declSpec.getType()) {
 		case IASTSimpleDeclSpecifier.t_unspecified:
-			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_unspecified(loc), attributes, loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_unspecified(getTokenSourceLocation(declSpec, "")), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_void:
-			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_void(loc), attributes, loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_void(getTokenSourceLocation(declSpec, "void")), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_char:
-			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_char(loc), attributes, loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_char(getTokenSourceLocation(declSpec, "char")), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_int:
-			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_integer(loc), attributes, loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_integer(getTokenSourceLocation(declSpec, "int")), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_float:
-			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_float(loc), attributes, loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_float(getTokenSourceLocation(declSpec, "float")), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_double:
-			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_double(loc), attributes, loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_double(getTokenSourceLocation(declSpec, "double")), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_bool:
-			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_bool(loc), attributes, loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_bool(getTokenSourceLocation(declSpec, "bool")), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_wchar_t:
-			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_wchar_t(loc), attributes, loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_wchar_t(getTokenSourceLocation(declSpec, "wchar_t")), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_typeof:
 			declSpec.getDeclTypeExpression().accept(this);
-			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_typeof(loc), stack.pop(), attributes,
-					loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_typeof(getTokenSourceLocation(declSpec, "typeof")), stack.pop(), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_decltype:
 			declSpec.getDeclTypeExpression().accept(this);
-			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_decltype(loc), stack.pop(),
-					attributes, loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_decltype(getTokenSourceLocation(declSpec, "decltype")), stack.pop(), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_auto:
-			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_auto(loc), attributes, loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_auto(getTokenSourceLocation(declSpec, "auto")), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_char16_t:
-			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_char16_t(loc), attributes, loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_char16_t(getTokenSourceLocation(declSpec, "char16_t")), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_char32_t:
-			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_char32_t(loc), attributes, loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_char32_t(getTokenSourceLocation(declSpec, "char32_t")), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_int128:
-			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_int128(loc), attributes, loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_int128(getTokenSourceLocation(declSpec, "__int128")), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_float128:
-			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_float128(loc), attributes, loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_float128(getTokenSourceLocation(declSpec, "__float128")), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_decimal32:
-			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_decimal128(loc), attributes, loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_decimal128(getTokenSourceLocation(declSpec, "_Decimal32")), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_decimal64:
-			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_decimal64(loc), attributes, loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_decimal64(getTokenSourceLocation(declSpec, "_Decimal64")), attributes, loc));
 			break;
 		case IASTSimpleDeclSpecifier.t_decimal128:
-			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_decimal128(loc), attributes, loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_decimal128(getTokenSourceLocation(declSpec, "_Decimal128")), attributes, loc));
 			break;
 		default:
 			throw new RuntimeException(
