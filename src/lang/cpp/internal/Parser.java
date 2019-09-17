@@ -1077,13 +1077,16 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(declaration);
 		switch (declaration.getVisibility()) {
 		case ICPPASTVisibilityLabel.v_public:
-			stack.push(builder.Declaration_visibilityLabel(builder.Modifier_public(loc), loc));
+			stack.push(builder.Declaration_visibilityLabel(
+					builder.Modifier_public(getTokenSourceLocation(declaration, "public")), loc));
 			break;
 		case ICPPASTVisibilityLabel.v_protected:
-			stack.push(builder.Declaration_visibilityLabel(builder.Modifier_protected(loc), loc));
+			stack.push(builder.Declaration_visibilityLabel(
+					builder.Modifier_protected(getTokenSourceLocation(declaration, "protected")), loc));
 			break;
 		case ICPPASTVisibilityLabel.v_private:
-			stack.push(builder.Declaration_visibilityLabel(builder.Modifier_private(loc), loc));
+			stack.push(builder.Declaration_visibilityLabel(
+					builder.Modifier_private(getTokenSourceLocation(declaration, "private")), loc));
 			break;
 		default:
 			throw new RuntimeException("Unknown CPPVisibilityLabel code " + declaration.getVisibility() + " at "
