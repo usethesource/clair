@@ -31,6 +31,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -194,6 +195,7 @@ import org.eclipse.cdt.core.parser.DefaultLogService;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
@@ -664,6 +666,20 @@ public class Parser extends ASTVisitor {
 		return vf.sourceLocation(URIUtil.assumeCorrect("unknown:///", "", ""));
 	}
 
+	public ISourceLocation getTokenSourceLocation(IASTNode node, String literal) {
+		ISourceLocation loc = getSourceLocation(node);
+		try {
+			for (IToken tokens = node.getSyntax();; tokens = tokens.getNext()) {
+				if (literal.equals(tokens.getImage())) {
+					return vf.sourceLocation(loc, loc.getOffset() + tokens.getOffset(), literal.length());
+				}
+			}
+		} catch (ExpansionOverlapsBoundaryException e) {
+			// Fall back to node's source location. Possibly find string in node's image
+		}
+		return loc;
+	}
+
 	IList getAttributes(IASTAttributeOwner node) {
 		IListWriter attributeSpecifiers = vf.listWriter();
 		Stream.of(node.getAttributeSpecifiers()).forEach(it -> {
@@ -674,110 +690,112 @@ public class Parser extends ASTVisitor {
 	}
 
 	IList getModifiers(IASTNode node) {
-		ISourceLocation loc = getSourceLocation(node);
 		IListWriter modifiers = vf.listWriter();
 
 		if (node instanceof ICPPASTDeclSpecifier) {
 			if (((ICPPASTDeclSpecifier) node).isFriend())
-				modifiers.append(builder.Modifier_friend(loc));
+				modifiers.append(builder.Modifier_friend(getTokenSourceLocation(node, "friend")));
 			if (((ICPPASTDeclSpecifier) node).isVirtual())
-				modifiers.append(builder.Modifier_virtual(loc));
+				modifiers.append(builder.Modifier_virtual(getTokenSourceLocation(node, "virtual")));
 			if (((ICPPASTDeclSpecifier) node).isExplicit())
-				modifiers.append(builder.Modifier_explicit(loc));
+				modifiers.append(builder.Modifier_explicit(getTokenSourceLocation(node, "explicit")));
 			if (((ICPPASTDeclSpecifier) node).isConstexpr())
-				modifiers.append(builder.Modifier_constexpr(loc));
+				modifiers.append(builder.Modifier_constexpr(getTokenSourceLocation(node, "constexpr")));
 			if (((ICPPASTDeclSpecifier) node).isThreadLocal())
-				modifiers.append(builder.Modifier_threadLocal(loc));
+				modifiers.append(builder.Modifier_threadLocal(getTokenSourceLocation(node, "thread_local")));
 		}
 
 		if (node instanceof ICPPASTFunctionDeclarator) {
 			if (((ICPPASTFunctionDeclarator) node).isMutable())
-				modifiers.append(builder.Modifier_mutable(loc));
+				modifiers.append(builder.Modifier_mutable(getTokenSourceLocation(node, "mutable")));
 			if (((ICPPASTFunctionDeclarator) node).isPureVirtual())
-				modifiers.append(builder.Modifier_pureVirtual(loc));
+				modifiers.append(builder.Modifier_pureVirtual(getTokenSourceLocation(node, "virtual")));// check
 		}
 
 		if (node instanceof IASTDeclSpecifier) {
 			switch (((IASTDeclSpecifier) node).getStorageClass()) {
 			case IASTDeclSpecifier.sc_typedef:
-				modifiers.append(builder.Modifier_typedef(loc));
+				modifiers.append(builder.Modifier_typedef(getTokenSourceLocation(node, "typedef")));
 				break;
 			case IASTDeclSpecifier.sc_extern:
-				modifiers.append(builder.Modifier_extern(loc));
+				modifiers.append(builder.Modifier_extern(getTokenSourceLocation(node, "extern")));
 				break;
 			case IASTDeclSpecifier.sc_static:
-				modifiers.append(builder.Modifier_static(loc));
+				modifiers.append(builder.Modifier_static(getTokenSourceLocation(node, "static")));
 				break;
 			case IASTDeclSpecifier.sc_auto:
-				modifiers.append(builder.Modifier_modAuto(loc));
+				modifiers.append(builder.Modifier_modAuto(getTokenSourceLocation(node, "auto")));
 				break;
 			case IASTDeclSpecifier.sc_register:
-				modifiers.append(builder.Modifier_register(loc));
+				modifiers.append(builder.Modifier_register(getTokenSourceLocation(node, "register")));
 				break;
 			case IASTDeclSpecifier.sc_mutable:
-				modifiers.append(builder.Modifier_mutable(loc));
+				modifiers.append(builder.Modifier_mutable(getTokenSourceLocation(node, "mutable")));
 				break;
 			}
 		}
 
 		if (node instanceof IASTSimpleDeclSpecifier) {
 			if (((IASTSimpleDeclSpecifier) node).isSigned())
-				modifiers.append(builder.Modifier_signed(loc));
+				modifiers.append(builder.Modifier_signed(getTokenSourceLocation(node, "signed")));
 			if (((IASTSimpleDeclSpecifier) node).isUnsigned())
-				modifiers.append(builder.Modifier_unsigned(loc));
+				modifiers.append(builder.Modifier_unsigned(getTokenSourceLocation(node, "unsigned")));
 			if (((IASTSimpleDeclSpecifier) node).isShort())
-				modifiers.append(builder.Modifier_short(loc));
+				modifiers.append(builder.Modifier_short(getTokenSourceLocation(node, "short")));
 			if (((IASTSimpleDeclSpecifier) node).isLong())
-				modifiers.append(builder.Modifier_long(loc));
+				modifiers.append(builder.Modifier_long(getTokenSourceLocation(node, "long")));
 			if (((IASTSimpleDeclSpecifier) node).isLongLong())
-				modifiers.append(builder.Modifier_longlong(loc));
+				modifiers.append(builder.Modifier_longlong(getTokenSourceLocation(node, "long long")));
 			if (((IASTSimpleDeclSpecifier) node).isComplex())
-				modifiers.append(builder.Modifier_complex(loc));
+				modifiers.append(builder.Modifier_complex(getTokenSourceLocation(node, "_Complex")));
 			if (((IASTSimpleDeclSpecifier) node).isImaginary())
-				modifiers.append(builder.Modifier_imaginary(loc));
+				modifiers.append(builder.Modifier_imaginary(getTokenSourceLocation(node, "_Imaginary")));
 		}
 
 		if (node instanceof ICASTArrayModifier) {
 			if (((ICASTArrayModifier) node).isConst())
-				modifiers.append(builder.Modifier_const(loc));
+				modifiers.append(builder.Modifier_const(getTokenSourceLocation(node, "const")));
 			if (((ICASTArrayModifier) node).isVolatile())
-				modifiers.append(builder.Modifier_volatile(loc));
+				modifiers.append(builder.Modifier_volatile(getTokenSourceLocation(node, "volatile")));
 			if (((ICASTArrayModifier) node).isRestrict())
-				modifiers.append(builder.Modifier_restrict(loc));
+				modifiers.append(builder.Modifier_restrict(getTokenSourceLocation(node, "restrict")));
 		} else if (node instanceof ICPPASTFunctionDeclarator) {
 			if (((ICPPASTFunctionDeclarator) node).isConst())
-				modifiers.append(builder.Modifier_const(loc));
+				modifiers.append(builder.Modifier_const(getTokenSourceLocation(node, "const")));
 			if (((ICPPASTFunctionDeclarator) node).isVolatile())
-				modifiers.append(builder.Modifier_volatile(loc));
+				modifiers.append(builder.Modifier_volatile(getTokenSourceLocation(node, "volatile")));
 		} else if (node instanceof IASTDeclSpecifier) {
 			if (((IASTDeclSpecifier) node).isConst())
-				modifiers.append(builder.Modifier_const(loc));
+				modifiers.append(builder.Modifier_const(getTokenSourceLocation(node, "const")));
 			if (((IASTDeclSpecifier) node).isVolatile())
-				modifiers.append(builder.Modifier_volatile(loc));
+				modifiers.append(builder.Modifier_volatile(getTokenSourceLocation(node, "volatile")));
 			if (((IASTDeclSpecifier) node).isRestrict())
-				modifiers.append(builder.Modifier_restrict(loc));
+				modifiers.append(builder.Modifier_restrict(getTokenSourceLocation(node, "restrict")));
 			if (((IASTDeclSpecifier) node).isInline())
-				modifiers.append(builder.Modifier_inline(loc));
+				modifiers.append(builder.Modifier_inline(getTokenSourceLocation(node, "inline")));
 		} else if (node instanceof IASTPointer) {
 			if (((IASTPointer) node).isConst())
-				modifiers.append(builder.Modifier_const(loc));
+				modifiers.append(builder.Modifier_const(getTokenSourceLocation(node, "const")));
 			if (((IASTPointer) node).isVolatile())
-				modifiers.append(builder.Modifier_volatile(loc));
+				modifiers.append(builder.Modifier_volatile(getTokenSourceLocation(node, "volatile")));
 			if (((IASTPointer) node).isRestrict())
-				modifiers.append(builder.Modifier_restrict(loc));
+				modifiers.append(builder.Modifier_restrict(getTokenSourceLocation(node, "restrict")));
 		} else if (node instanceof ICPPASTNamespaceDefinition) {
 			if (((ICPPASTNamespaceDefinition) node).isInline())
-				modifiers.append(builder.Modifier_inline(loc));
+				modifiers.append(builder.Modifier_inline(getTokenSourceLocation(node, "inline")));
 		}
 
 		if (node instanceof ICPPASTNamedTypeSpecifier) {
 			if (((ICPPASTNamedTypeSpecifier) node).isTypename())
-				modifiers.append(builder.Modifier_typename(loc));
+				modifiers.append(builder.Modifier_typename(getTokenSourceLocation(node, "typename")));
 		} else if (node instanceof ICPPASTUsingDeclaration)
 			if (((ICPPASTUsingDeclaration) node).isTypename())
-				modifiers.append(builder.Modifier_typename(loc));
+				modifiers.append(builder.Modifier_typename(getTokenSourceLocation(node, "typename")));
 
-		return modifiers.done();
+		return modifiers.done().stream()
+				.sorted((v1, v2) -> ((ISourceLocation) v1.asWithKeywordParameters().getParameter("src")).getOffset()
+						- ((ISourceLocation) v2.asWithKeywordParameters().getParameter("src")).getOffset())
+				.collect(vf.listWriter());
 	}
 
 	@Override
