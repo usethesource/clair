@@ -3394,10 +3394,12 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(virtSpecifier);
 		switch (virtSpecifier.getKind()) {
 		case Final:
-			stack.push(builder.Declaration_virtSpecifier(builder.Modifier_final(loc), loc));
+			stack.push(builder.Declaration_virtSpecifier(
+					builder.Modifier_final(getTokenSourceLocation(virtSpecifier, "final")), loc));
 			break;
 		case Override:
-			stack.push(builder.Declaration_virtSpecifier(builder.Modifier_override(loc), loc));
+			stack.push(builder.Declaration_virtSpecifier(
+					builder.Modifier_override(getTokenSourceLocation(virtSpecifier, "override")), loc));
 			break;
 		default:
 			throw new RuntimeException("ICPPASTVirtSpecifier encountered unknown SpecifierKind "
