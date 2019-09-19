@@ -1577,7 +1577,7 @@ public class Parser extends ASTVisitor {
 		ICPPASTExpression _noexceptExpression = declarator.getNoexceptExpression();
 
 		// TODO: fix when name == null
-		IConstructor name = builder.Name_name("", loc);
+		IConstructor name = builder.Name_name("", vf.sourceLocation(loc, loc.getOffset(), 0));
 		IASTName _name = declarator.getName();
 		if (_name != null) {
 			_name.accept(this);
