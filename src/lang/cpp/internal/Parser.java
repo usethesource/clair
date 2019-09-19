@@ -3235,7 +3235,7 @@ public class Parser extends ASTVisitor {
 			modifiers.append(builder.Modifier_private(getTokenSourceLocation(baseSpecifier, "private")));
 			break;
 		case 0:
-			modifiers.append(builder.Modifier_unspecifiedInheritance(loc));
+			modifiers.append(builder.Modifier_unspecifiedInheritance(vf.sourceLocation(loc, loc.getOffset(), 0)));
 			break;
 		default:
 			throw new RuntimeException(
