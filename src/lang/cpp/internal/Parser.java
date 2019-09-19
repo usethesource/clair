@@ -2268,16 +2268,19 @@ public class Parser extends ASTVisitor {
 
 		switch (captureDefault) {
 		case BY_COPY:
-			stack.push(builder.Expression_lambda(builder.Modifier_captDefByCopy(loc), captures.done(), declarator, body,
-					loc, typ));
+			stack.push(
+					builder.Expression_lambda(builder.Modifier_captDefByCopy(getTokenSourceLocation(expression, "=")),
+							captures.done(), declarator, body, loc, typ));
 			break;
 		case BY_REFERENCE:
-			stack.push(builder.Expression_lambda(builder.Modifier_captDefByReference(loc), captures.done(), declarator,
-					body, loc, typ));
+			stack.push(builder.Expression_lambda(
+					builder.Modifier_captDefByReference(getTokenSourceLocation(expression, "&")), captures.done(),
+					declarator, body, loc, typ));
 			break;
 		case UNSPECIFIED:
-			stack.push(builder.Expression_lambda(builder.Modifier_captDefUnspecified(loc), captures.done(), declarator,
-					body, loc, typ));
+			stack.push(builder.Expression_lambda(
+					builder.Modifier_captDefUnspecified(vf.sourceLocation(loc, loc.getOffset(), 0)), captures.done(),
+					declarator, body, loc, typ));
 			break;
 		default:
 			throw new RuntimeException("Unknown default capture type " + captureDefault + " encountered at "
