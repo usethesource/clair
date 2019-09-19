@@ -1165,6 +1165,7 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(parameterDeclaration);
 		// TODO: remove duplicate code
 		if (parameterDeclaration instanceof ICPPASTParameterDeclaration) {
+			// TODO: add isParameterPack()
 			ICPPASTParameterDeclaration declaration = (ICPPASTParameterDeclaration) parameterDeclaration;
 
 			declaration.getDeclSpecifier().accept(this);
@@ -1566,7 +1567,7 @@ public class Parser extends ASTVisitor {
 		// TODO: check refQualifier and declaresParameterPack
 		ISourceLocation loc = getSourceLocation(declarator);
 		ISourceLocation decl = br.resolveBinding(declarator);
-		IConstructor typ = tr.resolveType(declarator);
+//		IConstructor typ = tr.resolveType(declarator);
 		IList attributes = getAttributes(declarator);
 		IList modifiers = getModifiers(declarator);
 
