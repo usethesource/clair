@@ -2256,9 +2256,11 @@ public class Parser extends ASTVisitor {
 		});
 
 		IConstructor declarator;
-		if (expression.getDeclarator() == null)
-			declarator = builder.Declarator_missingDeclarator(loc, decl);
-		else {
+		if (expression.getDeclarator() == null) {
+			ISourceLocation endOfCapture = getTokenSourceLocation(expression, "]");
+			declarator = builder.Declarator_missingDeclarator(
+					vf.sourceLocation(endOfCapture, endOfCapture.getOffset() + 1, 0), decl);
+		} else {
 			expression.getDeclarator().accept(this);
 			declarator = stack.pop();
 		}
