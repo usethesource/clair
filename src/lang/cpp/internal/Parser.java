@@ -669,10 +669,12 @@ public class Parser extends ASTVisitor {
 	public ISourceLocation getTokenSourceLocation(IASTNode node, String literal) {
 		ISourceLocation loc = getSourceLocation(node);
 		try {
-			for (IToken tokens = node.getSyntax();; tokens = tokens.getNext()) {
+			IToken tokens = node.getSyntax();
+			while (tokens != null) {
 				if (literal.equals(tokens.getImage())) {
 					return vf.sourceLocation(loc, loc.getOffset() + tokens.getOffset(), literal.length());
 				}
+				tokens = tokens.getNext();
 			}
 		} catch (ExpansionOverlapsBoundaryException e) {
 			// Fall back to node's source location. Possibly find string in node's image
