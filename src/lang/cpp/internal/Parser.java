@@ -3002,18 +3002,23 @@ public class Parser extends ASTVisitor {
 
 		IASTExpression _condition = statement.getConditionExpression();
 		IConstructor condition;
-		if (_condition == null)
-			condition = builder.Expression_empty(loc);
-		else {
+		if (_condition == null) {
+			ISourceLocation initializerLoc = (ISourceLocation) initializer.asWithKeywordParameters()
+					.getParameter("src");
+			condition = builder.Expression_empty(
+					vf.sourceLocation(initializerLoc, initializerLoc.getOffset() + initializerLoc.getLength(), 0));
+		} else {
 			_condition.accept(this);
 			condition = stack.pop();
 		}
 
 		IASTExpression _iteration = statement.getIterationExpression();
 		IConstructor iteration;
-		if (_iteration == null)
-			iteration = builder.Expression_empty(loc);
-		else {
+		if (_iteration == null) {
+			ISourceLocation conditionLoc = (ISourceLocation) condition.asWithKeywordParameters().getParameter("src");
+			iteration = builder.Expression_empty(
+					vf.sourceLocation(conditionLoc, conditionLoc.getOffset() + conditionLoc.getLength(), 0));
+		} else {
 			_iteration.accept(this);
 			iteration = stack.pop();
 		}
