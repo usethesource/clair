@@ -1590,7 +1590,7 @@ public class Parser extends ASTVisitor {
 			parameters.append(stack.pop());
 		});
 		if (declarator.takesVarArgs())
-			parameters.append(builder.Declaration_varArgs(loc));
+			parameters.append(builder.Declaration_varArgs(getTokenSourceLocation(declarator, "...")));
 
 		IListWriter virtSpecifiers = vf.listWriter();
 		Stream.of(declarator.getVirtSpecifiers()).forEach(it -> {
