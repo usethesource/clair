@@ -2994,10 +2994,8 @@ public class Parser extends ASTVisitor {
 		IList attributes = getAttributes(statement);
 
 		IASTStatement _initializer = statement.getInitializerStatement();
-		IConstructor initializer;
-		if (_initializer == null)
-			initializer = builder.Expression_empty(loc);
-		else {
+		IConstructor initializer = null;
+		if (_initializer != null) {
 			_initializer.accept(this);
 			initializer = stack.pop();
 		}
