@@ -983,16 +983,16 @@ public class Parser extends ASTVisitor {
 			stack.push(builder.Declaration_explicitTemplateInstantiation(stack.pop(), loc));
 			break;
 		case ICPPASTExplicitTemplateInstantiation.STATIC:
-			stack.push(
-					builder.Declaration_explicitTemplateInstantiation(builder.Modifier_static(loc), stack.pop(), loc));
+			stack.push(builder.Declaration_explicitTemplateInstantiation(
+					builder.Modifier_static(getTokenSourceLocation(declaration, "static")), stack.pop(), loc));
 			break;
 		case ICPPASTExplicitTemplateInstantiation.INLINE:
-			stack.push(
-					builder.Declaration_explicitTemplateInstantiation(builder.Modifier_inline(loc), stack.pop(), loc));
+			stack.push(builder.Declaration_explicitTemplateInstantiation(
+					builder.Modifier_inline(getTokenSourceLocation(declaration, "inline")), stack.pop(), loc));
 			break;
 		case ICPPASTExplicitTemplateInstantiation.EXTERN:
-			stack.push(
-					builder.Declaration_explicitTemplateInstantiation(builder.Modifier_extern(loc), stack.pop(), loc));
+			stack.push(builder.Declaration_explicitTemplateInstantiation(
+					builder.Modifier_extern(getTokenSourceLocation(declaration, "extern")), stack.pop(), loc));
 			break;
 		default:
 			throw new RuntimeException("ICPPASTExplicitTemplateInstantiation encountered unknown modifier "
