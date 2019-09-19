@@ -276,11 +276,11 @@ data SExpression(loc src = |unknown:///|, STypeSymbol typ = \unresolved(), list[
  
 data SName(loc src = |unknown:///|, list[str] seps = []) //no attributes
     = \name(str \value)
-    | \qualifiedName(list[SName] qualifiers, SName lastName, loc decl = |unknown:///|)
+    | \qualifiedName(MyList[SName] qualifiers, SName lastName, loc decl = |unknown:///|)
     | \operatorName(str \value)
     | \conversionName(str \value, SExpression typeId)
     
-    | \templateId(SName name, list[SExpression] argumentTypes, loc decl = |unknown:///|)
+    | \templateId(SName name, MyList[SExpression] argumentTypes, loc decl = |unknown:///|)
 
     | \abstractEmptyName()
     ;
