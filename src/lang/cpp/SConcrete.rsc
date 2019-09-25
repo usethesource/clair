@@ -3,6 +3,7 @@ module lang::cpp::SConcrete
 import IO;
 import Node;
 import String;
+import Type;
 
 import lang::cpp::AST;
 import lang::cpp::Concrete;
@@ -54,23 +55,20 @@ str flatten(list[Part] parts) {
   return result;
 }
 
-node substitute2(type[&T] typ, str source) {
+&T <: node substitute(Symbol typ, str source) {
   parts = toParts(source);
   foo = flatten(parts);
   loc cacheLoc = |cache:///<"<counter>">|;
   sourceCache += (cacheLoc:foo);
-  tu = parseDeclaration(foo, cacheLoc);
   counter = counter + 1;
-  return tu;
-  //
-  //println("substitute2: \"<source>\"");
-  //str result = substitute(source);
-  //println("result: <result>");
-  //loc cacheLoc = |cache:///<"<counter>">|;
-  //sourceCache += (cacheLoc:result);
-  //counter = counter + 1;
-  //Declaration tu = parseDeclaration(result, cacheLoc);
-  //return toST(tu, result);
+  switch(typ) {
+    case adt("SDeclaration",[]) : return parseDeclaration(foo, cacheLoc);
+    case adt("SDeclSpecifier",[]) : return parseDeclSpecifier(foo, cacheLoc);
+    case adt("SStatement",[]) : return parseStatement(foo, cacheLoc);
+    case adt("SExpression",[]) : return parseExpression(foo, cacheLoc);
+    case adt("SName",[]) : return parseName(foo, cacheLoc);
+    default: throw "Missed adt <typ>";
+  }
 }
 
 &T <: node removeDeclAndType(&T <: node tree) = unsetRec(tree, {"decl", "typ"});
@@ -94,8 +92,10 @@ SStatement parseStatement(str code, loc l) {
                 '  <code>
                 '}";
   Declaration tu = parseString(context, l);
-  if (SStatement s := toST(adjustOffsets(tu.declarations[0].body.statements[0], l, 18))) {
-    return s;
+  adjusted = adjustOffsets(tu.declarations[0].body.statements[0], l, 18);
+  stt = toST(adjusted, context, sourceCache);
+  if (SStatement ss := stt) {
+    return ss;
   }
   throw "Impossible"; 
 }
@@ -109,7 +109,9 @@ SExpression parseExpression(str code, loc l) {
                 '  decltype(<code>) x;
                 '}";
   Declaration tu = parseString(context, l);
-  if (SExpression e := toST(adjustOffsets(tu.declarations[0].body.statements[0].declaration.declSpecifier.expression, l, 27))) {
+  adjusted = adjustOffsets(tu.declarations[0].body.statements[0].declaration.declSpecifier.expression, l, 27);
+  st = toST(adjusted, context, sourceCache);
+  if (SExpression e := st) {
     return e;
   }
   throw "Impossible";
@@ -122,7 +124,7 @@ str makeExpressionHole(int id) = "$$$$$clairExpr$<id>$$$$$";
 SName parseName(str code, loc l) {
   str context = "void <code>() {}";
   Declaration tu = parseString(context, l);
-  if (SName n := toST(adjustOffsets(tu.declarations[0].declarator.name, l, 5))) {
+  if (SName n := toST(adjustOffsets(tu.declarations[0].declarator.name, l, 5), context, sourceCache)) {
     return n;
   }
   throw "Impossible";
