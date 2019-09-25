@@ -486,8 +486,16 @@ public data STypeModifier
   
   ;
   
-node toST(node tree) {
-  return addSeps(wrapLists(tree));
+node toST(node tree) = toST(tree, ());
+node toST(node tree, map[loc,str] sourceCache) {
+  println(tree.src);
+  source = readSrc(asLoc(tree.src), sourceCache);
+  return toST(tree, source, sourceCache);
+}
+
+node toST(node tree, str src) = toST(tree, src, ());
+node toST(node tree, str src, map[loc,str] srcCache) {
+  return addSeps(wrapLists(tree), srcCache);
 }
 
 node wrapLists(node ast) {
@@ -518,7 +526,10 @@ node wrapLists(node ast) {
     case adt("Name",[]) : return make(#SName, getName(ast), children, params);
     case adt("Modifier",[]) : return make(#SModifier, getName(ast), children, params);
     case adt("Type",[]) : return make(#SType, getName(ast), children, params);
-    default: throw "Missed adt <typeOf(ast)>";
+    default: {
+      println("FOO");
+      throw "Missed adt <typeOf(ast)>";
+    }
   }
 }
 str wrapLists(str s) = s;
@@ -546,9 +557,9 @@ loc getLoc(node n) {
 
 list[&T] repeat(&T what, int times) = ([what] | it + what | i <- [1..times]);
 
-default &T <: node addSeps(&T <: node tree) {
+default &T <: node addSeps(&T <: node tree, map[loc,str] srcCache) {
   srcLoc = asLoc(tree.src);
-  code = readFile(srcLoc);
+  code = readSrc(srcLoc, srcCache);
   offset = srcLoc.offset;
   children = getChildren(tree);
   newChildren = [];
@@ -601,7 +612,7 @@ default &T <: node addSeps(&T <: node tree) {
       seps += code[lastLoc.offset+lastLoc.length-offset..];//"postfix"
     }
   }
-  newChildren = [addSeps(child) | child <- children];
+  newChildren = [addSeps(child, srcCache) | child <- children];
   params = getKeywordParameters(tree) + ("seps":seps);
   switch(typeOf(tree)) {
     case adt("SDeclaration",[]) : return make(#SDeclaration, getName(tree), newChildren, params);
@@ -616,26 +627,34 @@ default &T <: node addSeps(&T <: node tree) {
   }
 }
 
-str readBetween(node before, node after) {
+str readSrc(loc l, map[loc,str] sourceCache) {
+  if (l.scheme == "cache") {
+    return sourceCache[l.top][l.offset..l.offset+l.length];
+  } else {
+    return readFile(l);
+  }
+}
+
+str readBetween(node before, node after, map[loc,str] sourceCache) {
   if (loc beforeLoc := before.src && loc afterLoc := after.src) {
-    return readFile(beforeLoc[offset=beforeLoc.offset+beforeLoc.length][length=afterLoc.offset-beforeLoc.offset-beforeLoc.length]);
+    return readSrc(beforeLoc[offset=beforeLoc.offset+beforeLoc.length][length=afterLoc.offset-beforeLoc.offset-beforeLoc.length], sourceCache);
   }
   throw "Impossible";
 }
 
-MyList[&T] addSeps(MyList[&T] lst) {
+MyList[&T] addSeps(MyList[&T] lst, map[loc,str] sourceCache) {
   if (lst := lval([])) {
     return lst[seps=[]];
   }
   seps = for (i <- [0..size(lst.elts)-1]) {
-    append readBetween(lst.elts[i], lst.elts[i+1]);
+    append readBetween(lst.elts[i], lst.elts[i+1], sourceCache);
   }
-  elts = [addSeps(elt) | elt <- lst.elts];
+  elts = [addSeps(elt, sourceCache) | elt <- lst.elts];
   return lst[elts=elts][seps=seps];
 }
 
-loc addSeps(loc l) = l;
-str addSeps(str s) = s;
+loc addSeps(loc l, map[loc,str] _) = l;
+str addSeps(str s, map[loc,str] _) = s;
 
 list[str] getSeps(node n) {
   if (list[str] seps := n.seps) {
