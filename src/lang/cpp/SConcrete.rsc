@@ -15,10 +15,6 @@ map[loc, str] sourceCache = ();
 @reflect{need access to streams}
 java node findVariable(str name);
 
-@javaClass{lang.cpp.internal.STHelper}
-@reflect{need access to streams}
-java str substitute(str source);
-
 data Part = strPart(str src) | varPart(str var);
 
 list[Part] toParts(str s) {
@@ -41,7 +37,6 @@ list[Part] toParts(str s) {
       inVariable = false;
     }
   }
-  //iprintln(parts);
   return parts;
 }
 
@@ -83,10 +78,7 @@ node substitute2(type[&T] typ, str source) {
 &T <: node adjustOffsets(&T <: node tree, loc base, int offset) =
   visit(removeDeclAndType(tree)) {
     case loc l : {
-      if (l.scheme in {"file", "project", "home", "std", "prompt", "cache"} /*&& l.offset >= offset*/) {
-        //println("---");
-        //println(l);
-        //println( base[offset=l.offset+base.offset-offset][length=l.length]);
+      if (l.scheme in {"file", "project", "home", "std", "prompt", "cache"}) {
         if (base.offset?) {
           insert base[offset=l.offset+base.offset-offset][length=l.length];
         } else {
@@ -94,7 +86,6 @@ node substitute2(type[&T] typ, str source) {
         }
       }
     }
-      //when (l.scheme in {"file", "project", "home", "std", "prompt"} && l.offset >= offset)
   };
 
 @concreteSyntax{SStatement}
