@@ -1936,10 +1936,19 @@ public class Parser extends ASTVisitor {
 		IList modifiers = getModifiers(declSpec);
 
 		switch (declSpec.getType()) {
-		case IASTSimpleDeclSpecifier.t_unspecified:
-			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_unspecified(getTokenSourceLocation(declSpec, "")), attributes, loc));
+		case IASTSimpleDeclSpecifier.t_unspecified: {
+			ISourceLocation location = null;
+			if (modifiers.isEmpty()) {
+				location = vf.sourceLocation(loc, loc.getOffset(), 0);
+			} else {
+				ISourceLocation before = (ISourceLocation) modifiers.get(modifiers.size() - 1).asWithKeywordParameters()
+						.getParameter("src");
+				location = vf.sourceLocation(before, before.getOffset() + before.getLength(), 0);
+			}
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_unspecified(location), attributes,
+					loc));
 			break;
+		}
 		case IASTSimpleDeclSpecifier.t_void:
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
 					builder.Type_void(getTokenSourceLocation(declSpec, "void")), attributes, loc));
