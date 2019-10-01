@@ -526,6 +526,8 @@ node wrapLists(node ast) {
     case adt("Name",[]) : return make(#SName, getName(ast), children, params);
     case adt("Modifier",[]) : return make(#SModifier, getName(ast), children, params);
     case adt("Type",[]) : return make(#SType, getName(ast), children, params);
+    case adt("TypeSymbol",[]) : return make(#STypeSymbol, getName(ast), children, params);
+    case adt("TypeModifier",[]) : return make(#STypeModifier, getName(ast), children, params);
     default: {
       println("FOO");
       throw "Missed adt <typeOf(ast)>";
