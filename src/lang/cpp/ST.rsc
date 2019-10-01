@@ -665,8 +665,11 @@ list[str] getSeps(node n) {
   throw "Impossible";
 }
 
-str yield(str s) = s;
-str yield(node n) {
+str yield(str s, bool addIndentation = false) = s;
+str yield(node n, bool addIndentation = false) {
+  if (addIndentation) {
+    println("Adding indentation NYI!");
+  }
   if (lval(elts, seps = seps) := n) {
     if (elts == []) {
       return "";
