@@ -512,7 +512,7 @@ node wrapLists(node ast) {
     if ([*elts] := val) {
       params += (key : lval([wrapLists(elt) | elt <- elts]));
     } else {
-      params += (key : val);
+      params += (key : wrapLists(val));
     }
   }
   assert size(parameters) == size(params);
