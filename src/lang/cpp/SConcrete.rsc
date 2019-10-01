@@ -51,7 +51,16 @@ list[Part] toParts(str s) {
   return parts;
 }
 
-str flatten(list[Part] parts) {
+MyList[&T] findSurroundingList(list[&T] l, node ast) {
+  if (/MyList[&T] ml := ast, bla:[*pre, *target, *post] := ml.elts, target == l) {
+    if (lval(bla, seps=lSeps, sep=lSep) := ml) {//workaround for keyword parameters on parameterized ADTs
+      return lval(target, seps=lSeps[size(pre)..size(pre)+size(target)-1], sep=lSep);
+    }
+  }
+  throw "Impossible";
+}
+
+str flatten(list[Part] parts, node ast) {
   result = "";
   for (part <- parts) {
     if (strPart(src) := part) {
@@ -59,6 +68,10 @@ str flatten(list[Part] parts) {
     } else if (varPart(var) := part) {
       node n = findSimpleVariable(var);
       result += yield(n);
+    } else if (lvarPart(var) := part) {
+      l = findListVariable(var);
+      ml = findSurroundingList(l, ast);
+      result += yield(ml);
     }
   }
   return result;
@@ -66,7 +79,7 @@ str flatten(list[Part] parts) {
 
 &T <: node substitute(type[&T <: node] typ, node ast, str source) {
   parts = toParts(source);
-  foo = flatten(parts);
+  foo = flatten(parts, ast);
   loc cacheLoc = |cache:///<"<counter>">|;
   sourceCache += (cacheLoc:foo);
   counter = counter + 1;
