@@ -1,6 +1,7 @@
 module lang::cpp::SConcrete
 
 import IO;
+import List;
 import Node;
 import String;
 import Type;
@@ -20,23 +21,30 @@ java node findSimpleVariable(str name);
 @reflect{need access to streams}
 java list[&T] findListVariable(str name);
 
+data Part = strPart(str src) | varPart(str var) | lvarPart(str var);
+
 list[Part] toParts(str s) {
   inVariable = false;
   parts = [];
   while (s != "") {
     if (!inVariable) {
-      index = findFirst(s, "[");
-      if (index == -1) {
+      i = findFirst(s, "[");
+      if (i == -1) {
         parts += strPart(s);
         break;
       }
-      parts += strPart(s[0..index]);
-      s = s[index..];
+      parts += strPart(s[0..i]);
+      s = s[i..];
       inVariable = true;
     } else {
-      index = findFirst(s, "]");
-      parts += varPart(s[1..index]);
-      s = s[index+1..];
+      i = findFirst(s, "]");
+      var = s[1..i];
+      if (var[-1] == "*") {
+        parts += lvarPart(var[..-1]);
+      } else {
+        parts += varPart(var);
+      }
+      s = s[i+1..];
       inVariable = false;
     }
   }
