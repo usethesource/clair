@@ -118,7 +118,7 @@ SExpression parseExpression(str code, loc l) {
   throw "Impossible";
 }
 
-@concreteHole{Expression}
+@concreteHole{SExpression}
 str makeExpressionHole(int id) = "$$$$$clairExpr$<id>$$$$$";
 
 @concreteSyntax{SName}
