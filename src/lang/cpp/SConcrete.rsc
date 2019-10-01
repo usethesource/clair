@@ -56,13 +56,13 @@ str flatten(list[Part] parts) {
   return result;
 }
 
-&T <: node substitute(Symbol typ, str source) {
+&T <: node substitute(type[&T <: node] typ, node ast, str source) {
   parts = toParts(source);
   foo = flatten(parts);
   loc cacheLoc = |cache:///<"<counter>">|;
   sourceCache += (cacheLoc:foo);
   counter = counter + 1;
-  switch(typ) {
+  switch(typ.symbol) {
     case adt("SDeclaration",[]) : return parseDeclaration(foo, cacheLoc);
     case adt("SDeclSpecifier",[]) : return parseDeclSpecifier(foo, cacheLoc);
     case adt("SStatement",[]) : return parseStatement(foo, cacheLoc);
