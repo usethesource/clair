@@ -14,9 +14,11 @@ map[loc, str] sourceCache = ();
 
 @javaClass{lang.cpp.internal.STHelper}
 @reflect{need access to streams}
-java node findVariable(str name);
+java node findSimpleVariable(str name);
 
-data Part = strPart(str src) | varPart(str var);
+@javaClass{lang.cpp.internal.STHelper}
+@reflect{need access to streams}
+java list[&T] findListVariable(str name);
 
 list[Part] toParts(str s) {
   inVariable = false;
@@ -47,9 +49,8 @@ str flatten(list[Part] parts) {
     if (strPart(src) := part) {
       result += src;
     } else if (varPart(var) := part) {
-      node n = findVariable(var);
-      str y = yield(n);
-      result += y;
+      node n = findSimpleVariable(var);
+      result += yield(n);
     }
   }
   return result;
