@@ -13,19 +13,29 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 module lang::cpp::Concrete
 
 import IO;
-import List;
 import Node;
 
 import lang::cpp::AST;
-import util::ValueUI;
+
+&T <: node cleanup(&T <: node x) = unsetRec(x, {"decl", "typ"});
+
+&T <: node adjustOffsets(&T <: node x, loc base, int pre) {
+  return visit(x) {
+  case loc l : {
+    if (l.scheme in {"file", "project", "home", "std", "prompt"} && l.offset >= pre) {
+      insert base.top[offset = base.offset + l.offset - pre][length = l.length];
+    }
+  }
+  }
+}
 
 @concreteSyntax{Statement}
 Statement parseStatement(str code, loc l) {
   str context = "void parse() {
                 '  <code>
                 '}";
-  Declaration tu = parseString(context);
-  return unsetRec(tu.declarations[0].body.statements[0]); 
+  Declaration tu = adjustOffsets(parseString(context, l), l, 17);
+  return cleanup(tu.declarations[0].body.statements[0]); 
 }
 
 @concreteSyntax{Statement*}
@@ -33,8 +43,8 @@ list[Statement] parseStatements(str code, loc l) {
   str context = "void parse() {
                 '  <code>
                 '}";
-  Declaration tu = parseString(context);
-  return [unsetRec(s) | s <- tu.declarations[0].body.statements];
+  Declaration tu = adjustOffsets(parseString(context, l), l, 17);
+  return [cleanup(s) | s <- tu.declarations[0].body.statements];
 }
 
 @concreteHole{Statement}
@@ -45,8 +55,8 @@ Expression parseExpression(str code, loc l) {
   str context = "void parse() {
                 '  decltype(<code>) x;
                 '}";
-  Declaration tu = parseString(context);
-  return unsetRec(tu.declarations[0].body.statements[0].declaration.declSpecifier.expression);
+  Declaration tu = adjustOffsets(parseString(context), l, 26);
+  return cleanup(tu.declarations[0].body.statements[0].declaration.declSpecifier.expression);
 }
 
 @concreteSyntax{Expression*}
@@ -54,8 +64,8 @@ list[Expression] parseExpressions(str code, loc l) {
   str context = "void parse() {
                 '  x = f(<code>);
                 '}";
-  Declaration tu = parseString(context);
-  return [unsetRec(e) | e <- tu.declarations[0].body.statements[0].expression.rhs.arguments];
+  Declaration tu = adjustOffsets(parseString(context), l, 23);
+  return [cleanup(e) | e <- tu.declarations[0].body.statements[0].expression.rhs.arguments];
 }
 
 @concreteHole{Expression}
@@ -72,12 +82,16 @@ Name parseName(str code, loc l) {
 str makeNameHole(int id) = "_name$$<id>$$end";
 
 @concreteSyntax{Declaration}
-Declaration parseDeclaration(str code) {
-  Declaration tu = parseString("class C { <code> };");
+Declaration parseDeclaration(str code, loc l) {
+  //iprintln(cleanup(parseString("class C { <code> };")));
+  Declaration tu = adjustOffsets(parseString("class C { <code> };"), l, 10);
+  iprintln(tu);
   Declaration ret = tu.declarations[0].declSpecifier.members[0];
   if (ret is problemDeclaration)
     throw "Invalid input for external parser";
-  return unsetRec(ret);
+  return cleanup(ret);
+}
+
 @concreteSyntax{Declaration*}
 list[Declaration] parseDeclarations(str code, loc l) {
   Declaration tu = adjustOffsets(parseString("class C { <code> };"), l, 10);
@@ -89,9 +103,9 @@ list[Declaration] parseDeclarations(str code, loc l) {
 str makeDeclarationHole(int id) = "$clairDecl$<id>$ ClaiR {};";
 
 @concreteSyntax{DeclSpecifier}
-  Declaration tu = parseString("<code> myVariable;");
-  return unsetRec(tu.declarations[0].declSpecifier);
 DeclSpecifier parseDeclSpecifier(str code, loc l) {
+  Declaration tu = adjustOffsets(parseString("<code> myVariable;"), l, 5);
+  return cleanup(tu.declarations[0].declSpecifier);
 }
 
 @concreteHole{DeclSpecifier}
