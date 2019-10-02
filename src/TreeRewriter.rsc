@@ -5,9 +5,117 @@ import List;
 import Node;
 import ParseTree;
 import String;
-
+import util::ValueUI;
 
 import lang::cpp::AST;
+import lang::cpp::Concrete;
+
+//Declaration getAst() = parseCpp(|project://clair/src/test/rewriteSmall.cpp|);
+Declaration getAst() = parseCpp(|project://clair/src/test/encapsulate.cpp|);
+
+bool biprintln(value arg) {
+  iprintln(arg);
+  return true;
+}
+//
+public list[Expression] ee = (Expression*)`5,6`;
+list[Statement] ss() = (Statement*)`int x;
+'x = f(<Expression* ee>, 1);
+'return;`;
+Declaration foobar() = (Declaration)`class C {
+                                    'int x;
+                                    '};`; 
+list[Declaration] foobar2() = (Declaration*)`class C {
+                                            'int x;
+                                            '  char c;
+                                            '};`;
+
+
+Edits transform() = transform(getAst());
+Edits transform(node ast) {
+  newAst = visit(ast) {
+    //case (Expression)`<Name n>(<Expression e1>, <Expression e2>)` => (Expression)`<Name n>(<Expression e2>)`
+    //case (Statement)`int <Name n> = <Expression e>;` => (Statement)`int <Name n> = <Expression e> * <Expression e>;`
+    //case (Expression*)`<Expression* es>, 1` => (Expression*)`<Expression* es>,  2`
+    //case (Statement*)`<Statement* pre>
+    //                 'x = <Expression e>;
+    //                 '<Statement* post>`
+    //  => (Statement*)`<Statement* pre>
+    //                 'int x = 3;
+    //                 'y = x + <Expression e>;
+    //                 '<Statement* post>
+    //                 '<Statement* post>`
+   //case 0:;
+    case (Declaration)`class <Name c> {
+                      '  <Declaration* pre>
+                      '  public:
+                      '  <Declaration* inbetween>
+                      '  <DeclSpecifier ds> <Name n>;
+                      '  <Declaration* post>
+                      '};`
+      => (Declaration)`class <Name c> {
+                      '  <Declaration* pre>
+                      '  public: 
+                      '  <Declaration* inbetween>
+                      '  private: 
+                      '  <DeclSpecifier ds> <Name n>;
+                      '  public:
+                      '  void setn(ds _n) { n = _n; }
+                      '  ds getn() { return n; }
+                      '  <Declaration* post>
+                      '};`
+         when !(unsetRec((Declaration)`private:`) <- inbetween || unsetRec((Declaration)`protected:`) <- inbetween)// && biprintln(ast)
+           //Declaration setter := parseDeclaration("void set<readFile(n.src)>(<readFile(ds.src)> val) { <readFile(n.src)> = val; }"),
+           //Declaration setter := parseDeclaration("<readFile(ds.src)> get<readFile(n.src)>() { return <readFile(n.src)>; }")
+           //&& Declaration getter := parseDeclaration("<type> get<n>() { return <n>; }")
+           //&& Declaration setter := (Declaration)`void set<
+           //case (Expression*)`<Expression* es>, 1` => (Expression*)`<Expression* es>, 2`
+    //case (Statement)`z = f(<Expression* es>, 1);` => (Statement)`z = f(<Expression* es>, 0);`
+    //case (Expression)`foo(<Expression l>, <Expression r>)`
+    //  => (Expression)`foo(<Expression r>, 
+    //                 '               5, <Expression r>, <Expression l>)`
+    //case (Expression*)`<Expression* e>, <Expression f>`
+    //  => (Expression*)`<Expression f>,  <Expression* e>`
+    //case (Expression)`<Expression e> + <Expression f>`
+    //  => (Expression)`2 * <Expression e>` when e := f
+    //case (Expression)`f(<Expression* es>, <Expression* fs>)`
+    //  => (Expression)`f(<Expression* fs>, <Expression* es>)` when size(es) == 4
+    //case (Expression)`<Expression _> + <Expression e>` => e
+    //case (Expression)`<Expression _> + <Expression e>` => (Expression)`<Expression e>`
+    //case (Expression)`<Expression e1> + <Expression e2>` => (Expression)`<Expression e2> * <Expression e1>`
+    //case (Expression)`<Expression e> + <Expression e>` => (Expression)`2 * <Expression e>`
+    //case (Expression)`4` => (Expression)`42`
+    //case (Declaration)`<DeclSpecifier ds> <Name n>() { <Statement pre> x = <Expression xexpr>; <Statement post> }`
+    //  => (Declaration)`<DeclSpecifier ds> <Name n>() { <Statement pre> <Statement post> }`
+    //case (Declaration)`<DeclSpecifier ds> <Name n>() { <Statement* foo><Statement* bar> }`
+    //  => (Declaration)`<DeclSpecifier ds> <Name n>() { <Statement* bar><Statement* foo> }`
+    //case (Statement*)`<Statement* as><Statement b>` => (Statement*)`<Statement b><Statement* as>` when (Statement)`int y = <Expression _>;` := b
+    //case (Statement*)`<Statement* as><Statement* bs>` => (Statement*)`<Statement* bs><Statement* as>` when as!:=(Statement*)`` && bs!:=(Statement*)``
+    //case (Declaration)`<DeclSpecifier ds> <Name n>() { <Statement* foo> return <Expression ret>; <Statement* bar>} `
+    //  => (Declaration)`<DeclSpecifier ds> <Name n>() { <Statement* bar> <Statement* bar> int z = 42; return <Expression ret>; <Statement* foo>}`
+  };
+  //text(unsetRec(newAst, {"typ", "decl"}));
+  //text(unsetRec(newAst));
+  return diff(ast, newAst, ());
+}
+
+//TODO: remove whitespace/delimiter on empty list variable
+
+set[node] astStack = {};
+void addToStack(node n) {
+  if (/n !:= astStack) {
+    astStack += n;
+  }
+}
+node findAst(loc l, node _) {
+  if (/node n := astStack, n has src, n.src == l) {
+    return n;
+  }
+  throw "Did not find node with loc <l>"; 
+}
+list[node] findAst(list[node] nodes) {
+  return [];
+}
 
 data Edit
   = delete(loc where, loc prev = |unset:///|, loc post = |unset:///|)
@@ -48,7 +156,7 @@ str processEdit(map[loc, str] fragments, delete(loc where)) = "";
 str processEdit(map[loc, str] fragments, edit(loc where, loc what, Edits edits)) {
   ret = fragments[what];
   if (size(edits) == 0) {
-    return ret;
+    return ret; 
   }
   for (e <- sort(edits, bool(Edit e1, Edit e2) { return e1.where.offset > e2.where.offset; })) {
     ins = processEdit(fragments, e);
@@ -95,7 +203,13 @@ list[node] asList(value v) {
 
 loc getLocation(node n) = asLoc(getAnnotations(n)["loc"]?n.src);
   
-Edits concreteDiff(Tree pattern, node instance, map[str, int] listVarLengths) = [metaVar(pattern@\loc, asLoc(instance.src))];
+Edits concreteDiff(Tree pattern, node instance, map[str, int] listVarLengths) {
+  d = diff(findAst(instance.src, instance), instance, listVarLengths);
+  if (d != []) {
+    println("nested diff: <d>");
+  }
+  return [edit(pattern@\loc, asLoc(instance.src), [])];
+}
 
 Edits concreteDiff(&T <: node pattern, &T <: node instance, map[str, int] listVarLengths) {
   if (pattern == instance) { //trees are equal
@@ -135,9 +249,15 @@ Edits concreteDiff(list[node] pattern, list[node] instance, map[str, int] listVa
       } else {
         loc srcLoc = asLoc(varImage[0].src);
         if (tail(varImage) != [] && loc last := varImage[-1].src) {
+          println("last.offset: <last.offset>");
+          println("srcLoc.offset: <srcLoc.offset>");
+          println("last.length: <last.length>");
+          println("foo: <last.offset - srcLoc.offset + last.length>");
           srcLoc.length = last.offset - srcLoc.offset + last.length;
           //TODO: check for trailing whitespace/delimiter when we're not in the last list element
         }
+        foo = findAst(varImage);
+        println(foo);
         edits += edit(holeLoc, srcLoc, []);
         removeLeadingChars = true;
       }
@@ -149,7 +269,21 @@ Edits concreteDiff(list[node] pattern, list[node] instance, map[str, int] listVa
   return edits;
 }
 
+//Statement fooo() {
+//  //iprintln((Statement)`x = g(1,44);`);
+//  //iprintln((Expression*)`1,2,33`);
+//  //if ( /(Expression*)`1,2` := (Statement)`f(1,2);`) println("FOOOOOO");
+//  //iprintln(visit((Statement)`y = f(1,2,3);`) {
+//  //  case bla:(Expression)`f(<Expression* pre>, 3)`  => (Expression)`f(x,<Expression* pre>)`
+//  //});
+//  iprintln(visit((Statement)`y = x + 4;`) {
+//    case (Expression)`x +  <Expression e>` => (Expression)`<Expression e> - 1`
+//  });
+//  return (Statement)`y = f(11,222,     3333);`;
+//}
+
 Edits diff(&T <: node old, &T <: node new, map[str, int] listVarLengths) {
+  addToStack(old);
   if (old == new) {//trees are equal, no diff
     return [];
   }

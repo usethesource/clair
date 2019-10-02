@@ -21,13 +21,26 @@ public class TreeRewriterHelper {
 			return Collections.emptyMap();
 		}
 		return Collections.emptyMap();
+//		return ctx.getHeap().getModule(module).getExternalConcretePatterns();
 	}
 
 	public IValue getConcreteSyntaxImage(ISourceLocation loc, IEvaluatorContext ctx) {
-		return getExternalConcretePatterns(loc, ctx).get(loc);
+		Map<ISourceLocation, IValue> patterns = getExternalConcretePatterns(loc, ctx);
+		for (ISourceLocation l : patterns.keySet()) {
+			if (loc.top().isEqual(l.top()) && loc.getOffset() == l.getOffset() && loc.getLength() == l.getLength()) {
+				return patterns.get(l);
+			}
+		}
+		throw new IllegalArgumentException("No concrete image for " + loc);
 	}
 
 	public IBool isConcreteSyntaxPattern(ISourceLocation loc, IEvaluatorContext ctx) {
-		return vf.bool(getExternalConcretePatterns(loc, ctx).containsKey(loc));
+		Map<ISourceLocation, IValue> patterns = getExternalConcretePatterns(loc, ctx);
+		for (ISourceLocation l : patterns.keySet()) {
+			if (loc.top().isEqual(l.top()) && loc.getOffset() == l.getOffset() && loc.getLength() == l.getLength()) {
+				return vf.bool(true);
+			}
+		}
+		return vf.bool(false);
 	}
 }
