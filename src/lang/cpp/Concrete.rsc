@@ -20,7 +20,7 @@ import lang::cpp::AST;
 import util::ValueUI;
 
 @concreteSyntax{Statement}
-Statement parseStatement(str code) {
+Statement parseStatement(str code, loc l) {
   str context = "void parse() {
                 '  <code>
                 '}";
@@ -29,7 +29,7 @@ Statement parseStatement(str code) {
 }
 
 @concreteSyntax{Statement*}
-list[Statement] parseStatements(str code) {
+list[Statement] parseStatements(str code, loc l) {
   str context = "void parse() {
                 '  <code>
                 '}";
@@ -41,7 +41,7 @@ list[Statement] parseStatements(str code) {
 str makeStatementHole(int id) = "$$$$$clairStmt$<id>$$$$$();";
 
 @concreteSyntax{Expression}
-Expression parseExpression(str code) {
+Expression parseExpression(str code, loc l) {
   str context = "void parse() {
                 '  decltype(<code>) x;
                 '}";
@@ -50,7 +50,7 @@ Expression parseExpression(str code) {
 }
 
 @concreteSyntax{Expression*}
-list[Expression] parseExpressions(str code) {
+list[Expression] parseExpressions(str code, loc l) {
   str context = "void parse() {
                 '  x = f(<code>);
                 '}";
@@ -62,10 +62,10 @@ list[Expression] parseExpressions(str code) {
 str makeExpressionHole(int id) = "$$$$$clairExpr$<id>$$$$$";
 
 @concreteSyntax{Name}
-Name parseName(str code) {
+Name parseName(str code, loc l) {
   str context = "void <code>() {}";
-  Declaration tu = parseString(context);
-  return unsetRec(tu.declarations[0].declarator.name);
+  Declaration tu = adjustOffsets(parseString(context), l, 5);
+  return cleanup(tu.declarations[0].declarator.name);
 }
 
 @concreteHole{Name}
@@ -78,15 +78,20 @@ Declaration parseDeclaration(str code) {
   if (ret is problemDeclaration)
     throw "Invalid input for external parser";
   return unsetRec(ret);
+@concreteSyntax{Declaration*}
+list[Declaration] parseDeclarations(str code, loc l) {
+  Declaration tu = adjustOffsets(parseString("class C { <code> };"), l, 10);
+  iprintln(tu);
+  return [cleanup(declaration) | declaration <- tu.declarations[0].declSpecifier.members];
 }
 
 @concreteHole{Declaration}
 str makeDeclarationHole(int id) = "$clairDecl$<id>$ ClaiR {};";
 
 @concreteSyntax{DeclSpecifier}
-DeclSpecifier parseDeclSpecifier(str code) {
   Declaration tu = parseString("<code> myVariable;");
   return unsetRec(tu.declarations[0].declSpecifier);
+DeclSpecifier parseDeclSpecifier(str code, loc l) {
 }
 
 @concreteHole{DeclSpecifier}
