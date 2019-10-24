@@ -488,7 +488,6 @@ public data STypeModifier
   
 node toST(node tree) = toST(tree, ());
 node toST(node tree, map[loc,str] sourceCache) {
-  println(tree.src);
   source = readSrc(asLoc(tree.src), sourceCache);
   return toST(tree, source, sourceCache);
 }
