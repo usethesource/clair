@@ -348,6 +348,7 @@ data Type(loc src = |unknown:///|) //no attributes
     | \decimal32()
     | \decimal64()
     | \decimal128()
+    | \declTypeAuto()
     
     
     | \arrayType(Type \type, int size)

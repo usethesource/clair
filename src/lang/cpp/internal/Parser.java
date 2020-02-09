@@ -2019,6 +2019,10 @@ public class Parser extends ASTVisitor {
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
 					builder.Type_decimal128(getTokenSourceLocation(declSpec, "_Decimal128")), attributes, loc));
 			break;
+		case IASTSimpleDeclSpecifier.t_decltype_auto:
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_declTypeAuto(loc), attributes, loc));
+			out("Check decltype(auto) location at " + loc);
+			break;
 		default:
 			throw new RuntimeException(
 					"Unknown IASTSimpleDeclSpecifier kind " + declSpec.getType() + " at " + loc + ". Exiting");

@@ -446,8 +446,6 @@ public class AST {
     = tf.constructor(typestore,_Type,"classType",_Name,"name");
   private static final Type _Type_unionType_1 
     = tf.constructor(typestore,_Type,"unionType",_Name,"name");
-  private static final Type _Type_basicType_2 
-    = tf.constructor(typestore,_Type,"basicType",_Type,"type",tf.listType(_Modifier),"modifiers");
   private static final Type _Type_char_0 
     = tf.constructor(typestore,_Type,"char");
   private static final Type _Type_unspecified_0 
@@ -476,6 +474,10 @@ public class AST {
     = tf.constructor(typestore,_Type,"typeof");
   private static final Type _Type_double_0 
     = tf.constructor(typestore,_Type,"double");
+  private static final Type _Type_declTypeAuto_0 
+    = tf.constructor(typestore,_Type,"declTypeAuto");
+  private static final Type _Type_basicType_2 
+    = tf.constructor(typestore,_Type,"basicType",_Type,"type",tf.listType(_Modifier),"modifiers");
   private static final Type _Type_void_0 
     = tf.constructor(typestore,_Type,"void");
   private static final Type _Type_structType_1 
@@ -4477,6 +4479,16 @@ public class AST {
     
     
     return vf.constructor(_Type_double_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Type_declTypeAuto(ISourceLocation $loc) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    return vf.constructor(_Type_declTypeAuto_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Type_void(ISourceLocation $loc) {
