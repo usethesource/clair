@@ -18,7 +18,7 @@ import lang::cpp::TypeSymbol;
 
 //extend analysis::m3::AST;
 
-data Declarator(list[Attribute] attributes = [], loc src = |unknown:///|, loc decl = |unknown:///|)
+data Declarator(list[Attribute] attributes = [], loc src = |unknown:///|, loc decl = |unknown:///|, bool isMacroExpansion = false)
     = \declarator(list[Declaration] pointerOperators, Name name)
     | \declarator(list[Declaration] pointerOperators, Name name, Expression initializer)
     | \fieldDeclarator(list[Declaration] pointerOperators, Name name, Expression bitFieldSize)
@@ -40,7 +40,7 @@ data Declarator(list[Attribute] attributes = [], loc src = |unknown:///|, loc de
     | \missingDeclarator() //no attributes
     ;
     
-data DeclSpecifier(list[Attribute] attributes = [], loc src = |unknown:///|)
+data DeclSpecifier(list[Attribute] attributes = [], loc src = |unknown:///|, bool isMacroExpansion = false)
     = \declSpecifier(list[Modifier] modifiers, Type \type)
     | \declSpecifier(list[Modifier] modifiers, Type \type, Expression expression) //decltype and type_of
     | \etsEnum(list[Modifier] modifiers, Name name, loc decl = |unknown:///|) //no attributes
@@ -71,7 +71,7 @@ data DeclSpecifier(list[Attribute] attributes = [], loc src = |unknown:///|)
     | \msThrowEllipsis() //no attributes
     ;
     
-data Declaration(list[Attribute] attributes = [], loc src=|unknown:///|)
+data Declaration(list[Attribute] attributes = [], loc src=|unknown:///|, bool isMacroExpansion = false)
     = \translationUnit(list[Declaration] declarations) //no attributes
     | \simpleDeclaration(DeclSpecifier declSpecifier, list[Declarator] declarators)
     | \functionDefinition(Expression returnSpec, Declarator declarator, Statement body)//? //no attributes
@@ -141,7 +141,7 @@ data Declaration(list[Attribute] attributes = [], loc src=|unknown:///|)
     ;
 
 
-data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved()) //no attributes
+data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved(), bool isMacroExpansion = false) //no attributes
     = \multiply(Expression lhs, Expression rhs)
     | \divide(Expression lhs, Expression rhs)
     | \modulo(Expression lhs, Expression rhs)
@@ -287,7 +287,7 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved()) //no at
     
     ;                       
  
-data Name(loc src = |unknown:///|) //no attributes
+data Name(loc src = |unknown:///|, bool isMacroExpansion = false) //no attributes
     = \name(str \value)
     | \qualifiedName(list[Name] qualifiers, Name lastName, loc decl = |unknown:///|)
     | \operatorName(str \value)
@@ -298,7 +298,7 @@ data Name(loc src = |unknown:///|) //no attributes
     | \abstractEmptyName()
     ;
  
-data Statement(list[Attribute] attributes = [], loc src = |unknown:///|)
+data Statement(list[Attribute] attributes = [], loc src = |unknown:///|, bool isMacroExpansion = false)
     = \compoundStatement(list[Statement] statements)
     | \declarationStatement(Declaration declaration)
     | \expressionStatement(Expression expression)
@@ -332,7 +332,7 @@ data Statement(list[Attribute] attributes = [], loc src = |unknown:///|)
     | \problem(str raw) //no attributes
     ;           
   
-data Type(loc src = |unknown:///|) //no attributes
+data Type(loc src = |unknown:///|, bool isMacroExpansion = false) //no attributes
     = \unspecified()
     | \void()
     | \char()
@@ -364,7 +364,7 @@ data Type(loc src = |unknown:///|) //no attributes
 
     ;
   
-data Modifier(loc src = |unknown:///|) //no attributes
+data Modifier(loc src = |unknown:///|, bool isMacroExpansion = false) //no attributes
     = typedef()
     | \extern()
     | \static()
