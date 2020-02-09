@@ -2544,8 +2544,27 @@ public class Parser extends ASTVisitor {
 
 	public int visit(IASTBinaryTypeIdExpression expression) {
 		// has typ
-		out("BinaryTypeIdExpression: " + expression.getRawSignature());
-		throw new RuntimeException("NYI at " + getSourceLocation(expression));
+		ISourceLocation loc = getSourceLocation(expression);
+		IConstructor typ = tr.resolveType(expression);
+
+		expression.getOperand1().accept(this);
+		IConstructor lhs = stack.pop();
+		expression.getOperand2().accept(this);
+		IConstructor rhs = stack.pop();
+
+		switch (expression.getOperator()) {
+		case __is_base_of:
+			stack.push(builder.Expression_isBaseOf(lhs, rhs, loc, typ));
+			break;
+		case __is_trivially_assignable:
+			stack.push(builder.Expression_isTriviallyAssignable(lhs, rhs, loc, typ));
+			break;
+		default:
+			throw new RuntimeException(
+					"Unknown binary TypeId expression " + expression.getOperator().name() + " at " + loc);
+		}
+
+		return PROCESS_ABORT;
 	}
 
 	public int visit(IASTCastExpression expression) {

@@ -257,6 +257,9 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved()) //no at
     
     | \typeIdInitializerExpression(Expression typeId, Expression initializer)
     
+    | \isBaseOf(Expression lhs, Expression rhs)
+    | \isTriviallyAssignable(Expression lhs, Expression rhs)
+    
     // TypeId below
     | \typeId(DeclSpecifier declSpecifier)
     | \typeId(DeclSpecifier declSpecifier, Declarator abstractDeclarator)
