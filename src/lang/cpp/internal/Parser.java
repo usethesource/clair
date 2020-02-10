@@ -700,107 +700,113 @@ public class Parser extends ASTVisitor {
 	}
 
 	IList getModifiers(IASTNode node) {
+		boolean isMacroExpansion = isMacroExpansion(node);
 		IListWriter modifiers = vf.listWriter();
 
 		if (node instanceof ICPPASTDeclSpecifier) {
 			if (((ICPPASTDeclSpecifier) node).isFriend())
-				modifiers.append(builder.Modifier_friend(getTokenSourceLocation(node, "friend")));
+				modifiers.append(builder.Modifier_friend(getTokenSourceLocation(node, "friend"), isMacroExpansion));
 			if (((ICPPASTDeclSpecifier) node).isVirtual())
-				modifiers.append(builder.Modifier_virtual(getTokenSourceLocation(node, "virtual")));
+				modifiers.append(builder.Modifier_virtual(getTokenSourceLocation(node, "virtual"), isMacroExpansion));
 			if (((ICPPASTDeclSpecifier) node).isExplicit())
-				modifiers.append(builder.Modifier_explicit(getTokenSourceLocation(node, "explicit")));
+				modifiers.append(builder.Modifier_explicit(getTokenSourceLocation(node, "explicit"), isMacroExpansion));
 			if (((ICPPASTDeclSpecifier) node).isConstexpr())
-				modifiers.append(builder.Modifier_constexpr(getTokenSourceLocation(node, "constexpr")));
+				modifiers.append(
+						builder.Modifier_constexpr(getTokenSourceLocation(node, "constexpr"), isMacroExpansion));
 			if (((ICPPASTDeclSpecifier) node).isThreadLocal())
-				modifiers.append(builder.Modifier_threadLocal(getTokenSourceLocation(node, "thread_local")));
+				modifiers.append(
+						builder.Modifier_threadLocal(getTokenSourceLocation(node, "thread_local"), isMacroExpansion));
 		}
 
 		if (node instanceof ICPPASTFunctionDeclarator) {
 			if (((ICPPASTFunctionDeclarator) node).isMutable())
-				modifiers.append(builder.Modifier_mutable(getTokenSourceLocation(node, "mutable")));
+				modifiers.append(builder.Modifier_mutable(getTokenSourceLocation(node, "mutable"), isMacroExpansion));
 			if (((ICPPASTFunctionDeclarator) node).isPureVirtual())
-				modifiers.append(builder.Modifier_pureVirtual(getTokenSourceLocation(node, "virtual")));// check
+				modifiers.append(
+						builder.Modifier_pureVirtual(getTokenSourceLocation(node, "virtual"), isMacroExpansion));// check
 		}
 
 		if (node instanceof IASTDeclSpecifier) {
 			switch (((IASTDeclSpecifier) node).getStorageClass()) {
 			case IASTDeclSpecifier.sc_typedef:
-				modifiers.append(builder.Modifier_typedef(getTokenSourceLocation(node, "typedef")));
+				modifiers.append(builder.Modifier_typedef(getTokenSourceLocation(node, "typedef"), isMacroExpansion));
 				break;
 			case IASTDeclSpecifier.sc_extern:
-				modifiers.append(builder.Modifier_extern(getTokenSourceLocation(node, "extern")));
+				modifiers.append(builder.Modifier_extern(getTokenSourceLocation(node, "extern"), isMacroExpansion));
 				break;
 			case IASTDeclSpecifier.sc_static:
-				modifiers.append(builder.Modifier_static(getTokenSourceLocation(node, "static")));
+				modifiers.append(builder.Modifier_static(getTokenSourceLocation(node, "static"), isMacroExpansion));
 				break;
 			case IASTDeclSpecifier.sc_auto:
-				modifiers.append(builder.Modifier_modAuto(getTokenSourceLocation(node, "auto")));
+				modifiers.append(builder.Modifier_modAuto(getTokenSourceLocation(node, "auto"), isMacroExpansion));
 				break;
 			case IASTDeclSpecifier.sc_register:
-				modifiers.append(builder.Modifier_register(getTokenSourceLocation(node, "register")));
+				modifiers.append(builder.Modifier_register(getTokenSourceLocation(node, "register"), isMacroExpansion));
 				break;
 			case IASTDeclSpecifier.sc_mutable:
-				modifiers.append(builder.Modifier_mutable(getTokenSourceLocation(node, "mutable")));
+				modifiers.append(builder.Modifier_mutable(getTokenSourceLocation(node, "mutable"), isMacroExpansion));
 				break;
 			}
 		}
 
 		if (node instanceof IASTSimpleDeclSpecifier) {
 			if (((IASTSimpleDeclSpecifier) node).isSigned())
-				modifiers.append(builder.Modifier_signed(getTokenSourceLocation(node, "signed")));
+				modifiers.append(builder.Modifier_signed(getTokenSourceLocation(node, "signed"), isMacroExpansion));
 			if (((IASTSimpleDeclSpecifier) node).isUnsigned())
-				modifiers.append(builder.Modifier_unsigned(getTokenSourceLocation(node, "unsigned")));
+				modifiers.append(builder.Modifier_unsigned(getTokenSourceLocation(node, "unsigned"), isMacroExpansion));
 			if (((IASTSimpleDeclSpecifier) node).isShort())
-				modifiers.append(builder.Modifier_short(getTokenSourceLocation(node, "short")));
+				modifiers.append(builder.Modifier_short(getTokenSourceLocation(node, "short"), isMacroExpansion));
 			if (((IASTSimpleDeclSpecifier) node).isLong())
-				modifiers.append(builder.Modifier_long(getTokenSourceLocation(node, "long")));
+				modifiers.append(builder.Modifier_long(getTokenSourceLocation(node, "long"), isMacroExpansion));
 			if (((IASTSimpleDeclSpecifier) node).isLongLong())
-				modifiers.append(builder.Modifier_longlong(getTokenSourceLocation(node, "long long")));
+				modifiers
+						.append(builder.Modifier_longlong(getTokenSourceLocation(node, "long long"), isMacroExpansion));
 			if (((IASTSimpleDeclSpecifier) node).isComplex())
-				modifiers.append(builder.Modifier_complex(getTokenSourceLocation(node, "_Complex")));
+				modifiers.append(builder.Modifier_complex(getTokenSourceLocation(node, "_Complex"), isMacroExpansion));
 			if (((IASTSimpleDeclSpecifier) node).isImaginary())
-				modifiers.append(builder.Modifier_imaginary(getTokenSourceLocation(node, "_Imaginary")));
+				modifiers.append(
+						builder.Modifier_imaginary(getTokenSourceLocation(node, "_Imaginary"), isMacroExpansion));
 		}
 
 		if (node instanceof ICASTArrayModifier) {
 			if (((ICASTArrayModifier) node).isConst())
-				modifiers.append(builder.Modifier_const(getTokenSourceLocation(node, "const")));
+				modifiers.append(builder.Modifier_const(getTokenSourceLocation(node, "const"), isMacroExpansion));
 			if (((ICASTArrayModifier) node).isVolatile())
-				modifiers.append(builder.Modifier_volatile(getTokenSourceLocation(node, "volatile")));
+				modifiers.append(builder.Modifier_volatile(getTokenSourceLocation(node, "volatile"), isMacroExpansion));
 			if (((ICASTArrayModifier) node).isRestrict())
-				modifiers.append(builder.Modifier_restrict(getTokenSourceLocation(node, "restrict")));
+				modifiers.append(builder.Modifier_restrict(getTokenSourceLocation(node, "restrict"), isMacroExpansion));
 		} else if (node instanceof ICPPASTFunctionDeclarator) {
 			if (((ICPPASTFunctionDeclarator) node).isConst())
-				modifiers.append(builder.Modifier_const(getTokenSourceLocation(node, "const")));
+				modifiers.append(builder.Modifier_const(getTokenSourceLocation(node, "const"), isMacroExpansion));
 			if (((ICPPASTFunctionDeclarator) node).isVolatile())
-				modifiers.append(builder.Modifier_volatile(getTokenSourceLocation(node, "volatile")));
+				modifiers.append(builder.Modifier_volatile(getTokenSourceLocation(node, "volatile"), isMacroExpansion));
 		} else if (node instanceof IASTDeclSpecifier) {
 			if (((IASTDeclSpecifier) node).isConst())
-				modifiers.append(builder.Modifier_const(getTokenSourceLocation(node, "const")));
+				modifiers.append(builder.Modifier_const(getTokenSourceLocation(node, "const"), isMacroExpansion));
 			if (((IASTDeclSpecifier) node).isVolatile())
-				modifiers.append(builder.Modifier_volatile(getTokenSourceLocation(node, "volatile")));
+				modifiers.append(builder.Modifier_volatile(getTokenSourceLocation(node, "volatile"), isMacroExpansion));
 			if (((IASTDeclSpecifier) node).isRestrict())
-				modifiers.append(builder.Modifier_restrict(getTokenSourceLocation(node, "restrict")));
+				modifiers.append(builder.Modifier_restrict(getTokenSourceLocation(node, "restrict"), isMacroExpansion));
 			if (((IASTDeclSpecifier) node).isInline())
-				modifiers.append(builder.Modifier_inline(getTokenSourceLocation(node, "inline")));
+				modifiers.append(builder.Modifier_inline(getTokenSourceLocation(node, "inline"), isMacroExpansion));
 		} else if (node instanceof IASTPointer) {
 			if (((IASTPointer) node).isConst())
-				modifiers.append(builder.Modifier_const(getTokenSourceLocation(node, "const")));
+				modifiers.append(builder.Modifier_const(getTokenSourceLocation(node, "const"), isMacroExpansion));
 			if (((IASTPointer) node).isVolatile())
-				modifiers.append(builder.Modifier_volatile(getTokenSourceLocation(node, "volatile")));
+				modifiers.append(builder.Modifier_volatile(getTokenSourceLocation(node, "volatile"), isMacroExpansion));
 			if (((IASTPointer) node).isRestrict())
-				modifiers.append(builder.Modifier_restrict(getTokenSourceLocation(node, "restrict")));
+				modifiers.append(builder.Modifier_restrict(getTokenSourceLocation(node, "restrict"), isMacroExpansion));
 		} else if (node instanceof ICPPASTNamespaceDefinition) {
 			if (((ICPPASTNamespaceDefinition) node).isInline())
-				modifiers.append(builder.Modifier_inline(getTokenSourceLocation(node, "inline")));
+				modifiers.append(builder.Modifier_inline(getTokenSourceLocation(node, "inline"), isMacroExpansion));
 		}
 
 		if (node instanceof ICPPASTNamedTypeSpecifier) {
 			if (((ICPPASTNamedTypeSpecifier) node).isTypename())
-				modifiers.append(builder.Modifier_typename(getTokenSourceLocation(node, "typename")));
+				modifiers.append(builder.Modifier_typename(getTokenSourceLocation(node, "typename"), isMacroExpansion));
 		} else if (node instanceof ICPPASTUsingDeclaration)
 			if (((ICPPASTUsingDeclaration) node).isTypename())
-				modifiers.append(builder.Modifier_typename(getTokenSourceLocation(node, "typename")));
+				modifiers.append(builder.Modifier_typename(getTokenSourceLocation(node, "typename"), isMacroExpansion));
 
 		return modifiers.done().stream()
 				.sorted((v1, v2) -> ((ISourceLocation) v1.asWithKeywordParameters().getParameter("src")).getOffset()
@@ -1000,18 +1006,18 @@ public class Parser extends ASTVisitor {
 			break;
 		case ICPPASTExplicitTemplateInstantiation.STATIC:
 			stack.push(builder.Declaration_explicitTemplateInstantiation(
-					builder.Modifier_static(getTokenSourceLocation(declaration, "static")), stack.pop(), loc,
-					isMacroExpansion));
+					builder.Modifier_static(getTokenSourceLocation(declaration, "static"), isMacroExpansion),
+					stack.pop(), loc, isMacroExpansion));
 			break;
 		case ICPPASTExplicitTemplateInstantiation.INLINE:
 			stack.push(builder.Declaration_explicitTemplateInstantiation(
-					builder.Modifier_inline(getTokenSourceLocation(declaration, "inline")), stack.pop(), loc,
-					isMacroExpansion));
+					builder.Modifier_inline(getTokenSourceLocation(declaration, "inline"), isMacroExpansion),
+					stack.pop(), loc, isMacroExpansion));
 			break;
 		case ICPPASTExplicitTemplateInstantiation.EXTERN:
 			stack.push(builder.Declaration_explicitTemplateInstantiation(
-					builder.Modifier_extern(getTokenSourceLocation(declaration, "extern")), stack.pop(), loc,
-					isMacroExpansion));
+					builder.Modifier_extern(getTokenSourceLocation(declaration, "extern"), isMacroExpansion),
+					stack.pop(), loc, isMacroExpansion));
 			break;
 		default:
 			throw new RuntimeException("ICPPASTExplicitTemplateInstantiation encountered unknown modifier "
@@ -1109,16 +1115,18 @@ public class Parser extends ASTVisitor {
 		switch (declaration.getVisibility()) {
 		case ICPPASTVisibilityLabel.v_public:
 			stack.push(builder.Declaration_visibilityLabel(
-					builder.Modifier_public(getTokenSourceLocation(declaration, "public")), loc, isMacroExpansion));
+					builder.Modifier_public(getTokenSourceLocation(declaration, "public"), isMacroExpansion), loc,
+					isMacroExpansion));
 			break;
 		case ICPPASTVisibilityLabel.v_protected:
 			stack.push(builder.Declaration_visibilityLabel(
-					builder.Modifier_protected(getTokenSourceLocation(declaration, "protected")), loc,
+					builder.Modifier_protected(getTokenSourceLocation(declaration, "protected"), isMacroExpansion), loc,
 					isMacroExpansion));
 			break;
 		case ICPPASTVisibilityLabel.v_private:
 			stack.push(builder.Declaration_visibilityLabel(
-					builder.Modifier_private(getTokenSourceLocation(declaration, "private")), loc, isMacroExpansion));
+					builder.Modifier_private(getTokenSourceLocation(declaration, "private"), isMacroExpansion), loc,
+					isMacroExpansion));
 			break;
 		default:
 			throw new RuntimeException("Unknown CPPVisibilityLabel code " + declaration.getVisibility() + " at "
@@ -2006,94 +2014,100 @@ public class Parser extends ASTVisitor {
 						.getParameter("src");
 				location = vf.sourceLocation(before, before.getOffset() + before.getLength(), 0);
 			}
-			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_unspecified(location), attributes,
-					loc));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_unspecified(location, isMacroExpansion), attributes, loc, isMacroExpansion));
 			break;
 		}
 		case IASTSimpleDeclSpecifier.t_void:
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_void(getTokenSourceLocation(declSpec, "void")), attributes, loc, isMacroExpansion));
+					builder.Type_void(getTokenSourceLocation(declSpec, "void"), isMacroExpansion), attributes, loc,
+					isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_char:
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_char(getTokenSourceLocation(declSpec, "char")), attributes, loc, isMacroExpansion));
+					builder.Type_char(getTokenSourceLocation(declSpec, "char"), isMacroExpansion), attributes, loc,
+					isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_int:
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_integer(getTokenSourceLocation(declSpec, "int")), attributes, loc, isMacroExpansion));
+					builder.Type_integer(getTokenSourceLocation(declSpec, "int"), isMacroExpansion), attributes, loc,
+					isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_float:
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_float(getTokenSourceLocation(declSpec, "float")), attributes, loc, isMacroExpansion));
+					builder.Type_float(getTokenSourceLocation(declSpec, "float"), isMacroExpansion), attributes, loc,
+					isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_double:
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_double(getTokenSourceLocation(declSpec, "double")), attributes, loc,
+					builder.Type_double(getTokenSourceLocation(declSpec, "double"), isMacroExpansion), attributes, loc,
 					isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_bool:
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_bool(getTokenSourceLocation(declSpec, "bool")), attributes, loc, isMacroExpansion));
+					builder.Type_bool(getTokenSourceLocation(declSpec, "bool"), isMacroExpansion), attributes, loc,
+					isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_wchar_t:
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_wchar_t(getTokenSourceLocation(declSpec, "wchar_t")), attributes, loc,
-					isMacroExpansion));
+					builder.Type_wchar_t(getTokenSourceLocation(declSpec, "wchar_t"), isMacroExpansion), attributes,
+					loc, isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_typeof:
 			declSpec.getDeclTypeExpression().accept(this);
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_typeof(getTokenSourceLocation(declSpec, "typeof")), stack.pop(), attributes, loc,
-					isMacroExpansion));
+					builder.Type_typeof(getTokenSourceLocation(declSpec, "typeof"), isMacroExpansion), stack.pop(),
+					attributes, loc, isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_decltype:
 			declSpec.getDeclTypeExpression().accept(this);
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_decltype(getTokenSourceLocation(declSpec, "decltype")), stack.pop(), attributes, loc,
-					isMacroExpansion));
+					builder.Type_decltype(getTokenSourceLocation(declSpec, "decltype"), isMacroExpansion), stack.pop(),
+					attributes, loc, isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_auto:
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_auto(getTokenSourceLocation(declSpec, "auto")), attributes, loc, isMacroExpansion));
+					builder.Type_auto(getTokenSourceLocation(declSpec, "auto"), isMacroExpansion), attributes, loc,
+					isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_char16_t:
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_char16_t(getTokenSourceLocation(declSpec, "char16_t")), attributes, loc,
-					isMacroExpansion));
+					builder.Type_char16_t(getTokenSourceLocation(declSpec, "char16_t"), isMacroExpansion), attributes,
+					loc, isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_char32_t:
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_char32_t(getTokenSourceLocation(declSpec, "char32_t")), attributes, loc,
-					isMacroExpansion));
+					builder.Type_char32_t(getTokenSourceLocation(declSpec, "char32_t"), isMacroExpansion), attributes,
+					loc, isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_int128:
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_int128(getTokenSourceLocation(declSpec, "__int128")), attributes, loc,
-					isMacroExpansion));
+					builder.Type_int128(getTokenSourceLocation(declSpec, "__int128"), isMacroExpansion), attributes,
+					loc, isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_float128:
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_float128(getTokenSourceLocation(declSpec, "__float128")), attributes, loc,
-					isMacroExpansion));
+					builder.Type_float128(getTokenSourceLocation(declSpec, "__float128"), isMacroExpansion), attributes,
+					loc, isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_decimal32:
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_decimal128(getTokenSourceLocation(declSpec, "_Decimal32")), attributes, loc,
-					isMacroExpansion));
+					builder.Type_decimal128(getTokenSourceLocation(declSpec, "_Decimal32"), isMacroExpansion),
+					attributes, loc, isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_decimal64:
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_decimal64(getTokenSourceLocation(declSpec, "_Decimal64")), attributes, loc,
-					isMacroExpansion));
+					builder.Type_decimal64(getTokenSourceLocation(declSpec, "_Decimal64"), isMacroExpansion),
+					attributes, loc, isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_decimal128:
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_decimal128(getTokenSourceLocation(declSpec, "_Decimal128")), attributes, loc,
-					isMacroExpansion));
+					builder.Type_decimal128(getTokenSourceLocation(declSpec, "_Decimal128"), isMacroExpansion),
+					attributes, loc, isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_decltype_auto:
-			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_declTypeAuto(loc), attributes, loc,
-					isMacroExpansion));
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_declTypeAuto(loc, isMacroExpansion),
+					attributes, loc, isMacroExpansion));
 			out("Check decltype(auto) location at " + loc);
 			break;
 		default:
@@ -2363,19 +2377,19 @@ public class Parser extends ASTVisitor {
 
 		switch (captureDefault) {
 		case BY_COPY:
-			stack.push(
-					builder.Expression_lambda(builder.Modifier_captDefByCopy(getTokenSourceLocation(expression, "=")),
-							captures.done(), declarator, body, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_lambda(
+					builder.Modifier_captDefByCopy(getTokenSourceLocation(expression, "="), isMacroExpansion),
+					captures.done(), declarator, body, loc, typ, isMacroExpansion));
 			break;
 		case BY_REFERENCE:
 			stack.push(builder.Expression_lambda(
-					builder.Modifier_captDefByReference(getTokenSourceLocation(expression, "&")), captures.done(),
-					declarator, body, loc, typ, isMacroExpansion));
+					builder.Modifier_captDefByReference(getTokenSourceLocation(expression, "&"), isMacroExpansion),
+					captures.done(), declarator, body, loc, typ, isMacroExpansion));
 			break;
 		case UNSPECIFIED:
 			stack.push(builder.Expression_lambda(
-					builder.Modifier_captDefUnspecified(vf.sourceLocation(loc, loc.getOffset(), 0)), captures.done(),
-					declarator, body, loc, typ, isMacroExpansion));
+					builder.Modifier_captDefUnspecified(vf.sourceLocation(loc, loc.getOffset(), 0), isMacroExpansion),
+					captures.done(), declarator, body, loc, typ, isMacroExpansion));
 			break;
 		default:
 			throw new RuntimeException("Unknown default capture type " + captureDefault + " encountered at "
@@ -2430,7 +2444,7 @@ public class Parser extends ASTVisitor {
 				_initializer.accept(this);
 				if (expression.isGlobal())
 					stack.push(builder.Expression_globalNewWithArgs(placementArguments.done(), typeId, stack.pop(), loc,
-							typ));
+							typ, isMacroExpansion));
 				else
 					stack.push(builder.Expression_newWithArgs(placementArguments.done(), typeId, stack.pop(), loc, typ,
 							isMacroExpansion));
@@ -2809,7 +2823,7 @@ public class Parser extends ASTVisitor {
 		IASTProblem problem = expression.getProblem();
 		if (doProblemLogging)
 			err("ProblemExpression " + expression.getRawSignature() + ":" + problem.getMessageWithLocation());
-		stack.push(builder.Expression_problemExpression(loc));
+		stack.push(builder.Expression_problemExpression(loc, isMacroExpansion));
 		return PROCESS_ABORT;
 	}
 
@@ -3163,8 +3177,9 @@ public class Parser extends ASTVisitor {
 		IConstructor iteration;
 		if (_iteration == null) {
 			ISourceLocation conditionLoc = (ISourceLocation) condition.asWithKeywordParameters().getParameter("src");
-			iteration = builder.Expression_empty(vf.sourceLocation(conditionLoc,
-					conditionLoc.getOffset() + conditionLoc.getLength(), 0, isMacroExpansion));
+			iteration = builder.Expression_empty(
+					vf.sourceLocation(conditionLoc, conditionLoc.getOffset() + conditionLoc.getLength(), 0),
+					isMacroExpansion);
 		} else {
 			_iteration.accept(this);
 			iteration = stack.pop();
@@ -3390,23 +3405,28 @@ public class Parser extends ASTVisitor {
 		IListWriter modifiers = vf.listWriter();
 		switch (baseSpecifier.getVisibility()) {
 		case ICPPASTBaseSpecifier.v_public:
-			modifiers.append(builder.Modifier_public(getTokenSourceLocation(baseSpecifier, "public")));
+			modifiers
+					.append(builder.Modifier_public(getTokenSourceLocation(baseSpecifier, "public"), isMacroExpansion));
 			break;
 		case ICPPASTBaseSpecifier.v_protected:
-			modifiers.append(builder.Modifier_protected(getTokenSourceLocation(baseSpecifier, "protected")));
+			modifiers.append(
+					builder.Modifier_protected(getTokenSourceLocation(baseSpecifier, "protected"), isMacroExpansion));
 			break;
 		case ICPPASTBaseSpecifier.v_private:
-			modifiers.append(builder.Modifier_private(getTokenSourceLocation(baseSpecifier, "private")));
+			modifiers.append(
+					builder.Modifier_private(getTokenSourceLocation(baseSpecifier, "private"), isMacroExpansion));
 			break;
 		case 0:
-			modifiers.append(builder.Modifier_unspecifiedInheritance(vf.sourceLocation(loc, loc.getOffset(), 0)));
+			modifiers.append(builder.Modifier_unspecifiedInheritance(vf.sourceLocation(loc, loc.getOffset(), 0),
+					isMacroExpansion));
 			break;
 		default:
 			throw new RuntimeException(
 					"Unknown BaseSpecifier visibility code " + baseSpecifier.getVisibility() + " at " + loc);
 		}
 		if (baseSpecifier.isVirtual())
-			modifiers.append(builder.Modifier_virtual(getTokenSourceLocation(baseSpecifier, "virtual")));
+			modifiers.append(
+					builder.Modifier_virtual(getTokenSourceLocation(baseSpecifier, "virtual"), isMacroExpansion));
 
 		ICPPASTNameSpecifier nameSpecifier = baseSpecifier.getNameSpecifier();
 		if (nameSpecifier == null)
@@ -3567,11 +3587,12 @@ public class Parser extends ASTVisitor {
 		switch (virtSpecifier.getKind()) {
 		case Final:
 			stack.push(builder.Declaration_virtSpecifier(
-					builder.Modifier_final(getTokenSourceLocation(virtSpecifier, "final")), loc, isMacroExpansion));
+					builder.Modifier_final(getTokenSourceLocation(virtSpecifier, "final"), isMacroExpansion), loc,
+					isMacroExpansion));
 			break;
 		case Override:
 			stack.push(builder.Declaration_virtSpecifier(
-					builder.Modifier_override(getTokenSourceLocation(virtSpecifier, "override")), loc,
+					builder.Modifier_override(getTokenSourceLocation(virtSpecifier, "override"), isMacroExpansion), loc,
 					isMacroExpansion));
 			break;
 		default:
