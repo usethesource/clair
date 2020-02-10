@@ -82,30 +82,30 @@ public class AST {
     = tf.constructor(typestore,_Declarator,"arrayDeclaratorNested",tf.listType(_Declaration),"pointerOperators",_Declarator,"declarator",tf.listType(_Expression),"arrayModifier",_Expression,"initializer");
   
   
-  private static final Type _DeclSpecifier_enum_4 
-    = tf.constructor(typestore,_DeclSpecifier,"enum",tf.listType(_Modifier),"modifiers",_DeclSpecifier,"baseType",_Name,"name",tf.listType(_Declaration),"enumerators");
-  private static final Type _DeclSpecifier_etsEnum_2 
-    = tf.constructor(typestore,_DeclSpecifier,"etsEnum",tf.listType(_Modifier),"modifiers",_Name,"name");
   private static final Type _DeclSpecifier_struct_4 
     = tf.constructor(typestore,_DeclSpecifier,"struct",tf.listType(_Modifier),"modifiers",_Name,"name",tf.listType(_Declaration),"baseSpecifiers",tf.listType(_Declaration),"members");
   private static final Type _DeclSpecifier_class_3 
     = tf.constructor(typestore,_DeclSpecifier,"class",tf.listType(_Modifier),"modifiers",_Name,"name",tf.listType(_Declaration),"members");
+  private static final Type _DeclSpecifier_enum_4 
+    = tf.constructor(typestore,_DeclSpecifier,"enum",tf.listType(_Modifier),"modifiers",_DeclSpecifier,"baseType",_Name,"name",tf.listType(_Declaration),"enumerators");
+  private static final Type _DeclSpecifier_etsEnum_2 
+    = tf.constructor(typestore,_DeclSpecifier,"etsEnum",tf.listType(_Modifier),"modifiers",_Name,"name");
   private static final Type _DeclSpecifier_classFinal_4 
     = tf.constructor(typestore,_DeclSpecifier,"classFinal",tf.listType(_Modifier),"modifiers",_Name,"name",tf.listType(_Declaration),"baseSpecifiers",tf.listType(_Declaration),"members");
   private static final Type _DeclSpecifier_struct_3 
     = tf.constructor(typestore,_DeclSpecifier,"struct",tf.listType(_Modifier),"modifiers",_Name,"name",tf.listType(_Declaration),"members");
-  private static final Type _DeclSpecifier_union_3 
-    = tf.constructor(typestore,_DeclSpecifier,"union",tf.listType(_Modifier),"modifiers",_Name,"name",tf.listType(_Declaration),"members");
-  private static final Type _DeclSpecifier_declSpecifier_2 
-    = tf.constructor(typestore,_DeclSpecifier,"declSpecifier",tf.listType(_Modifier),"modifiers",_Type,"type");
-  private static final Type _DeclSpecifier_union_4 
-    = tf.constructor(typestore,_DeclSpecifier,"union",tf.listType(_Modifier),"modifiers",_Name,"name",tf.listType(_Declaration),"baseSpecifiers",tf.listType(_Declaration),"members");
-  private static final Type _DeclSpecifier_etsStruct_2 
-    = tf.constructor(typestore,_DeclSpecifier,"etsStruct",tf.listType(_Modifier),"modifiers",_Name,"name");
   private static final Type _DeclSpecifier_declSpecifier_3 
     = tf.constructor(typestore,_DeclSpecifier,"declSpecifier",tf.listType(_Modifier),"modifiers",_Type,"type",_Expression,"expression");
   private static final Type _DeclSpecifier_msThrowEllipsis_0 
     = tf.constructor(typestore,_DeclSpecifier,"msThrowEllipsis");
+  private static final Type _DeclSpecifier_union_3 
+    = tf.constructor(typestore,_DeclSpecifier,"union",tf.listType(_Modifier),"modifiers",_Name,"name",tf.listType(_Declaration),"members");
+  private static final Type _DeclSpecifier_union_4 
+    = tf.constructor(typestore,_DeclSpecifier,"union",tf.listType(_Modifier),"modifiers",_Name,"name",tf.listType(_Declaration),"baseSpecifiers",tf.listType(_Declaration),"members");
+  private static final Type _DeclSpecifier_declSpecifier_2 
+    = tf.constructor(typestore,_DeclSpecifier,"declSpecifier",tf.listType(_Modifier),"modifiers",_Type,"type");
+  private static final Type _DeclSpecifier_etsStruct_2 
+    = tf.constructor(typestore,_DeclSpecifier,"etsStruct",tf.listType(_Modifier),"modifiers",_Name,"name");
   private static final Type _DeclSpecifier_enumScoped_3 
     = tf.constructor(typestore,_DeclSpecifier,"enumScoped",tf.listType(_Modifier),"modifiers",_Name,"name",tf.listType(_Declaration),"enumerators");
   private static final Type _DeclSpecifier_enumOpaque_3 
@@ -132,82 +132,82 @@ public class AST {
     = tf.constructor(typestore,_DeclSpecifier,"enumScopedOpaque",tf.listType(_Modifier),"modifiers",_DeclSpecifier,"baseType",_Name,"name");
   
   
-  private static final Type _Declaration_sttClass_1 
-    = tf.constructor(typestore,_Declaration,"sttClass",_Name,"name");
-  private static final Type _Declaration_namespaceDefinitionInline_2 
-    = tf.constructor(typestore,_Declaration,"namespaceDefinitionInline",_Name,"name",tf.listType(_Declaration),"declarations");
-  private static final Type _Declaration_asmDeclaration_1 
-    = tf.constructor(typestore,_Declaration,"asmDeclaration",tf.stringType(),"assembly");
-  private static final Type _Declaration_reference_0 
-    = tf.constructor(typestore,_Declaration,"reference");
-  private static final Type _Declaration_template_3 
-    = tf.constructor(typestore,_Declaration,"template",tf.listType(_Declaration),"parameters",_Declaration,"declaration",_TypeSymbol,"type");
-  private static final Type _Declaration_explicitTemplateInstantiation_2 
-    = tf.constructor(typestore,_Declaration,"explicitTemplateInstantiation",_Modifier,"modifier",_Declaration,"declaration");
-  private static final Type _Declaration_functionDefinition_4 
-    = tf.constructor(typestore,_Declaration,"functionDefinition",_DeclSpecifier,"declSpecifier",_Declarator,"declarator",tf.listType(_Expression),"memberInitializer",_Statement,"body");
-  private static final Type _Declaration_pointerToMember_2 
-    = tf.constructor(typestore,_Declaration,"pointerToMember",tf.listType(_Modifier),"modifiers",_Name,"nestedName");
-  private static final Type _Declaration_translationUnit_1 
-    = tf.constructor(typestore,_Declaration,"translationUnit",tf.listType(_Declaration),"declarations");
-  private static final Type _Declaration_parameter_2 
-    = tf.constructor(typestore,_Declaration,"parameter",_DeclSpecifier,"declSpecifier",_Declarator,"declarator");
-  private static final Type _Declaration_enumerator_2 
-    = tf.constructor(typestore,_Declaration,"enumerator",_Name,"name",_Expression,"value");
-  private static final Type _Declaration_varArgs_0 
-    = tf.constructor(typestore,_Declaration,"varArgs");
-  private static final Type _Declaration_simpleDeclaration_2 
-    = tf.constructor(typestore,_Declaration,"simpleDeclaration",_DeclSpecifier,"declSpecifier",tf.listType(_Declarator),"declarators");
   private static final Type _Declaration_sttClass_2 
     = tf.constructor(typestore,_Declaration,"sttClass",_Name,"name",_Expression,"defaultType");
-  private static final Type _Declaration_linkageSpecification_2 
-    = tf.constructor(typestore,_Declaration,"linkageSpecification",tf.stringType(),"literal",tf.listType(_Declaration),"declarations");
+  private static final Type _Declaration_enumerator_2 
+    = tf.constructor(typestore,_Declaration,"enumerator",_Name,"name",_Expression,"value");
+  private static final Type _Declaration_asmDeclaration_1 
+    = tf.constructor(typestore,_Declaration,"asmDeclaration",tf.stringType(),"assembly");
+  private static final Type _Declaration_rvalueReference_0 
+    = tf.constructor(typestore,_Declaration,"rvalueReference");
+  private static final Type _Declaration_tttParameter_2 
+    = tf.constructor(typestore,_Declaration,"tttParameter",tf.listType(_Declaration),"nestedParameters",_Name,"name");
+  private static final Type _Declaration_namespaceDefinitionInline_2 
+    = tf.constructor(typestore,_Declaration,"namespaceDefinitionInline",_Name,"name",tf.listType(_Declaration),"declarations");
+  private static final Type _Declaration_enumerator_1 
+    = tf.constructor(typestore,_Declaration,"enumerator",_Name,"name");
+  private static final Type _Declaration_simpleDeclaration_2 
+    = tf.constructor(typestore,_Declaration,"simpleDeclaration",_DeclSpecifier,"declSpecifier",tf.listType(_Declarator),"declarators");
+  private static final Type _Declaration_varArgs_0 
+    = tf.constructor(typestore,_Declaration,"varArgs");
+  private static final Type _Declaration_parameter_2 
+    = tf.constructor(typestore,_Declaration,"parameter",_DeclSpecifier,"declSpecifier",_Declarator,"declarator");
+  private static final Type _Declaration_problemDeclaration_0 
+    = tf.constructor(typestore,_Declaration,"problemDeclaration");
+  private static final Type _Declaration_translationUnit_1 
+    = tf.constructor(typestore,_Declaration,"translationUnit",tf.listType(_Declaration),"declarations");
+  private static final Type _Declaration_pointerToMember_2 
+    = tf.constructor(typestore,_Declaration,"pointerToMember",tf.listType(_Modifier),"modifiers",_Name,"nestedName");
+  private static final Type _Declaration_functionDefinition_3 
+    = tf.constructor(typestore,_Declaration,"functionDefinition",_Expression,"returnSpec",_Declarator,"declarator",_Statement,"body");
+  private static final Type _Declaration_deletedFunctionDefinition_3 
+    = tf.constructor(typestore,_Declaration,"deletedFunctionDefinition",_DeclSpecifier,"declSpecifier",tf.listType(_Expression),"memberInitializer",_Declarator,"declarator");
+  private static final Type _Declaration_template_3 
+    = tf.constructor(typestore,_Declaration,"template",tf.listType(_Declaration),"parameters",_Declaration,"declaration",_TypeSymbol,"type");
+  private static final Type _Declaration_staticAssert_2 
+    = tf.constructor(typestore,_Declaration,"staticAssert",_Expression,"condition",_Expression,"message");
   private static final Type _Declaration_namespaceDefinition_2 
     = tf.constructor(typestore,_Declaration,"namespaceDefinition",_Name,"name",tf.listType(_Declaration),"declarations");
   private static final Type _Declaration_baseSpecifier_2 
     = tf.constructor(typestore,_Declaration,"baseSpecifier",tf.listType(_Modifier),"modifiers",_Name,"name");
-  private static final Type _Declaration_explicitTemplateInstantiation_1 
-    = tf.constructor(typestore,_Declaration,"explicitTemplateInstantiation",_Declaration,"declaration");
+  private static final Type _Declaration_reference_0 
+    = tf.constructor(typestore,_Declaration,"reference");
   private static final Type _Declaration_explicitTemplateSpecialization_1 
     = tf.constructor(typestore,_Declaration,"explicitTemplateSpecialization",_Declaration,"declaration");
-  private static final Type _Declaration_tttParameter_2 
-    = tf.constructor(typestore,_Declaration,"tttParameter",tf.listType(_Declaration),"nestedParameters",_Name,"name");
-  private static final Type _Declaration_rvalueReference_0 
-    = tf.constructor(typestore,_Declaration,"rvalueReference");
-  private static final Type _Declaration_enumerator_1 
-    = tf.constructor(typestore,_Declaration,"enumerator",_Name,"name");
+  private static final Type _Declaration_sttClass_1 
+    = tf.constructor(typestore,_Declaration,"sttClass",_Name,"name");
+  private static final Type _Declaration_explicitTemplateInstantiation_1 
+    = tf.constructor(typestore,_Declaration,"explicitTemplateInstantiation",_Declaration,"declaration");
+  private static final Type _Declaration_linkageSpecification_2 
+    = tf.constructor(typestore,_Declaration,"linkageSpecification",tf.stringType(),"literal",tf.listType(_Declaration),"declarations");
   private static final Type _Declaration_namespaceAlias_2 
     = tf.constructor(typestore,_Declaration,"namespaceAlias",_Name,"alias",_Name,"mapping");
-  private static final Type _Declaration_staticAssert_2 
-    = tf.constructor(typestore,_Declaration,"staticAssert",_Expression,"condition",_Expression,"message");
   private static final Type _Declaration_alias_2 
     = tf.constructor(typestore,_Declaration,"alias",_Name,"alias",_Expression,"mappingTypeId");
-  private static final Type _Declaration_visibilityLabel_1 
-    = tf.constructor(typestore,_Declaration,"visibilityLabel",_Modifier,"visibility");
-  private static final Type _Declaration_functionWithTryBlockDefinition_5 
-    = tf.constructor(typestore,_Declaration,"functionWithTryBlockDefinition",_DeclSpecifier,"declSpecifier",_Declarator,"declarator",tf.listType(_Expression),"memberInitializers",_Statement,"sbody",tf.listType(_Statement),"catchHandlers");
-  private static final Type _Declaration_parameter_1 
-    = tf.constructor(typestore,_Declaration,"parameter",_DeclSpecifier,"declSpecifier");
   private static final Type _Declaration_sttTypename_1 
     = tf.constructor(typestore,_Declaration,"sttTypename",_Name,"name");
+  private static final Type _Declaration_pointer_1 
+    = tf.constructor(typestore,_Declaration,"pointer",tf.listType(_Modifier),"modifiers");
   private static final Type _Declaration_virtSpecifier_1 
     = tf.constructor(typestore,_Declaration,"virtSpecifier",_Modifier,"modifier");
   private static final Type _Declaration_defaultedFunctionDefinition_3 
     = tf.constructor(typestore,_Declaration,"defaultedFunctionDefinition",_DeclSpecifier,"declSpecifier",tf.listType(_Expression),"memberInitializer",_Declarator,"declarator");
-  private static final Type _Declaration_usingDeclaration_2 
-    = tf.constructor(typestore,_Declaration,"usingDeclaration",tf.listType(_Modifier),"modifiers",_Name,"name");
-  private static final Type _Declaration_pointer_1 
-    = tf.constructor(typestore,_Declaration,"pointer",tf.listType(_Modifier),"modifiers");
-  private static final Type _Declaration_usingDirective_1 
-    = tf.constructor(typestore,_Declaration,"usingDirective",_Name,"qualifiedName");
-  private static final Type _Declaration_deletedFunctionDefinition_3 
-    = tf.constructor(typestore,_Declaration,"deletedFunctionDefinition",_DeclSpecifier,"declSpecifier",tf.listType(_Expression),"memberInitializer",_Declarator,"declarator");
-  private static final Type _Declaration_functionDefinition_3 
-    = tf.constructor(typestore,_Declaration,"functionDefinition",_Expression,"returnSpec",_Declarator,"declarator",_Statement,"body");
+  private static final Type _Declaration_functionDefinition_4 
+    = tf.constructor(typestore,_Declaration,"functionDefinition",_DeclSpecifier,"declSpecifier",_Declarator,"declarator",tf.listType(_Expression),"memberInitializer",_Statement,"body");
   private static final Type _Declaration_baseSpecifier_1 
     = tf.constructor(typestore,_Declaration,"baseSpecifier",tf.listType(_Modifier),"modifiers");
-  private static final Type _Declaration_problemDeclaration_0 
-    = tf.constructor(typestore,_Declaration,"problemDeclaration");
+  private static final Type _Declaration_parameter_1 
+    = tf.constructor(typestore,_Declaration,"parameter",_DeclSpecifier,"declSpecifier");
+  private static final Type _Declaration_usingDeclaration_2 
+    = tf.constructor(typestore,_Declaration,"usingDeclaration",tf.listType(_Modifier),"modifiers",_Name,"name");
+  private static final Type _Declaration_explicitTemplateInstantiation_2 
+    = tf.constructor(typestore,_Declaration,"explicitTemplateInstantiation",_Modifier,"modifier",_Declaration,"declaration");
+  private static final Type _Declaration_usingDirective_1 
+    = tf.constructor(typestore,_Declaration,"usingDirective",_Name,"qualifiedName");
+  private static final Type _Declaration_visibilityLabel_1 
+    = tf.constructor(typestore,_Declaration,"visibilityLabel",_Modifier,"visibility");
+  private static final Type _Declaration_functionWithTryBlockDefinition_5 
+    = tf.constructor(typestore,_Declaration,"functionWithTryBlockDefinition",_DeclSpecifier,"declSpecifier",_Declarator,"declarator",tf.listType(_Expression),"memberInitializers",_Statement,"sbody",tf.listType(_Statement),"catchHandlers");
   private static final Type _Declaration_sttTypename_2 
     = tf.constructor(typestore,_Declaration,"sttTypename",_Name,"name",_Expression,"defaultType");
   
@@ -436,40 +436,48 @@ public class AST {
     = tf.constructor(typestore,_Expression,"problemExpression");
   
   
-  private static final Type _Type_wchar_t_0 
-    = tf.constructor(typestore,_Type,"wchar_t");
-  private static final Type _Type_decltype_0 
-    = tf.constructor(typestore,_Type,"decltype");
-  private static final Type _Type_decimal128_0 
-    = tf.constructor(typestore,_Type,"decimal128");
-  private static final Type _Type_nullptr_0 
-    = tf.constructor(typestore,_Type,"nullptr");
   private static final Type _Type_int128_0 
     = tf.constructor(typestore,_Type,"int128");
   private static final Type _Type_classType_1 
     = tf.constructor(typestore,_Type,"classType",_Name,"name");
-  private static final Type _Type_unionType_1 
-    = tf.constructor(typestore,_Type,"unionType",_Name,"name");
+  private static final Type _Type_decimal128_0 
+    = tf.constructor(typestore,_Type,"decimal128");
+  private static final Type _Type_nullptr_0 
+    = tf.constructor(typestore,_Type,"nullptr");
+  private static final Type _Type_decltype_0 
+    = tf.constructor(typestore,_Type,"decltype");
+  private static final Type _Type_wchar_t_0 
+    = tf.constructor(typestore,_Type,"wchar_t");
+  private static final Type _Type_integer_0 
+    = tf.constructor(typestore,_Type,"integer");
+  private static final Type _Type_float_0 
+    = tf.constructor(typestore,_Type,"float");
+  private static final Type _Type_float128_0 
+    = tf.constructor(typestore,_Type,"float128");
+  private static final Type _Type_arrayType_2 
+    = tf.constructor(typestore,_Type,"arrayType",_Type,"type",tf.integerType(),"size");
   private static final Type _Type_char_0 
     = tf.constructor(typestore,_Type,"char");
   private static final Type _Type_unspecified_0 
     = tf.constructor(typestore,_Type,"unspecified");
-  private static final Type _Type_arrayType_2 
-    = tf.constructor(typestore,_Type,"arrayType",_Type,"type",tf.integerType(),"size");
-  private static final Type _Type_float128_0 
-    = tf.constructor(typestore,_Type,"float128");
-  private static final Type _Type_float_0 
-    = tf.constructor(typestore,_Type,"float");
-  private static final Type _Type_integer_0 
-    = tf.constructor(typestore,_Type,"integer");
-  private static final Type _Type_char32_t_0 
-    = tf.constructor(typestore,_Type,"char32_t");
-  private static final Type _Type_bool_0 
-    = tf.constructor(typestore,_Type,"bool");
+  private static final Type _Type_unionType_1 
+    = tf.constructor(typestore,_Type,"unionType",_Name,"name");
   private static final Type _Type_decimal64_0 
     = tf.constructor(typestore,_Type,"decimal64");
   private static final Type _Type_auto_0 
     = tf.constructor(typestore,_Type,"auto");
+  private static final Type _Type_char32_t_0 
+    = tf.constructor(typestore,_Type,"char32_t");
+  private static final Type _Type_bool_0 
+    = tf.constructor(typestore,_Type,"bool");
+  private static final Type _Type_structType_1 
+    = tf.constructor(typestore,_Type,"structType",_Name,"name");
+  private static final Type _Type_void_0 
+    = tf.constructor(typestore,_Type,"void");
+  private static final Type _Type_declTypeAuto_0 
+    = tf.constructor(typestore,_Type,"declTypeAuto");
+  private static final Type _Type_basicType_2 
+    = tf.constructor(typestore,_Type,"basicType",_Type,"type",tf.listType(_Modifier),"modifiers");
   private static final Type _Type_decimal32_0 
     = tf.constructor(typestore,_Type,"decimal32");
   private static final Type _Type_char16_t_0 
@@ -478,140 +486,132 @@ public class AST {
     = tf.constructor(typestore,_Type,"typeof");
   private static final Type _Type_double_0 
     = tf.constructor(typestore,_Type,"double");
-  private static final Type _Type_declTypeAuto_0 
-    = tf.constructor(typestore,_Type,"declTypeAuto");
-  private static final Type _Type_basicType_2 
-    = tf.constructor(typestore,_Type,"basicType",_Type,"type",tf.listType(_Modifier),"modifiers");
-  private static final Type _Type_void_0 
-    = tf.constructor(typestore,_Type,"void");
-  private static final Type _Type_structType_1 
-    = tf.constructor(typestore,_Type,"structType",_Name,"name");
   
   
-  private static final Type _Statement_for_4 
-    = tf.constructor(typestore,_Statement,"for",_Statement,"sInitializer",_Expression,"condition",_Expression,"iteration",_Statement,"body");
-  private static final Type _Statement_expressionStatement_1 
-    = tf.constructor(typestore,_Statement,"expressionStatement",_Expression,"expression");
-  private static final Type _Statement_forWithDecl_4 
-    = tf.constructor(typestore,_Statement,"forWithDecl",_Statement,"sInitializer",_Declaration,"conditionDeclaration",_Expression,"iteration",_Statement,"body");
   private static final Type _Statement_nullStatement_0 
     = tf.constructor(typestore,_Statement,"nullStatement");
-  private static final Type _Statement_ifWithDecl_2 
-    = tf.constructor(typestore,_Statement,"ifWithDecl",_Declaration,"conditionDeclaration",_Statement,"thenClause");
+  private static final Type _Statement_forWithDecl_4 
+    = tf.constructor(typestore,_Statement,"forWithDecl",_Statement,"sInitializer",_Declaration,"conditionDeclaration",_Expression,"iteration",_Statement,"body");
+  private static final Type _Statement_expressionStatement_1 
+    = tf.constructor(typestore,_Statement,"expressionStatement",_Expression,"expression");
+  private static final Type _Statement_for_4 
+    = tf.constructor(typestore,_Statement,"for",_Statement,"sInitializer",_Expression,"condition",_Expression,"iteration",_Statement,"body");
   private static final Type _Statement_return_0 
     = tf.constructor(typestore,_Statement,"return");
   private static final Type _Statement_defaultCase_0 
     = tf.constructor(typestore,_Statement,"defaultCase");
+  private static final Type _Statement_ifWithDecl_2 
+    = tf.constructor(typestore,_Statement,"ifWithDecl",_Declaration,"conditionDeclaration",_Statement,"thenClause");
+  private static final Type _Statement_compoundStatement_1 
+    = tf.constructor(typestore,_Statement,"compoundStatement",tf.listType(_Statement),"statements");
+  private static final Type _Statement_switchWithDecl_2 
+    = tf.constructor(typestore,_Statement,"switchWithDecl",_Declaration,"controllerDeclaration",_Statement,"body");
+  private static final Type _Statement_case_1 
+    = tf.constructor(typestore,_Statement,"case",_Expression,"expression");
   private static final Type _Statement_label_2 
     = tf.constructor(typestore,_Statement,"label",_Name,"name",_Statement,"nestedStatement");
-  private static final Type _Statement_continue_0 
-    = tf.constructor(typestore,_Statement,"continue");
+  private static final Type _Statement_return_1 
+    = tf.constructor(typestore,_Statement,"return",_Expression,"expression");
+  private static final Type _Statement_rangeBasedFor_3 
+    = tf.constructor(typestore,_Statement,"rangeBasedFor",_Declaration,"declaration",_Expression,"initializer",_Statement,"body");
+  private static final Type _Statement_declarationStatement_1 
+    = tf.constructor(typestore,_Statement,"declarationStatement",_Declaration,"declaration");
+  private static final Type _Statement_catchAll_1 
+    = tf.constructor(typestore,_Statement,"catchAll",_Statement,"body");
   private static final Type _Statement_problem_1 
     = tf.constructor(typestore,_Statement,"problem",tf.stringType(),"raw");
   private static final Type _Statement_catch_2 
     = tf.constructor(typestore,_Statement,"catch",_Declaration,"declaration",_Statement,"body");
-  private static final Type _Statement_catchAll_1 
-    = tf.constructor(typestore,_Statement,"catchAll",_Statement,"body");
-  private static final Type _Statement_declarationStatement_1 
-    = tf.constructor(typestore,_Statement,"declarationStatement",_Declaration,"declaration");
-  private static final Type _Statement_switchWithDecl_2 
-    = tf.constructor(typestore,_Statement,"switchWithDecl",_Declaration,"controllerDeclaration",_Statement,"body");
-  private static final Type _Statement_compoundStatement_1 
-    = tf.constructor(typestore,_Statement,"compoundStatement",tf.listType(_Statement),"statements");
-  private static final Type _Statement_case_1 
-    = tf.constructor(typestore,_Statement,"case",_Expression,"expression");
-  private static final Type _Statement_rangeBasedFor_3 
-    = tf.constructor(typestore,_Statement,"rangeBasedFor",_Declaration,"declaration",_Expression,"initializer",_Statement,"body");
+  private static final Type _Statement_continue_0 
+    = tf.constructor(typestore,_Statement,"continue");
   private static final Type _Statement_goto_1 
     = tf.constructor(typestore,_Statement,"goto",_Name,"name");
-  private static final Type _Statement_return_1 
-    = tf.constructor(typestore,_Statement,"return",_Expression,"expression");
-  private static final Type _Statement_while_2 
-    = tf.constructor(typestore,_Statement,"while",_Expression,"condition",_Statement,"body");
-  private static final Type _Statement_if_3 
-    = tf.constructor(typestore,_Statement,"if",_Expression,"condition",_Statement,"thenClause",_Statement,"elseClause");
-  private static final Type _Statement_break_0 
-    = tf.constructor(typestore,_Statement,"break");
-  private static final Type _Statement_ifWithDecl_3 
-    = tf.constructor(typestore,_Statement,"ifWithDecl",_Declaration,"conditionDeclaration",_Statement,"thenClause",_Statement,"elseClause");
+  private static final Type _Statement_tryBlock_2 
+    = tf.constructor(typestore,_Statement,"tryBlock",_Statement,"tryBody",tf.listType(_Statement),"catchHandlers");
+  private static final Type _Statement_if_2 
+    = tf.constructor(typestore,_Statement,"if",_Expression,"condition",_Statement,"thenClause");
+  private static final Type _Statement_do_2 
+    = tf.constructor(typestore,_Statement,"do",_Statement,"body",_Expression,"condition");
   private static final Type _Statement_switch_2 
     = tf.constructor(typestore,_Statement,"switch",_Expression,"controller",_Statement,"body");
   private static final Type _Statement_whileWithDecl_2 
     = tf.constructor(typestore,_Statement,"whileWithDecl",_Declaration,"conditionDeclaration",_Statement,"body");
-  private static final Type _Statement_if_2 
-    = tf.constructor(typestore,_Statement,"if",_Expression,"condition",_Statement,"thenClause");
-  private static final Type _Statement_tryBlock_2 
-    = tf.constructor(typestore,_Statement,"tryBlock",_Statement,"tryBody",tf.listType(_Statement),"catchHandlers");
-  private static final Type _Statement_do_2 
-    = tf.constructor(typestore,_Statement,"do",_Statement,"body",_Expression,"condition");
+  private static final Type _Statement_break_0 
+    = tf.constructor(typestore,_Statement,"break");
+  private static final Type _Statement_ifWithDecl_3 
+    = tf.constructor(typestore,_Statement,"ifWithDecl",_Declaration,"conditionDeclaration",_Statement,"thenClause",_Statement,"elseClause");
+  private static final Type _Statement_if_3 
+    = tf.constructor(typestore,_Statement,"if",_Expression,"condition",_Statement,"thenClause",_Statement,"elseClause");
+  private static final Type _Statement_while_2 
+    = tf.constructor(typestore,_Statement,"while",_Expression,"condition",_Statement,"body");
   
   
-  private static final Type _Modifier_override_0 
-    = tf.constructor(typestore,_Modifier,"override");
-  private static final Type _Modifier_captDefByCopy_0 
-    = tf.constructor(typestore,_Modifier,"captDefByCopy");
-  private static final Type _Modifier_public_0 
-    = tf.constructor(typestore,_Modifier,"public");
-  private static final Type _Modifier_typename_0 
-    = tf.constructor(typestore,_Modifier,"typename");
-  private static final Type _Modifier_mutable_0 
-    = tf.constructor(typestore,_Modifier,"mutable");
   private static final Type _Modifier_threadLocal_0 
     = tf.constructor(typestore,_Modifier,"threadLocal");
   private static final Type _Modifier_extern_0 
     = tf.constructor(typestore,_Modifier,"extern");
-  private static final Type _Modifier_friend_0 
-    = tf.constructor(typestore,_Modifier,"friend");
-  private static final Type _Modifier_unsigned_0 
-    = tf.constructor(typestore,_Modifier,"unsigned");
-  private static final Type _Modifier_final_0 
-    = tf.constructor(typestore,_Modifier,"final");
+  private static final Type _Modifier_mutable_0 
+    = tf.constructor(typestore,_Modifier,"mutable");
+  private static final Type _Modifier_typename_0 
+    = tf.constructor(typestore,_Modifier,"typename");
+  private static final Type _Modifier_public_0 
+    = tf.constructor(typestore,_Modifier,"public");
+  private static final Type _Modifier_captDefByCopy_0 
+    = tf.constructor(typestore,_Modifier,"captDefByCopy");
+  private static final Type _Modifier_override_0 
+    = tf.constructor(typestore,_Modifier,"override");
   private static final Type _Modifier_complex_0 
     = tf.constructor(typestore,_Modifier,"complex");
-  private static final Type _Modifier_protected_0 
-    = tf.constructor(typestore,_Modifier,"protected");
-  private static final Type _Modifier_static_0 
-    = tf.constructor(typestore,_Modifier,"static");
-  private static final Type _Modifier_virtual_0 
-    = tf.constructor(typestore,_Modifier,"virtual");
-  private static final Type _Modifier_typedef_0 
-    = tf.constructor(typestore,_Modifier,"typedef");
+  private static final Type _Modifier_final_0 
+    = tf.constructor(typestore,_Modifier,"final");
+  private static final Type _Modifier_unsigned_0 
+    = tf.constructor(typestore,_Modifier,"unsigned");
+  private static final Type _Modifier_friend_0 
+    = tf.constructor(typestore,_Modifier,"friend");
+  private static final Type _Modifier_private_0 
+    = tf.constructor(typestore,_Modifier,"private");
   private static final Type _Modifier_const_0 
     = tf.constructor(typestore,_Modifier,"const");
   private static final Type _Modifier_register_0 
     = tf.constructor(typestore,_Modifier,"register");
-  private static final Type _Modifier_private_0 
-    = tf.constructor(typestore,_Modifier,"private");
+  private static final Type _Modifier_virtual_0 
+    = tf.constructor(typestore,_Modifier,"virtual");
+  private static final Type _Modifier_typedef_0 
+    = tf.constructor(typestore,_Modifier,"typedef");
+  private static final Type _Modifier_protected_0 
+    = tf.constructor(typestore,_Modifier,"protected");
+  private static final Type _Modifier_static_0 
+    = tf.constructor(typestore,_Modifier,"static");
+  private static final Type _Modifier_unspecifiedInheritance_0 
+    = tf.constructor(typestore,_Modifier,"unspecifiedInheritance");
+  private static final Type _Modifier_pureVirtual_0 
+    = tf.constructor(typestore,_Modifier,"pureVirtual");
+  private static final Type _Modifier_modAuto_0 
+    = tf.constructor(typestore,_Modifier,"modAuto");
+  private static final Type _Modifier_captDefByReference_0 
+    = tf.constructor(typestore,_Modifier,"captDefByReference");
+  private static final Type _Modifier_captDefUnspecified_0 
+    = tf.constructor(typestore,_Modifier,"captDefUnspecified");
+  private static final Type _Modifier_explicit_0 
+    = tf.constructor(typestore,_Modifier,"explicit");
+  private static final Type _Modifier_imaginary_0 
+    = tf.constructor(typestore,_Modifier,"imaginary");
+  private static final Type _Modifier_inline_0 
+    = tf.constructor(typestore,_Modifier,"inline");
+  private static final Type _Modifier_constexpr_0 
+    = tf.constructor(typestore,_Modifier,"constexpr");
+  private static final Type _Modifier_longlong_0 
+    = tf.constructor(typestore,_Modifier,"longlong");
+  private static final Type _Modifier_volatile_0 
+    = tf.constructor(typestore,_Modifier,"volatile");
+  private static final Type _Modifier_short_0 
+    = tf.constructor(typestore,_Modifier,"short");
   private static final Type _Modifier_signed_0 
     = tf.constructor(typestore,_Modifier,"signed");
   private static final Type _Modifier_restrict_0 
     = tf.constructor(typestore,_Modifier,"restrict");
   private static final Type _Modifier_long_0 
     = tf.constructor(typestore,_Modifier,"long");
-  private static final Type _Modifier_volatile_0 
-    = tf.constructor(typestore,_Modifier,"volatile");
-  private static final Type _Modifier_short_0 
-    = tf.constructor(typestore,_Modifier,"short");
-  private static final Type _Modifier_inline_0 
-    = tf.constructor(typestore,_Modifier,"inline");
-  private static final Type _Modifier_imaginary_0 
-    = tf.constructor(typestore,_Modifier,"imaginary");
-  private static final Type _Modifier_constexpr_0 
-    = tf.constructor(typestore,_Modifier,"constexpr");
-  private static final Type _Modifier_longlong_0 
-    = tf.constructor(typestore,_Modifier,"longlong");
-  private static final Type _Modifier_explicit_0 
-    = tf.constructor(typestore,_Modifier,"explicit");
-  private static final Type _Modifier_captDefUnspecified_0 
-    = tf.constructor(typestore,_Modifier,"captDefUnspecified");
-  private static final Type _Modifier_modAuto_0 
-    = tf.constructor(typestore,_Modifier,"modAuto");
-  private static final Type _Modifier_captDefByReference_0 
-    = tf.constructor(typestore,_Modifier,"captDefByReference");
-  private static final Type _Modifier_unspecifiedInheritance_0 
-    = tf.constructor(typestore,_Modifier,"unspecifiedInheritance");
-  private static final Type _Modifier_pureVirtual_0 
-    = tf.constructor(typestore,_Modifier,"pureVirtual");
   
   
   private static final Type _TypeSymbol_typedef_1 
@@ -766,22 +766,22 @@ public class AST {
     = tf.constructor(typestore,_M3,"m3",tf.sourceLocationType(),"id");
   
   
-  private static final Type _Name_conversionName_2 
-    = tf.constructor(typestore,_Name,"conversionName",tf.stringType(),"value",_Expression,"typeId");
-  private static final Type _Name_qualifiedName_2 
-    = tf.constructor(typestore,_Name,"qualifiedName",tf.listType(_Name),"qualifiers",_Name,"lastName");
-  private static final Type _Name_name_1 
-    = tf.constructor(typestore,_Name,"name",tf.stringType(),"value");
-  private static final Type _Name_operatorName_1 
-    = tf.constructor(typestore,_Name,"operatorName",tf.stringType(),"value");
-  private static final Type _Name_abstractEmptyName_0 
-    = tf.constructor(typestore,_Name,"abstractEmptyName");
   private static final Type _Name_templateId_2 
     = tf.constructor(typestore,_Name,"templateId",_Name,"name",tf.listType(_Expression),"argumentTypes");
+  private static final Type _Name_conversionName_2 
+    = tf.constructor(typestore,_Name,"conversionName",tf.stringType(),"value",_Expression,"typeId");
+  private static final Type _Name_operatorName_1 
+    = tf.constructor(typestore,_Name,"operatorName",tf.stringType(),"value");
+  private static final Type _Name_name_1 
+    = tf.constructor(typestore,_Name,"name",tf.stringType(),"value");
+  private static final Type _Name_qualifiedName_2 
+    = tf.constructor(typestore,_Name,"qualifiedName",tf.listType(_Name),"qualifiers",_Name,"lastName");
+  private static final Type _Name_abstractEmptyName_0 
+    = tf.constructor(typestore,_Name,"abstractEmptyName");
   
    
   
-  public IConstructor Declarator_functionDeclaratorNested(IList $pointerOperators, IList $modifiers, IConstructor $declarator, IList $parameters, IList $virtSpecifiers, IConstructor $initializer, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Declarator_functionDeclaratorNested(IList $pointerOperators, IList $modifiers, IConstructor $declarator, IList $parameters, IList $virtSpecifiers, IConstructor $initializer, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
@@ -814,10 +814,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_functionDeclaratorNested_6 , $pointerOperators, $modifiers, $declarator, $parameters, $virtSpecifiers, $initializer).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_functionDeclarator(IList $pointerOperators, IConstructor $name, IList $parameters, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Declarator_functionDeclarator(IList $pointerOperators, IConstructor $name, IList $parameters, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
@@ -838,10 +839,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_functionDeclarator_3 , $pointerOperators, $name, $parameters).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_functionDeclaratorWithES(IList $pointerOperators, IList $modifiers, IConstructor $name, IList $parameters, IList $virtSpecifiers, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Declarator_functionDeclaratorWithES(IList $pointerOperators, IList $modifiers, IConstructor $name, IList $parameters, IList $virtSpecifiers, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
@@ -870,10 +872,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_functionDeclaratorWithES_5 , $pointerOperators, $modifiers, $name, $parameters, $virtSpecifiers).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_functionDeclaratorNoexcept(IList $pointerOperators, IList $modifiers, IConstructor $name, IList $parameters, IList $virtSpecifiers, IConstructor $noexceptExpression, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Declarator_functionDeclaratorNoexcept(IList $pointerOperators, IList $modifiers, IConstructor $name, IList $parameters, IList $virtSpecifiers, IConstructor $noexceptExpression, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
@@ -906,10 +909,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_functionDeclaratorNoexcept_6 , $pointerOperators, $modifiers, $name, $parameters, $virtSpecifiers, $noexceptExpression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_arrayDeclaratorNested(IList $pointerOperators, IConstructor $declarator, IList $arrayModifier, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Declarator_arrayDeclaratorNested(IList $pointerOperators, IConstructor $declarator, IList $arrayModifier, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
@@ -930,10 +934,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_arrayDeclaratorNested_3 , $pointerOperators, $declarator, $arrayModifier).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_functionDeclarator(IList $pointerOperators, IList $modifiers, IConstructor $name, IList $parameters, IList $virtSpecifiers, IConstructor $trailingReturnType, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Declarator_functionDeclarator(IList $pointerOperators, IList $modifiers, IConstructor $name, IList $parameters, IList $virtSpecifiers, IConstructor $trailingReturnType, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
@@ -966,10 +971,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_functionDeclarator_6 , $pointerOperators, $modifiers, $name, $parameters, $virtSpecifiers, $trailingReturnType).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_declarator(IList $pointerOperators, IConstructor $name, IConstructor $initializer, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Declarator_declarator(IList $pointerOperators, IConstructor $name, IConstructor $initializer, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
@@ -990,10 +996,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_declarator_3 , $pointerOperators, $name, $initializer).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_arrayDeclarator(IList $pointerOperators, IConstructor $name, IList $arrayModifier, IConstructor $initializer, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Declarator_arrayDeclarator(IList $pointerOperators, IConstructor $name, IList $arrayModifier, IConstructor $initializer, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
@@ -1018,10 +1025,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_arrayDeclarator_4 , $pointerOperators, $name, $arrayModifier, $initializer).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_declarator(IList $pointerOperators, IConstructor $name, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Declarator_declarator(IList $pointerOperators, IConstructor $name, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
@@ -1038,20 +1046,22 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_declarator_2 , $pointerOperators, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_missingDeclarator(ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Declarator_missingDeclarator(ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_missingDeclarator_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_functionDeclaratorWithES(IList $pointerOperators, IList $modifiers, IConstructor $name, IList $parameters, IList $virtSpecifiers, IList $exceptionSpecification, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Declarator_functionDeclaratorWithES(IList $pointerOperators, IList $modifiers, IConstructor $name, IList $parameters, IList $virtSpecifiers, IList $exceptionSpecification, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
@@ -1084,10 +1094,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_functionDeclaratorWithES_6 , $pointerOperators, $modifiers, $name, $parameters, $virtSpecifiers, $exceptionSpecification).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_fieldDeclarator(IList $pointerOperators, IConstructor $name, IConstructor $bitFieldSize, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Declarator_fieldDeclarator(IList $pointerOperators, IConstructor $name, IConstructor $bitFieldSize, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
@@ -1108,10 +1119,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_fieldDeclarator_3 , $pointerOperators, $name, $bitFieldSize).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_arrayDeclarator(IList $pointerOperators, IConstructor $name, IList $arrayModifier, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Declarator_arrayDeclarator(IList $pointerOperators, IConstructor $name, IList $arrayModifier, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
@@ -1132,10 +1144,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_arrayDeclarator_3 , $pointerOperators, $name, $arrayModifier).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_functionDeclarator(IList $pointerOperators, IList $modifiers, IConstructor $name, IList $parameters, IList $virtSpecifiers, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Declarator_functionDeclarator(IList $pointerOperators, IList $modifiers, IConstructor $name, IList $parameters, IList $virtSpecifiers, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
@@ -1164,10 +1177,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_functionDeclarator_5 , $pointerOperators, $modifiers, $name, $parameters, $virtSpecifiers).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_fieldDeclarator(IList $pointerOperators, IConstructor $name, IConstructor $bitFieldSize, IConstructor $initializer, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Declarator_fieldDeclarator(IList $pointerOperators, IConstructor $name, IConstructor $bitFieldSize, IConstructor $initializer, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
@@ -1192,10 +1206,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_fieldDeclarator_4 , $pointerOperators, $name, $bitFieldSize, $initializer).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_functionDeclaratorNested(IList $pointerOperators, IList $modifiers, IConstructor $declarator, IList $parameters, IList $virtSpecifiers, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Declarator_functionDeclaratorNested(IList $pointerOperators, IList $modifiers, IConstructor $declarator, IList $parameters, IList $virtSpecifiers, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
@@ -1224,10 +1239,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_functionDeclaratorNested_5 , $pointerOperators, $modifiers, $declarator, $parameters, $virtSpecifiers).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declarator_arrayDeclaratorNested(IList $pointerOperators, IConstructor $declarator, IList $arrayModifier, IConstructor $initializer, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Declarator_arrayDeclaratorNested(IList $pointerOperators, IConstructor $declarator, IList $arrayModifier, IConstructor $initializer, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$pointerOperators.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $pointerOperators.getType() + " for $pointerOperators:" + $pointerOperators);
@@ -1252,11 +1268,66 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_arrayDeclaratorNested_4 , $pointerOperators, $declarator, $arrayModifier, $initializer).asWithKeywordParameters().setParameters(kwParams);
   }
   
   
-  public IConstructor DeclSpecifier_enum(IList $modifiers, IConstructor $baseType, IConstructor $name, IList $enumerators, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor DeclSpecifier_struct(IList $modifiers, IConstructor $name, IList $baseSpecifiers, IList $members, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
+      
+    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
+    }
+      
+    if (!$name.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$baseSpecifiers.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $baseSpecifiers.getType() + " for $baseSpecifiers:" + $baseSpecifiers);
+    }
+      
+    if (!$members.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_DeclSpecifier_struct_4 , $modifiers, $name, $baseSpecifiers, $members).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor DeclSpecifier_class(IList $modifiers, IConstructor $name, IList $members, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
+      
+    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
+    }
+      
+    if (!$name.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$members.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_DeclSpecifier_class_3 , $modifiers, $name, $members).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor DeclSpecifier_enum(IList $modifiers, IConstructor $baseType, IConstructor $name, IList $enumerators, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
@@ -1281,10 +1352,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_enum_4 , $modifiers, $baseType, $name, $enumerators).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor DeclSpecifier_etsEnum(IList $modifiers, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor DeclSpecifier_etsEnum(IList $modifiers, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
@@ -1299,10 +1371,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_etsEnum_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor DeclSpecifier_struct(IList $modifiers, IConstructor $name, IList $baseSpecifiers, IList $members, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor DeclSpecifier_classFinal(IList $modifiers, IConstructor $name, IList $baseSpecifiers, IList $members, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
@@ -1327,62 +1400,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
-    return vf.constructor(_DeclSpecifier_struct_4 , $modifiers, $name, $baseSpecifiers, $members).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor DeclSpecifier_class(IList $modifiers, IConstructor $name, IList $members, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
-    }
-      
-    if (!$name.getType().isSubtypeOf(_Name)) {
-      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
-    }
-      
-    if (!$members.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_DeclSpecifier_class_3 , $modifiers, $name, $members).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor DeclSpecifier_classFinal(IList $modifiers, IConstructor $name, IList $baseSpecifiers, IList $members, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
-    }
-      
-    if (!$name.getType().isSubtypeOf(_Name)) {
-      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
-    }
-      
-    if (!$baseSpecifiers.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $baseSpecifiers.getType() + " for $baseSpecifiers:" + $baseSpecifiers);
-    }
-      
-    if (!$members.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_classFinal_4 , $modifiers, $name, $baseSpecifiers, $members).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor DeclSpecifier_struct(IList $modifiers, IConstructor $name, IList $members, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor DeclSpecifier_struct(IList $modifiers, IConstructor $name, IList $members, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
@@ -1403,100 +1425,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_struct_3 , $modifiers, $name, $members).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor DeclSpecifier_union(IList $modifiers, IConstructor $name, IList $members, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
-    }
-      
-    if (!$name.getType().isSubtypeOf(_Name)) {
-      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
-    }
-      
-    if (!$members.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_DeclSpecifier_union_3 , $modifiers, $name, $members).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor DeclSpecifier_declSpecifier(IList $modifiers, IConstructor $type, IList $attributes, ISourceLocation $loc) {
-      
-    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
-    }
-      
-    if (!$type.getType().isSubtypeOf(_Type)) {
-      throw new IllegalArgumentException("Expected " + _Type + " but got " + $type.getType() + " for $type:" + $type);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_DeclSpecifier_declSpecifier_2 , $modifiers, $type).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor DeclSpecifier_union(IList $modifiers, IConstructor $name, IList $baseSpecifiers, IList $members, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
-    }
-      
-    if (!$name.getType().isSubtypeOf(_Name)) {
-      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
-    }
-      
-    if (!$baseSpecifiers.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $baseSpecifiers.getType() + " for $baseSpecifiers:" + $baseSpecifiers);
-    }
-      
-    if (!$members.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_DeclSpecifier_union_4 , $modifiers, $name, $baseSpecifiers, $members).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor DeclSpecifier_etsStruct(IList $modifiers, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
-    }
-      
-    if (!$name.getType().isSubtypeOf(_Name)) {
-      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_DeclSpecifier_etsStruct_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor DeclSpecifier_declSpecifier(IList $modifiers, IConstructor $type, IConstructor $expression, IList $attributes, ISourceLocation $loc) {
+  public IConstructor DeclSpecifier_declSpecifier(IList $modifiers, IConstructor $type, IConstructor $expression, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
@@ -1517,20 +1450,116 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_declSpecifier_3 , $modifiers, $type, $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor DeclSpecifier_msThrowEllipsis(ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor DeclSpecifier_msThrowEllipsis(ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_msThrowEllipsis_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor DeclSpecifier_enumScoped(IList $modifiers, IConstructor $name, IList $enumerators, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor DeclSpecifier_union(IList $modifiers, IConstructor $name, IList $members, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
+      
+    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
+    }
+      
+    if (!$name.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$members.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_DeclSpecifier_union_3 , $modifiers, $name, $members).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor DeclSpecifier_union(IList $modifiers, IConstructor $name, IList $baseSpecifiers, IList $members, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
+      
+    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
+    }
+      
+    if (!$name.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$baseSpecifiers.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $baseSpecifiers.getType() + " for $baseSpecifiers:" + $baseSpecifiers);
+    }
+      
+    if (!$members.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $members.getType() + " for $members:" + $members);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_DeclSpecifier_union_4 , $modifiers, $name, $baseSpecifiers, $members).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor DeclSpecifier_declSpecifier(IList $modifiers, IConstructor $type, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
+    }
+      
+    if (!$type.getType().isSubtypeOf(_Type)) {
+      throw new IllegalArgumentException("Expected " + _Type + " but got " + $type.getType() + " for $type:" + $type);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_DeclSpecifier_declSpecifier_2 , $modifiers, $type).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor DeclSpecifier_etsStruct(IList $modifiers, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
+      
+    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
+    }
+      
+    if (!$name.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_DeclSpecifier_etsStruct_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor DeclSpecifier_enumScoped(IList $modifiers, IConstructor $name, IList $enumerators, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
@@ -1551,10 +1580,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_enumScoped_3 , $modifiers, $name, $enumerators).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor DeclSpecifier_enumOpaque(IList $modifiers, IConstructor $baseType, IConstructor $name, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor DeclSpecifier_enumOpaque(IList $modifiers, IConstructor $baseType, IConstructor $name, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
@@ -1575,10 +1605,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_enumOpaque_3 , $modifiers, $baseType, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor DeclSpecifier_namedTypeSpecifier(IList $modifiers, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor DeclSpecifier_namedTypeSpecifier(IList $modifiers, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
@@ -1593,10 +1624,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_namedTypeSpecifier_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor DeclSpecifier_class(IList $modifiers, IConstructor $name, IList $baseSpecifiers, IList $members, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor DeclSpecifier_class(IList $modifiers, IConstructor $name, IList $baseSpecifiers, IList $members, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
@@ -1621,10 +1653,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_class_4 , $modifiers, $name, $baseSpecifiers, $members).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor DeclSpecifier_etsUnion(IList $modifiers, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor DeclSpecifier_etsUnion(IList $modifiers, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
@@ -1639,10 +1672,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_etsUnion_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor DeclSpecifier_unionFinal(IList $modifiers, IConstructor $name, IList $baseSpecifiers, IList $members, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor DeclSpecifier_unionFinal(IList $modifiers, IConstructor $name, IList $baseSpecifiers, IList $members, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
@@ -1667,10 +1701,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_unionFinal_4 , $modifiers, $name, $baseSpecifiers, $members).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor DeclSpecifier_enumScoped(IList $modifiers, IConstructor $baseType, IConstructor $name, IList $enumerators, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor DeclSpecifier_enumScoped(IList $modifiers, IConstructor $baseType, IConstructor $name, IList $enumerators, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
@@ -1695,10 +1730,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_enumScoped_4 , $modifiers, $baseType, $name, $enumerators).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor DeclSpecifier_etsClass(IList $modifiers, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor DeclSpecifier_etsClass(IList $modifiers, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
@@ -1713,10 +1749,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_etsClass_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor DeclSpecifier_enumScopedOpaque(IList $modifiers, IConstructor $name, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor DeclSpecifier_enumScopedOpaque(IList $modifiers, IConstructor $name, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
@@ -1733,10 +1770,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_enumScopedOpaque_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor DeclSpecifier_structFinal(IList $modifiers, IConstructor $name, IList $baseSpecifiers, IList $members, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor DeclSpecifier_structFinal(IList $modifiers, IConstructor $name, IList $baseSpecifiers, IList $members, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
@@ -1761,10 +1799,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_structFinal_4 , $modifiers, $name, $baseSpecifiers, $members).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor DeclSpecifier_enum(IList $modifiers, IConstructor $name, IList $enumerators, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor DeclSpecifier_enum(IList $modifiers, IConstructor $name, IList $enumerators, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
@@ -1785,10 +1824,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_enum_3 , $modifiers, $name, $enumerators).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor DeclSpecifier_enumScopedOpaque(IList $modifiers, IConstructor $baseType, IConstructor $name, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor DeclSpecifier_enumScopedOpaque(IList $modifiers, IConstructor $baseType, IConstructor $name, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
@@ -1809,11 +1849,82 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_enumScopedOpaque_3 , $modifiers, $baseType, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
   
-  public IConstructor Declaration_sttClass(IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Declaration_sttClass(IConstructor $name, IConstructor $defaultType, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
+      
+    if (!$name.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$defaultType.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $defaultType.getType() + " for $defaultType:" + $defaultType);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_sttClass_2 , $name, $defaultType).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_enumerator(IConstructor $name, IConstructor $value, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
+      
+    if (!$name.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$value.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $value.getType() + " for $value:" + $value);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_enumerator_2 , $name, $value).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_asmDeclaration(String $assembly, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!vf.string($assembly).getType().isSubtypeOf(tf.stringType())) {
+      throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($assembly).getType() + " for vf.string($assembly):" + vf.string($assembly));
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_asmDeclaration_1 , vf.string($assembly)).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_rvalueReference(IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_rvalueReference_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_tttParameter(IList $nestedParameters, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
+      
+    if (!$nestedParameters.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $nestedParameters.getType() + " for $nestedParameters:" + $nestedParameters);
+    }
       
     if (!$name.getType().isSubtypeOf(_Name)) {
       throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
@@ -1824,10 +1935,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
-    return vf.constructor(_Declaration_sttClass_1 , $name).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_tttParameter_2 , $nestedParameters, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declaration_namespaceDefinitionInline(IConstructor $name, IList $declarations, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Declaration_namespaceDefinitionInline(IConstructor $name, IList $declarations, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$name.getType().isSubtypeOf(_Name)) {
       throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
@@ -1844,24 +1956,34 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_namespaceDefinitionInline_2 , $name, $declarations).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declaration_asmDeclaration(String $assembly, ISourceLocation $loc) {
+  public IConstructor Declaration_enumerator(IConstructor $name, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
-    if (!vf.string($assembly).getType().isSubtypeOf(tf.stringType())) {
-      throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($assembly).getType() + " for vf.string($assembly):" + vf.string($assembly));
+    if (!$name.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
     
-    
-    return vf.constructor(_Declaration_asmDeclaration_1 , vf.string($assembly)).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_enumerator_1 , $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declaration_reference(IList $attributes, ISourceLocation $loc) {
+  public IConstructor Declaration_simpleDeclaration(IConstructor $declSpecifier, IList $declarators, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$declSpecifier.getType().isSubtypeOf(_DeclSpecifier)) {
+      throw new IllegalArgumentException("Expected " + _DeclSpecifier + " but got " + $declSpecifier.getType() + " for $declSpecifier:" + $declSpecifier);
+    }
+      
+    if (!$declarators.getType().isSubtypeOf(tf.listType(_Declarator))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declarator) + " but got " + $declarators.getType() + " for $declarators:" + $declarators);
+    }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     if (!$attributes.isEmpty()) {
@@ -1870,10 +1992,138 @@ public class AST {
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Declaration_reference_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_simpleDeclaration_2 , $declSpecifier, $declarators).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declaration_template(IList $parameters, IConstructor $declaration, IConstructor $type, ISourceLocation $loc) {
+  public IConstructor Declaration_varArgs(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_varArgs_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_parameter(IConstructor $declSpecifier, IConstructor $declarator, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$declSpecifier.getType().isSubtypeOf(_DeclSpecifier)) {
+      throw new IllegalArgumentException("Expected " + _DeclSpecifier + " but got " + $declSpecifier.getType() + " for $declSpecifier:" + $declSpecifier);
+    }
+      
+    if (!$declarator.getType().isSubtypeOf(_Declarator)) {
+      throw new IllegalArgumentException("Expected " + _Declarator + " but got " + $declarator.getType() + " for $declarator:" + $declarator);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_parameter_2 , $declSpecifier, $declarator).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_problemDeclaration(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_problemDeclaration_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_translationUnit(IList $declarations, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$declarations.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $declarations.getType() + " for $declarations:" + $declarations);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_translationUnit_1 , $declarations).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_pointerToMember(IList $modifiers, IConstructor $nestedName, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
+    }
+      
+    if (!$nestedName.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $nestedName.getType() + " for $nestedName:" + $nestedName);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_pointerToMember_2 , $modifiers, $nestedName).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_functionDefinition(IConstructor $returnSpec, IConstructor $declarator, IConstructor $body, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$returnSpec.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $returnSpec.getType() + " for $returnSpec:" + $returnSpec);
+    }
+      
+    if (!$declarator.getType().isSubtypeOf(_Declarator)) {
+      throw new IllegalArgumentException("Expected " + _Declarator + " but got " + $declarator.getType() + " for $declarator:" + $declarator);
+    }
+      
+    if (!$body.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_functionDefinition_3 , $returnSpec, $declarator, $body).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_deletedFunctionDefinition(IConstructor $declSpecifier, IList $memberInitializer, IConstructor $declarator, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$declSpecifier.getType().isSubtypeOf(_DeclSpecifier)) {
+      throw new IllegalArgumentException("Expected " + _DeclSpecifier + " but got " + $declSpecifier.getType() + " for $declSpecifier:" + $declSpecifier);
+    }
+      
+    if (!$memberInitializer.getType().isSubtypeOf(tf.listType(_Expression))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $memberInitializer.getType() + " for $memberInitializer:" + $memberInitializer);
+    }
+      
+    if (!$declarator.getType().isSubtypeOf(_Declarator)) {
+      throw new IllegalArgumentException("Expected " + _Declarator + " but got " + $declarator.getType() + " for $declarator:" + $declarator);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_deletedFunctionDefinition_3 , $declSpecifier, $memberInitializer, $declarator).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_template(IList $parameters, IConstructor $declaration, IConstructor $type, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$parameters.getType().isSubtypeOf(tf.listType(_Declaration))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $parameters.getType() + " for $parameters:" + $parameters);
@@ -1892,14 +2142,83 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_template_3 , $parameters, $declaration, $type).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declaration_explicitTemplateInstantiation(IConstructor $modifier, IConstructor $declaration, ISourceLocation $loc) {
+  public IConstructor Declaration_staticAssert(IConstructor $condition, IConstructor $message, ISourceLocation $loc, boolean $isMacroExpansion) {
       
-    if (!$modifier.getType().isSubtypeOf(_Modifier)) {
-      throw new IllegalArgumentException("Expected " + _Modifier + " but got " + $modifier.getType() + " for $modifier:" + $modifier);
+    if (!$condition.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $condition.getType() + " for $condition:" + $condition);
     }
+      
+    if (!$message.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $message.getType() + " for $message:" + $message);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_staticAssert_2 , $condition, $message).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_namespaceDefinition(IConstructor $name, IList $declarations, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
+      
+    if (!$name.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$declarations.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $declarations.getType() + " for $declarations:" + $declarations);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_namespaceDefinition_2 , $name, $declarations).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_baseSpecifier(IList $modifiers, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
+      
+    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
+    }
+      
+    if (!$name.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_baseSpecifier_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_reference(IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_reference_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_explicitTemplateSpecialization(IConstructor $declaration, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$declaration.getType().isSubtypeOf(_Declaration)) {
       throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $declaration.getType() + " for $declaration:" + $declaration);
@@ -1910,10 +2229,172 @@ public class AST {
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Declaration_explicitTemplateInstantiation_2 , $modifier, $declaration).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_explicitTemplateSpecialization_1 , $declaration).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declaration_functionDefinition(IConstructor $declSpecifier, IConstructor $declarator, IList $memberInitializer, IConstructor $body, IList $attributes, ISourceLocation $loc) {
+  public IConstructor Declaration_sttClass(IConstructor $name, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
+      
+    if (!$name.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_sttClass_1 , $name).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_explicitTemplateInstantiation(IConstructor $declaration, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$declaration.getType().isSubtypeOf(_Declaration)) {
+      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $declaration.getType() + " for $declaration:" + $declaration);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_explicitTemplateInstantiation_1 , $declaration).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_linkageSpecification(String $literal, IList $declarations, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!vf.string($literal).getType().isSubtypeOf(tf.stringType())) {
+      throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($literal).getType() + " for vf.string($literal):" + vf.string($literal));
+    }
+      
+    if (!$declarations.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $declarations.getType() + " for $declarations:" + $declarations);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_linkageSpecification_2 , vf.string($literal), $declarations).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_namespaceAlias(IConstructor $alias, IConstructor $mapping, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
+      
+    if (!$alias.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $alias.getType() + " for $alias:" + $alias);
+    }
+      
+    if (!$mapping.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $mapping.getType() + " for $mapping:" + $mapping);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_namespaceAlias_2 , $alias, $mapping).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_alias(IConstructor $alias, IConstructor $mappingTypeId, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
+      
+    if (!$alias.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $alias.getType() + " for $alias:" + $alias);
+    }
+      
+    if (!$mappingTypeId.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $mappingTypeId.getType() + " for $mappingTypeId:" + $mappingTypeId);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_alias_2 , $alias, $mappingTypeId).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_sttTypename(IConstructor $name, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
+      
+    if (!$name.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_sttTypename_1 , $name).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_pointer(IList $modifiers, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_pointer_1 , $modifiers).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_virtSpecifier(IConstructor $modifier, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$modifier.getType().isSubtypeOf(_Modifier)) {
+      throw new IllegalArgumentException("Expected " + _Modifier + " but got " + $modifier.getType() + " for $modifier:" + $modifier);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_virtSpecifier_1 , $modifier).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_defaultedFunctionDefinition(IConstructor $declSpecifier, IList $memberInitializer, IConstructor $declarator, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$declSpecifier.getType().isSubtypeOf(_DeclSpecifier)) {
+      throw new IllegalArgumentException("Expected " + _DeclSpecifier + " but got " + $declSpecifier.getType() + " for $declSpecifier:" + $declSpecifier);
+    }
+      
+    if (!$memberInitializer.getType().isSubtypeOf(tf.listType(_Expression))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $memberInitializer.getType() + " for $memberInitializer:" + $memberInitializer);
+    }
+      
+    if (!$declarator.getType().isSubtypeOf(_Declarator)) {
+      throw new IllegalArgumentException("Expected " + _Declarator + " but got " + $declarator.getType() + " for $declarator:" + $declarator);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_defaultedFunctionDefinition_3 , $declSpecifier, $memberInitializer, $declarator).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_functionDefinition(IConstructor $declSpecifier, IConstructor $declarator, IList $memberInitializer, IConstructor $body, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$declSpecifier.getType().isSubtypeOf(_DeclSpecifier)) {
       throw new IllegalArgumentException("Expected " + _DeclSpecifier + " but got " + $declSpecifier.getType() + " for $declSpecifier:" + $declSpecifier);
@@ -1938,166 +2419,41 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_functionDefinition_4 , $declSpecifier, $declarator, $memberInitializer, $body).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declaration_pointerToMember(IList $modifiers, IConstructor $nestedName, IList $attributes, ISourceLocation $loc) {
+  public IConstructor Declaration_baseSpecifier(IList $modifiers, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
     }
-      
-    if (!$nestedName.getType().isSubtypeOf(_Name)) {
-      throw new IllegalArgumentException("Expected " + _Name + " but got " + $nestedName.getType() + " for $nestedName:" + $nestedName);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Declaration_pointerToMember_2 , $modifiers, $nestedName).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_translationUnit(IList $declarations, ISourceLocation $loc) {
-      
-    if (!$declarations.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $declarations.getType() + " for $declarations:" + $declarations);
-    }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
     
-    
-    return vf.constructor(_Declaration_translationUnit_1 , $declarations).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_baseSpecifier_1 , $modifiers).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declaration_parameter(IConstructor $declSpecifier, IConstructor $declarator, ISourceLocation $loc) {
+  public IConstructor Declaration_parameter(IConstructor $declSpecifier, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$declSpecifier.getType().isSubtypeOf(_DeclSpecifier)) {
       throw new IllegalArgumentException("Expected " + _DeclSpecifier + " but got " + $declSpecifier.getType() + " for $declSpecifier:" + $declSpecifier);
     }
-      
-    if (!$declarator.getType().isSubtypeOf(_Declarator)) {
-      throw new IllegalArgumentException("Expected " + _Declarator + " but got " + $declarator.getType() + " for $declarator:" + $declarator);
-    }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Declaration_parameter_2 , $declSpecifier, $declarator).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_parameter_1 , $declSpecifier).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declaration_enumerator(IConstructor $name, IConstructor $value, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$name.getType().isSubtypeOf(_Name)) {
-      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
-    }
-      
-    if (!$value.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $value.getType() + " for $value:" + $value);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_Declaration_enumerator_2 , $name, $value).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_varArgs(ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Declaration_varArgs_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_simpleDeclaration(IConstructor $declSpecifier, IList $declarators, IList $attributes, ISourceLocation $loc) {
-      
-    if (!$declSpecifier.getType().isSubtypeOf(_DeclSpecifier)) {
-      throw new IllegalArgumentException("Expected " + _DeclSpecifier + " but got " + $declSpecifier.getType() + " for $declSpecifier:" + $declSpecifier);
-    }
-      
-    if (!$declarators.getType().isSubtypeOf(tf.listType(_Declarator))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declarator) + " but got " + $declarators.getType() + " for $declarators:" + $declarators);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Declaration_simpleDeclaration_2 , $declSpecifier, $declarators).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_sttClass(IConstructor $name, IConstructor $defaultType, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$name.getType().isSubtypeOf(_Name)) {
-      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
-    }
-      
-    if (!$defaultType.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $defaultType.getType() + " for $defaultType:" + $defaultType);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_Declaration_sttClass_2 , $name, $defaultType).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_linkageSpecification(String $literal, IList $declarations, ISourceLocation $loc) {
-      
-    if (!vf.string($literal).getType().isSubtypeOf(tf.stringType())) {
-      throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($literal).getType() + " for vf.string($literal):" + vf.string($literal));
-    }
-      
-    if (!$declarations.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $declarations.getType() + " for $declarations:" + $declarations);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Declaration_linkageSpecification_2 , vf.string($literal), $declarations).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_namespaceDefinition(IConstructor $name, IList $declarations, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$name.getType().isSubtypeOf(_Name)) {
-      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
-    }
-      
-    if (!$declarations.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $declarations.getType() + " for $declarations:" + $declarations);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_Declaration_namespaceDefinition_2 , $name, $declarations).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_baseSpecifier(IList $modifiers, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Declaration_usingDeclaration(IList $modifiers, IConstructor $name, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
@@ -2108,14 +2464,21 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
-    return vf.constructor(_Declaration_baseSpecifier_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_usingDeclaration_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declaration_explicitTemplateInstantiation(IConstructor $declaration, ISourceLocation $loc) {
+  public IConstructor Declaration_explicitTemplateInstantiation(IConstructor $modifier, IConstructor $declaration, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$modifier.getType().isSubtypeOf(_Modifier)) {
+      throw new IllegalArgumentException("Expected " + _Modifier + " but got " + $modifier.getType() + " for $modifier:" + $modifier);
+    }
       
     if (!$declaration.getType().isSubtypeOf(_Declaration)) {
       throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $declaration.getType() + " for $declaration:" + $declaration);
@@ -2126,111 +2489,14 @@ public class AST {
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Declaration_explicitTemplateInstantiation_1 , $declaration).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_explicitTemplateInstantiation_2 , $modifier, $declaration).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declaration_explicitTemplateSpecialization(IConstructor $declaration, ISourceLocation $loc) {
+  public IConstructor Declaration_usingDirective(IConstructor $qualifiedName, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
-    if (!$declaration.getType().isSubtypeOf(_Declaration)) {
-      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $declaration.getType() + " for $declaration:" + $declaration);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Declaration_explicitTemplateSpecialization_1 , $declaration).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_tttParameter(IList $nestedParameters, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$nestedParameters.getType().isSubtypeOf(tf.listType(_Declaration))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $nestedParameters.getType() + " for $nestedParameters:" + $nestedParameters);
-    }
-      
-    if (!$name.getType().isSubtypeOf(_Name)) {
-      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_Declaration_tttParameter_2 , $nestedParameters, $name).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_rvalueReference(IList $attributes, ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Declaration_rvalueReference_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_enumerator(IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$name.getType().isSubtypeOf(_Name)) {
-      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_Declaration_enumerator_1 , $name).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_namespaceAlias(IConstructor $alias, IConstructor $mapping, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$alias.getType().isSubtypeOf(_Name)) {
-      throw new IllegalArgumentException("Expected " + _Name + " but got " + $alias.getType() + " for $alias:" + $alias);
-    }
-      
-    if (!$mapping.getType().isSubtypeOf(_Name)) {
-      throw new IllegalArgumentException("Expected " + _Name + " but got " + $mapping.getType() + " for $mapping:" + $mapping);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_Declaration_namespaceAlias_2 , $alias, $mapping).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_staticAssert(IConstructor $condition, IConstructor $message, ISourceLocation $loc) {
-      
-    if (!$condition.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $condition.getType() + " for $condition:" + $condition);
-    }
-      
-    if (!$message.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $message.getType() + " for $message:" + $message);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Declaration_staticAssert_2 , $condition, $message).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_alias(IConstructor $alias, IConstructor $mappingTypeId, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$alias.getType().isSubtypeOf(_Name)) {
-      throw new IllegalArgumentException("Expected " + _Name + " but got " + $alias.getType() + " for $alias:" + $alias);
-    }
-      
-    if (!$mappingTypeId.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $mappingTypeId.getType() + " for $mappingTypeId:" + $mappingTypeId);
+    if (!$qualifiedName.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $qualifiedName.getType() + " for $qualifiedName:" + $qualifiedName);
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
@@ -2240,10 +2506,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
-    return vf.constructor(_Declaration_alias_2 , $alias, $mappingTypeId).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_usingDirective_1 , $qualifiedName).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declaration_visibilityLabel(IConstructor $visibility, ISourceLocation $loc) {
+  public IConstructor Declaration_visibilityLabel(IConstructor $visibility, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$visibility.getType().isSubtypeOf(_Modifier)) {
       throw new IllegalArgumentException("Expected " + _Modifier + " but got " + $visibility.getType() + " for $visibility:" + $visibility);
@@ -2254,10 +2521,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_visibilityLabel_1 , $visibility).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declaration_functionWithTryBlockDefinition(IConstructor $declSpecifier, IConstructor $declarator, IList $memberInitializers, IConstructor $sbody, IList $catchHandlers, IList $attributes, ISourceLocation $loc) {
+  public IConstructor Declaration_functionWithTryBlockDefinition(IConstructor $declSpecifier, IConstructor $declarator, IList $memberInitializers, IConstructor $sbody, IList $catchHandlers, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$declSpecifier.getType().isSubtypeOf(_DeclSpecifier)) {
       throw new IllegalArgumentException("Expected " + _DeclSpecifier + " but got " + $declSpecifier.getType() + " for $declSpecifier:" + $declSpecifier);
@@ -2286,200 +2554,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_functionWithTryBlockDefinition_5 , $declSpecifier, $declarator, $memberInitializers, $sbody, $catchHandlers).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declaration_parameter(IConstructor $declSpecifier, ISourceLocation $loc) {
-      
-    if (!$declSpecifier.getType().isSubtypeOf(_DeclSpecifier)) {
-      throw new IllegalArgumentException("Expected " + _DeclSpecifier + " but got " + $declSpecifier.getType() + " for $declSpecifier:" + $declSpecifier);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Declaration_parameter_1 , $declSpecifier).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_sttTypename(IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$name.getType().isSubtypeOf(_Name)) {
-      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_Declaration_sttTypename_1 , $name).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_virtSpecifier(IConstructor $modifier, ISourceLocation $loc) {
-      
-    if (!$modifier.getType().isSubtypeOf(_Modifier)) {
-      throw new IllegalArgumentException("Expected " + _Modifier + " but got " + $modifier.getType() + " for $modifier:" + $modifier);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Declaration_virtSpecifier_1 , $modifier).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_defaultedFunctionDefinition(IConstructor $declSpecifier, IList $memberInitializer, IConstructor $declarator, IList $attributes, ISourceLocation $loc) {
-      
-    if (!$declSpecifier.getType().isSubtypeOf(_DeclSpecifier)) {
-      throw new IllegalArgumentException("Expected " + _DeclSpecifier + " but got " + $declSpecifier.getType() + " for $declSpecifier:" + $declSpecifier);
-    }
-      
-    if (!$memberInitializer.getType().isSubtypeOf(tf.listType(_Expression))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $memberInitializer.getType() + " for $memberInitializer:" + $memberInitializer);
-    }
-      
-    if (!$declarator.getType().isSubtypeOf(_Declarator)) {
-      throw new IllegalArgumentException("Expected " + _Declarator + " but got " + $declarator.getType() + " for $declarator:" + $declarator);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Declaration_defaultedFunctionDefinition_3 , $declSpecifier, $memberInitializer, $declarator).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_usingDeclaration(IList $modifiers, IConstructor $name, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
-    }
-      
-    if (!$name.getType().isSubtypeOf(_Name)) {
-      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_Declaration_usingDeclaration_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_pointer(IList $modifiers, IList $attributes, ISourceLocation $loc) {
-      
-    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Declaration_pointer_1 , $modifiers).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_usingDirective(IConstructor $qualifiedName, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$qualifiedName.getType().isSubtypeOf(_Name)) {
-      throw new IllegalArgumentException("Expected " + _Name + " but got " + $qualifiedName.getType() + " for $qualifiedName:" + $qualifiedName);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_Declaration_usingDirective_1 , $qualifiedName).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_deletedFunctionDefinition(IConstructor $declSpecifier, IList $memberInitializer, IConstructor $declarator, IList $attributes, ISourceLocation $loc) {
-      
-    if (!$declSpecifier.getType().isSubtypeOf(_DeclSpecifier)) {
-      throw new IllegalArgumentException("Expected " + _DeclSpecifier + " but got " + $declSpecifier.getType() + " for $declSpecifier:" + $declSpecifier);
-    }
-      
-    if (!$memberInitializer.getType().isSubtypeOf(tf.listType(_Expression))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $memberInitializer.getType() + " for $memberInitializer:" + $memberInitializer);
-    }
-      
-    if (!$declarator.getType().isSubtypeOf(_Declarator)) {
-      throw new IllegalArgumentException("Expected " + _Declarator + " but got " + $declarator.getType() + " for $declarator:" + $declarator);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Declaration_deletedFunctionDefinition_3 , $declSpecifier, $memberInitializer, $declarator).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_functionDefinition(IConstructor $returnSpec, IConstructor $declarator, IConstructor $body, IList $attributes, ISourceLocation $loc) {
-      
-    if (!$returnSpec.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $returnSpec.getType() + " for $returnSpec:" + $returnSpec);
-    }
-      
-    if (!$declarator.getType().isSubtypeOf(_Declarator)) {
-      throw new IllegalArgumentException("Expected " + _Declarator + " but got " + $declarator.getType() + " for $declarator:" + $declarator);
-    }
-      
-    if (!$body.getType().isSubtypeOf(_Statement)) {
-      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Declaration_functionDefinition_3 , $returnSpec, $declarator, $body).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_baseSpecifier(IList $modifiers, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_Declaration_baseSpecifier_1 , $modifiers).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_problemDeclaration(ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Declaration_problemDeclaration_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Declaration_sttTypename(IConstructor $name, IConstructor $defaultType, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Declaration_sttTypename(IConstructor $name, IConstructor $defaultType, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$name.getType().isSubtypeOf(_Name)) {
       throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
@@ -2494,21 +2573,23 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_sttTypename_2 , $name, $defaultType).asWithKeywordParameters().setParameters(kwParams);
   }
   
   
-  public IConstructor Expression_empty(ISourceLocation $loc) {
+  public IConstructor Expression_empty(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_empty_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_cast(IConstructor $typeId, IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_cast(IConstructor $typeId, IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$typeId.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $typeId.getType() + " for $typeId:" + $typeId);
@@ -2523,10 +2604,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_cast_2 , $typeId, $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_sizeofParameterPack(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_sizeofParameterPack(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
@@ -2537,10 +2619,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_sizeofParameterPack_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_newWithArgs(IList $arguments, IConstructor $typeId, IConstructor $initializer, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_newWithArgs(IList $arguments, IConstructor $typeId, IConstructor $initializer, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$arguments.getType().isSubtypeOf(tf.listType(_Expression))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $arguments.getType() + " for $arguments:" + $arguments);
@@ -2559,10 +2642,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_newWithArgs_3 , $arguments, $typeId, $initializer).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_not(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_not(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
@@ -2573,10 +2657,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_not_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_shiftLeftAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_shiftLeftAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -2591,10 +2676,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_shiftLeftAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_typeId(IConstructor $declSpecifier, IConstructor $abstractDeclarator, ISourceLocation $loc) {
+  public IConstructor Expression_typeId(IConstructor $declSpecifier, IConstructor $abstractDeclarator, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$declSpecifier.getType().isSubtypeOf(_DeclSpecifier)) {
       throw new IllegalArgumentException("Expected " + _DeclSpecifier + " but got " + $declSpecifier.getType() + " for $declSpecifier:" + $declSpecifier);
@@ -2609,10 +2695,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_typeId_2 , $declSpecifier, $abstractDeclarator).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_star(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_star(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
@@ -2623,10 +2710,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_star_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_divide(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_divide(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -2641,20 +2729,22 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_divide_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_captureThisPtr(ISourceLocation $loc) {
+  public IConstructor Expression_captureThisPtr(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_captureThisPtr_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_shiftRight(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_shiftRight(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -2669,10 +2759,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_shiftRight_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_stringLiteral(String $value, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_stringLiteral(String $value, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!vf.string($value).getType().isSubtypeOf(tf.stringType())) {
       throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($value).getType() + " for vf.string($value):" + vf.string($value));
@@ -2683,10 +2774,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_stringLiteral_1 , vf.string($value)).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_greaterEqual(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_greaterEqual(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -2701,10 +2793,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_greaterEqual_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_binaryXor(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_binaryXor(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -2719,10 +2812,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_binaryXor_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_plus(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_plus(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -2737,10 +2831,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_plus_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_amper(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_amper(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
@@ -2751,10 +2846,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_amper_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_arraySubscriptExpression(IConstructor $array, IConstructor $argument, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_arraySubscriptExpression(IConstructor $array, IConstructor $argument, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$array.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $array.getType() + " for $array:" + $array);
@@ -2769,10 +2865,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_arraySubscriptExpression_2 , $array, $argument).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_lessThan(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_lessThan(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -2787,10 +2884,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_lessThan_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_functionCall(IConstructor $functionName, IList $arguments, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_functionCall(IConstructor $functionName, IList $arguments, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$functionName.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $functionName.getType() + " for $functionName:" + $functionName);
@@ -2805,10 +2903,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_functionCall_2 , $functionName, $arguments).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_globalVectoredDelete(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_globalVectoredDelete(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
@@ -2819,10 +2918,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_globalVectoredDelete_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_greaterThan(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_greaterThan(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -2837,10 +2937,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_greaterThan_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_minus(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_minus(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
@@ -2851,10 +2952,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_minus_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_constructorChainInitializer(IConstructor $name, IConstructor $initializer, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Expression_constructorChainInitializer(IConstructor $name, IConstructor $initializer, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$name.getType().isSubtypeOf(_Name)) {
       throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
@@ -2869,10 +2971,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_constructorChainInitializer_2 , $name, $initializer).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_lessEqual(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_lessEqual(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -2887,10 +2990,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_lessEqual_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_typeId(IConstructor $declSpecifier, ISourceLocation $loc) {
+  public IConstructor Expression_typeId(IConstructor $declSpecifier, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$declSpecifier.getType().isSubtypeOf(_DeclSpecifier)) {
       throw new IllegalArgumentException("Expected " + _DeclSpecifier + " but got " + $declSpecifier.getType() + " for $declSpecifier:" + $declSpecifier);
@@ -2901,10 +3005,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_typeId_1 , $declSpecifier).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_labelReference(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_labelReference(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
@@ -2915,20 +3020,22 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_labelReference_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_true(ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_true(ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_true_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_charConstant(String $value, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_charConstant(String $value, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!vf.string($value).getType().isSubtypeOf(tf.stringType())) {
       throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($value).getType() + " for vf.string($value):" + vf.string($value));
@@ -2939,10 +3046,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_charConstant_1 , vf.string($value)).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_typeid(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_typeid(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
@@ -2953,10 +3061,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_typeid_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_equals(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_equals(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -2971,10 +3080,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_equals_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_minusAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_minusAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -2989,10 +3099,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_minusAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_fieldReferencePointerDeref(IConstructor $fieldOwner, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl, IConstructor $typ) {
+  public IConstructor Expression_fieldReferencePointerDeref(IConstructor $fieldOwner, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$fieldOwner.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $fieldOwner.getType() + " for $fieldOwner:" + $fieldOwner);
@@ -3007,10 +3118,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_fieldReferencePointerDeref_2 , $fieldOwner, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_nyi(String $raw, ISourceLocation $loc) {
+  public IConstructor Expression_nyi(String $raw, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!vf.string($raw).getType().isSubtypeOf(tf.stringType())) {
       throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($raw).getType() + " for vf.string($raw):" + vf.string($raw));
@@ -3021,10 +3133,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_nyi_1 , vf.string($raw)).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_new(IConstructor $typeId, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_new(IConstructor $typeId, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$typeId.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $typeId.getType() + " for $typeId:" + $typeId);
@@ -3035,10 +3148,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_new_1 , $typeId).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_minus(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_minus(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -3053,10 +3167,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_minus_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_noexcept(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_noexcept(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
@@ -3067,10 +3182,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_noexcept_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_plus(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_plus(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
@@ -3081,10 +3197,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_plus_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_constructorInitializer(IList $arguments, ISourceLocation $loc) {
+  public IConstructor Expression_constructorInitializer(IList $arguments, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$arguments.getType().isSubtypeOf(tf.listType(_Expression))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $arguments.getType() + " for $arguments:" + $arguments);
@@ -3095,10 +3212,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_constructorInitializer_1 , $arguments).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_arrayRangeDesignator(IConstructor $rangeFloor, IConstructor $rangeCeiling, ISourceLocation $loc) {
+  public IConstructor Expression_arrayRangeDesignator(IConstructor $rangeFloor, IConstructor $rangeCeiling, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$rangeFloor.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $rangeFloor.getType() + " for $rangeFloor:" + $rangeFloor);
@@ -3113,10 +3231,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_arrayRangeDesignator_2 , $rangeFloor, $rangeCeiling).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_notEquals(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_notEquals(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -3131,10 +3250,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_notEquals_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_arrayModifier(IConstructor $constExpression, IList $attributes, ISourceLocation $loc) {
+  public IConstructor Expression_arrayModifier(IConstructor $constExpression, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$constExpression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $constExpression.getType() + " for $constExpression:" + $constExpression);
@@ -3147,10 +3267,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_arrayModifier_1 , $constExpression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_reinterpretCast(IConstructor $typeId, IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_reinterpretCast(IConstructor $typeId, IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$typeId.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $typeId.getType() + " for $typeId:" + $typeId);
@@ -3165,10 +3286,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_reinterpretCast_2 , $typeId, $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_capture(IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Expression_capture(IConstructor $name, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$name.getType().isSubtypeOf(_Name)) {
       throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
@@ -3179,10 +3301,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_capture_1 , $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_isBaseOf(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_isBaseOf(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -3197,10 +3320,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_isBaseOf_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_min(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_min(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -3215,20 +3339,22 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_min_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_false(ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_false(ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_false_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_binaryOrAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_binaryOrAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -3243,10 +3369,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_binaryOrAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_tilde(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_tilde(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
@@ -3257,10 +3384,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_tilde_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_multiplyAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_multiplyAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -3275,10 +3403,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_multiplyAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_sizeof(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_sizeof(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
@@ -3289,10 +3418,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_sizeof_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_globalNew(IConstructor $typeId, IConstructor $initializer, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_globalNew(IConstructor $typeId, IConstructor $initializer, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$typeId.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $typeId.getType() + " for $typeId:" + $typeId);
@@ -3307,10 +3437,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_globalNew_2 , $typeId, $initializer).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_isTriviallyAssignable(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_isTriviallyAssignable(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -3325,10 +3456,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_isTriviallyAssignable_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_simpleTypeConstructor(IConstructor $declSpecifier, IConstructor $initializer, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_simpleTypeConstructor(IConstructor $declSpecifier, IConstructor $initializer, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$declSpecifier.getType().isSubtypeOf(_DeclSpecifier)) {
       throw new IllegalArgumentException("Expected " + _DeclSpecifier + " but got " + $declSpecifier.getType() + " for $declSpecifier:" + $declSpecifier);
@@ -3343,10 +3475,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_simpleTypeConstructor_2 , $declSpecifier, $initializer).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_ellipses(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_ellipses(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -3361,10 +3494,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_ellipses_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_dynamicCast(IConstructor $typeId, IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_dynamicCast(IConstructor $typeId, IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$typeId.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $typeId.getType() + " for $typeId:" + $typeId);
@@ -3379,10 +3513,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_dynamicCast_2 , $typeId, $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_binaryAnd(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_binaryAnd(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -3397,10 +3532,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_binaryAnd_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_modulo(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_modulo(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -3415,30 +3551,33 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_modulo_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_throw(ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_throw(ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_throw_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_nullptr(ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_nullptr(ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_nullptr_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_alignOf(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_alignOf(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
@@ -3449,10 +3588,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_alignOf_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_initializerList(IList $clauses, ISourceLocation $loc) {
+  public IConstructor Expression_initializerList(IList $clauses, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$clauses.getType().isSubtypeOf(tf.listType(_Expression))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $clauses.getType() + " for $clauses:" + $clauses);
@@ -3463,10 +3603,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_initializerList_1 , $clauses).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_divideAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_divideAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -3481,10 +3622,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_divideAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_new(IConstructor $typeId, IConstructor $initializer, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_new(IConstructor $typeId, IConstructor $initializer, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$typeId.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $typeId.getType() + " for $typeId:" + $typeId);
@@ -3499,10 +3641,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_new_2 , $typeId, $initializer).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_prefixDecr(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_prefixDecr(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
@@ -3513,10 +3656,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_prefixDecr_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_binaryXorAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_binaryXorAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -3531,10 +3675,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_binaryXorAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_shiftLeft(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_shiftLeft(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -3549,10 +3694,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_shiftLeft_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_lambda(IConstructor $captureDefault, IList $captures, IConstructor $declarator, IConstructor $body, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_lambda(IConstructor $captureDefault, IList $captures, IConstructor $declarator, IConstructor $body, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$captureDefault.getType().isSubtypeOf(_Modifier)) {
       throw new IllegalArgumentException("Expected " + _Modifier + " but got " + $captureDefault.getType() + " for $captureDefault:" + $captureDefault);
@@ -3575,10 +3721,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_lambda_4 , $captureDefault, $captures, $declarator, $body).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_plusAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_plusAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -3593,10 +3740,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_plusAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_shiftRightAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_shiftRightAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -3611,10 +3759,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_shiftRightAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_constCast(IConstructor $typeId, IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_constCast(IConstructor $typeId, IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$typeId.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $typeId.getType() + " for $typeId:" + $typeId);
@@ -3629,10 +3778,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_constCast_2 , $typeId, $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_arrayDesignator(IConstructor $subscript, ISourceLocation $loc) {
+  public IConstructor Expression_arrayDesignator(IConstructor $subscript, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$subscript.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $subscript.getType() + " for $subscript:" + $subscript);
@@ -3643,10 +3793,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_arrayDesignator_1 , $subscript).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_compoundStatementExpression(IConstructor $compoundStatement, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_compoundStatementExpression(IConstructor $compoundStatement, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$compoundStatement.getType().isSubtypeOf(_Statement)) {
       throw new IllegalArgumentException("Expected " + _Statement + " but got " + $compoundStatement.getType() + " for $compoundStatement:" + $compoundStatement);
@@ -3657,10 +3808,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_compoundStatementExpression_1 , $compoundStatement).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_equalsInitializer(IConstructor $initializer, ISourceLocation $loc) {
+  public IConstructor Expression_equalsInitializer(IConstructor $initializer, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$initializer.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $initializer.getType() + " for $initializer:" + $initializer);
@@ -3671,10 +3823,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_equalsInitializer_1 , $initializer).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_integerLiteral(IValue $number, ISourceLocation $loc) {
+  public IConstructor Expression_integerLiteral(IValue $number, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$number.getType().isSubtypeOf(tf.integerType())) {
       throw new IllegalArgumentException("Expected " + tf.integerType() + " but got " + $number.getType() + " for $number:" + $number);
@@ -3685,10 +3838,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_integerLiteral_1 , $number).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_pmDot(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_pmDot(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -3703,10 +3857,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_pmDot_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_logicalOr(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_logicalOr(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -3721,10 +3876,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_logicalOr_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_bracketed(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_bracketed(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
@@ -3735,10 +3891,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_bracketed_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_pmArrow(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_pmArrow(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -3753,10 +3910,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_pmArrow_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_prefixIncr(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_prefixIncr(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
@@ -3767,10 +3925,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_prefixIncr_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_throw(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_throw(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
@@ -3781,10 +3940,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_throw_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_globalNew(IConstructor $typeId, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_globalNew(IConstructor $typeId, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$typeId.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $typeId.getType() + " for $typeId:" + $typeId);
@@ -3795,10 +3955,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_globalNew_1 , $typeId).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_typeIdInitializerExpression(IConstructor $typeId, IConstructor $initializer, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_typeIdInitializerExpression(IConstructor $typeId, IConstructor $initializer, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$typeId.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $typeId.getType() + " for $typeId:" + $typeId);
@@ -3813,10 +3974,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_typeIdInitializerExpression_2 , $typeId, $initializer).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_logicalAnd(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_logicalAnd(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -3831,20 +3993,22 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_logicalAnd_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_this(ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_this(ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_this_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_postfixDecr(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_postfixDecr(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
@@ -3855,10 +4019,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_postfixDecr_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_arrayModifier(IList $attributes, ISourceLocation $loc) {
+  public IConstructor Expression_arrayModifier(IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     if (!$attributes.isEmpty()) {
@@ -3867,10 +4032,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_arrayModifier_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_assign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_assign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -3885,10 +4051,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_assign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_globalNewWithArgs(IList $arguments, IConstructor $typeId, IConstructor $initializer, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_globalNewWithArgs(IList $arguments, IConstructor $typeId, IConstructor $initializer, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$arguments.getType().isSubtypeOf(tf.listType(_Expression))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $arguments.getType() + " for $arguments:" + $arguments);
@@ -3907,10 +4074,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_globalNewWithArgs_3 , $arguments, $typeId, $initializer).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_expressionList(IList $expressions, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_expressionList(IList $expressions, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expressions.getType().isSubtypeOf(tf.listType(_Expression))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $expressions.getType() + " for $expressions:" + $expressions);
@@ -3921,10 +4089,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_expressionList_1 , $expressions).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_delete(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_delete(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
@@ -3935,10 +4104,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_delete_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_captureByRef(IConstructor $name, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Expression_captureByRef(IConstructor $name, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$name.getType().isSubtypeOf(_Name)) {
       throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
@@ -3949,10 +4119,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_captureByRef_1 , $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_postfixIncr(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_postfixIncr(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
@@ -3963,10 +4134,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_postfixIncr_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_multiply(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_multiply(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -3981,10 +4153,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_multiply_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_floatConstant(String $value, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_floatConstant(String $value, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!vf.string($value).getType().isSubtypeOf(tf.stringType())) {
       throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($value).getType() + " for vf.string($value):" + vf.string($value));
@@ -3995,10 +4168,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_floatConstant_1 , vf.string($value)).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_binaryOr(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_binaryOr(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -4013,10 +4187,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_binaryOr_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_max(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_max(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -4031,10 +4206,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_max_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_fieldDesignator(IConstructor $fieldName, ISourceLocation $loc) {
+  public IConstructor Expression_fieldDesignator(IConstructor $fieldName, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$fieldName.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $fieldName.getType() + " for $fieldName:" + $fieldName);
@@ -4045,10 +4221,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_fieldDesignator_1 , $fieldName).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_globalNewWithArgs(IList $arguments, IConstructor $typeId, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_globalNewWithArgs(IList $arguments, IConstructor $typeId, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$arguments.getType().isSubtypeOf(tf.listType(_Expression))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $arguments.getType() + " for $arguments:" + $arguments);
@@ -4063,10 +4240,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_globalNewWithArgs_2 , $arguments, $typeId).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_conditional(IConstructor $condition, IConstructor $positive, IConstructor $negative, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_conditional(IConstructor $condition, IConstructor $positive, IConstructor $negative, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$condition.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $condition.getType() + " for $condition:" + $condition);
@@ -4085,10 +4263,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_conditional_3 , $condition, $positive, $negative).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_binaryAndAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_binaryAndAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -4103,10 +4282,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_binaryAndAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_globalDelete(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_globalDelete(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
@@ -4117,10 +4297,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_globalDelete_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_moduloAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_moduloAssign(IConstructor $lhs, IConstructor $rhs, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$lhs.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $lhs.getType() + " for $lhs:" + $lhs);
@@ -4135,10 +4316,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_moduloAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_packExpansion(IConstructor $pattern, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_packExpansion(IConstructor $pattern, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$pattern.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $pattern.getType() + " for $pattern:" + $pattern);
@@ -4149,10 +4331,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_packExpansion_1 , $pattern).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_staticCast(IConstructor $typeId, IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_staticCast(IConstructor $typeId, IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$typeId.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $typeId.getType() + " for $typeId:" + $typeId);
@@ -4167,10 +4350,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_staticCast_2 , $typeId, $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_integerConstant(String $value, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_integerConstant(String $value, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!vf.string($value).getType().isSubtypeOf(tf.stringType())) {
       throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($value).getType() + " for vf.string($value):" + vf.string($value));
@@ -4181,10 +4365,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_integerConstant_1 , vf.string($value)).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_vectoredDelete(IConstructor $expression, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_vectoredDelete(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
@@ -4195,10 +4380,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_vectoredDelete_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_idExpression(IConstructor $name, ISourceLocation $loc, ISourceLocation $decl, IConstructor $typ) {
+  public IConstructor Expression_idExpression(IConstructor $name, ISourceLocation $loc, ISourceLocation $decl, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$name.getType().isSubtypeOf(_Name)) {
       throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
@@ -4209,10 +4395,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_idExpression_1 , $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_fieldReference(IConstructor $fieldOwner, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl, IConstructor $typ) {
+  public IConstructor Expression_fieldReference(IConstructor $fieldOwner, IConstructor $name, ISourceLocation $loc, ISourceLocation $decl, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$fieldOwner.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $fieldOwner.getType() + " for $fieldOwner:" + $fieldOwner);
@@ -4227,10 +4414,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_fieldReference_2 , $fieldOwner, $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_designatedInitializer(IList $designators, IConstructor $operand, ISourceLocation $loc) {
+  public IConstructor Expression_designatedInitializer(IList $designators, IConstructor $operand, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$designators.getType().isSubtypeOf(tf.listType(_Expression))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $designators.getType() + " for $designators:" + $designators);
@@ -4245,10 +4433,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_designatedInitializer_2 , $designators, $operand).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_newWithArgs(IList $arguments, IConstructor $typeId, ISourceLocation $loc, IConstructor $typ) {
+  public IConstructor Expression_newWithArgs(IList $arguments, IConstructor $typeId, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$arguments.getType().isSubtypeOf(tf.listType(_Expression))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $arguments.getType() + " for $arguments:" + $arguments);
@@ -4263,71 +4452,34 @@ public class AST {
     kwParams.put("src", $loc);
     
     kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_newWithArgs_2 , $arguments, $typeId).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Expression_problemExpression(ISourceLocation $loc) {
+  public IConstructor Expression_problemExpression(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_problemExpression_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   
-  public IConstructor Type_wchar_t(ISourceLocation $loc) {
+  public IConstructor Type_int128(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Type_wchar_t_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Type_decltype(ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Type_decltype_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Type_decimal128(ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Type_decimal128_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Type_nullptr(ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Type_nullptr_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Type_int128(ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Type_int128_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Type_classType(IConstructor $name, ISourceLocation $loc) {
+  public IConstructor Type_classType(IConstructor $name, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$name.getType().isSubtypeOf(_Name)) {
       throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
@@ -4338,44 +4490,88 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Type_classType_1 , $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Type_unionType(IConstructor $name, ISourceLocation $loc) {
-      
-    if (!$name.getType().isSubtypeOf(_Name)) {
-      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
-    }
+  public IConstructor Type_decimal128(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Type_unionType_1 , $name).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Type_decimal128_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Type_char(ISourceLocation $loc) {
+  public IConstructor Type_nullptr(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Type_char_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Type_nullptr_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Type_unspecified(ISourceLocation $loc) {
+  public IConstructor Type_decltype(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Type_unspecified_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Type_decltype_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Type_arrayType(IConstructor $type, IValue $size, ISourceLocation $loc) {
+  public IConstructor Type_wchar_t(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Type_wchar_t_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Type_integer(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Type_integer_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Type_float(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Type_float_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Type_float128(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Type_float128_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Type_arrayType(IConstructor $type, IValue $size, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$type.getType().isSubtypeOf(_Type)) {
       throw new IllegalArgumentException("Expected " + _Type + " but got " + $type.getType() + " for $type:" + $type);
@@ -4390,130 +4586,129 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Type_arrayType_2 , $type, $size).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Type_float128(ISourceLocation $loc) {
+  public IConstructor Type_char(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Type_float128_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Type_char_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Type_float(ISourceLocation $loc) {
+  public IConstructor Type_unspecified(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Type_float_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Type_unspecified_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Type_integer(ISourceLocation $loc) {
+  public IConstructor Type_unionType(IConstructor $name, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$name.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
+    }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Type_integer_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Type_unionType_1 , $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Type_char32_t(ISourceLocation $loc) {
+  public IConstructor Type_decimal64(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Type_char32_t_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Type_bool(ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Type_bool_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Type_decimal64(ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Type_decimal64_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Type_auto(ISourceLocation $loc) {
+  public IConstructor Type_auto(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Type_auto_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Type_decimal32(ISourceLocation $loc) {
+  public IConstructor Type_char32_t(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Type_decimal32_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Type_char32_t_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Type_char16_t(ISourceLocation $loc) {
+  public IConstructor Type_bool(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Type_char16_t_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Type_bool_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Type_typeof(ISourceLocation $loc) {
+  public IConstructor Type_structType(IConstructor $name, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$name.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
+    }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Type_typeof_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Type_structType_1 , $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Type_double(ISourceLocation $loc) {
+  public IConstructor Type_void(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Type_double_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Type_void_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Type_declTypeAuto(ISourceLocation $loc) {
+  public IConstructor Type_declTypeAuto(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Type_declTypeAuto_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Type_basicType(IConstructor $type, IList $modifiers, ISourceLocation $loc) {
+  public IConstructor Type_basicType(IConstructor $type, IList $modifiers, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$type.getType().isSubtypeOf(_Type)) {
       throw new IllegalArgumentException("Expected " + _Type + " but got " + $type.getType() + " for $type:" + $type);
@@ -4528,35 +4723,115 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Type_basicType_2 , $type, $modifiers).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Type_void(ISourceLocation $loc) {
+  public IConstructor Type_decimal32(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Type_void_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Type_decimal32_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Type_structType(IConstructor $name, ISourceLocation $loc) {
+  public IConstructor Type_char16_t(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Type_char16_t_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Type_typeof(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Type_typeof_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Type_double(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Type_double_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  
+  public IConstructor Statement_nullStatement(IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Statement_nullStatement_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Statement_forWithDecl(IConstructor $sInitializer, IConstructor $conditionDeclaration, IConstructor $iteration, IConstructor $body, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
       
-    if (!$name.getType().isSubtypeOf(_Name)) {
-      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
+    if (!$sInitializer.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $sInitializer.getType() + " for $sInitializer:" + $sInitializer);
+    }
+      
+    if (!$conditionDeclaration.getType().isSubtypeOf(_Declaration)) {
+      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $conditionDeclaration.getType() + " for $conditionDeclaration:" + $conditionDeclaration);
+    }
+      
+    if (!$iteration.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $iteration.getType() + " for $iteration:" + $iteration);
+    }
+      
+    if (!$body.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Type_structType_1 , $name).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Statement_forWithDecl_4 , $sInitializer, $conditionDeclaration, $iteration, $body).asWithKeywordParameters().setParameters(kwParams);
   }
   
+  public IConstructor Statement_expressionStatement(IConstructor $expression, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$expression.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Statement_expressionStatement_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
+  }
   
-  public IConstructor Statement_for(IConstructor $sInitializer, IConstructor $condition, IConstructor $iteration, IConstructor $body, IList $attributes, ISourceLocation $loc) {
+  public IConstructor Statement_for(IConstructor $sInitializer, IConstructor $condition, IConstructor $iteration, IConstructor $body, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$sInitializer.getType().isSubtypeOf(_Statement)) {
       throw new IllegalArgumentException("Expected " + _Statement + " but got " + $sInitializer.getType() + " for $sInitializer:" + $sInitializer);
@@ -4581,14 +4856,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Statement_for_4 , $sInitializer, $condition, $iteration, $body).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Statement_expressionStatement(IConstructor $expression, IList $attributes, ISourceLocation $loc) {
-      
-    if (!$expression.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
-    }
+  public IConstructor Statement_return(IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     if (!$attributes.isEmpty()) {
@@ -4597,26 +4869,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Statement_expressionStatement_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Statement_return_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Statement_forWithDecl(IConstructor $sInitializer, IConstructor $conditionDeclaration, IConstructor $iteration, IConstructor $body, IList $attributes, ISourceLocation $loc) {
-      
-    if (!$sInitializer.getType().isSubtypeOf(_Statement)) {
-      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $sInitializer.getType() + " for $sInitializer:" + $sInitializer);
-    }
-      
-    if (!$conditionDeclaration.getType().isSubtypeOf(_Declaration)) {
-      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $conditionDeclaration.getType() + " for $conditionDeclaration:" + $conditionDeclaration);
-    }
-      
-    if (!$iteration.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $iteration.getType() + " for $iteration:" + $iteration);
-    }
-      
-    if (!$body.getType().isSubtypeOf(_Statement)) {
-      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
-    }
+  public IConstructor Statement_defaultCase(IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     if (!$attributes.isEmpty()) {
@@ -4625,22 +4882,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Statement_forWithDecl_4 , $sInitializer, $conditionDeclaration, $iteration, $body).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Statement_defaultCase_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Statement_nullStatement(IList $attributes, ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Statement_nullStatement_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Statement_ifWithDecl(IConstructor $conditionDeclaration, IConstructor $thenClause, IList $attributes, ISourceLocation $loc) {
+  public IConstructor Statement_ifWithDecl(IConstructor $conditionDeclaration, IConstructor $thenClause, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$conditionDeclaration.getType().isSubtypeOf(_Declaration)) {
       throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $conditionDeclaration.getType() + " for $conditionDeclaration:" + $conditionDeclaration);
@@ -4657,87 +4903,14 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Statement_ifWithDecl_2 , $conditionDeclaration, $thenClause).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Statement_return(IList $attributes, ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Statement_return_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Statement_defaultCase(IList $attributes, ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Statement_defaultCase_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Statement_label(IConstructor $name, IConstructor $nestedStatement, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Statement_compoundStatement(IList $statements, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
       
-    if (!$name.getType().isSubtypeOf(_Name)) {
-      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
-    }
-      
-    if (!$nestedStatement.getType().isSubtypeOf(_Statement)) {
-      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $nestedStatement.getType() + " for $nestedStatement:" + $nestedStatement);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_Statement_label_2 , $name, $nestedStatement).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Statement_continue(IList $attributes, ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Statement_continue_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Statement_problem(String $raw, ISourceLocation $loc) {
-      
-    if (!vf.string($raw).getType().isSubtypeOf(tf.stringType())) {
-      throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($raw).getType() + " for vf.string($raw):" + vf.string($raw));
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Statement_problem_1 , vf.string($raw)).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Statement_catch(IConstructor $declaration, IConstructor $body, IList $attributes, ISourceLocation $loc) {
-      
-    if (!$declaration.getType().isSubtypeOf(_Declaration)) {
-      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $declaration.getType() + " for $declaration:" + $declaration);
-    }
-      
-    if (!$body.getType().isSubtypeOf(_Statement)) {
-      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
+    if (!$statements.getType().isSubtypeOf(tf.listType(_Statement))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Statement) + " but got " + $statements.getType() + " for $statements:" + $statements);
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
@@ -4747,42 +4920,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Statement_catch_2 , $declaration, $body).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Statement_compoundStatement_1 , $statements).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Statement_catchAll(IConstructor $body, IList $attributes, ISourceLocation $loc) {
-      
-    if (!$body.getType().isSubtypeOf(_Statement)) {
-      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Statement_catchAll_1 , $body).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Statement_declarationStatement(IConstructor $declaration, IList $attributes, ISourceLocation $loc) {
-      
-    if (!$declaration.getType().isSubtypeOf(_Declaration)) {
-      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $declaration.getType() + " for $declaration:" + $declaration);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Statement_declarationStatement_1 , $declaration).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Statement_switchWithDecl(IConstructor $controllerDeclaration, IConstructor $body, IList $attributes, ISourceLocation $loc) {
+  public IConstructor Statement_switchWithDecl(IConstructor $controllerDeclaration, IConstructor $body, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$controllerDeclaration.getType().isSubtypeOf(_Declaration)) {
       throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $controllerDeclaration.getType() + " for $controllerDeclaration:" + $controllerDeclaration);
@@ -4799,26 +4941,11 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Statement_switchWithDecl_2 , $controllerDeclaration, $body).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Statement_compoundStatement(IList $statements, IList $attributes, ISourceLocation $loc) {
-      
-    if (!$statements.getType().isSubtypeOf(tf.listType(_Statement))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Statement) + " but got " + $statements.getType() + " for $statements:" + $statements);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Statement_compoundStatement_1 , $statements).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Statement_case(IConstructor $expression, IList $attributes, ISourceLocation $loc) {
+  public IConstructor Statement_case(IConstructor $expression, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
       throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
@@ -4831,10 +4958,49 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Statement_case_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Statement_rangeBasedFor(IConstructor $declaration, IConstructor $initializer, IConstructor $body, IList $attributes, ISourceLocation $loc) {
+  public IConstructor Statement_label(IConstructor $name, IConstructor $nestedStatement, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
+      
+    if (!$name.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$nestedStatement.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $nestedStatement.getType() + " for $nestedStatement:" + $nestedStatement);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Statement_label_2 , $name, $nestedStatement).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Statement_return(IConstructor $expression, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$expression.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Statement_return_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Statement_rangeBasedFor(IConstructor $declaration, IConstructor $initializer, IConstructor $body, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$declaration.getType().isSubtypeOf(_Declaration)) {
       throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $declaration.getType() + " for $declaration:" + $declaration);
@@ -4855,10 +5021,94 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Statement_rangeBasedFor_3 , $declaration, $initializer, $body).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Statement_goto(IConstructor $name, IList $attributes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Statement_declarationStatement(IConstructor $declaration, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$declaration.getType().isSubtypeOf(_Declaration)) {
+      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $declaration.getType() + " for $declaration:" + $declaration);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Statement_declarationStatement_1 , $declaration).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Statement_catchAll(IConstructor $body, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$body.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Statement_catchAll_1 , $body).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Statement_problem(String $raw, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!vf.string($raw).getType().isSubtypeOf(tf.stringType())) {
+      throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($raw).getType() + " for vf.string($raw):" + vf.string($raw));
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Statement_problem_1 , vf.string($raw)).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Statement_catch(IConstructor $declaration, IConstructor $body, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$declaration.getType().isSubtypeOf(_Declaration)) {
+      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $declaration.getType() + " for $declaration:" + $declaration);
+    }
+      
+    if (!$body.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Statement_catch_2 , $declaration, $body).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Statement_continue(IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Statement_continue_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Statement_goto(IConstructor $name, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$name.getType().isSubtypeOf(_Name)) {
       throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
@@ -4871,166 +5121,11 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Statement_goto_1 , $name).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Statement_return(IConstructor $expression, IList $attributes, ISourceLocation $loc) {
-      
-    if (!$expression.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $expression.getType() + " for $expression:" + $expression);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Statement_return_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Statement_while(IConstructor $condition, IConstructor $body, IList $attributes, ISourceLocation $loc) {
-      
-    if (!$condition.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $condition.getType() + " for $condition:" + $condition);
-    }
-      
-    if (!$body.getType().isSubtypeOf(_Statement)) {
-      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Statement_while_2 , $condition, $body).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Statement_if(IConstructor $condition, IConstructor $thenClause, IConstructor $elseClause, IList $attributes, ISourceLocation $loc) {
-      
-    if (!$condition.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $condition.getType() + " for $condition:" + $condition);
-    }
-      
-    if (!$thenClause.getType().isSubtypeOf(_Statement)) {
-      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $thenClause.getType() + " for $thenClause:" + $thenClause);
-    }
-      
-    if (!$elseClause.getType().isSubtypeOf(_Statement)) {
-      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $elseClause.getType() + " for $elseClause:" + $elseClause);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Statement_if_3 , $condition, $thenClause, $elseClause).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Statement_break(IList $attributes, ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Statement_break_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Statement_ifWithDecl(IConstructor $conditionDeclaration, IConstructor $thenClause, IConstructor $elseClause, IList $attributes, ISourceLocation $loc) {
-      
-    if (!$conditionDeclaration.getType().isSubtypeOf(_Declaration)) {
-      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $conditionDeclaration.getType() + " for $conditionDeclaration:" + $conditionDeclaration);
-    }
-      
-    if (!$thenClause.getType().isSubtypeOf(_Statement)) {
-      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $thenClause.getType() + " for $thenClause:" + $thenClause);
-    }
-      
-    if (!$elseClause.getType().isSubtypeOf(_Statement)) {
-      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $elseClause.getType() + " for $elseClause:" + $elseClause);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Statement_ifWithDecl_3 , $conditionDeclaration, $thenClause, $elseClause).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Statement_switch(IConstructor $controller, IConstructor $body, IList $attributes, ISourceLocation $loc) {
-      
-    if (!$controller.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $controller.getType() + " for $controller:" + $controller);
-    }
-      
-    if (!$body.getType().isSubtypeOf(_Statement)) {
-      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Statement_switch_2 , $controller, $body).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Statement_whileWithDecl(IConstructor $conditionDeclaration, IConstructor $body, IList $attributes, ISourceLocation $loc) {
-      
-    if (!$conditionDeclaration.getType().isSubtypeOf(_Declaration)) {
-      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $conditionDeclaration.getType() + " for $conditionDeclaration:" + $conditionDeclaration);
-    }
-      
-    if (!$body.getType().isSubtypeOf(_Statement)) {
-      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Statement_whileWithDecl_2 , $conditionDeclaration, $body).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Statement_if(IConstructor $condition, IConstructor $thenClause, IList $attributes, ISourceLocation $loc) {
-      
-    if (!$condition.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $condition.getType() + " for $condition:" + $condition);
-    }
-      
-    if (!$thenClause.getType().isSubtypeOf(_Statement)) {
-      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $thenClause.getType() + " for $thenClause:" + $thenClause);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    if (!$attributes.isEmpty()) {
-      kwParams.put("attributes", $attributes);
-    }
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Statement_if_2 , $condition, $thenClause).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Statement_tryBlock(IConstructor $tryBody, IList $catchHandlers, IList $attributes, ISourceLocation $loc) {
+  public IConstructor Statement_tryBlock(IConstructor $tryBody, IList $catchHandlers, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$tryBody.getType().isSubtypeOf(_Statement)) {
       throw new IllegalArgumentException("Expected " + _Statement + " but got " + $tryBody.getType() + " for $tryBody:" + $tryBody);
@@ -5047,10 +5142,32 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Statement_tryBlock_2 , $tryBody, $catchHandlers).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Statement_do(IConstructor $body, IConstructor $condition, IList $attributes, ISourceLocation $loc) {
+  public IConstructor Statement_if(IConstructor $condition, IConstructor $thenClause, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$condition.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $condition.getType() + " for $condition:" + $condition);
+    }
+      
+    if (!$thenClause.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $thenClause.getType() + " for $thenClause:" + $thenClause);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Statement_if_2 , $condition, $thenClause).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Statement_do(IConstructor $body, IConstructor $condition, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
       
     if (!$body.getType().isSubtypeOf(_Statement)) {
       throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
@@ -5067,338 +5184,498 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Statement_do_2 , $body, $condition).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  
-  public IConstructor Modifier_override(ISourceLocation $loc) {
+  public IConstructor Statement_switch(IConstructor $controller, IConstructor $body, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$controller.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $controller.getType() + " for $controller:" + $controller);
+    }
+      
+    if (!$body.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
+    }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Modifier_override_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Statement_switch_2 , $controller, $body).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_captDefByCopy(ISourceLocation $loc) {
+  public IConstructor Statement_whileWithDecl(IConstructor $conditionDeclaration, IConstructor $body, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$conditionDeclaration.getType().isSubtypeOf(_Declaration)) {
+      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $conditionDeclaration.getType() + " for $conditionDeclaration:" + $conditionDeclaration);
+    }
+      
+    if (!$body.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
+    }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Modifier_captDefByCopy_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Statement_whileWithDecl_2 , $conditionDeclaration, $body).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_public(ISourceLocation $loc) {
+  public IConstructor Statement_break(IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Modifier_public_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Statement_break_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_typename(ISourceLocation $loc) {
+  public IConstructor Statement_ifWithDecl(IConstructor $conditionDeclaration, IConstructor $thenClause, IConstructor $elseClause, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$conditionDeclaration.getType().isSubtypeOf(_Declaration)) {
+      throw new IllegalArgumentException("Expected " + _Declaration + " but got " + $conditionDeclaration.getType() + " for $conditionDeclaration:" + $conditionDeclaration);
+    }
+      
+    if (!$thenClause.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $thenClause.getType() + " for $thenClause:" + $thenClause);
+    }
+      
+    if (!$elseClause.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $elseClause.getType() + " for $elseClause:" + $elseClause);
+    }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Modifier_typename_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Statement_ifWithDecl_3 , $conditionDeclaration, $thenClause, $elseClause).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_mutable(ISourceLocation $loc) {
+  public IConstructor Statement_if(IConstructor $condition, IConstructor $thenClause, IConstructor $elseClause, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$condition.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $condition.getType() + " for $condition:" + $condition);
+    }
+      
+    if (!$thenClause.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $thenClause.getType() + " for $thenClause:" + $thenClause);
+    }
+      
+    if (!$elseClause.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $elseClause.getType() + " for $elseClause:" + $elseClause);
+    }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Modifier_mutable_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Statement_if_3 , $condition, $thenClause, $elseClause).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_threadLocal(ISourceLocation $loc) {
+  public IConstructor Statement_while(IConstructor $condition, IConstructor $body, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$condition.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $condition.getType() + " for $condition:" + $condition);
+    }
+      
+    if (!$body.getType().isSubtypeOf(_Statement)) {
+      throw new IllegalArgumentException("Expected " + _Statement + " but got " + $body.getType() + " for $body:" + $body);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Statement_while_2 , $condition, $body).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  
+  public IConstructor Modifier_threadLocal(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Modifier_threadLocal_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_extern(ISourceLocation $loc) {
+  public IConstructor Modifier_extern(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Modifier_extern_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_friend(ISourceLocation $loc) {
+  public IConstructor Modifier_mutable(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Modifier_friend_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_mutable_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_unsigned(ISourceLocation $loc) {
+  public IConstructor Modifier_typename(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Modifier_unsigned_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_typename_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_final(ISourceLocation $loc) {
+  public IConstructor Modifier_public(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Modifier_final_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_public_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_complex(ISourceLocation $loc) {
+  public IConstructor Modifier_captDefByCopy(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_captDefByCopy_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Modifier_override(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_override_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Modifier_complex(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Modifier_complex_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_protected(ISourceLocation $loc) {
+  public IConstructor Modifier_final(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Modifier_protected_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_final_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_static(ISourceLocation $loc) {
+  public IConstructor Modifier_unsigned(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Modifier_static_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_unsigned_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_virtual(ISourceLocation $loc) {
+  public IConstructor Modifier_friend(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Modifier_virtual_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_friend_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_typedef(ISourceLocation $loc) {
+  public IConstructor Modifier_private(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Modifier_typedef_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Modifier_const(ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Modifier_const_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Modifier_register(ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Modifier_register_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Modifier_private(ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Modifier_private_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_signed(ISourceLocation $loc) {
+  public IConstructor Modifier_const(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Modifier_signed_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_const_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_restrict(ISourceLocation $loc) {
+  public IConstructor Modifier_register(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Modifier_restrict_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_register_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_long(ISourceLocation $loc) {
+  public IConstructor Modifier_virtual(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Modifier_long_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_virtual_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_volatile(ISourceLocation $loc) {
+  public IConstructor Modifier_typedef(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Modifier_volatile_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_typedef_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_short(ISourceLocation $loc) {
+  public IConstructor Modifier_protected(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Modifier_short_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_protected_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_inline(ISourceLocation $loc) {
+  public IConstructor Modifier_static(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Modifier_inline_0 ).asWithKeywordParameters().setParameters(kwParams);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_static_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_imaginary(ISourceLocation $loc) {
+  public IConstructor Modifier_unspecifiedInheritance(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
-    return vf.constructor(_Modifier_imaginary_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Modifier_constexpr(ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Modifier_constexpr_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Modifier_longlong(ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Modifier_longlong_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Modifier_explicit(ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Modifier_explicit_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Modifier_captDefUnspecified(ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Modifier_captDefUnspecified_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Modifier_modAuto(ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Modifier_modAuto_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Modifier_captDefByReference(ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Modifier_captDefByReference_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Modifier_unspecifiedInheritance(ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Modifier_unspecifiedInheritance_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Modifier_pureVirtual(ISourceLocation $loc) {
+  public IConstructor Modifier_pureVirtual(ISourceLocation $loc, boolean $isMacroExpansion) {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
     
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Modifier_pureVirtual_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Modifier_modAuto(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_modAuto_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Modifier_captDefByReference(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_captDefByReference_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Modifier_captDefUnspecified(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_captDefUnspecified_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Modifier_explicit(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_explicit_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Modifier_imaginary(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_imaginary_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Modifier_inline(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_inline_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Modifier_constexpr(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_constexpr_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Modifier_longlong(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_longlong_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Modifier_volatile(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_volatile_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Modifier_short(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_short_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Modifier_signed(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_signed_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Modifier_restrict(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_restrict_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Modifier_long(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Modifier_long_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   
@@ -5409,6 +5686,7 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -5427,6 +5705,7 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_problemType_1 , vf.string($msg)).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -5441,6 +5720,7 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_union_1 , $decl).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -5451,12 +5731,14 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_float_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeSymbol_unspecified() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -5479,6 +5761,7 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_eUnionTemplate_2 , $decl, $templateParameters).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -5489,6 +5772,7 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -5511,6 +5795,7 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_eClassTemplate_2 , $decl, $templateParameters).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -5525,6 +5810,7 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -5547,6 +5833,7 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_cClassTemplate_2 , $decl, $templateParameters).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -5561,6 +5848,7 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -5583,6 +5871,7 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_functionTypeVarArgs_2 , $returnType, $parameterTypes).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -5597,6 +5886,7 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -5619,6 +5909,7 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_templateTemplate_2 , $child, $templateParameters).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -5629,12 +5920,14 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_noType_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeSymbol_float128() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -5657,6 +5950,7 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_variableTemplate_2 , $decl, $templateParameters).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -5675,12 +5969,14 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_unknownMemberClass_2 , $owner, vf.string($name)).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeSymbol_char16() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -5703,6 +5999,7 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_functionTemplate_2 , $decl, $templateParameters).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -5721,6 +6018,7 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_cStructTemplate_2 , $decl, $templateParameters).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -5735,6 +6033,7 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_typeOfDependentExpression_1 , $src).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -5745,6 +6044,7 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -5767,12 +6067,14 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_qualifierType_2 , $modifiers, $type).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeSymbol_unresolved() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -5787,12 +6089,14 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_double_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeSymbol_decimal32() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -5815,12 +6119,14 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_enumerationSpecialization_2 , $specializedBinding, $templateArguments).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeSymbol_char32() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -5839,6 +6145,7 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_enumeration_1 , $decl).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -5853,6 +6160,7 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_typeContainer_1 , $type).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -5863,12 +6171,14 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_void_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeSymbol_char() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -5891,6 +6201,7 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_functionSetTypePointer_2 , $decl, $templateArguments).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -5905,6 +6216,7 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_referenceType_1 , $type).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -5915,12 +6227,14 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_boolean_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeSymbol_int128() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -5943,6 +6257,7 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_cUnionTemplate_2 , $decl, $templateParameters).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -5957,6 +6272,7 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -5979,6 +6295,7 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_implicitTemplateTypeParameter_2 , $owner, $position).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -5993,6 +6310,7 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -6015,6 +6333,7 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_eEnumTemplate_2 , $decl, $templateParameters).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -6025,12 +6344,14 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_wchar_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeSymbol_any() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -6053,6 +6374,7 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_classSpecialization_2 , $decl, $templateArguments).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -6067,6 +6389,7 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_parameterPackType_1 , $type).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -6077,12 +6400,14 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_decimal64_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeSymbol_int() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -6101,6 +6426,7 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_struct_1 , $fields).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -6111,6 +6437,7 @@ public class AST {
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -6133,6 +6460,7 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_array_2 , $baseType, $size).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -6151,6 +6479,7 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_aliasTemplate_2 , $decl, $templateParameters).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -6161,12 +6490,14 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_nullPtr_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeSymbol_decimal128() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -6189,12 +6520,14 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeSymbol_basicType_2 , $modifiers, $baseType).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeSymbol_problemBinding() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -6214,6 +6547,7 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    
     return vf.constructor(_Attribute_alignmentSpecifier_1 , $typeIdOrExpression).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -6228,6 +6562,7 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    
     return vf.constructor(_Attribute_attribute_1 , vf.string($name)).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -6240,6 +6575,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
+    
     
     
     return vf.constructor(_Attribute_attributeSpecifier_1 , $attributes).asWithKeywordParameters().setParameters(kwParams);
@@ -6260,6 +6596,7 @@ public class AST {
     kwParams.put("src", $loc);
     
     
+    
     return vf.constructor(_Attribute_attribute_2 , vf.string($name), vf.string($argumentClause)).asWithKeywordParameters().setParameters(kwParams);
   }
   
@@ -6267,6 +6604,7 @@ public class AST {
   public IConstructor TypeModifier_unsigned() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -6281,12 +6619,14 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeModifier_complex_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeModifier_imaginary() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -6301,12 +6641,14 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeModifier_longlong_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeModifier_const() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -6321,12 +6663,14 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeModifier_static_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeModifier_short() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -6341,12 +6685,14 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeModifier_volatile_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeModifier_long() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -6361,12 +6707,14 @@ public class AST {
     
     
     
+    
     return vf.constructor(_TypeModifier_restrict_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeModifier_signed() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
     
     
     
@@ -6386,85 +6734,12 @@ public class AST {
     
     
     
+    
     return vf.constructor(_M3_m3_1 , $id).asWithKeywordParameters().setParameters(kwParams);
   }
   
   
-  public IConstructor Name_conversionName(String $value, IConstructor $typeId, ISourceLocation $loc, IConstructor $typ) {
-      
-    if (!vf.string($value).getType().isSubtypeOf(tf.stringType())) {
-      throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($value).getType() + " for vf.string($value):" + vf.string($value));
-    }
-      
-    if (!$typeId.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $typeId.getType() + " for $typeId:" + $typeId);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    kwParams.put("typ", $typ);
-    return vf.constructor(_Name_conversionName_2 , vf.string($value), $typeId).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Name_qualifiedName(IList $qualifiers, IConstructor $lastName, ISourceLocation $loc, ISourceLocation $decl) {
-      
-    if (!$qualifiers.getType().isSubtypeOf(tf.listType(_Name))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Name) + " but got " + $qualifiers.getType() + " for $qualifiers:" + $qualifiers);
-    }
-      
-    if (!$lastName.getType().isSubtypeOf(_Name)) {
-      throw new IllegalArgumentException("Expected " + _Name + " but got " + $lastName.getType() + " for $lastName:" + $lastName);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
-    
-    return vf.constructor(_Name_qualifiedName_2 , $qualifiers, $lastName).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Name_name(String $value, ISourceLocation $loc) {
-      
-    if (!vf.string($value).getType().isSubtypeOf(tf.stringType())) {
-      throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($value).getType() + " for vf.string($value):" + vf.string($value));
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Name_name_1 , vf.string($value)).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Name_operatorName(String $value, ISourceLocation $loc) {
-      
-    if (!vf.string($value).getType().isSubtypeOf(tf.stringType())) {
-      throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($value).getType() + " for vf.string($value):" + vf.string($value));
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Name_operatorName_1 , vf.string($value)).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Name_abstractEmptyName(ISourceLocation $loc) {
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    return vf.constructor(_Name_abstractEmptyName_0 ).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor Name_templateId(IConstructor $name, IList $argumentTypes, ISourceLocation $loc, ISourceLocation $decl) {
+  public IConstructor Name_templateId(IConstructor $name, IList $argumentTypes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$name.getType().isSubtypeOf(_Name)) {
       throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
@@ -6479,7 +6754,87 @@ public class AST {
     kwParams.put("src", $loc);
     kwParams.put("decl", $decl);
     
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Name_templateId_2 , $name, $argumentTypes).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Name_conversionName(String $value, IConstructor $typeId, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
+      
+    if (!vf.string($value).getType().isSubtypeOf(tf.stringType())) {
+      throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($value).getType() + " for vf.string($value):" + vf.string($value));
+    }
+      
+    if (!$typeId.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $typeId.getType() + " for $typeId:" + $typeId);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Name_conversionName_2 , vf.string($value), $typeId).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Name_operatorName(String $value, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!vf.string($value).getType().isSubtypeOf(tf.stringType())) {
+      throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($value).getType() + " for vf.string($value):" + vf.string($value));
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Name_operatorName_1 , vf.string($value)).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Name_name(String $value, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!vf.string($value).getType().isSubtypeOf(tf.stringType())) {
+      throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($value).getType() + " for vf.string($value):" + vf.string($value));
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Name_name_1 , vf.string($value)).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Name_qualifiedName(IList $qualifiers, IConstructor $lastName, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
+      
+    if (!$qualifiers.getType().isSubtypeOf(tf.listType(_Name))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Name) + " but got " + $qualifiers.getType() + " for $qualifiers:" + $qualifiers);
+    }
+      
+    if (!$lastName.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $lastName.getType() + " for $lastName:" + $lastName);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Name_qualifiedName_2 , $qualifiers, $lastName).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Name_abstractEmptyName(ISourceLocation $loc, boolean $isMacroExpansion) {
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Name_abstractEmptyName_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
  
   
