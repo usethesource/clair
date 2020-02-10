@@ -682,6 +682,11 @@ public class Parser extends ASTVisitor {
 		return loc;
 	}
 
+	public boolean isMacroExpansion(IASTNode node) {
+		IASTNodeLocation[] nodeLocations = node.getNodeLocations();
+		return nodeLocations.length > 1 || nodeLocations[0] instanceof IASTMacroExpansionLocation;
+	}
+
 	IList getAttributes(IASTAttributeOwner node) {
 		IListWriter attributeSpecifiers = vf.listWriter();
 		Stream.of(node.getAttributeSpecifiers()).forEach(it -> {
