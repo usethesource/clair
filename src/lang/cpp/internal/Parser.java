@@ -686,7 +686,8 @@ public class Parser extends ASTVisitor {
 
 	public boolean isMacroExpansion(IASTNode node) {
 		IASTNodeLocation[] nodeLocations = node.getNodeLocations();
-		return nodeLocations.length > 1 || nodeLocations[0] instanceof IASTMacroExpansionLocation;
+		return nodeLocations.length > 1
+				|| nodeLocations.length == 1 && nodeLocations[0] instanceof IASTMacroExpansionLocation;
 	}
 
 	IList getAttributes(IASTAttributeOwner node) {
