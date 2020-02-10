@@ -670,7 +670,6 @@ public class Parser extends ASTVisitor {
 
 	public ISourceLocation getTokenSourceLocation(IASTNode node, String literal) {
 		ISourceLocation loc = getSourceLocation(node);
-		boolean isMacroExpansion = isMacroExpansion(node);
 		try {
 			IToken tokens = node.getSyntax();
 			while (tokens != null) {
@@ -3055,7 +3054,6 @@ public class Parser extends ASTVisitor {
 
 	public int visit(IASTAmbiguousStatement statement) {
 		ISourceLocation loc = getSourceLocation(statement);
-		boolean isMacroExpansion = isMacroExpansion(statement);
 		out("visit(IASTAmbiguousStatement) " + loc);
 		out(statement.getRawSignature());
 		IListWriter statements = vf.listWriter();
