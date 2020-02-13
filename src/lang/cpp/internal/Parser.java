@@ -406,6 +406,7 @@ public class Parser extends ASTVisitor {
 						}
 					}
 					err("Include " + include + " for " + currentFile + " not found");
+					ctx.getStdErr().flush();
 					return null;// TODO: restore exception here
 				}
 
@@ -443,6 +444,28 @@ public class Parser extends ASTVisitor {
 			// TODO: make more specific
 			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
 		}
+	}
+
+	List<IASTFunctionDefinition> funDefs = new ArrayList<>();
+
+	public IValue getCFGs(ISourceLocation file, IList stdLib, IList includeDirs, IMap additionalMacros,
+			IBool includeStdLib, IEvaluatorContext ctx) {
+		funDefs = new ArrayList<>();
+		IValue tu = parseCpp(file, stdLib, includeDirs, additionalMacros, includeStdLib, ctx);
+		new CFG().foo(funDefs);
+		return tu;
+	}
+
+	public void fakeParse(ISourceLocation file, IList stdLib, IList includeDirs, IMap additionalMacros,
+			IBool includeStdLib, IEvaluatorContext ctx) {
+		setIEvaluatorContext(ctx);
+		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
+		this.stdLib = stdLib;
+		IListWriter allIncludes = vf.listWriter();
+		allIncludes.appendAll(includeDirs);
+		allIncludes.appendAll(stdLib);
+		IASTTranslationUnit tu = getCdtAst(file, allIncludes.done(), additionalMacros);
+		IValue result = convertCdtToRascal(tu);
 	}
 
 	public IValue parseCpp(ISourceLocation file, IList stdLib, IList includeDirs, IMap additionalMacros,
@@ -1145,7 +1168,6 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTFunctionDefinition definition) {
 		ISourceLocation loc = getSourceLocation(definition);
 		boolean isMacroExpansion = isMacroExpansion(definition);
-		funDefs.add(definition);
 		if (definition instanceof ICPPASTFunctionDefinition) {
 			IList attributes = getAttributes((ICPPASTFunctionDefinition) definition);
 			boolean isDefaulted = ((ICPPASTFunctionDefinition) definition).isDefaulted();
