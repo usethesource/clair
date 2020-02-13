@@ -446,28 +446,6 @@ public class Parser extends ASTVisitor {
 		}
 	}
 
-	List<IASTFunctionDefinition> funDefs = new ArrayList<>();
-
-	public IValue getCFGs(ISourceLocation file, IList stdLib, IList includeDirs, IMap additionalMacros,
-			IBool includeStdLib, IEvaluatorContext ctx) {
-		funDefs = new ArrayList<>();
-		IValue tu = parseCpp(file, stdLib, includeDirs, additionalMacros, includeStdLib, ctx);
-		new CFG().foo(funDefs);
-		return tu;
-	}
-
-	public void fakeParse(ISourceLocation file, IList stdLib, IList includeDirs, IMap additionalMacros,
-			IBool includeStdLib, IEvaluatorContext ctx) {
-		setIEvaluatorContext(ctx);
-		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
-		this.stdLib = stdLib;
-		IListWriter allIncludes = vf.listWriter();
-		allIncludes.appendAll(includeDirs);
-		allIncludes.appendAll(stdLib);
-		IASTTranslationUnit tu = getCdtAst(file, allIncludes.done(), additionalMacros);
-		IValue result = convertCdtToRascal(tu);
-	}
-
 	public IValue parseCpp(ISourceLocation file, IList stdLib, IList includeDirs, IMap additionalMacros,
 			IBool includeStdLib, IEvaluatorContext ctx) {
 		setIEvaluatorContext(ctx);
