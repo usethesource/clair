@@ -4,8 +4,8 @@
 
 	<parent>
 		<groupId>io.usethesource</groupId>
-		<artifactId>pom-parent</artifactId>
-		<version>0.2.0</version>
+		<artifactId>pom_parent</artifactId>
+		<version>0.3.5</version>
 	</parent>
 
 	<artifactId>clair</artifactId>
