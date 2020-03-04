@@ -30,7 +30,7 @@ public class STHelper {
 				return var;
 			}
 		}
-		if (env.getParent() != null) {
+		if (env.getParent() != null && env.getCallerScope() != null) {
 			IValue var = searchForVariable(name, env.getCallerScope());
 			if (var != null) {
 				return var;
