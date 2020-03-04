@@ -3524,10 +3524,16 @@ public class Parser extends ASTVisitor {
 						templateParameters.append(stack.pop());
 					});
 			((ICPPASTTemplatedTypeTemplateParameter) templateParameter).getName().accept(this);
-			stack.push(builder.Declaration_tttParameter(templateParameters.done(), stack.pop(), loc, decl,
-					isMacroExpansion));
-			if (((ICPPASTTemplatedTypeTemplateParameter) templateParameter).getDefaultValue() != null)
-				err("ICPPASTTemplatedTypeTemplateParameter has defaultType at " + loc + ", unimplemented");
+			IConstructor name = stack.pop();
+			IASTExpression defaultValue = ((ICPPASTTemplatedTypeTemplateParameter) templateParameter).getDefaultValue();
+			if (defaultValue == null) {
+				stack.push(
+						builder.Declaration_tttParameter(templateParameters.done(), name, loc, decl, isMacroExpansion));
+			} else {
+				defaultValue.accept(this);
+				stack.push(builder.Declaration_tttParameterWithDefault(templateParameters.done(), name, stack.pop(),
+						loc, decl, isMacroExpansion));
+			}
 		} else
 			throw new RuntimeException("ICPPASTTemplateParameter encountered unknown subtype "
 					+ templateParameter.getClass().getName() + " at " + loc + ". Exiting");

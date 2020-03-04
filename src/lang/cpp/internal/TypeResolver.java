@@ -70,6 +70,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation.Operator;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitTemplateTypeParameter;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClass;
@@ -599,7 +601,13 @@ public class TypeResolver {
 		IListWriter templateArguments = vf.listWriter();
 		if (functionSet.getTemplateArguments() != null)
 			Stream.of(functionSet.getTemplateArguments()).forEach(it -> {
-				templateArguments.append(resolveType(it.getTypeValue()));
+				if (it instanceof CPPTemplateTypeArgument) {
+					templateArguments.append(resolveType(it.getTypeValue()));
+				} else if (it instanceof CPPTemplateNonTypeArgument) {
+					templateArguments.append(resolveType(it.getTypeOfNonTypeValue()));
+				} else {
+					throw new RuntimeException("Unknown template argument type " + it.getClass());
+				}
 			});
 
 		if (ValueCategory.LVALUE.equals(type.getValueCategory()))

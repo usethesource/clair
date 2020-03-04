@@ -151,7 +151,7 @@ str type2FactoryCall(Symbol t){
   bool hasDecl("DeclSpecifier", "declSpecifier") = false;
   bool hasDecl("DeclSpecifier", str _) = true;
   bool hasDecl("Declaration", str cname)
-    = cname in {"enumerator", "usingDirective", "sttClass", "sttTypename", "tttParameter", "baseSpecifier", "namespaceDefinition", "namespaceDefinitionInline", "usingDeclaration", "namespaceAlias", "alias"};
+    = cname in {"enumerator", "usingDirective", "sttClass", "sttTypename", "tttParameter", "tttParameterWithDefault", "baseSpecifier", "namespaceDefinition", "namespaceDefinitionInline", "usingDeclaration", "namespaceAlias", "alias"};
   bool hasDecl("Expression", str cname)
     = cname in {"idExpression", "fieldReference", "fieldReferencePointerDeref", "templateId", "constructorChainInitializer", "capture", "captureByRef"};
   bool hasDecl("Statement", str cname) = cname in {"label", "goto"};
@@ -184,7 +184,7 @@ str type2FactoryCall(Symbol t){
     {"etsEnum", "etsStruct", "etsUnion", "etsClass", "namedTypeSpecifier", /*"struct", "union", "class",*/ "msThrowEllipsis" };
   bool hasAttrs("Declaration", str cname) = cname notin
     {"translationUnit", /*"functionDefinition", */ "asmDeclaration", "enumerator", "visibilityLabel",
-    "parameter", "template", "sttClass", "sttTypename", "tttParameter", "baseSpecifier", "virtSpecifier",
+    "parameter", "template", "sttClass", "sttTypename", "tttParameter", "tttParameterWithDefault", "baseSpecifier", "virtSpecifier",
     "namespaceAlias", "linkageSpecification", "staticAssert", "explicitTemplateInstantiation", "explicitTemplateSpecialization",
     "varArgs", "problemDeclaration"};
   bool hasAttrs("Expression", "arrayModifier") = true;

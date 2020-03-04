@@ -150,6 +150,8 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"simpleDeclaration",_DeclSpecifier,"declSpecifier",tf.listType(_Declarator),"declarators");
   private static final Type _Declaration_varArgs_0 
     = tf.constructor(typestore,_Declaration,"varArgs");
+  private static final Type _Declaration_tttParameterWithDefault_3 
+    = tf.constructor(typestore,_Declaration,"tttParameterWithDefault",tf.listType(_Declaration),"nestedParameters",_Name,"name",_Expression,"defaultValue");
   private static final Type _Declaration_parameter_2 
     = tf.constructor(typestore,_Declaration,"parameter",_DeclSpecifier,"declSpecifier",_Declarator,"declarator");
   private static final Type _Declaration_problemDeclaration_0 
@@ -2005,6 +2007,29 @@ public class AST {
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_varArgs_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_tttParameterWithDefault(IList $nestedParameters, IConstructor $name, IConstructor $defaultValue, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
+      
+    if (!$nestedParameters.getType().isSubtypeOf(tf.listType(_Declaration))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Declaration) + " but got " + $nestedParameters.getType() + " for $nestedParameters:" + $nestedParameters);
+    }
+      
+    if (!$name.getType().isSubtypeOf(_Name)) {
+      throw new IllegalArgumentException("Expected " + _Name + " but got " + $name.getType() + " for $name:" + $name);
+    }
+      
+    if (!$defaultValue.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $defaultValue.getType() + " for $defaultValue:" + $defaultValue);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    kwParams.put("decl", $decl);
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_tttParameterWithDefault_3 , $nestedParameters, $name, $defaultValue).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_parameter(IConstructor $declSpecifier, IConstructor $declarator, ISourceLocation $loc, boolean $isMacroExpansion) {

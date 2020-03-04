@@ -115,6 +115,7 @@ data Declaration(list[Attribute] attributes = [], loc src=|unknown:///|, bool is
     | \sttTypename(Name name, Expression defaultType, loc decl = |unknown:///|) //simpleTypeTemplateParameter //no attributes
     
     | \tttParameter(list[Declaration] nestedParameters, Name name, loc decl = |unknown:///|) //templatedTypeTemplateParameter //no attributes
+    | \tttParameterWithDefault(list[Declaration] nestedParameters, Name name, Expression defaultValue, loc decl = |unknown:///|) //templatedTypeTemplateParameter //no attributes
     
     | \baseSpecifier(list[Modifier] modifiers, loc decl = |unknown:///|) //no attributes
     | \baseSpecifier(list[Modifier] modifiers, Name name, loc decl = |unknown:///|) //no attributes
