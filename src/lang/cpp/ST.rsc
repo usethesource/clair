@@ -4,72 +4,73 @@ import IO;
 import List;
 import Map;
 import Node;
+import String;
 import Type;
 import util::Math;
 
-data MyList[&T] = lval(list[&T] elts, list[str] seps = [], str sep = "");
+import SST;
 
-data SDeclarator(MyList[SAttribute] attributes = lval([]), loc src = |unknown:///|, loc decl = |unknown:///|, list[str] seps = [])
-    = \declarator(MyList[SDeclaration] pointerOperators, SName name)
-    | \declarator(MyList[SDeclaration] pointerOperators, SName name, SExpression initializer)
-    | \fieldDeclarator(MyList[SDeclaration] pointerOperators, SName name, SExpression bitFieldSize)
-    | \fieldDeclarator(MyList[SDeclaration] pointerOperators, SName name, SExpression bitFieldSize, SExpression initializer)
-    | \functionDeclarator(MyList[SDeclaration] pointerOperators, SName name, MyList[SDeclaration] parameters)  //superfluous?
-    | \functionDeclarator(MyList[SDeclaration] pointerOperators, MyList[SModifier] modifiers, SName name, MyList[SDeclaration] parameters, MyList[SDeclaration] virtSpecifiers)
-    | \functionDeclarator(MyList[SDeclaration] pointerOperators, MyList[SModifier] modifiers, SName name, MyList[SDeclaration] parameters, MyList[SDeclaration] virtSpecifiers, SExpression trailingReturnType)
-    | \functionDeclaratorNested(MyList[SDeclaration] pointerOperators, MyList[SModifier] modifiers, SDeclarator declarator, MyList[SDeclaration] parameters, MyList[SDeclaration] virtSpecifiers)
-    | \functionDeclaratorNested(MyList[SDeclaration] pointerOperators, MyList[SModifier] modifiers, SDeclarator declarator, MyList[SDeclaration] parameters, MyList[SDeclaration] virtSpecifiers, SExpression initializer)
-    | \functionDeclaratorNoexcept(MyList[SDeclaration] pointerOperators, MyList[SModifier] modifiers, SName name, MyList[SDeclaration] parameters, MyList[SDeclaration] virtSpecifiers, SExpression noexceptExpression)
-    | \functionDeclaratorWithES(MyList[SDeclaration] pointerOperators, MyList[SModifier] modifiers, SName name, MyList[SDeclaration] parameters, MyList[SDeclaration] virtSpecifiers) //empty exception specification
-    | \functionDeclaratorWithES(MyList[SDeclaration] pointerOperators, MyList[SModifier] modifiers, SName name, MyList[SDeclaration] parameters, MyList[SDeclaration] virtSpecifiers, MyList[SExpression] exceptionSpecification)
-    | \arrayDeclarator(MyList[SDeclaration] pointerOperators, SName name, MyList[SExpression] arrayModifier)
-    | \arrayDeclarator(MyList[SDeclaration] pointerOperators, SName name, MyList[SExpression] arrayModifier, SExpression initializer)
-    | \arrayDeclaratorNested(MyList[SDeclaration] pointerOperators, SDeclarator declarator, MyList[SExpression] arrayModifier)
-    | \arrayDeclaratorNested(MyList[SDeclaration] pointerOperators, SDeclarator declarator, MyList[SExpression] arrayModifier, SExpression initializer)
+data SDeclarator(SepList[SAttribute] attributes = lst([], []), loc src = |unknown:///|, loc decl = |unknown:///|, list[str] seps = [])
+    = \declarator(SepList[SDeclaration] pointerOperators, SName name)
+    | \declarator(SepList[SDeclaration] pointerOperators, SName name, SExpression initializer)
+    | \fieldDeclarator(SepList[SDeclaration] pointerOperators, SName name, SExpression bitFieldSize)
+    | \fieldDeclarator(SepList[SDeclaration] pointerOperators, SName name, SExpression bitFieldSize, SExpression initializer)
+    | \functionDeclarator(SepList[SDeclaration] pointerOperators, SName name, SepList[SDeclaration] parameters)  //superfluous?
+    | \functionDeclarator(SepList[SDeclaration] pointerOperators, SepList[SModifier] modifiers, SName name, SepList[SDeclaration] parameters, SepList[SDeclaration] virtSpecifiers)
+    | \functionDeclarator(SepList[SDeclaration] pointerOperators, SepList[SModifier] modifiers, SName name, SepList[SDeclaration] parameters, SepList[SDeclaration] virtSpecifiers, SExpression trailingReturnType)
+    | \functionDeclaratorNested(SepList[SDeclaration] pointerOperators, SepList[SModifier] modifiers, SDeclarator declarator, SepList[SDeclaration] parameters, SepList[SDeclaration] virtSpecifiers)
+    | \functionDeclaratorNested(SepList[SDeclaration] pointerOperators, SepList[SModifier] modifiers, SDeclarator declarator, SepList[SDeclaration] parameters, SepList[SDeclaration] virtSpecifiers, SExpression initializer)
+    | \functionDeclaratorNoexcept(SepList[SDeclaration] pointerOperators, SepList[SModifier] modifiers, SName name, SepList[SDeclaration] parameters, SepList[SDeclaration] virtSpecifiers, SExpression noexceptExpression)
+    | \functionDeclaratorWithES(SepList[SDeclaration] pointerOperators, SepList[SModifier] modifiers, SName name, SepList[SDeclaration] parameters, SepList[SDeclaration] virtSpecifiers) //empty exception specification
+    | \functionDeclaratorWithES(SepList[SDeclaration] pointerOperators, SepList[SModifier] modifiers, SName name, SepList[SDeclaration] parameters, SepList[SDeclaration] virtSpecifiers, SepList[SExpression] exceptionSpecification)
+    | \arrayDeclarator(SepList[SDeclaration] pointerOperators, SName name, SepList[SExpression] arrayModifier)
+    | \arrayDeclarator(SepList[SDeclaration] pointerOperators, SName name, SepList[SExpression] arrayModifier, SExpression initializer)
+    | \arrayDeclaratorNested(SepList[SDeclaration] pointerOperators, SDeclarator declarator, SepList[SExpression] arrayModifier)
+    | \arrayDeclaratorNested(SepList[SDeclaration] pointerOperators, SDeclarator declarator, SepList[SExpression] arrayModifier, SExpression initializer)
     
     //quick fix
     | \missingDeclarator() //no attributes
     ;
     
-data SDeclSpecifier(MyList[SAttribute] attributes = lval([]), loc src = |unknown:///|, list[str] seps = [])
-    = \declSpecifier(MyList[SModifier] modifiers, SType \type)
-    | \declSpecifier(MyList[SModifier] modifiers, SType \type, SExpression expression) //decltype and type_of
-    | \etsEnum(MyList[SModifier] modifiers, SName name, loc decl = |unknown:///|) //no attributes
-    | \etsStruct(MyList[SModifier] modifiers, SName name, loc decl = |unknown:///|) //ElaboratedTypeSpecifier //no attributes
-    | \etsUnion(MyList[SModifier] modifiers, SName name, loc decl = |unknown:///|) //no attributes
-    | \etsClass(MyList[SModifier] modifiers, SName name, loc decl = |unknown:///|) //no attributes
-    | \namedTypeSpecifier(MyList[SModifier] modifiers, SName name, loc decl = |unknown:///|) //no attributes
+data SDeclSpecifier(SepList[SAttribute] attributes = lst([],[]), loc src = |unknown:///|, list[str] seps = [])
+    = \declSpecifier(SepList[SModifier] modifiers, SType \type)
+    | \declSpecifier(SepList[SModifier] modifiers, SType \type, SExpression expression) //decltype and type_of
+    | \etsEnum(SepList[SModifier] modifiers, SName name, loc decl = |unknown:///|) //no attributes
+    | \etsStruct(SepList[SModifier] modifiers, SName name, loc decl = |unknown:///|) //ElaboratedTypeSpecifier //no attributes
+    | \etsUnion(SepList[SModifier] modifiers, SName name, loc decl = |unknown:///|) //no attributes
+    | \etsClass(SepList[SModifier] modifiers, SName name, loc decl = |unknown:///|) //no attributes
+    | \namedTypeSpecifier(SepList[SModifier] modifiers, SName name, loc decl = |unknown:///|) //no attributes
     
-    | \struct(MyList[SModifier] modifiers, SName name, MyList[SDeclaration] members, loc decl = |unknown:///|)  //c //no attributes
-    | \union(MyList[SModifier] modifiers, SName name, MyList[SDeclaration] members, loc decl = |unknown:///|)   //c //no attributes
-    | \class(MyList[SModifier] modifiers, SName name, MyList[SDeclaration] members, loc decl = |unknown:///|)   //c //no attributes
-    | \struct(MyList[SModifier] modifiers, SName name, MyList[SDeclaration] baseSpecifiers, MyList[SDeclaration] members, loc decl = |unknown:///|)
-    | \union(MyList[SModifier] modifiers, SName name, MyList[SDeclaration] baseSpecifiers, MyList[SDeclaration] members, loc decl = |unknown:///|)
-    | \class(MyList[SModifier] modifiers, SName name, MyList[SDeclaration] baseSpecifiers, MyList[SDeclaration] members, loc decl = |unknown:///|)
-    | \structFinal(MyList[SModifier] modifiers, SName name, MyList[SDeclaration] baseSpecifiers, MyList[SDeclaration] members, loc decl = |unknown:///|)
-    | \unionFinal(MyList[SModifier] modifiers, SName name, MyList[SDeclaration] baseSpecifiers, MyList[SDeclaration] members, loc decl = |unknown:///|)
-    | \classFinal(MyList[SModifier] modifiers, SName name, MyList[SDeclaration] baseSpecifiers, MyList[SDeclaration] members, loc decl = |unknown:///|)
+    | \struct(SepList[SModifier] modifiers, SName name, SepList[SDeclaration] members, loc decl = |unknown:///|)  //c //no attributes
+    | \union(SepList[SModifier] modifiers, SName name, SepList[SDeclaration] members, loc decl = |unknown:///|)   //c //no attributes
+    | \class(SepList[SModifier] modifiers, SName name, SepList[SDeclaration] members, loc decl = |unknown:///|)   //c //no attributes
+    | \struct(SepList[SModifier] modifiers, SName name, SepList[SDeclaration] baseSpecifiers, SepList[SDeclaration] members, loc decl = |unknown:///|)
+    | \union(SepList[SModifier] modifiers, SName name, SepList[SDeclaration] baseSpecifiers, SepList[SDeclaration] members, loc decl = |unknown:///|)
+    | \class(SepList[SModifier] modifiers, SName name, SepList[SDeclaration] baseSpecifiers, SepList[SDeclaration] members, loc decl = |unknown:///|)
+    | \structFinal(SepList[SModifier] modifiers, SName name, SepList[SDeclaration] baseSpecifiers, SepList[SDeclaration] members, loc decl = |unknown:///|)
+    | \unionFinal(SepList[SModifier] modifiers, SName name, SepList[SDeclaration] baseSpecifiers, SepList[SDeclaration] members, loc decl = |unknown:///|)
+    | \classFinal(SepList[SModifier] modifiers, SName name, SepList[SDeclaration] baseSpecifiers, SepList[SDeclaration] members, loc decl = |unknown:///|)
     
-    | \enum(MyList[SModifier] modifiers, SName name, MyList[SDeclaration] enumerators, loc decl = |unknown:///|)
-    | \enum(MyList[SModifier] modifiers, SDeclSpecifier baseType, SName name, MyList[SDeclaration] enumerators, loc decl = |unknown:///|)
-    | \enumOpaque(MyList[SModifier] modifiers, SDeclSpecifier baseType, SName name, loc decl = |unknown:///|)
-    | \enumScoped(MyList[SModifier] modifiers, SName name, MyList[SDeclaration] enumerators, loc decl = |unknown:///|)
-    | \enumScoped(MyList[SModifier] modifiers, SDeclSpecifier baseType, SName name, MyList[SDeclaration] enumerators, loc decl = |unknown:///|)
-    | \enumScopedOpaque(MyList[SModifier] modifiers, SName name, loc decl = |unknown:///|)
-    | \enumScopedOpaque(MyList[SModifier] modifiers, SDeclSpecifier baseType, SName name, loc decl = |unknown:///|)
+    | \enum(SepList[SModifier] modifiers, SName name, SepList[SDeclaration] enumerators, loc decl = |unknown:///|)
+    | \enum(SepList[SModifier] modifiers, SDeclSpecifier baseType, SName name, SepList[SDeclaration] enumerators, loc decl = |unknown:///|)
+    | \enumOpaque(SepList[SModifier] modifiers, SDeclSpecifier baseType, SName name, loc decl = |unknown:///|)
+    | \enumScoped(SepList[SModifier] modifiers, SName name, SepList[SDeclaration] enumerators, loc decl = |unknown:///|)
+    | \enumScoped(SepList[SModifier] modifiers, SDeclSpecifier baseType, SName name, SepList[SDeclaration] enumerators, loc decl = |unknown:///|)
+    | \enumScopedOpaque(SepList[SModifier] modifiers, SName name, loc decl = |unknown:///|)
+    | \enumScopedOpaque(SepList[SModifier] modifiers, SDeclSpecifier baseType, SName name, loc decl = |unknown:///|)
     
      // Non-standard MSVC throw ellipsis
     | \msThrowEllipsis() //no attributes
     ;
     
-data SDeclaration(MyList[SAttribute] attributes = lval([]), loc src=|unknown:///|, list[str] seps = [])
-    = \translationUnit(MyList[SDeclaration] declarations) //no attributes
-    | \simpleDeclaration(SDeclSpecifier declSpecifier, MyList[SDeclarator] declarators)
+data SDeclaration(SepList[SAttribute] attributes = lst([],[]), loc src=|unknown:///|, list[str] seps = [])
+    = \translationUnit(SepList[SDeclaration] declarations) //no attributes
+    | \simpleDeclaration(SDeclSpecifier declSpecifier, SepList[SDeclarator] declarators)
     | \functionDefinition(SExpression returnSpec, SDeclarator declarator, SStatement body)//? //no attributes
-    | \defaultedFunctionDefinition(SDeclSpecifier declSpecifier, MyList[SExpression] memberInitializer, SDeclarator declarator)
-    | \deletedFunctionDefinition(SDeclSpecifier declSpecifier, MyList[SExpression] memberInitializer, SDeclarator declarator)
-    | \functionDefinition(SDeclSpecifier declSpecifier, SDeclarator declarator, MyList[SExpression] memberInitializer, SStatement body)
-    | \functionWithTryBlockDefinition(SDeclSpecifier declSpecifier, SDeclarator declarator, MyList[SExpression] memberInitializers, SStatement sbody, MyList[SStatement] catchHandlers)
+    | \defaultedFunctionDefinition(SDeclSpecifier declSpecifier, SepList[SExpression] memberInitializer, SDeclarator declarator)
+    | \deletedFunctionDefinition(SDeclSpecifier declSpecifier, SepList[SExpression] memberInitializer, SDeclarator declarator)
+    | \functionDefinition(SDeclSpecifier declSpecifier, SDeclarator declarator, SepList[SExpression] memberInitializer, SStatement body)
+    | \functionWithTryBlockDefinition(SDeclSpecifier declSpecifier, SDeclarator declarator, SepList[SExpression] memberInitializers, SStatement sbody, SepList[SStatement] catchHandlers)
     
     | \asmDeclaration(str assembly) //no attributes
     
@@ -84,40 +85,40 @@ data SDeclaration(MyList[SAttribute] attributes = lval([]), loc src=|unknown:///
     //| \etsUnion(Name name)
     //| \etsClass(Name name)
     
-    | \pointer(MyList[SModifier] modifiers)    // *
-    | \pointerToMember(MyList[SModifier] modifiers, SName nestedName)
+    | \pointer(SepList[SModifier] modifiers)    // *
+    | \pointerToMember(SepList[SModifier] modifiers, SName nestedName)
     | \reference()  // &
     | \rvalueReference() // &&
     
     | \parameter(SDeclSpecifier declSpecifier) //no attributes
     | \parameter(SDeclSpecifier declSpecifier, SDeclarator declarator) //no attributes
     
-    //| \declSpecifier(MyList[SModifier] modifiers, Type \type)
-    //| \declSpecifier(MyList[SModifier] modifiers, Type \type, Expression expression) //decltype and type_of
+    //| \declSpecifier(SepList[SModifier] modifiers, Type \type)
+    //| \declSpecifier(SepList[SModifier] modifiers, Type \type, Expression expression) //decltype and type_of
     //| \initializerClause(Expression expression) Unneeded layer of abstraction?
-    //| \initializerList(MyList[SExpression] clauses)
+    //| \initializerList(SepList[SExpression] clauses)
     
     //| \declarationEqualsInitializer(str name, Expression initializer) //weg //Que?
     
-    | \template(MyList[SDeclaration] parameters, SDeclaration declaration, STypeSymbol \type) //no attributes
+    | \template(SepList[SDeclaration] parameters, SDeclaration declaration, STypeSymbol \type) //no attributes
     | \sttClass(SName name, loc decl = |unknown:///|) //simpleTypeTemplateParameter //no attributes
     | \sttTypename(SName name, loc decl = |unknown:///|) //simpleTypeTemplateParameter //no attributes
     | \sttClass(SName name, SExpression defaultType, loc decl = |unknown:///|) //simpleTypeTemplateParameter //no attributes    
     | \sttTypename(SName name, SExpression defaultType, loc decl = |unknown:///|) //simpleTypeTemplateParameter //no attributes
     
-    | \tttParameter(MyList[SDeclaration] nestedParameters, SName name, loc decl = |unknown:///|) //templatedTypeTemplateParameter //no attributes
+    | \tttParameter(SepList[SDeclaration] nestedParameters, SName name, loc decl = |unknown:///|) //templatedTypeTemplateParameter //no attributes
     
-    | \baseSpecifier(MyList[SModifier] modifiers, loc decl = |unknown:///|) //no attributes
-    | \baseSpecifier(MyList[SModifier] modifiers, SName name, loc decl = |unknown:///|) //no attributes
+    | \baseSpecifier(SepList[SModifier] modifiers, loc decl = |unknown:///|) //no attributes
+    | \baseSpecifier(SepList[SModifier] modifiers, SName name, loc decl = |unknown:///|) //no attributes
     
     | \virtSpecifier(SModifier modifier) //no attributes
     
-    | \namespaceDefinition(SName name, MyList[SDeclaration] declarations, loc decl = |unknown:///|)
-    | \namespaceDefinitionInline(SName name, MyList[SDeclaration] declarations, loc decl = |unknown:///|)
-    | \usingDeclaration(MyList[SModifier] modifiers, SName name, loc decl = |unknown:///|)
+    | \namespaceDefinition(SName name, SepList[SDeclaration] declarations, loc decl = |unknown:///|)
+    | \namespaceDefinitionInline(SName name, SepList[SDeclaration] declarations, loc decl = |unknown:///|)
+    | \usingDeclaration(SepList[SModifier] modifiers, SName name, loc decl = |unknown:///|)
     | \namespaceAlias(SName \alias, SName mapping, loc decl = |unknown:///|) //no attributes
     
-    | \linkageSpecification(str literal, MyList[SDeclaration] declarations) //no attributes
+    | \linkageSpecification(str literal, SepList[SDeclaration] declarations) //no attributes
     | \alias(SName \alias, SExpression mappingTypeId, loc decl = |unknown:///|)
     
     | \staticAssert(SExpression condition, SExpression message) //no attributes
@@ -208,20 +209,20 @@ data SExpression(loc src = |unknown:///|, STypeSymbol typ = \unresolved(), list[
     | \false()
     | \nullptr()
     
-    //| \namedTypeSpecifier(MyList[SModifier] modifiers, Name name)
+    //| \namedTypeSpecifier(SepList[SModifier] modifiers, Name name)
     
-    | \functionCall(SExpression functionName, MyList[SExpression] arguments)
+    | \functionCall(SExpression functionName, SepList[SExpression] arguments)
     
     | \fieldReference(SExpression fieldOwner, SName name, loc decl = |unknown:///|)
     | \fieldReferencePointerDeref(SExpression fieldOwner, SName name, loc decl = |unknown:///|)
     | \new(SExpression typeId)
     | \new(SExpression typeId, SExpression initializer)
-    | \newWithArgs(MyList[SExpression] arguments, SExpression typeId)
-    | \newWithArgs(MyList[SExpression] arguments, SExpression typeId, SExpression initializer)
+    | \newWithArgs(SepList[SExpression] arguments, SExpression typeId)
+    | \newWithArgs(SepList[SExpression] arguments, SExpression typeId, SExpression initializer)
     | \globalNew(SExpression typeId)
     | \globalNew(SExpression typeId, SExpression initializer)
-    | \globalNewWithArgs(MyList[SExpression] arguments, SExpression typeId)
-    | \globalNewWithArgs(MyList[SExpression] arguments, SExpression typeId, SExpression initializer)
+    | \globalNewWithArgs(SepList[SExpression] arguments, SExpression typeId)
+    | \globalNewWithArgs(SepList[SExpression] arguments, SExpression typeId, SExpression initializer)
     
     | \delete(SExpression expression)
     | \vectoredDelete(SExpression expression)
@@ -229,19 +230,19 @@ data SExpression(loc src = |unknown:///|, STypeSymbol typ = \unresolved(), list[
     | \globalVectoredDelete(SExpression expression)
     
     | \arraySubscriptExpression(SExpression array, SExpression argument)
-    | \arrayModifier(MyList[SAttribute] attributes = lval([]))
-    | \arrayModifier(SExpression constExpression, MyList[SAttribute] attributes = lval([]))
+    | \arrayModifier(SepList[SAttribute] attributes = lst([],[]))
+    | \arrayModifier(SExpression constExpression, SepList[SAttribute] attributes = lst([],[]))
     
     | \simpleTypeConstructor(SDeclSpecifier declSpecifier, SExpression initializer)
     
-    | \expressionList(MyList[SExpression] expressions)
+    | \expressionList(SepList[SExpression] expressions)
     
     | \compoundStatementExpression(SStatement compoundStatement)
     
     | \empty()    
     | \nyi(str raw)
     
-    | \lambda(SModifier captureDefault, MyList[SExpression] captures, SDeclarator declarator, SStatement body)
+    | \lambda(SModifier captureDefault, SepList[SExpression] captures, SDeclarator declarator, SStatement body)
     
     | \packExpansion(SExpression pattern)
     
@@ -253,12 +254,12 @@ data SExpression(loc src = |unknown:///|, STypeSymbol typ = \unresolved(), list[
     
     // Initializers below
     | \equalsInitializer(SExpression initializer)
-    | \initializerList(MyList[SExpression] clauses) //initializerClause?
+    | \initializerList(SepList[SExpression] clauses) //initializerClause?
     | \constructorChainInitializer(SName name, SExpression initializer, loc decl = |unknown:///|)
-    | \constructorInitializer(MyList[SExpression] arguments)
+    | \constructorInitializer(SepList[SExpression] arguments)
     
     // DesignatedInitializers below
-    | \designatedInitializer(MyList[SExpression] designators, SExpression operand)
+    | \designatedInitializer(SepList[SExpression] designators, SExpression operand)
     
     // Designators below
     | \arrayDesignator(SExpression subscript)
@@ -276,17 +277,17 @@ data SExpression(loc src = |unknown:///|, STypeSymbol typ = \unresolved(), list[
  
 data SName(loc src = |unknown:///|, list[str] seps = []) //no attributes
     = \name(str \value)
-    | \qualifiedName(MyList[SName] qualifiers, SName lastName, loc decl = |unknown:///|)
+    | \qualifiedName(SepList[SName] qualifiers, SName lastName, loc decl = |unknown:///|)
     | \operatorName(str \value)
     | \conversionName(str \value, SExpression typeId)
     
-    | \templateId(SName name, MyList[SExpression] argumentTypes, loc decl = |unknown:///|)
+    | \templateId(SName name, SepList[SExpression] argumentTypes, loc decl = |unknown:///|)
 
     | \abstractEmptyName()
     ;
  
-data SStatement(MyList[SAttribute] attributes = lval([]), loc src = |unknown:///|, list[str] seps = [])
-    = \compoundStatement(MyList[SStatement] statements)
+data SStatement(SepList[SAttribute] attributes = lst([],[]), loc src = |unknown:///|, list[str] seps = [])
+    = \compoundStatement(SepList[SStatement] statements)
     | \declarationStatement(SDeclaration declaration)
     | \expressionStatement(SExpression expression)
     | \if(SExpression condition, SStatement thenClause)
@@ -312,7 +313,7 @@ data SStatement(MyList[SAttribute] attributes = lval([]), loc src = |unknown:///
     | \label(SName name, SStatement nestedStatement, loc decl = |unknown:///|)
     | \goto(SName name, loc decl = |unknown:///|)
     
-    | \tryBlock(SStatement tryBody, MyList[SStatement] catchHandlers)
+    | \tryBlock(SStatement tryBody, SepList[SStatement] catchHandlers)
     | \catch(SDeclaration declaration, SStatement body)
     | \catchAll(SStatement body)    
     
@@ -341,7 +342,7 @@ data SType(loc src = |unknown:///|, list[str] seps = []) //no attributes
     
     
     | \arrayType(SType \type, int size)
-    | \basicType(SType \type, MyList[SModifier] modifiers)
+    | \basicType(SType \type, SepList[SModifier] modifiers)
     | \nullptr()
     
     | \structType(SName name)
@@ -396,7 +397,7 @@ data SModifier(loc src = |unknown:///|, list[str] seps = []) //no attributes
 data SAttribute(list[str] seps = []) //no attributes
     = \attribute(str name)
     | \attribute(str name, str argumentClause)
-    | \attributeSpecifier(MyList[SAttribute] attributes)
+    | \attributeSpecifier(SepList[SAttribute] attributes)
     | \alignmentSpecifier(SExpression typeIdOrExpression)
 	;
 	
@@ -422,22 +423,22 @@ public data STypeSymbol
   
   | \array(STypeSymbol baseType)
   | \array(STypeSymbol baseType, int size)
-  | \basicType(MyList[STypeModifier] modifiers, STypeSymbol baseType)
+  | \basicType(SepList[STypeModifier] modifiers, STypeSymbol baseType)
   | \class(loc decl)
   | \union(loc decl)
-  | \struct(MyList[STypeSymbol] fields)
-  | \qualifierType(MyList[STypeModifier] modifiers, STypeSymbol \type)
-  | \pointerType(MyList[STypeModifier] modifiers, STypeSymbol \type)
-  | \functionType(STypeSymbol returnType, MyList[STypeSymbol] parameterTypes)
-  | \functionTypeVarArgs(STypeSymbol returnType, MyList[STypeSymbol] parameterTypes)
+  | \struct(SepList[STypeSymbol] fields)
+  | \qualifierType(SepList[STypeModifier] modifiers, STypeSymbol \type)
+  | \pointerType(SepList[STypeModifier] modifiers, STypeSymbol \type)
+  | \functionType(STypeSymbol returnType, SepList[STypeSymbol] parameterTypes)
+  | \functionTypeVarArgs(STypeSymbol returnType, SepList[STypeSymbol] parameterTypes)
   | \typeContainer(STypeSymbol \type)
   | \typedef(STypeSymbol \type)
   | \enumeration(loc decl)
   | \referenceType(STypeSymbol \type)
   | \parameterPackType(STypeSymbol \type)
   
-  | \classSpecialization(loc decl, MyList[STypeSymbol] templateArguments)
-  | \enumerationSpecialization(loc specializedBinding, MyList[STypeSymbol] templateArguments)
+  | \classSpecialization(loc decl, SepList[STypeSymbol] templateArguments)
+  | \enumerationSpecialization(loc specializedBinding, SepList[STypeSymbol] templateArguments)
   
   | \templateTypeParameter(loc owner, loc decl)
   | \implicitTemplateTypeParameter(loc owner, int position) //no decl?
@@ -449,21 +450,21 @@ public data STypeSymbol
   | \problemType(str msg)
   | \noType()
   
-  | \cStructTemplate(loc decl, MyList[loc] templateParameters)
-  | \cUnionTemplate(loc decl, MyList[loc] templateParameters)
-  | \cClassTemplate(loc decl, MyList[loc] templateParameters)
-  | \eStructTemplate(loc decl, MyList[loc] templateParameters)
-  | \eUnionTemplate(loc decl, MyList[loc] templateParameters)
-  | \eClassTemplate(loc decl, MyList[loc] templateParameters)
-  | \eEnumTemplate(loc decl, MyList[loc] templateParameters)
-  | \templateTemplate(STypeSymbol child, MyList[loc] templateParameters)
-  | \functionTemplate(loc decl, MyList[loc] templateParameters)
-  | \variableTemplate(loc decl, MyList[loc] templateParameters)
+  | \cStructTemplate(loc decl, SepList[loc] templateParameters)
+  | \cUnionTemplate(loc decl, SepList[loc] templateParameters)
+  | \cClassTemplate(loc decl, SepList[loc] templateParameters)
+  | \eStructTemplate(loc decl, SepList[loc] templateParameters)
+  | \eUnionTemplate(loc decl, SepList[loc] templateParameters)
+  | \eClassTemplate(loc decl, SepList[loc] templateParameters)
+  | \eEnumTemplate(loc decl, SepList[loc] templateParameters)
+  | \templateTemplate(STypeSymbol child, SepList[loc] templateParameters)
+  | \functionTemplate(loc decl, SepList[loc] templateParameters)
+  | \variableTemplate(loc decl, SepList[loc] templateParameters)
   
-  | \aliasTemplate(loc decl, MyList[loc] templateParameters)
+  | \aliasTemplate(loc decl, SepList[loc] templateParameters)
   
-  | \functionSetType(loc decl, MyList[STypeSymbol] templateArguments)
-  | \functionSetTypePointer(loc decl, MyList[STypeSymbol] templateArguments)
+  | \functionSetType(loc decl, SepList[STypeSymbol] templateArguments)
+  | \functionSetTypePointer(loc decl, SepList[STypeSymbol] templateArguments)
   
   | \unresolved()
   | \any()
