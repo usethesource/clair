@@ -301,6 +301,9 @@ public class TypeResolver {
 		if (type instanceof FunctionSetType)
 			return resolveFunctionSetType((FunctionSetType) type);
 
+		if (type == null) {
+			ctx.getStdErr().println("resolveType has null type");
+		}
 		throw new RuntimeException("TypeResolver encountered unknown type " + type.getClass().getSimpleName());
 	}
 
