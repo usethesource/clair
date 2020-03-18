@@ -2,6 +2,7 @@ module lang::cpp::M3
 
 extend analysis::m3::Core;
 
+import IO;
 import Node;
 import lang::cpp::AST;
 import lang::cpp::TypeSymbol;
