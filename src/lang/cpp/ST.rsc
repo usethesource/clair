@@ -487,15 +487,66 @@ public data STypeModifier
   
   ;
   
+  
+default &T <: node removeAligners(&T <: node n) {
+  if (!(n has seps)) {
+    println("?");
+    return n;
+  }
+  oldChildren = getChildren(n);
+  list[node] newChildren = [];
+  newChildren = for (node child <- oldChildren) {
+    append(removeAligners(child));
+  }
+  newSeps = for (list[str] ss := n.seps, sep <- ss) {
+    append(removeAligners(sep));
+  }
+  switch(typeOf(n)) {
+    case adt("SDeclaration",[]) : return make(#SDeclaration, getName(n), newChildren, getKeywordParameters(n) + ("seps" : newSeps));
+    case adt("SDeclarator",[]) : return make(#SDeclarator, getName(n), newChildren, getKeywordParameters(n) + ("seps" : newSeps));
+    case adt("SDeclSpecifier",[]) : return make(#SDeclSpecifier, getName(n), newChildren, getKeywordParameters(n) + ("seps" : newSeps));
+    case adt("SStatement",[]) : return make(#SStatement, getName(n), newChildren, getKeywordParameters(n) + ("seps" : newSeps));
+    case adt("SExpression",[]) : return make(#SExpression, getName(n), newChildren, getKeywordParameters(n) + ("seps" : newSeps));
+    case adt("SName",[]) : return make(#SName, getName(n), getChildren(n), getKeywordParameters(n) + ("seps" : newSeps));
+    case adt("SModifier",[]) : return make(#SModifier, getName(n), newChildren, getKeywordParameters(n) + ("seps" : newSeps));
+    case adt("SType",[]) : return make(#SType, getName(n), newChildren, getKeywordParameters(n) + ("seps" : newSeps));
+    default: throw "Missed adt <typeOf(n)>";
+  }
+}
+
+SepList[&T] removeAligners(SepList[&T] sl) {
+  newSeps = for (sep <- sl.seps) {
+    append(removeAligners(sep));
+  }
+  if (sl.seps != newSeps) {
+    println("LKJKLJLKJLK");
+    println(sl[seps=newSeps]);
+  }
+  return sl[seps=newSeps];
+}
+
+str removeAligners(str src) {
+  if (contains(src,"\'")) {
+    newline = findFirst(src,"\n");
+    quote = findFirst(src,"\'");
+    if (newline == -1) {
+      return substring(src,quote);
+    }
+    return src[..newline+1] + src[quote+1..];
+  }
+  return src;
+}
+
 node toST(node tree) = toST(tree, ());
 node toST(node tree, map[loc,str] sourceCache) {
   source = readSrc(asLoc(tree.src), sourceCache);
-  return toST(tree, source, sourceCache);
+  sst = toST(tree, source, sourceCache);
+  return removeAligners(sst);
 }
 
 node toST(node tree, str src) = toST(tree, src, ());
 node toST(node tree, str src, map[loc,str] srcCache) {
-  return addSeps(wrapLists(tree), srcCache);
+  return removeAligners(addSeps(wrapLists(tree), srcCache));
 }
 
 node wrapLists(node ast) {
@@ -639,7 +690,8 @@ str readSrc(loc l, map[loc,str] sourceCache) {
 
 str readBetween(node before, node after, map[loc,str] sourceCache) {
   if (loc beforeLoc := before.src && loc afterLoc := after.src) {
-    return readSrc(beforeLoc[offset=beforeLoc.offset+beforeLoc.length][length=afterLoc.offset-beforeLoc.offset-beforeLoc.length], sourceCache);
+    str result = readSrc(beforeLoc[offset=beforeLoc.offset+beforeLoc.length][length=afterLoc.offset-beforeLoc.offset-beforeLoc.length], sourceCache);
+    return removeAligners(result);
   }
   throw "Impossible";
 }
