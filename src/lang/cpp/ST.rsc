@@ -501,7 +501,7 @@ node toST(node tree, str src, map[loc,str] srcCache) {
 node wrapLists(node ast) {
   children = for (child <- getChildren(ast)) {
     if ([*elts] := child) {
-      append lval([wrapLists(elt) | elt <- elts]);
+      append lst([wrapLists(elt) | elt <- elts], []);
     } else {
       append wrapLists(child);
     }
@@ -510,7 +510,7 @@ node wrapLists(node ast) {
   params = ();
   for (key <- parameters, val := parameters[key]) {
     if ([*elts] := val) {
-      params += (key : lval([wrapLists(elt) | elt <- elts]));
+      params += (key : lst([wrapLists(elt) | elt <- elts], []));
     } else {
       params += (key : wrapLists(val));
     }
@@ -546,7 +546,7 @@ loc asLoc(value v) {
 }
 
 loc getLoc(node n) {
-  if (lval(elts) := n) {
+  if (lst(elts, []) := n) {
     loc first = getLoc(elts[0]);
     loc last = getLoc(elts[-1]);
     return first[length=last.offset+last.length-first.offset];
@@ -574,22 +574,22 @@ default &T <: node addSeps(&T <: node tree, map[loc,str] srcCache) {
     newChildren = children;
   } else {
     i = 0;
-    while (i < size(children) && lval([]) := children[i]) {//find cutoff point for "prefix"
+    while (i < size(children) && lst([],[]) := children[i]) {//find cutoff point for "prefix"
       i = i + 1;
     }
-    if (i == size(children)) {//what to do if all children are lval([])?
+    if (i == size(children)) {//what to do if all children are lst([],[])?
       seps = [code] + repeat("", size(children)-1);
     } else {
       seps += code[..getLoc(children[i]).offset-offset];//"prefix"
       m = max(0,size(children)-1);
       for (j <- [0..m]) {//add separators between children
-        if (lval([]) := children[j]) {
+        if (lst([],[]) := children[j]) {
           seps += "";
           continue;
         }
         firstLoc = getLoc(children[j]);
         k = 1;
-        while (j+k < size(children) && lval([]) := children[j+k]) {
+        while (j+k < size(children) && lst([], []) := children[j+k]) {
           k = k + 1;
         }
         if (j+k < size(children)) {
@@ -597,17 +597,17 @@ default &T <: node addSeps(&T <: node tree, map[loc,str] srcCache) {
           seps += code[firstLoc.offset-offset+firstLoc.length..secondLoc.offset-offset];
         }
       }
-      if (lval([]) := children[-1]) {//TODO: Check
+      if (lst([], []) := children[-1]) {//TODO: Check
         seps += "";
       }
     
       assert size(children) == size(seps);//TODO: REMOVE
     
       i = size(children) - 1;//find cutoff point for "postfix"
-      while (lval([]) := children[i] && i >= 0) {
+      while (lst([], []) := children[i] && i >= 0) {
         i = i - 1;
       }
-      if (i == -1) {//what to do if all children are lval([])?
+      if (i == -1) {//what to do if all children are lst([],[])?
         throw "FIXME";
       }
       lastLoc = getLoc(children[i]);
@@ -644,15 +644,13 @@ str readBetween(node before, node after, map[loc,str] sourceCache) {
   throw "Impossible";
 }
 
-MyList[&T] addSeps(MyList[&T] lst, map[loc,str] sourceCache) {
-  if (lst := lval([])) {
-    return lst[seps=[]];
+SepList[&T] addSeps(sl:lst([], []), _) = lst([],[]); 
+SepList[&T] addSeps(SepList[&T] sl, map[loc,str] sourceCache) {
+  seps = for (i <- [0..size(sl.elts)-1]) {
+    append readBetween(sl.elts[i], sl.elts[i+1], sourceCache);
   }
-  seps = for (i <- [0..size(lst.elts)-1]) {
-    append readBetween(lst.elts[i], lst.elts[i+1], sourceCache);
-  }
-  elts = [addSeps(elt, sourceCache) | elt <- lst.elts];
-  return lst[elts=elts][seps=seps];
+  elts = [addSeps(elt, sourceCache) | elt <- sl.elts];
+  return lst(elts, seps);
 }
 
 loc addSeps(loc l, map[loc,str] _) = l;
@@ -670,7 +668,7 @@ str yield(node n, bool addIndentation = false) {
   if (addIndentation) {
     println("Adding indentation NYI!");
   }
-  if (lval(elts, seps = seps) := n) {
+  if (lst(elts, seps) := n) {
     if (elts == []) {
       return "";
     }
