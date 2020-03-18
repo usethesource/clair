@@ -112,11 +112,9 @@ str flatten(list[Part] parts, node ast) {
 
 @concreteSyntax{SStatement}
 SStatement parseStatement(str code, loc l) {
-  str context = "void parse() {
-                '  <code>
-                '}";
+  str context = "void parse() { <code> }";
   Declaration tu = parseString(context, l);
-  adjusted = adjustOffsets(tu.declarations[0].body.statements[0], l, 18);
+  adjusted = adjustOffsets(tu.declarations[0].body.statements[0], l, 15);
   stt = toST(adjusted, context, sourceCache);
   if (SStatement ss := stt) {
     return ss;
@@ -129,11 +127,9 @@ str makeStatementHole(int id) = "$$$$$clairStmt$<id>$$$$$();";
 
 @concreteSyntax{SExpression}
 SExpression parseExpression(str code, loc l) {
-  str context = "void parse() {
-                '  decltype(<code>) x;
-                '}";
+  str context = "void parse() { decltype(<code>) x; }";
   Declaration tu = parseString(context, l);
-  adjusted = adjustOffsets(tu.declarations[0].body.statements[0].declaration.declSpecifier.expression, l, 27);
+  adjusted = adjustOffsets(tu.declarations[0].body.statements[0].declaration.declSpecifier.expression, l, 24);
   st = toST(adjusted, context, sourceCache);
   if (SExpression e := st) {
     return e;
