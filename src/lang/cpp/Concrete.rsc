@@ -31,10 +31,8 @@ import lang::cpp::AST;
 
 @concreteSyntax{Statement}
 Statement parseStatement(str code, loc l) {
-  str context = "void parse() {
-                '  <code>
-                '}";
-  Declaration tu = adjustOffsets(parseString(context, l), l, 17);
+  str context = "void parse() { <code> }";
+  Declaration tu = adjustOffsets(parseString(context, l), l, 15);
   return cleanup(tu.declarations[0].body.statements[0]); 
 }
 
@@ -52,10 +50,8 @@ str makeStatementHole(int id) = "$$$$$clairStmt$<id>$$$$$();";
 
 @concreteSyntax{Expression}
 Expression parseExpression(str code, loc l) {
-  str context = "void parse() {
-                '  decltype(<code>) x;
-                '}";
-  Declaration tu = adjustOffsets(parseString(context), l, 26);
+  str context = "void parse() {  decltype(<code>) x; }";
+  Declaration tu = adjustOffsets(parseString(context), l, 25);
   return cleanup(tu.declarations[0].body.statements[0].declaration.declSpecifier.expression);
 }
 
