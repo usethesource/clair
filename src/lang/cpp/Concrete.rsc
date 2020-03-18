@@ -83,9 +83,7 @@ str makeNameHole(int id) = "_name$$<id>$$end";
 
 @concreteSyntax{Declaration}
 Declaration parseDeclaration(str code, loc l) {
-  //iprintln(cleanup(parseString("class C { <code> };")));
   Declaration tu = adjustOffsets(parseString("class C { <code> };"), l, 10);
-  iprintln(tu);
   Declaration ret = tu.declarations[0].declSpecifier.members[0];
   if (ret is problemDeclaration)
     throw "Invalid input for external parser";
