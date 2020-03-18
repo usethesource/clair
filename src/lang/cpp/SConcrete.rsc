@@ -6,6 +6,8 @@ import Node;
 import String;
 import Type;
 
+import SST;
+
 import lang::cpp::AST;
 import lang::cpp::Concrete;
 import lang::cpp::ST;
@@ -51,7 +53,7 @@ list[Part] toParts(str s) {
   return parts;
 }
 
-MyList[&T] findSurroundingList(list[&T] l, node ast) {
+SepList[&T] findSurroundingList(list[&T] l, node ast) {
   if (/MyList[&T] ml := ast, bla:[*pre, *target, *post] := ml.elts, target == l) {
     if (lval(bla, seps=lSeps, sep=lSep) := ml) {//workaround for keyword parameters on parameterized ADTs
       return lval(target, seps=lSeps[size(pre)..size(pre)+size(target)-1], sep=lSep);
