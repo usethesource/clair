@@ -545,7 +545,7 @@ node toST(node tree, map[loc,str] sourceCache) {
 }
 
 node toST(node tree, str src) = toST(tree, src, ());
-node toST(node tree, str src, map[loc,str] srcCache) {
+node toST(node tree, str _, map[loc,str] srcCache) {
   return removeAligners(addSeps(wrapLists(tree), srcCache));
 }
 
@@ -587,6 +587,9 @@ node wrapLists(node ast) {
 }
 str wrapLists(str s) = s;
 loc wrapLists(loc l) = l;
+default &T wrapLists(&T val) {
+  throw "Impossible";
+}
 //maybe: default &T wrapLists(&T val) = val;
 
 loc asLoc(value v) {
@@ -608,7 +611,7 @@ loc getLoc(node n) {
   throw "Impossible";
 }
 
-list[&T] repeat(&T what, int times) = ([what] | it + what | i <- [1..times]);
+list[&T] repeat(&T what, int times) = ([what] | it + what | _ <- [1..times]);
 
 default &T <: node addSeps(&T <: node tree, map[loc,str] srcCache) {
   srcLoc = asLoc(tree.src);
@@ -620,7 +623,7 @@ default &T <: node addSeps(&T <: node tree, map[loc,str] srcCache) {
   if (children == []) {
     seps += code;
     newChildren = [];
-  } else if ([str s] := children) {
+  } else if ([str _] := children) {
     seps = ["",""];
     newChildren = children;
   } else {
@@ -715,7 +718,7 @@ list[str] getSeps(node n) {
   throw "Impossible";
 }
 
-str yield(str s, bool addIndentation = false) = s;
+str yield(str s) = s;
 str yield(node n, bool addIndentation = false) {
   if (addIndentation) {
     println("Adding indentation NYI!");

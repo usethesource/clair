@@ -1,7 +1,5 @@
 module lang::cpp::SConcrete
 
-import IO;
-import List;
 import Node;
 import String;
 import Type;
@@ -21,7 +19,7 @@ java node findSimpleVariable(str name);
 
 @javaClass{lang.cpp.internal.STHelper}
 @reflect{need access to streams}
-java list[&T] findListVariable(str name);
+java list[value] findListVariable(str name);
 
 data Part = strPart(str src) | varPart(str var) | lvarPart(str var);
 
@@ -54,11 +52,11 @@ list[Part] toParts(str s) {
 }
 
 SepList[&T] findSurroundingList(list[&T] l, node ast) {
-  if (/MyList[&T] ml := ast, bla:[*pre, *target, *post] := ml.elts, target == l) {
-    if (lval(bla, seps=lSeps, sep=lSep) := ml) {//workaround for keyword parameters on parameterized ADTs
-      return lval(target, seps=lSeps[size(pre)..size(pre)+size(target)-1], sep=lSep);
-    }
-  }
+  //if (/SepList[&T] ml := ast, bla:[*pre, *target, *post] := ml.elts, target == l) {
+  //  if (lst(bla, seps=lSeps, sep=lSep) := ml) {//workaround for keyword parameters on parameterized ADTs
+  //    return lst(target, seps=lSeps[size(pre)..size(pre)+size(target)-1], sep=lSep);
+  //  }
+  //}
   throw "Impossible";
 }
 
