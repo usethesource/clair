@@ -732,8 +732,12 @@ public class AST {
   
   private static final Type _Attribute_alignmentSpecifier_1 
     = tf.constructor(typestore,_Attribute,"alignmentSpecifier",_Expression,"typeIdOrExpression");
+  private static final Type _Attribute_msDeclspecList_1 
+    = tf.constructor(typestore,_Attribute,"msDeclspecList",tf.listType(_Attribute),"attributes");
   private static final Type _Attribute_attribute_1 
     = tf.constructor(typestore,_Attribute,"attribute",tf.stringType(),"name");
+  private static final Type _Attribute_gccAttributeList_1 
+    = tf.constructor(typestore,_Attribute,"gccAttributeList",tf.listType(_Attribute),"attributes");
   private static final Type _Attribute_attributeSpecifier_1 
     = tf.constructor(typestore,_Attribute,"attributeSpecifier",tf.listType(_Attribute),"attributes");
   private static final Type _Attribute_attribute_2 
@@ -6576,6 +6580,21 @@ public class AST {
     return vf.constructor(_Attribute_alignmentSpecifier_1 , $typeIdOrExpression).asWithKeywordParameters().setParameters(kwParams);
   }
   
+  public IConstructor Attribute_msDeclspecList(IList $attributes, ISourceLocation $loc) {
+      
+    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    
+    return vf.constructor(_Attribute_msDeclspecList_1 , $attributes).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
   public IConstructor Attribute_attribute(String $name, ISourceLocation $loc) {
       
     if (!vf.string($name).getType().isSubtypeOf(tf.stringType())) {
@@ -6589,6 +6608,21 @@ public class AST {
     
     
     return vf.constructor(_Attribute_attribute_1 , vf.string($name)).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Attribute_gccAttributeList(IList $attributes, ISourceLocation $loc) {
+      
+    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    
+    return vf.constructor(_Attribute_gccAttributeList_1 , $attributes).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Attribute_attributeSpecifier(IList $attributes, ISourceLocation $loc) {

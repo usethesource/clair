@@ -186,10 +186,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.gnu.IGCCASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTArrayRangeDesignator;
+import org.eclipse.cdt.core.dom.ast.ms.IMSASTDeclspecList;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.model.ILanguage;
@@ -2198,14 +2200,22 @@ public class Parser extends ASTVisitor {
 			else
 				((ICPPASTAlignmentSpecifier) specifier).getTypeId().accept(this);
 			stack.push(builder.Attribute_alignmentSpecifier(stack.pop(), src));
-		} else {
+		} else if (specifier instanceof IASTAttributeList) {
 			IASTAttributeList list = (IASTAttributeList) specifier;
 			IListWriter attributes = vf.listWriter();
 			Stream.of(list.getAttributes()).forEach(it -> {
 				it.accept(this);
 				attributes.append(stack.pop());
 			});
-			stack.push(builder.Attribute_attributeSpecifier(attributes.done(), src));
+			if (specifier instanceof IMSASTDeclspecList)
+				stack.push(builder.Attribute_msDeclspecList(attributes.done(), src));
+			else if (specifier instanceof IGCCASTAttributeList)
+				stack.push(builder.Attribute_gccAttributeList(attributes.done(), src));
+			else
+				stack.push(builder.Attribute_attributeSpecifier(attributes.done(), src));
+		} else {
+			throw new RuntimeException(
+					"Unknown AttributeSpecifier type: " + specifier.getClass().getSimpleName() + " at " + src);
 		}
 		return PROCESS_ABORT;
 	}

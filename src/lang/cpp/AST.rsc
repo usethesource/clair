@@ -12,8 +12,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 }
 module lang::cpp::AST
 
-import IO;
-import Node;
 import lang::cpp::TypeSymbol;
 
 //extend analysis::m3::AST;
@@ -413,6 +411,9 @@ data Attribute //no attributes
     | \attribute(str name, str argumentClause)
     | \attributeSpecifier(list[Attribute] attributes)
     | \alignmentSpecifier(Expression typeIdOrExpression)
+    
+    | \msDeclspecList(list[Attribute] attributes)
+    | \gccAttributeList(list[Attribute] attributes)
 	;
     
 public map[str, list[loc]] classPaths =
