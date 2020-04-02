@@ -125,13 +125,11 @@ public class BindingsResolver {
 	}
 
 	private void out(String msg) {
-		// ctx.getStdOut().println(spaces() + msg.replace("\n", "\n" +
-		// spaces()));
+//		ctx.getOutPrinter().println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
 
 	private void err(String msg) {
-		// ctx.getStdErr().println(spaces() + msg.replace("\n", "\n" +
-		// spaces()));
+//		ctx.getErrorPrinter().println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
 
 	ISourceLocation resolveOwner(IBinding binding) throws URISyntaxException {

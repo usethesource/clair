@@ -113,11 +113,11 @@ public class TypeResolver {
 	}
 
 	private void out(String msg) {
-		ctx.getStdOut().println(spaces() + msg.replace("\n", "\n" + spaces()));
+		ctx.getOutPrinter().println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
 
 	private void err(String msg) {
-		ctx.getStdErr().println(spaces() + msg.replace("\n", "\n" + spaces()));
+		ctx.getOutPrinter().println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
 
 	private ISourceLocation getSourceLocation(IASTNode node) {
@@ -187,14 +187,14 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveICPPASTTemplateId(ICPPASTTemplateId node) {
-		ctx.getStdOut().println("Parent " + node.getParent().getParent().getClass().getSimpleName());
+		out("Parent " + node.getParent().getParent().getClass().getSimpleName());
 		IListWriter templateArguments = vf.listWriter();
 		Stream.of(node.getTemplateArguments()).forEach(it -> {
-			ctx.getStdOut().println(it.getRawSignature());
+			out(it.getRawSignature());
 			templateArguments.append(resolveType(it));
 		});
 		IConstructor ret = builder.TypeSymbol_classSpecialization(br.resolveBinding(node), templateArguments.done());
-		ctx.getStdOut().println(ret);
+		out(ret.toString());
 		return ret;
 	}
 
@@ -214,15 +214,14 @@ public class TypeResolver {
 					binding = ((ICPPASTCompositeTypeSpecifier) declSpec).getName().resolveBinding();
 					return builder.TypeSymbol_cUnionTemplate(getDecl(binding), handleTemplateParameters(node));
 				default:
-					ctx.getStdOut().println(getSourceLocation(node).toString());
+					out(getSourceLocation(node).toString());
 					throw new RuntimeException("ICPPASTCompositeTypeSpecifier");
 				}
 			} else if (declSpec instanceof ICPPASTSimpleDeclSpecifier
 					|| declSpec instanceof ICPPASTNamedTypeSpecifier) {
 				IASTDeclarator[] declarators = ((IASTSimpleDeclaration) declaration).getDeclarators();
 				if (declarators.length != 1)
-					ctx.getStdOut()
-							.println("Variable template with unexpected #declarators at " + getSourceLocation(node));
+					out("Variable template with unexpected #declarators at " + getSourceLocation(node));
 				return builder.TypeSymbol_variableTemplate(getDecl(declarators[0].getName().resolveBinding()),
 						handleTemplateParameters(node));
 			} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier) {
@@ -302,7 +301,7 @@ public class TypeResolver {
 			return resolveFunctionSetType((FunctionSetType) type);
 
 		if (type == null) {
-			ctx.getStdErr().println("resolveType has null type");
+			out("resolveType has null type");
 		}
 		throw new RuntimeException("TypeResolver encountered unknown type " + type.getClass().getSimpleName());
 	}

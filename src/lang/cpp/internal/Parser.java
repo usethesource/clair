@@ -362,7 +362,7 @@ public class Parser extends ASTVisitor {
 						path.add(ResourcesPlugin.getWorkspace().getRoot().getProject("clair").getLocation().toString()
 								+ "/includes");
 					} catch (Throwable t) {
-						ctx.getStdErr().println(
+						ctx.getOutPrinter().println(
 								"WARNING: ResourcesPlugin was null, can't get workspace; not overriding include files");
 					}
 
@@ -406,7 +406,7 @@ public class Parser extends ASTVisitor {
 						}
 					}
 					err("Include " + include + " for " + currentFile + " not found");
-					ctx.getStdErr().flush();
+					ctx.getErrorPrinter().flush();
 					return null;// TODO: restore exception here
 				}
 
@@ -635,11 +635,11 @@ public class Parser extends ASTVisitor {
 	}
 
 	private void out(String msg) {
-		ctx.getStdOut().println(spaces() + msg.replace("\n", "\n" + spaces()));
+		ctx.getOutPrinter().println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
 
 	private void err(String msg) {
-		ctx.getStdErr().println(spaces() + msg.replace("\n", "\n" + spaces()));
+		ctx.getErrorPrinter().println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
 
 	public ISourceLocation getSourceLocation(IASTNode node) {
@@ -2507,7 +2507,7 @@ public class Parser extends ASTVisitor {
 			typ = tr.resolveType(expression);
 		} catch (Throwable t) {
 			err("CPPASTCompoundStatement couldn't get type at " + loc);
-			t.printStackTrace(ctx.getStdErr());
+			t.printStackTrace(ctx.getErrorPrinter());
 			typ = builder.TypeSymbol_any();
 		}
 		expression.getCompoundStatement().accept(this);
