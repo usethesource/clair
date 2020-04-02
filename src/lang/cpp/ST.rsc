@@ -699,7 +699,7 @@ str readBetween(node before, node after, map[loc,str] sourceCache) {
   throw "Impossible";
 }
 
-SepList[&T] addSeps(sl:lst([], []), _) = lst([],[]); 
+SepList[value] addSeps(sl:lst([], []), _) = lst([],[]); 
 SepList[&T] addSeps(SepList[&T] sl, map[loc,str] sourceCache) {
   seps = for (i <- [0..size(sl.elts)-1]) {
     append readBetween(sl.elts[i], sl.elts[i+1], sourceCache);

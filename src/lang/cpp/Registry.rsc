@@ -2,7 +2,6 @@ module lang::cpp::Registry
 
 import analysis::m3::Registry;
 import lang::cpp::AST;
-import IO;
 import analysis::m3::Core;
 
 

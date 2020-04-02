@@ -12,7 +12,7 @@ import Node;
 
 import vis::Figure;
 import vis::Render;
-import vis::KeySym;
+//import vis::KeySym;
   
 void main() {
   registerNonRascalContributions("org.eclipse.cdt.ui.editor.CEditor", 
@@ -50,7 +50,7 @@ node findNearEnoughSubTree(loc select, node tree) {
    return tree;
 }
 
-default node findNearEnoughSubTree(loc _, value t) = t;
+default node findNearEnoughSubTree(loc _, node t) = t;
 
 private int end(loc l)   = l.offset + l.length; 
 private int begin(loc l) = l.offset;
@@ -65,9 +65,9 @@ void drawAnnotatedAST(str x, loc select) {
 
 void drawASTOptions(str _, loc select, bool withTypes=false, bool withNames=false) {
     ast = findNearEnoughSubTree(select, parseCpp(select.top));
-    int count = 0;
-    int next() { count +=1 ; return count; }
-    str yield = readFile(select);
+    //int count = 0;
+    //int next() { count +=1 ; return count; }
+    //str yield = readFile(select);
     
     FProperty popup(str s, str color){
       return mouseOver(box(text(s, fontSize(24)), grow(1.1),resizable(false), fillColor(color)));
