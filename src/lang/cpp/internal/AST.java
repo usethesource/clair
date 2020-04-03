@@ -730,18 +730,18 @@ public class AST {
     = tf.constructor(typestore,_TypeSymbol,"problemBinding");
   
   
-  private static final Type _Attribute_alignmentSpecifier_1 
-    = tf.constructor(typestore,_Attribute,"alignmentSpecifier",_Expression,"typeIdOrExpression");
   private static final Type _Attribute_msDeclspecList_1 
     = tf.constructor(typestore,_Attribute,"msDeclspecList",tf.listType(_Attribute),"attributes");
-  private static final Type _Attribute_attribute_1 
-    = tf.constructor(typestore,_Attribute,"attribute",tf.stringType(),"name");
+  private static final Type _Attribute_alignmentSpecifier_1 
+    = tf.constructor(typestore,_Attribute,"alignmentSpecifier",_Expression,"typeIdOrExpression");
   private static final Type _Attribute_gccAttributeList_1 
     = tf.constructor(typestore,_Attribute,"gccAttributeList",tf.listType(_Attribute),"attributes");
-  private static final Type _Attribute_attributeSpecifier_1 
-    = tf.constructor(typestore,_Attribute,"attributeSpecifier",tf.listType(_Attribute),"attributes");
+  private static final Type _Attribute_attribute_1 
+    = tf.constructor(typestore,_Attribute,"attribute",tf.stringType(),"name");
   private static final Type _Attribute_attribute_2 
     = tf.constructor(typestore,_Attribute,"attribute",tf.stringType(),"name",tf.stringType(),"argumentClause");
+  private static final Type _Attribute_attributeSpecifier_1 
+    = tf.constructor(typestore,_Attribute,"attributeSpecifier",tf.listType(_Attribute),"attributes");
   
   
   private static final Type _TypeModifier_unsigned_0 
@@ -6565,21 +6565,6 @@ public class AST {
   }
   
   
-  public IConstructor Attribute_alignmentSpecifier(IConstructor $typeIdOrExpression, ISourceLocation $loc) {
-      
-    if (!$typeIdOrExpression.getType().isSubtypeOf(_Expression)) {
-      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $typeIdOrExpression.getType() + " for $typeIdOrExpression:" + $typeIdOrExpression);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    kwParams.put("src", $loc);
-    
-    
-    
-    return vf.constructor(_Attribute_alignmentSpecifier_1 , $typeIdOrExpression).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
   public IConstructor Attribute_msDeclspecList(IList $attributes, ISourceLocation $loc) {
       
     if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
@@ -6595,10 +6580,10 @@ public class AST {
     return vf.constructor(_Attribute_msDeclspecList_1 , $attributes).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Attribute_attribute(String $name, ISourceLocation $loc) {
+  public IConstructor Attribute_alignmentSpecifier(IConstructor $typeIdOrExpression, ISourceLocation $loc) {
       
-    if (!vf.string($name).getType().isSubtypeOf(tf.stringType())) {
-      throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($name).getType() + " for vf.string($name):" + vf.string($name));
+    if (!$typeIdOrExpression.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $typeIdOrExpression.getType() + " for $typeIdOrExpression:" + $typeIdOrExpression);
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
@@ -6607,7 +6592,7 @@ public class AST {
     
     
     
-    return vf.constructor(_Attribute_attribute_1 , vf.string($name)).asWithKeywordParameters().setParameters(kwParams);
+    return vf.constructor(_Attribute_alignmentSpecifier_1 , $typeIdOrExpression).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Attribute_gccAttributeList(IList $attributes, ISourceLocation $loc) {
@@ -6625,10 +6610,10 @@ public class AST {
     return vf.constructor(_Attribute_gccAttributeList_1 , $attributes).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Attribute_attributeSpecifier(IList $attributes, ISourceLocation $loc) {
+  public IConstructor Attribute_attribute(String $name, ISourceLocation $loc) {
       
-    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
+    if (!vf.string($name).getType().isSubtypeOf(tf.stringType())) {
+      throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($name).getType() + " for vf.string($name):" + vf.string($name));
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
@@ -6637,7 +6622,7 @@ public class AST {
     
     
     
-    return vf.constructor(_Attribute_attributeSpecifier_1 , $attributes).asWithKeywordParameters().setParameters(kwParams);
+    return vf.constructor(_Attribute_attribute_1 , vf.string($name)).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Attribute_attribute(String $name, String $argumentClause, ISourceLocation $loc) {
@@ -6657,6 +6642,21 @@ public class AST {
     
     
     return vf.constructor(_Attribute_attribute_2 , vf.string($name), vf.string($argumentClause)).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Attribute_attributeSpecifier(IList $attributes, ISourceLocation $loc) {
+      
+    if (!$attributes.getType().isSubtypeOf(tf.listType(_Attribute))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Attribute) + " but got " + $attributes.getType() + " for $attributes:" + $attributes);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    
+    return vf.constructor(_Attribute_attributeSpecifier_1 , $attributes).asWithKeywordParameters().setParameters(kwParams);
   }
   
   

@@ -406,7 +406,7 @@ data Modifier(loc src = |unknown:///|, bool isMacroExpansion = false) //no attri
     | \captDefByReference()
     ;
 
-data Attribute //no attributes
+data Attribute(loc src = |unknown:///|) //no attributes
     = \attribute(str name)
     | \attribute(str name, str argumentClause)
     | \attributeSpecifier(list[Attribute] attributes)
