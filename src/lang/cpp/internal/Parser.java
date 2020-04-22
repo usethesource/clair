@@ -502,23 +502,17 @@ public class Parser extends ASTVisitor {
 	}
 
 	public ISet getMacroDefinitionsFromTranslationUnit(IASTTranslationUnit tu) {
-		ISetWriter macros = vf.setWriter();
-		Stream.of(tu.getMacroDefinitions()).forEach(it -> {
-			ISourceLocation decl;
+		return Stream.of(tu.getMacroExpansions()).map(it -> {
 			try {
-				decl = br.resolveBinding(it.getName().resolveBinding());
+				return vf.tuple(getSourceLocation(it), br.resolveBinding(it.getMacroReference().resolveBinding()));
 			} catch (URISyntaxException e) {
-				decl = vf.sourceLocation(URIUtil.rootScheme("null"));
+				return vf.tuple(getSourceLocation(it), vf.sourceLocation(URIUtil.rootScheme("unknown")));
 			}
-			macros.insert(vf.tuple(decl, getSourceLocation(it)));
-		});
-		return macros.done();
+		}).collect(vf.setWriter());
 	}
 
 	public IList getCommentsFromTranslationUnit(IASTTranslationUnit tu) {
-		IListWriter comments = vf.listWriter();
-		Stream.of(tu.getComments()).forEach(it -> comments.append(getSourceLocation(it)));
-		return comments.done();
+		return Stream.of(tu.getComments()).map(this::getSourceLocation).collect(vf.listWriter());
 	}
 
 	public IList parseForComments(ISourceLocation file, IList includePath, IMap additionalMacros,
