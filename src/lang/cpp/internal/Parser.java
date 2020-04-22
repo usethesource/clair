@@ -243,7 +243,8 @@ public class Parser extends ASTVisitor {
 	private BindingsResolver br = new BindingsResolver();
 	private TypeResolver tr;
 
-	boolean doProblemLogging = false;
+	private boolean doProblemLogging = false;
+	private boolean toM3 = false;
 	private boolean includeStdLib = false;
 	private IList stdLib;
 
@@ -449,7 +450,7 @@ public class Parser extends ASTVisitor {
 		IASTTranslationUnit tu = getCdtAst(file, stdLib, includeDirs, additionalMacros, includeStdLib.getValue());
 		Instant between = Instant.now();
 		out("CDT took " + new Double(Duration.between(begin, between).toMillis()).doubleValue() / 1000 + "seconds");
-		IValue result = convertCdtToRascal(tu);
+		IValue result = convertCdtToRascal(tu, false);
 		Instant done = Instant.now();
 		out("Marshalling took " + new Double(Duration.between(between, done).toMillis()).doubleValue() / 1000
 				+ "seconds");
@@ -476,7 +477,7 @@ public class Parser extends ASTVisitor {
 		m3 = setM3IncludeInformationFromTranslationUnit(tu, m3);
 
 		declaredType = vf.setWriter();
-		IValue result = convertCdtToRascal(tu);
+		IValue result = convertCdtToRascal(tu, true);
 		m3 = m3.asWithKeywordParameters().setParameter("declaredType", declaredType.done());
 
 		return vf.tuple(m3, result);
