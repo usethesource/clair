@@ -21,10 +21,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Stream;
@@ -330,11 +328,9 @@ public class Parser extends ASTVisitor {
 					((IString) new Prelude(vf).readFile(file)).getValue().toCharArray());
 
 			Map<String, String> macros = new HashMap<String, String>();
-			Iterator<Entry<IValue, IValue>> it = additionalMacros.entryIterator();
-			while (it.hasNext()) {
-				Entry<IValue, IValue> entry = it.next();
-				macros.put(entry.getKey().toString().replace("\"", ""), entry.getValue().toString().replace("\"", ""));
-			}
+			additionalMacros.stream().map(ITuple.class::cast).forEach(tuple -> macros
+					.put(tuple.get(0).toString().replace("\"", ""), tuple.get(1).toString().replace("\"", "")));
+			macros.putAll(standardMacros);
 
 			IScannerInfo si = new ScannerInfo(macros, null);
 
