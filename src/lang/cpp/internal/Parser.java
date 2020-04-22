@@ -264,7 +264,10 @@ public class Parser extends ASTVisitor {
 		this.declaredType = vf.setWriter();
 	}
 
-	private IASTTranslationUnit getCdtAst(ISourceLocation file, IList includePath, IMap additionalMacros) {
+	private IASTTranslationUnit getCdtAst(ISourceLocation file, IList stdLib, IList includePath, IMap additionalMacros,
+			boolean includeStdLib) {
+		this.includeStdLib = includeStdLib || stdLib.isEmpty();
+		this.stdLib = stdLib;
 		try {
 			FileContent fc = FileContent.create(file.toString(),
 					((IString) new Prelude(vf).readFile(file)).getValue().toCharArray());
@@ -441,16 +444,15 @@ public class Parser extends ASTVisitor {
 	public IValue parseCpp(ISourceLocation file, IList stdLib, IList includeDirs, IMap additionalMacros,
 			IBool includeStdLib, IEvaluatorContext ctx) {
 		setIEvaluatorContext(ctx);
-		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
-		this.stdLib = stdLib;
+
 		Instant begin = Instant.now();
 		out("Beginning at " + begin.toString());
-		IASTTranslationUnit tu = getCdtAst(file, allIncludes.done(), additionalMacros);
+		IASTTranslationUnit tu = getCdtAst(file, stdLib, includeDirs, additionalMacros, includeStdLib.getValue());
 		Instant between = Instant.now();
 		out("CDT took " + new Double(Duration.between(begin, between).toMillis()).doubleValue() / 1000 + "seconds");
 		IValue result = convertCdtToRascal(tu);
 		Instant done = Instant.now();
-		out("Converting took " + new Double(Duration.between(between, done).toMillis()).doubleValue() / 1000
+		out("Marshalling took " + new Double(Duration.between(between, done).toMillis()).doubleValue() / 1000
 				+ "seconds");
 		if (result == null) {
 			throw RuntimeExceptionFactory.parseError(file, null, null);
@@ -461,10 +463,8 @@ public class Parser extends ASTVisitor {
 	public ITuple parseCppToM3AndAst(ISourceLocation file, IList stdLib, IList includeDirs, IMap additionalMacros,
 			IBool includeStdLib, IEvaluatorContext ctx) {
 		setIEvaluatorContext(ctx);
-		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
-		this.stdLib = stdLib;
 		IValue m3 = builder.M3_m3(file);
-		IASTTranslationUnit tu = getCdtAst(file, allIncludes.done(), additionalMacros);
+		IASTTranslationUnit tu = getCdtAst(file, stdLib, includeDirs, additionalMacros, includeStdLib.getValue());
 		IList comments = getCommentsFromTranslationUnit(tu);
 		ISet macroExpansions = getMacroExpansionsFromTranslationUnit(tu);
 		ISet macroDefinitions = getMacroDefinitionsFromTranslationUnit(tu);
@@ -524,7 +524,7 @@ public class Parser extends ASTVisitor {
 	public IList parseForComments(ISourceLocation file, IList includePath, IMap additionalMacros,
 			IEvaluatorContext ctx) {
 		setIEvaluatorContext(ctx);
-		IASTTranslationUnit tu = getCdtAst(file, includePath, additionalMacros);
+		IASTTranslationUnit tu = getCdtAst(file, vf.listWriter().done(), includePath, additionalMacros, true);
 		return getCommentsFromTranslationUnit(tu);
 	}
 
@@ -575,7 +575,7 @@ public class Parser extends ASTVisitor {
 
 	public ISet parseForMacros(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
 		setIEvaluatorContext(ctx);
-		IASTTranslationUnit tu = getCdtAst(file, includePath, additionalMacros);
+		IASTTranslationUnit tu = getCdtAst(file, vf.listWriter().done(), includePath, additionalMacros, true);
 		return getMacroExpansionsFromTranslationUnit(tu);
 	}
 
