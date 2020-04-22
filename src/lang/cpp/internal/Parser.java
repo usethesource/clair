@@ -264,14 +264,6 @@ public class Parser extends ASTVisitor {
 		this.declaredType = vf.setWriter();
 	}
 
-	Map<String, Set<String>> dependencies = new HashMap<String, Set<String>>();
-
-	private void addDependency(String from, String to) {
-		if (!dependencies.containsKey(from))
-			dependencies.put(from, new HashSet<String>());
-		dependencies.get(from).add(to);
-	}
-
 	private IASTTranslationUnit getCdtAst(ISourceLocation file, IList includePath, IMap additionalMacros) {
 		try {
 			FileContent fc = FileContent.create(file.toString(),
@@ -397,13 +389,11 @@ public class Parser extends ASTVisitor {
 					String fileName = include.substring(include.lastIndexOf('/') + 1);
 					String found = checkDirectory(new File(new File(currentFile).getParentFile(), filePath), fileName);
 					if (found != null) {
-						addDependency(currentFile, include);
 						return found;
 					}
 					for (String path : path) {
 						found = checkDirectory(new File(path, filePath), fileName);
 						if (found != null) {
-							addDependency(currentFile, include);
 							return found;
 						}
 					}
