@@ -362,9 +362,8 @@ public class Parser extends ASTVisitor {
 						ctx.getOutPrinter().println(
 								"WARNING: ResourcesPlugin was null, can't get workspace; not overriding include files");
 					}
-
-					for (IValue include : includePath)
-						path.add(locToPath((ISourceLocation) include));
+					includePath.stream().forEach(it -> path.add(locToPath((ISourceLocation) it)));
+					stdLib.stream().forEach(it -> path.add(locToPath((ISourceLocation) it)));
 				}
 
 				private String locToPath(ISourceLocation loc) {
