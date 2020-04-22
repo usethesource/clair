@@ -570,7 +570,8 @@ public class Parser extends ASTVisitor {
 	}
 
 	private void addDeclaredType(ISourceLocation decl, IConstructor typ) {
-		declaredType.insert(vf.tuple(decl, typ));
+		if (toM3)
+			declaredType.insert(vf.tuple(decl, typ));
 	}
 
 	public ISet parseForMacros(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
@@ -596,7 +597,8 @@ public class Parser extends ASTVisitor {
 		return stack.pop();
 	}
 
-	public IValue convertCdtToRascal(IASTTranslationUnit translationUnit) {
+	public IValue convertCdtToRascal(IASTTranslationUnit translationUnit, boolean toM3) {
+		this.toM3 = toM3;
 		translationUnit.accept(this);
 		if (stack.size() == 1)
 			return stack.pop();
