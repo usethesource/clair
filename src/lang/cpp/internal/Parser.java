@@ -250,6 +250,63 @@ public class Parser extends ASTVisitor {
 	private IList stdLib;
 
 	private ISetWriter declaredType;
+	private static final Map<String, String> standardMacros;
+
+	static {
+		standardMacros = new HashMap<>();
+		// from WinDiscoveredPathInfo.java:
+		standardMacros.put("_M_IX86", "600");
+		standardMacros.put("_WIN32", "1");
+		// macros.put("_MSC_VER", "1400");
+		standardMacros.put("__cdecl", "");
+		standardMacros.put("__fastcall", "");
+		standardMacros.put("__restrict", "");
+		standardMacros.put("__sptr", "");
+		standardMacros.put("__stdcall", "");
+		standardMacros.put("__unaligned", "");
+		standardMacros.put("__uptr", "");
+		standardMacros.put("__w64", "");
+		standardMacros.put("__forceinline", "__inline");
+		standardMacros.put("__int8", "char");
+		standardMacros.put("__int16", "short");
+		standardMacros.put("__int32", "int");
+		standardMacros.put("__int64", "long long");
+
+		// additional:
+		standardMacros.put("_MSC_VER", "1700");
+		standardMacros.put("__cplusplus", "199711L");
+		standardMacros.put("__thiscall", "");
+		standardMacros.put("_CHAR16T", "");
+		standardMacros.put("_NATIVE_WCHAR_T_DEFINED", "1");
+		standardMacros.put("__nullptr", "nullptr");
+		standardMacros.put("_MSC_EXTENSIONS", "1");
+		standardMacros.put("__inline", "inline");
+		standardMacros.put("__ptr32", "");
+		standardMacros.put("__ptr64", "");
+		standardMacros.put("__interface", "struct");
+
+		standardMacros.put("__pragma(A)", "");
+		standardMacros.put("__identifier(A)", "A");
+//		standardMacros.put("__declspec(A)", "");
+		standardMacros.put("_stdcall", "");
+
+		standardMacros.put("_USE_DECLSPECS_FOR_SAL", "0");
+		standardMacros.put("_DLL", "1");
+
+		standardMacros.put("NDEBUG", "");
+		standardMacros.put("WIN32", "");
+		standardMacros.put("_WINDOWS", "");
+		standardMacros.put("_WIN32_DCOM", "");
+		standardMacros.put("_USRDLL", "");
+		standardMacros.put("SSCF1_INCLUDED", "");
+		standardMacros.put("LOGGINGTRACING_INCLUDED", "");
+		standardMacros.put("_WINDLL", "");
+		standardMacros.put("_UNICODE", "");
+		standardMacros.put("UNICODE", "");
+		standardMacros.put("_AFXDLL", "");
+
+//		standardMacros.put("__INTELLISENSE__", "1");
+	}
 
 	public Parser(IValueFactory vf) {
 		super(true);
@@ -278,59 +335,6 @@ public class Parser extends ASTVisitor {
 				Entry<IValue, IValue> entry = it.next();
 				macros.put(entry.getKey().toString().replace("\"", ""), entry.getValue().toString().replace("\"", ""));
 			}
-
-			// from WinDiscoveredPathInfo.java:
-			macros.put("_M_IX86", "600");
-			macros.put("_WIN32", "1");
-			// macros.put("_MSC_VER", "1400");
-			macros.put("__cdecl", "");
-			macros.put("__fastcall", "");
-			macros.put("__restrict", "");
-			macros.put("__sptr", "");
-			macros.put("__stdcall", "");
-			macros.put("__unaligned", "");
-			macros.put("__uptr", "");
-			macros.put("__w64", "");
-			macros.put("__forceinline", "__inline");
-			macros.put("__int8", "char");
-			macros.put("__int16", "short");
-			macros.put("__int32", "int");
-			macros.put("__int64", "long long");
-
-			// additional:
-			macros.put("_MSC_VER", "1700");
-			macros.put("__cplusplus", "199711L");
-			macros.put("__thiscall", "");
-			macros.put("_CHAR16T", "");
-			macros.put("_NATIVE_WCHAR_T_DEFINED", "1");
-			macros.put("__nullptr", "nullptr");
-			macros.put("_MSC_EXTENSIONS", "1");
-			macros.put("__inline", "inline");
-			macros.put("__ptr32", "");
-			macros.put("__ptr64", "");
-			macros.put("__interface", "struct");
-
-			macros.put("__pragma(A)", "");
-			macros.put("__identifier(A)", "A");
-//			macros.put("__declspec(A)", "");
-			macros.put("_stdcall", "");
-
-			macros.put("_USE_DECLSPECS_FOR_SAL", "0");
-			macros.put("_DLL", "1");
-
-			macros.put("NDEBUG", "");
-			macros.put("WIN32", "");
-			macros.put("_WINDOWS", "");
-			macros.put("_WIN32_DCOM", "");
-			macros.put("_USRDLL", "");
-			macros.put("SSCF1_INCLUDED", "");
-			macros.put("LOGGINGTRACING_INCLUDED", "");
-			macros.put("_WINDLL", "");
-			macros.put("_UNICODE", "");
-			macros.put("UNICODE", "");
-			macros.put("_AFXDLL", "");
-
-			// macros.put("__INTELLISENSE__", "1");
 
 			IScannerInfo si = new ScannerInfo(macros, null);
 
