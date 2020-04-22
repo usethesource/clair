@@ -636,6 +636,8 @@ public class AST {
     = tf.constructor(typestore,_TypeSymbol,"templateTypeParameter",tf.sourceLocationType(),"owner",tf.sourceLocationType(),"decl");
   private static final Type _TypeSymbol_cClassTemplate_2 
     = tf.constructor(typestore,_TypeSymbol,"cClassTemplate",tf.sourceLocationType(),"decl",tf.listType(tf.sourceLocationType()),"templateParameters");
+  private static final Type _TypeSymbol_deferredClassInstance_1 
+    = tf.constructor(typestore,_TypeSymbol,"deferredClassInstance",tf.stringType(),"name");
   private static final Type _TypeSymbol_functionType_2 
     = tf.constructor(typestore,_TypeSymbol,"functionType",_TypeSymbol,"returnType",tf.listType(_TypeSymbol),"parameterTypes");
   private static final Type _TypeSymbol_functionTypeVarArgs_2 
@@ -713,9 +715,7 @@ public class AST {
   private static final Type _TypeSymbol_int_0 
     = tf.constructor(typestore,_TypeSymbol,"int");
   private static final Type _TypeSymbol_struct_1 
-    = tf.constructor(typestore,_TypeSymbol,"struct",tf.listType(_TypeSymbol),"fields");
-  private static final Type _TypeSymbol_deferredClassInstance_1 
-    = tf.constructor(typestore,_TypeSymbol,"deferredClassInstance",tf.stringType(),"name");
+    = tf.constructor(typestore,_TypeSymbol,"struct",tf.sourceLocationType(),"decl");
   private static final Type _TypeSymbol_array_2 
     = tf.constructor(typestore,_TypeSymbol,"array",_TypeSymbol,"baseType",tf.integerType(),"size");
   private static final Type _TypeSymbol_aliasTemplate_2 
@@ -5866,6 +5866,21 @@ public class AST {
     return vf.constructor(_TypeSymbol_cClassTemplate_2 , $decl, $templateParameters).asWithKeywordParameters().setParameters(kwParams);
   }
   
+  public IConstructor TypeSymbol_deferredClassInstance(String $name) {
+      
+    if (!vf.string($name).getType().isSubtypeOf(tf.stringType())) {
+      throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($name).getType() + " for vf.string($name):" + vf.string($name));
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    
+    
+    return vf.constructor(_TypeSymbol_deferredClassInstance_1 , vf.string($name)).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
   public IConstructor TypeSymbol_functionType(IConstructor $returnType, IList $parameterTypes) {
       
     if (!$returnType.getType().isSubtypeOf(_TypeSymbol)) {
@@ -6444,10 +6459,10 @@ public class AST {
     return vf.constructor(_TypeSymbol_int_0 ).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor TypeSymbol_struct(IList $fields) {
+  public IConstructor TypeSymbol_struct(ISourceLocation $decl) {
       
-    if (!$fields.getType().isSubtypeOf(tf.listType(_TypeSymbol))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(_TypeSymbol) + " but got " + $fields.getType() + " for $fields:" + $fields);
+    if (!$decl.getType().isSubtypeOf(tf.sourceLocationType())) {
+      throw new IllegalArgumentException("Expected " + tf.sourceLocationType() + " but got " + $decl.getType() + " for $decl:" + $decl);
     }
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
@@ -6456,22 +6471,7 @@ public class AST {
     
     
     
-    return vf.constructor(_TypeSymbol_struct_1 , $fields).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
-  public IConstructor TypeSymbol_deferredClassInstance(String $name) {
-      
-    if (!vf.string($name).getType().isSubtypeOf(tf.stringType())) {
-      throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($name).getType() + " for vf.string($name):" + vf.string($name));
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    
-    
-    
-    
-    return vf.constructor(_TypeSymbol_deferredClassInstance_1 , vf.string($name)).asWithKeywordParameters().setParameters(kwParams);
+    return vf.constructor(_TypeSymbol_struct_1 , $decl).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeSymbol_array(IConstructor $baseType, IValue $size) {

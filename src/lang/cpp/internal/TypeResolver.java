@@ -403,11 +403,7 @@ public class TypeResolver {
 	private IConstructor resolveICPPClassType(ICPPClassType type) {
 		switch (type.getKey()) {
 		case ICPPClassType.k_struct:
-			IListWriter fields = vf.listWriter();
-			// Stream.of(type.getFields()).forEach(it -> out("\tField: " + it));
-			// Stream.of(type.getFields()).forEach(it ->
-			// fields.append(resolveType(it.getType(), src)));
-			return builder.TypeSymbol_struct(fields.done());
+			return builder.TypeSymbol_struct(getDecl(type));
 		case ICPPClassType.k_union:
 			return builder.TypeSymbol_union(getDecl(type));
 		case ICPPClassType.k_class:

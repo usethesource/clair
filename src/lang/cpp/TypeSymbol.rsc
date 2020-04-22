@@ -41,7 +41,7 @@ public data TypeSymbol
   | \basicType(list[TypeModifier] modifiers, TypeSymbol baseType)
   | \class(loc decl)
   | \union(loc decl)
-  | \struct(list[TypeSymbol] fields)
+  | \struct(loc decl)
   | \qualifierType(list[TypeModifier] modifiers, TypeSymbol \type)
   | \pointerType(list[TypeModifier] modifiers, TypeSymbol \type)
   | \functionType(TypeSymbol returnType, list[TypeSymbol] parameterTypes)
