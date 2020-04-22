@@ -296,7 +296,7 @@ public class Parser extends ASTVisitor {
 
 			// additional:
 			macros.put("_MSC_VER", "1700");
-			macros.put("__cplusplus", "");
+			macros.put("__cplusplus", "199711L");
 			macros.put("__thiscall", "");
 			macros.put("_CHAR16T", "");
 			macros.put("_NATIVE_WCHAR_T_DEFINED", "1");
