@@ -445,9 +445,6 @@ public class Parser extends ASTVisitor {
 		this.stdLib = stdLib;
 		Instant begin = Instant.now();
 		out("Beginning at " + begin.toString());
-		IListWriter allIncludes = vf.listWriter();
-		allIncludes.appendAll(includeDirs);
-		allIncludes.appendAll(stdLib);
 		IASTTranslationUnit tu = getCdtAst(file, allIncludes.done(), additionalMacros);
 		Instant between = Instant.now();
 		out("CDT took " + new Double(Duration.between(begin, between).toMillis()).doubleValue() / 1000 + "seconds");
@@ -467,9 +464,6 @@ public class Parser extends ASTVisitor {
 		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
 		this.stdLib = stdLib;
 		IValue m3 = builder.M3_m3(file);
-		IListWriter allIncludes = vf.listWriter();
-		allIncludes.appendAll(includeDirs);
-		allIncludes.appendAll(stdLib);
 		IASTTranslationUnit tu = getCdtAst(file, allIncludes.done(), additionalMacros);
 		IList comments = getCommentsFromTranslationUnit(tu);
 		ISet macroExpansions = getMacroExpansionsFromTranslationUnit(tu);
