@@ -12,7 +12,6 @@
  */
 package lang.cpp.internal;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
@@ -190,8 +189,6 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTArrayRangeDesignator;
 import org.eclipse.cdt.core.dom.ast.ms.IMSASTDeclspecList;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.DefaultLogService;
 import org.eclipse.cdt.core.parser.FileContent;
@@ -200,22 +197,14 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.internal.core.dom.IIncludeFileResolutionHeuristics;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode.NameCollector;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
-import org.eclipse.cdt.internal.core.index.CIndex;
-import org.eclipse.cdt.internal.core.index.IIndexFragment;
-import org.eclipse.cdt.internal.core.parser.IMacroDictionary;
-import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
-import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.rascalmpl.interpreter.IEvaluatorContext;
 import org.rascalmpl.interpreter.utils.RuntimeExceptionFactory;
-import org.rascalmpl.library.Prelude;
 import org.rascalmpl.uri.URIUtil;
 
 import io.usethesource.vallang.IBool;
@@ -249,63 +238,6 @@ public class Parser extends ASTVisitor {
 	private IList stdLib;
 
 	private ISetWriter declaredType;
-	private static final Map<String, String> standardMacros;
-
-	static {
-		standardMacros = new HashMap<>();
-		// from WinDiscoveredPathInfo.java:
-		standardMacros.put("_M_IX86", "600");
-		standardMacros.put("_WIN32", "1");
-		// macros.put("_MSC_VER", "1400");
-		standardMacros.put("__cdecl", "");
-		standardMacros.put("__fastcall", "");
-		standardMacros.put("__restrict", "");
-		standardMacros.put("__sptr", "");
-		standardMacros.put("__stdcall", "");
-		standardMacros.put("__unaligned", "");
-		standardMacros.put("__uptr", "");
-		standardMacros.put("__w64", "");
-		standardMacros.put("__forceinline", "__inline");
-		standardMacros.put("__int8", "char");
-		standardMacros.put("__int16", "short");
-		standardMacros.put("__int32", "int");
-		standardMacros.put("__int64", "long long");
-
-		// additional:
-		standardMacros.put("_MSC_VER", "1700");
-		standardMacros.put("__cplusplus", "199711L");
-		standardMacros.put("__thiscall", "");
-		standardMacros.put("_CHAR16T", "");
-		standardMacros.put("_NATIVE_WCHAR_T_DEFINED", "1");
-		standardMacros.put("__nullptr", "nullptr");
-		standardMacros.put("_MSC_EXTENSIONS", "1");
-		standardMacros.put("__inline", "inline");
-		standardMacros.put("__ptr32", "");
-		standardMacros.put("__ptr64", "");
-		standardMacros.put("__interface", "struct");
-
-		standardMacros.put("__pragma(A)", "");
-		standardMacros.put("__identifier(A)", "A");
-//		standardMacros.put("__declspec(A)", "");
-		standardMacros.put("_stdcall", "");
-
-		standardMacros.put("_USE_DECLSPECS_FOR_SAL", "0");
-		standardMacros.put("_DLL", "1");
-
-		standardMacros.put("NDEBUG", "");
-		standardMacros.put("WIN32", "");
-		standardMacros.put("_WINDOWS", "");
-		standardMacros.put("_WIN32_DCOM", "");
-		standardMacros.put("_USRDLL", "");
-		standardMacros.put("SSCF1_INCLUDED", "");
-		standardMacros.put("LOGGINGTRACING_INCLUDED", "");
-		standardMacros.put("_WINDLL", "");
-		standardMacros.put("_UNICODE", "");
-		standardMacros.put("UNICODE", "");
-		standardMacros.put("_AFXDLL", "");
-
-//		standardMacros.put("__INTELLISENSE__", "1");
-	}
 
 	public Parser(IValueFactory vf) {
 		super(true);
@@ -320,134 +252,16 @@ public class Parser extends ASTVisitor {
 		this.declaredType = vf.setWriter();
 	}
 
-	private IASTTranslationUnit getCdtAst(ISourceLocation file, IList stdLib, IList includePath, IMap additionalMacros,
-			boolean includeStdLib) {
-		this.includeStdLib = includeStdLib || stdLib.isEmpty();
-		this.stdLib = stdLib;
-		try {
-			FileContent fc = FileContent.create(file.toString(),
-					((IString) new Prelude(vf).readFile(file)).getValue().toCharArray());
-
-			Map<String, String> macros = new HashMap<String, String>();
-			additionalMacros.stream().map(ITuple.class::cast).forEach(tuple -> macros
-					.put(tuple.get(0).toString().replace("\"", ""), tuple.get(1).toString().replace("\"", "")));
-			macros.putAll(standardMacros);
-
-			IScannerInfo si = new ScannerInfo(macros, null);
-
-			InternalFileContentProvider ifcp = new InternalFileContentProvider() {
-				@Override
-				public InternalFileContent getContentForInclusion(String filePath, IMacroDictionary macroDictionary) {
-					return (InternalFileContent) FileContent.createForExternalFileLocation(filePath);
-				}
-
-				@Override
-				public InternalFileContent getContentForInclusion(IIndexFileLocation ifl, String astPath) {
-					return (InternalFileContent) FileContent.create(ifl);
-				}
-
-			};
-
-			IIncludeFileResolutionHeuristics ifrh = new IIncludeFileResolutionHeuristics() {
-				List<String> path = new ArrayList<String>();
-				{
-					try {
-						path.add(locToPath(URIUtil.getParentLocation(file)));
-					} catch (IllegalArgumentException e) {
-						// Do nothing, will not lookup parent of non-file loc
-					}
-					try {
-						path.add(ResourcesPlugin.getWorkspace().getRoot().getProject("clair").getLocation().toString()
-								+ "/includes");
-					} catch (Throwable t) {
-						ctx.getOutPrinter().println(
-								"WARNING: ResourcesPlugin was null, can't get workspace; not overriding include files");
-					}
-					includePath.stream().forEach(it -> path.add(locToPath((ISourceLocation) it)));
-					stdLib.stream().forEach(it -> path.add(locToPath((ISourceLocation) it)));
-				}
-
-				private String locToPath(ISourceLocation loc) {
-					if (!loc.getScheme().equals("file"))
-						throw new IllegalArgumentException("Will not convert non-file loc");
-					return loc.getAuthority() + loc.getPath();
-				}
-
-				String checkDirectory(File dir, String fileName) {
-					if (!dir.isDirectory()) {
-						return null;
-					}
-					for (File f : dir.listFiles()) {
-						if (isRightFile(f.getName(), fileName)) {
-							return f.getAbsolutePath();
-						}
-					}
-					return null;
-				}
-
-				@Override
-				public String findInclusion(String include, String currentFile) {
-					include = include.trim().replace("\\", "/");
-					String filePath = include.substring(0, include.lastIndexOf('/') + 1);
-					String fileName = include.substring(include.lastIndexOf('/') + 1);
-					String found = checkDirectory(new File(new File(currentFile).getParentFile(), filePath), fileName);
-					if (found != null) {
-						return found;
-					}
-					for (String path : path) {
-						found = checkDirectory(new File(path, filePath), fileName);
-						if (found != null) {
-							return found;
-						}
-					}
-					err("Include " + include + " for " + currentFile + " not found");
-					ctx.getErrorPrinter().flush();
-					return null;// TODO: restore exception here
-				}
-
-				private boolean isRightFile(String include, String toMatch) {
-					if (System.getProperty("os.name").contains("Win"))
-						return include.equalsIgnoreCase(toMatch);
-					return include.equals(toMatch);
-				}
-			};
-
-			ifcp.setIncludeResolutionHeuristics(ifrh);
-			IIndex idx = new CIndex(new IIndexFragment[] {});
-			int options = ILanguage.OPTION_PARSE_INACTIVE_CODE;
-
-			IParserLogService log = new IParserLogService() {
-
-				@Override
-				public void traceLog(String message) {
-					// ctx.getStdErr().println(message);
-				}
-
-				@Override
-				public boolean isTracing() {
-					return true;
-				}
-
-			};
-
-			return GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, idx, options, log);
-		} catch (CoreException e) {
-			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
-		} catch (StackOverflowError e) {
-			throw RuntimeExceptionFactory.stackOverflow(null, null);
-		} catch (Throwable e) {
-			// TODO: make more specific
-			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
-		}
-	}
-
 	public IValue parseCpp(ISourceLocation file, IList stdLib, IList includeDirs, IMap additionalMacros,
 			IBool includeStdLib, IEvaluatorContext ctx) {
 		setIEvaluatorContext(ctx);
+		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
+		this.stdLib = stdLib;
 
 		Instant begin = Instant.now();
 		out("Beginning at " + begin.toString());
-		IASTTranslationUnit tu = getCdtAst(file, stdLib, includeDirs, additionalMacros, includeStdLib.getValue());
+		CDTParser parser = new CDTParser(stdLib, includeDirs, additionalMacros, includeStdLib.getValue(), ctx);
+		IASTTranslationUnit tu = parser.parseFile(file);
 		Instant between = Instant.now();
 		out("CDT took " + new Double(Duration.between(begin, between).toMillis()).doubleValue() / 1000 + "seconds");
 		IValue result = convertCdtToRascal(tu, false);
@@ -463,8 +277,12 @@ public class Parser extends ASTVisitor {
 	public ITuple parseCppToM3AndAst(ISourceLocation file, IList stdLib, IList includeDirs, IMap additionalMacros,
 			IBool includeStdLib, IEvaluatorContext ctx) {
 		setIEvaluatorContext(ctx);
+		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
+		this.stdLib = stdLib;
+
 		IValue m3 = builder.M3_m3(file);
-		IASTTranslationUnit tu = getCdtAst(file, stdLib, includeDirs, additionalMacros, includeStdLib.getValue());
+		CDTParser parser = new CDTParser(stdLib, includeDirs, additionalMacros, includeStdLib.getValue(), ctx);
+		IASTTranslationUnit tu = parser.parseFile(file);
 		IList comments = getCommentsFromTranslationUnit(tu);
 		ISet macroExpansions = getMacroExpansionsFromTranslationUnit(tu);
 		ISet macroDefinitions = getMacroDefinitionsFromTranslationUnit(tu);
@@ -518,7 +336,7 @@ public class Parser extends ASTVisitor {
 	public IList parseForComments(ISourceLocation file, IList includePath, IMap additionalMacros,
 			IEvaluatorContext ctx) {
 		setIEvaluatorContext(ctx);
-		IASTTranslationUnit tu = getCdtAst(file, vf.listWriter().done(), includePath, additionalMacros, true);
+		IASTTranslationUnit tu = null;// getCdtAst(file, vf.listWriter().done(), includePath, additionalMacros, true);
 		return getCommentsFromTranslationUnit(tu);
 	}
 
@@ -570,7 +388,7 @@ public class Parser extends ASTVisitor {
 
 	public ISet parseForMacros(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
 		setIEvaluatorContext(ctx);
-		IASTTranslationUnit tu = getCdtAst(file, vf.listWriter().done(), includePath, additionalMacros, true);
+		IASTTranslationUnit tu = null;// getCdtAst(file, vf.listWriter().done(), includePath, additionalMacros, true);
 		return getMacroExpansionsFromTranslationUnit(tu);
 	}
 
