@@ -228,7 +228,7 @@ public class Parser extends ASTVisitor {
 	private IValueFactory vf;
 	private AST builder;
 	private IEvaluatorContext ctx;
-	private Stack<IConstructor> stack = new Stack<IConstructor>();
+	private Stack<IConstructor> stack = new Stack<>();
 	private BindingsResolver br = new BindingsResolver();
 	private TypeResolver tr;
 
