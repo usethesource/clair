@@ -15,9 +15,14 @@
 	
 	<repositories>
 		<repository>
-			<id>cdt</id>
+			<id>cdt_9_11</id>
 			<layout>p2</layout>
-			<url>https://nexus.usethesource.io/content/repositories/cdt9.5/</url>
+			<url>http://download.eclipse.org/tools/cdt/releases/9.11</url>
+		</repository>
+		<repository>
+			<id>eclipse_2020-03</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/releases/2020-03</url>
 		</repository>
 	</repositories>
 
