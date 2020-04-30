@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>io.usethesource</groupId>
 		<artifactId>pom_parent</artifactId>
-		<version>0.3.5</version>
+		<version>0.3.7</version>
 	</parent>
 
 	<artifactId>clair</artifactId>
@@ -13,7 +13,7 @@
 	<version>0.1.0-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 	
-	<repositories>
+	<!--<repositories>
 		<repository>
 			<id>cdt_9_11</id>
 			<layout>p2</layout>
@@ -24,7 +24,7 @@
 			<layout>p2</layout>
 			<url>http://download.eclipse.org/releases/2020-03</url>
 		</repository>
-	</repositories>
+	</repositories>-->
 
 	<scm>
 		<developerConnection>scm:git:https://github.com/cwi-swat/clair.git</developerConnection>			
