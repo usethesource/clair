@@ -336,7 +336,8 @@ public class Parser extends ASTVisitor {
 	public IList parseForComments(ISourceLocation file, IList includePath, IMap additionalMacros,
 			IEvaluatorContext ctx) {
 		setIEvaluatorContext(ctx);
-		IASTTranslationUnit tu = null;// getCdtAst(file, vf.listWriter().done(), includePath, additionalMacros, true);
+		CDTParser parser = new CDTParser(vf.listWriter().done(), includePath, additionalMacros, true, ctx);
+		IASTTranslationUnit tu = parser.parseFile(file);
 		return getCommentsFromTranslationUnit(tu);
 	}
 
@@ -388,7 +389,8 @@ public class Parser extends ASTVisitor {
 
 	public ISet parseForMacros(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
 		setIEvaluatorContext(ctx);
-		IASTTranslationUnit tu = null;// getCdtAst(file, vf.listWriter().done(), includePath, additionalMacros, true);
+		CDTParser parser = new CDTParser(vf.listWriter().done(), includePath, additionalMacros, true, ctx);
+		IASTTranslationUnit tu = parser.parseFile(file);
 		return getMacroExpansionsFromTranslationUnit(tu);
 	}
 
