@@ -16,4 +16,36 @@
 	<scm>
 		<developerConnection>scm:git:https://github.com/cwi-swat/clair.git</developerConnection>			
 	</scm>
+	
+	<!--<build>
+		<plugins>
+			<plugin>
+				<groupId>org.rascalmpl</groupId>
+				<artifactId>rascal-maven-plugin</artifactId>
+				<version>0.2.16</version>
+				<configuration>
+					<bin>${project.build.outputDirectory}</bin>
+					<srcs>
+						<src>${project.basedir}/src</src>
+					</srcs>
+				</configuration>
+				<executions>
+					<execution>
+						<id>flybytes-compile</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>flybytes-package</id>
+						<phase>pre-package</phase>
+						<goals>
+							<goal>package</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>-->
 </project>
