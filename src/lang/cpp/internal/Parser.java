@@ -320,11 +320,11 @@ public class Parser extends ASTVisitor {
 	}
 
 	public ISet getMacroDefinitionsFromTranslationUnit(IASTTranslationUnit tu) {
-		return Stream.of(tu.getMacroExpansions()).map(it -> {
+		return Stream.of(tu.getMacroDefinitions()).map(it -> {
 			try {
-				return vf.tuple(getSourceLocation(it), br.resolveBinding(it.getMacroReference().resolveBinding()));
+				return vf.tuple(br.resolveBinding(it.getName().resolveBinding()), getSourceLocation(it));
 			} catch (URISyntaxException e) {
-				return vf.tuple(getSourceLocation(it), vf.sourceLocation(URIUtil.rootScheme("unknown")));
+				return vf.tuple(vf.sourceLocation(URIUtil.rootScheme("unknown")), getSourceLocation(it));
 			}
 		}).collect(vf.setWriter());
 	}
