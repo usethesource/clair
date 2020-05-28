@@ -70,7 +70,7 @@ rel[loc, loc] deriveAccessModifiers(list[Declaration] declarations, bool isStruc
         case \protected(): current = |protected:///|;
         case \private(): current = |private:///|;
       }
-    } else if (declaration is template) {
+    } else if (declaration is template || declaration is explicitTemplateSpecialization) {
       result += makeEntry(declaration.declaration, current);
     } else {
       result += makeEntry(declaration, current);
@@ -85,7 +85,7 @@ rel[loc, loc] makeEntry(Declaration declaration, loc current) {
   } else if (declaration has declarator) {
     return {<declaration.declarator.decl, current>};
   } else {
-    if (!(declaration is staticAssert)) {
+    if (!(declaration is staticAssert) && !(declaration is usingDeclaration)) {
       println("Missed entry for member visibility?");
       iprintln(declaration);
     }
