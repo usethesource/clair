@@ -79,6 +79,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPFunctionSet;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.FunctionSetType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExpression;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfUnknownMember;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.IPDOMCPPClassType;
 import org.rascalmpl.interpreter.IEvaluatorContext;
@@ -523,7 +524,11 @@ public class TypeResolver {
 
 	private IConstructor resolveICPPUnknownType(ICPPUnknownType type) {
 		if (type instanceof TypeOfDependentExpression)
-			return builder.TypeSymbol_typeOfDependentExpression(URIUtil.rootLocation("foo"));
+			return builder.TypeSymbol_typeOfDependentExpression(
+					String.join(".", ((TypeOfDependentExpression) type).getQualifiedName()));
+		if (type instanceof TypeOfUnknownMember)
+			return builder
+					.TypeSymbol_typeOfUnknownMember(String.join(".", ((TypeOfUnknownMember) type).getQualifiedName()));
 		throw new RuntimeException("NYI: resolveICPPUnknownType (" + type.getClass().getSimpleName() + ")");
 	}
 

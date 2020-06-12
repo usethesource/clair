@@ -60,7 +60,8 @@ public data TypeSymbol
   | \deferredClassInstance(str name)
   | \unknownMemberClass(loc owner, str name)
   
-  | \typeOfDependentExpression(loc src)
+  | \typeOfDependentExpression(str name)
+  | \typeOfUnknownMember(str name)
   | \problemBinding()
   | \problemType(str msg)
   | \noType()
