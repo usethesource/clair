@@ -167,7 +167,9 @@ str type2FactoryCall(Symbol t){
     "shiftRightAssign", "binaryAndAssign", "binaryXorAssign", "binaryOrAssign", "equals",
     "notEquals", "pmDot", "pmArrow", "max", "min", "ellipses",
     "prefixIncr", "prefixDecr", "plus", "minus", "star", "amper", "tilde", "not", "sizeof", "postfixIncr",
-    "postfixDecr", "bracketed", "throw", "typeid", "alignOf", "sizeofParameterPack", "noexcept", "labelReference",
+    "postfixDecr", "bracketed", "throw", "typeid", "alignOf", "typeof", "hasNothrowAssign", "hasNothrowCopy", "hasNothrowConstructor", "hasTrivialAssign",
+    "hasTrivialCopy", "hasTrivialConstructor", "hasTrivialDestructor", "hasVirtualDestructor", "isAbstract", "isClass", "isEmpty", "isEnum", "isPod",
+    "isPolymorphic", "isUnion", "isLiteralType", "isStandardLayout", "isTrivial", "sizeofParameterPack", "isFinal", "isTriviallyCopyable", "noexcept", "labelReference",
     "functionCall", "fieldReference", "fieldReferencePointerDeref", "expressionList", "compoundStatementExpression", "conditional",
     "cast", "dynamicCast", "staticCast", "reinterpretCast", "constCast", "idExpression", "typeIdInitializerExpression",
     

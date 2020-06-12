@@ -2664,8 +2664,71 @@ public class Parser extends ASTVisitor {
 		case IASTTypeIdExpression.op_alignof: // gnu-only?
 			stack.push(builder.Expression_alignOf(stack.pop(), loc, typ, isMacroExpansion));
 			break;
+		case IASTTypeIdExpression.op_typeof:
+			stack.push(builder.Expression_typeof(stack.pop(), loc, typ, isMacroExpansion));
+			break;
+		case IASTTypeIdExpression.op_has_nothrow_assign:
+			stack.push(builder.Expression_hasNothrowAssign(stack.pop(), loc, typ, isMacroExpansion));
+			break;
+		case IASTTypeIdExpression.op_has_nothrow_copy:
+			stack.push(builder.Expression_hasNothrowCopy(stack.pop(), loc, typ, isMacroExpansion));
+			break;
+		case IASTTypeIdExpression.op_has_nothrow_constructor:
+			stack.push(builder.Expression_hasNothrowConstructor(stack.pop(), loc, typ, isMacroExpansion));
+			break;
+		case IASTTypeIdExpression.op_has_trivial_assign:
+			stack.push(builder.Expression_hasTrivialAssign(stack.pop(), loc, typ, isMacroExpansion));
+			break;
+		case IASTTypeIdExpression.op_has_trivial_constructor:
+			stack.push(builder.Expression_hasTrivialConstructor(stack.pop(), loc, typ, isMacroExpansion));
+			break;
+		case IASTTypeIdExpression.op_has_trivial_copy:
+			stack.push(builder.Expression_hasTrivialCopy(stack.pop(), loc, typ, isMacroExpansion));
+			break;
+		case IASTTypeIdExpression.op_has_trivial_destructor:
+			stack.push(builder.Expression_hasTrivialDestructor(stack.pop(), loc, typ, isMacroExpansion));
+			break;
+		case IASTTypeIdExpression.op_has_virtual_destructor:
+			stack.push(builder.Expression_hasVirtualDestructor(stack.pop(), loc, typ, isMacroExpansion));
+			break;
+		case IASTTypeIdExpression.op_is_abstract:
+			stack.push(builder.Expression_isAbstract(stack.pop(), loc, typ, isMacroExpansion));
+			break;
+		case IASTTypeIdExpression.op_is_class:
+			stack.push(builder.Expression_isClass(stack.pop(), loc, typ, isMacroExpansion));
+			break;
+		case IASTTypeIdExpression.op_is_empty:
+			stack.push(builder.Expression_isEmpty(stack.pop(), loc, typ, isMacroExpansion));
+			break;
+		case IASTTypeIdExpression.op_is_enum:
+			stack.push(builder.Expression_isEnum(stack.pop(), loc, typ, isMacroExpansion));
+			break;
+		case IASTTypeIdExpression.op_is_pod:
+			stack.push(builder.Expression_isPod(stack.pop(), loc, typ, isMacroExpansion));
+			break;
+		case IASTTypeIdExpression.op_is_polymorphic:
+			stack.push(builder.Expression_isPolymorphic(stack.pop(), loc, typ, isMacroExpansion));
+			break;
+		case IASTTypeIdExpression.op_is_union:
+			stack.push(builder.Expression_isUnion(stack.pop(), loc, typ, isMacroExpansion));
+			break;
+		case IASTTypeIdExpression.op_is_literal_type:
+			stack.push(builder.Expression_isLiteralType(stack.pop(), loc, typ, isMacroExpansion));
+			break;
+		case IASTTypeIdExpression.op_is_standard_layout:
+			stack.push(builder.Expression_isStandardLayout(stack.pop(), loc, typ, isMacroExpansion));
+			break;
+		case IASTTypeIdExpression.op_is_trivial:
+			stack.push(builder.Expression_isTrivial(stack.pop(), loc, typ, isMacroExpansion));
+			break;
 		case IASTTypeIdExpression.op_sizeofParameterPack:
 			stack.push(builder.Expression_sizeofParameterPack(stack.pop(), loc, typ, isMacroExpansion));
+			break;
+		case IASTTypeIdExpression.op_is_final:
+			stack.push(builder.Expression_isFinal(stack.pop(), loc, typ, isMacroExpansion));
+			break;
+		case IASTTypeIdExpression.op_is_trivially_copyable:
+			stack.push(builder.Expression_isTriviallyCopyable(stack.pop(), loc, typ, isMacroExpansion));
 			break;
 		default:
 			throw new RuntimeException("ERROR: IASTTypeIdExpression called with unimplemented/unknown operator "

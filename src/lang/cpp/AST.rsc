@@ -193,7 +193,28 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved(), bool is
     | \typeid(Expression expression)        //typeid exp, c++ only
     //| \typeof(Expression expression)        //typeof exp, deprecated
     | \alignOf(Expression expression)       //__alignOf(exp), gcc only
+    | \typeof(Expression expression)
+    | \hasNothrowAssign(Expression expression)
+    | \hasNothrowCopy(Expression expression)
+    | \hasNothrowConstructor(Expression expression)
+    | \hasTrivialAssign(Expression expression)
+    | \hasTrivialCopy(Expression expression)
+    | \hasTrivialConstructor(Expression expression)
+    | \hasTrivialDestructor(Expression expression)
+    | \hasVirtualDestructor(Expression expression)
+    | \isAbstract(Expression expression)
+    | \isClass(Expression expression)
+    | \isEmpty(Expression expression)
+    | \isEnum(Expression expression)
+    | \isPod(Expression expression)
+    | \isPolymorphic(Expression expression)
+    | \isUnion(Expression expression)
+    | \isLiteralType(Expression expression)
+    | \isStandardLayout(Expression expression)
+    | \isTrivial(Expression expression)
     | \sizeofParameterPack(Expression expression) //sizeof...(parameterpack), c++ only?
+    | \isFinal(Expression expression)
+    | \isTriviallyCopyable(Expression expression)
     | \noexcept(Expression expression)      //noexcept (exp), c++ only
     | \labelReference(Expression expression)//&&label, gcc only?
     
