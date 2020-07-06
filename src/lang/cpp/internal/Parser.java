@@ -407,8 +407,7 @@ public class Parser extends ASTVisitor {
 		int options = ILanguage.OPTION_PARSE_INACTIVE_CODE;
 		IParserLogService log = new DefaultLogService();
 		IASTTranslationUnit tu = GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, null, options, log);
-		tu.accept(this);
-		return stack.pop();
+		return convertCdtToRascal(tu, false);
 	}
 
 	public IValue convertCdtToRascal(IASTTranslationUnit translationUnit, boolean toM3) {
