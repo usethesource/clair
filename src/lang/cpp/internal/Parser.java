@@ -252,6 +252,31 @@ public class Parser extends ASTVisitor {
 		this.declaredType = vf.setWriter();
 	}
 
+	public IList parseFiles(IList files, IList stdLib, IList includeDirs, IMap additionalMacros, IBool includeStdLib,
+			IEvaluatorContext ctx) {
+		setIEvaluatorContext(ctx);
+		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
+		this.stdLib = stdLib;
+
+		CDTParser parser = new CDTParser(stdLib, includeDirs, additionalMacros, includeStdLib.getValue(), ctx);
+		Instant begin = Instant.now();
+		out("Beginning at " + begin.toString());
+		IListWriter asts = vf.listWriter();
+		for (IValue v : files) {
+			if (ctx.isInterrupted()) {
+				break;
+			}
+			ISourceLocation file = (ISourceLocation) v;
+			IASTTranslationUnit tu = parser.parseFile(file);
+			IValue result = convertCdtToRascal(tu, false);
+			asts.append(result);
+		}
+		Instant done = Instant.now();
+		out("Parsing and marshalling " + files.size() + " files took "
+				+ new Double(Duration.between(begin, done).toMillis()).doubleValue() / 1000 + "seconds");
+		return asts.done();
+	}
+
 	public IValue parseCpp(ISourceLocation file, IList stdLib, IList includeDirs, IMap additionalMacros,
 			IBool includeStdLib, IEvaluatorContext ctx) {
 		setIEvaluatorContext(ctx);
@@ -1909,7 +1934,6 @@ public class Parser extends ASTVisitor {
 		case IASTSimpleDeclSpecifier.t_decltype_auto:
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_declTypeAuto(loc, isMacroExpansion),
 					attributes, loc, isMacroExpansion));
-			out("Check decltype(auto) location at " + loc);
 			break;
 		default:
 			throw new RuntimeException(
@@ -3146,6 +3170,7 @@ public class Parser extends ASTVisitor {
 			err("IASTProblemStatement:");
 			prefix += 4;
 			err(statement.getProblem().getMessageWithLocation());
+			err("" + statement.getProblem().getID());
 			err(statement.getRawSignature());
 			prefix -= 4;
 		}

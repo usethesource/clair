@@ -464,6 +464,10 @@ java Declaration parseCpp(loc file, list[loc] stdLib = classPaths["vs12"], list[
 
 @javaClass{lang.cpp.internal.Parser}  
 @reflect{need access to streams}   
+java list[Declaration] parseFiles(list[loc] files, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false);
+
+@javaClass{lang.cpp.internal.Parser}  
+@reflect{need access to streams}   
 java Declaration parseString(str code);
 
 @javaClass{lang.cpp.internal.Parser}  
