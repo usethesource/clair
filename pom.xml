@@ -17,29 +17,38 @@
 		<developerConnection>scm:git:https://github.com/cwi-swat/clair.git</developerConnection>			
 	</scm>
 	
-	<!--<build>
+	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.rascalmpl</groupId>
 				<artifactId>rascal-maven-plugin</artifactId>
-				<version>0.2.16</version>
+				<version>0.3.2</version>
 				<configuration>
+					<errorsAsWarnings>false</errorsAsWarnings>
 					<bin>${project.build.outputDirectory}</bin>
 					<srcs>
 						<src>${project.basedir}/src</src>
 					</srcs>
+					<sourceLookup>|lib://clair/|</sourceLookup>
+					<srcIgnores>
+						<ignore>${project.basedir}/src/lang/cpp/SConcrete.rsc</ignore>
+						<ignore>${project.basedir}/src/lang/cpp/ST.rsc</ignore>
+						<ignore>${project.basedir}/src/lang/cpp/Test.rsc</ignore>
+						<ignore>${project.basedir}/src/lang/cpp/IDE.rsc</ignore>
+					</srcIgnores>
+					<enableStandardLibrary>true</enableStandardLibrary>
 				</configuration>
 				<executions>
 					<execution>
-						<id>flybytes-compile</id>
+						<id>it-compile</id>
 						<phase>compile</phase>
 						<goals>
 							<goal>compile</goal>
 						</goals>
 					</execution>
 					<execution>
-						<id>flybytes-package</id>
-						<phase>pre-package</phase>
+						<id>it-package</id>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>package</goal>
 						</goals>
@@ -47,5 +56,5 @@
 				</executions>
 			</plugin>
 		</plugins>
-	</build>-->
+	</build>
 </project>
