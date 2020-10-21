@@ -14,10 +14,6 @@ module lang::cpp::TypeSymbol
 
 import lang::cpp::AST;
 
-//extend analysis::m3::TypeSymbol;
-
-data Bound = \unbounded();
-
 public data TypeSymbol
   = \unspecified()
   | \void()
