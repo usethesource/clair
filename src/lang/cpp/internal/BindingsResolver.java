@@ -519,8 +519,7 @@ public class BindingsResolver {
 				return resolveQualifiedName((ICPPASTQualifiedName) node);
 			if (node instanceof ICPPASTSimpleTypeTemplateParameter)
 				return resolveSimpleTypeTemplateParameter((ICPPASTSimpleTypeTemplateParameter) node);
-			if (node instanceof ICPPASTTemplatedTypeTemplateParameter)// TODO,
-																		// NYI
+			if (node instanceof ICPPASTTemplatedTypeTemplateParameter)
 				return resolveTemplatedTypeTemplateParameter((ICPPASTTemplatedTypeTemplateParameter) node);
 			if (node instanceof ICPPASTTemplateId)
 				return resolveTemplateId((ICPPASTTemplateId) node);
@@ -555,7 +554,7 @@ public class BindingsResolver {
 
 	private ISourceLocation resolveTemplatedTypeTemplateParameter(ICPPASTTemplatedTypeTemplateParameter node)
 			throws URISyntaxException {
-		return resolveBinding(node.getName().getBinding());
+		return resolveBinding(node.getName().resolveBinding());
 	}
 
 	private ISourceLocation resolveSimpleTypeTemplateParameter(ICPPASTSimpleTypeTemplateParameter node)
