@@ -172,8 +172,9 @@ public class BindingsResolver {
 			return resolveICPPBinding((ICPPBinding) binding);
 		if (binding instanceof ICPPTwoPhaseBinding)
 			return resolveICPPTwoPhaseBinding((ICPPTwoPhaseBinding) binding);
-		// TODO: throw Exception here
-		return makeBinding("UNKNOWN1", null, null);
+		if (binding == null)
+			return makeBinding("UNKNOWN1", null, null);
+		throw new RuntimeException("Encountered unknown Binding: " + binding.getName());
 	}
 
 	private ISourceLocation resolveICPPTwoPhaseBinding(ICPPTwoPhaseBinding binding) {
