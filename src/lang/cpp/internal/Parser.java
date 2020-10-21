@@ -2309,7 +2309,6 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTSimpleTypeConstructorExpression expression) {
-		// decl keyword parameter?
 		ISourceLocation loc = getSourceLocation(expression);
 		boolean isMacroExpansion = isMacroExpansion(expression);
 		IConstructor typ = tr.resolveType(expression);
@@ -3444,10 +3443,10 @@ public class Parser extends ASTVisitor {
 		// TODO: check isPackExpansion and capturesThisPointer
 		ISourceLocation loc = getSourceLocation(capture);
 		boolean isMacroExpansion = isMacroExpansion(capture);
-		ISourceLocation decl = br.resolveBinding(capture);
 		if (capture.capturesThisPointer())
 			stack.push(builder.Expression_captureThisPtr(loc, isMacroExpansion));
 		else {
+			ISourceLocation decl = br.resolveBinding(capture);
 			capture.getIdentifier().accept(this);
 			if (capture.isByReference())
 				stack.push(builder.Expression_captureByRef(stack.pop(), loc, decl, isMacroExpansion));

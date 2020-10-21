@@ -53,7 +53,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplateInstance;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
@@ -390,8 +389,6 @@ public class TypeResolver {
 			return resolveICPPClassTemplate((ICPPClassTemplate) type);
 		if (type instanceof ICPPDeferredClassInstance)
 			return resolveICPPDeferredClassInstance((ICPPDeferredClassInstance) type);
-		if (type instanceof ICPPASTCompositeTypeSpecifier)
-			;
 		if (type instanceof ICPPUnknownMemberClass)
 			return resolveICPPUnknownMemberClass((ICPPUnknownMemberClass) type);
 		if (type instanceof IPDOMCPPClassType)
@@ -433,9 +430,8 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveICPPClassTemplate(ICPPClassTemplate type) {
-		ICPPBase[] _bases = type.getBases();
 		IListWriter baseClassTypes = vf.listWriter();
-		Stream.of(_bases).forEach(it -> baseClassTypes.append(resolveType(it.getBaseClassType())));
+		Stream.of(type.getBases()).forEach(it -> baseClassTypes.append(resolveType(it.getBaseClassType())));
 		switch (type.getKey()) {
 		case ICPPClassTemplate.k_struct:
 			// TODO: make internal struct type?
