@@ -1984,8 +1984,10 @@ public class Parser extends ASTVisitor {
 		IList attributes = getAttributes(pointer);
 		IList modifiers = getModifiers(pointer);
 		if (pointer instanceof ICPPASTPointerToMember) {
+			ISourceLocation decl = br.resolveBinding(((ICPPASTPointerToMember) pointer));
 			((ICPPASTPointerToMember) pointer).getName().accept(this);
-			stack.push(builder.Declaration_pointerToMember(modifiers, stack.pop(), attributes, loc, isMacroExpansion));
+			stack.push(builder.Declaration_pointerToMember(modifiers, stack.pop(), attributes, loc, decl,
+					isMacroExpansion));
 		} else
 			stack.push(builder.Declaration_pointer(modifiers, attributes, loc, isMacroExpansion));
 		return PROCESS_ABORT;
