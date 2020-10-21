@@ -28,7 +28,6 @@ import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -147,15 +146,6 @@ public class BindingsResolver {
 	}
 
 	public ISourceLocation resolveBinding(IBinding binding) throws URISyntaxException {
-		ISourceLocation src = resolveBinding2(binding);
-		if (true)
-			return src;
-		if (binding == null)
-			return src;
-		return vf.sourceLocation(URIUtil.changeAuthority(src.getURI(), System.identityHashCode(binding) + ""));
-	}
-
-	public ISourceLocation resolveBinding2(IBinding binding) throws URISyntaxException {
 		if (binding instanceof ICExternalBinding)
 			return resolveICExternalBinding((ICExternalBinding) binding);
 		if (binding instanceof ICompositeType)
@@ -485,29 +475,6 @@ public class BindingsResolver {
 	}
 
 	public ISourceLocation resolveBinding(IASTNameOwner node) {
-		ISourceLocation decl = resolveBinding2(node);
-		if (decl.getScheme().equals("cpp+problem")) {
-			out(((IASTNode) node).getRawSignature());
-			// throw new RuntimeException();
-		}
-		// if (decl.getScheme().equals("cpp+problem")) {
-		// IASTNode n = (IASTNode) node;
-		// IASTNodeLocation[] nodeLocations = n.getNodeLocations();
-		// if (nodeLocations.length == 1 && nodeLocations[0] instanceof
-		// IASTMacroExpansionLocation) {
-		// try {
-		// return resolveBinding(((IASTMacroExpansionLocation)
-		// nodeLocations[0]).getExpansion()
-		// .getMacroReference().resolveBinding());
-		// } catch (URISyntaxException e) {
-		// err("Failed to get Macro binding for " + n);
-		// }
-		// }
-		// }
-		return decl;
-	}
-
-	public ISourceLocation resolveBinding2(IASTNameOwner node) {
 		try {
 			if (node instanceof IASTCompositeTypeSpecifier)
 				return resolveCompositeTypeSpecifier((IASTCompositeTypeSpecifier) node);
