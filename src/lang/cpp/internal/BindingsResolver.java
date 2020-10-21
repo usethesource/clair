@@ -513,7 +513,7 @@ public class BindingsResolver {
 				return resolveNamespaceAlias((ICPPASTNamespaceAlias) node);
 			if (node instanceof ICPPASTNamespaceDefinition)
 				return resolveNamespaceDefinition((ICPPASTNamespaceDefinition) node);
-			if (node instanceof ICPPASTPointerToMember)// TODO
+			if (node instanceof ICPPASTPointerToMember)
 				return resolvePointerToMember((ICPPASTPointerToMember) node);
 			if (node instanceof ICPPASTQualifiedName)
 				return resolveQualifiedName((ICPPASTQualifiedName) node);
@@ -566,8 +566,8 @@ public class BindingsResolver {
 		return resolveBinding(node.resolveBinding());
 	}
 
-	private ISourceLocation resolvePointerToMember(ICPPASTPointerToMember node) {
-		throw new RuntimeException("NYI");
+	private ISourceLocation resolvePointerToMember(ICPPASTPointerToMember node) throws URISyntaxException {
+		return resolveBinding(node.getName().resolveBinding());
 	}
 
 	private ISourceLocation resolveNamespaceDefinition(ICPPASTNamespaceDefinition node) throws URISyntaxException {

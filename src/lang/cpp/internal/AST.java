@@ -2125,7 +2125,7 @@ public class AST {
     return vf.constructor(_Declaration_translationUnit_1 , $declarations).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor Declaration_pointerToMember(IList $modifiers, IConstructor $nestedName, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+  public IConstructor Declaration_pointerToMember(IList $modifiers, IConstructor $nestedName, IList $attributes, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
       
     if (!$modifiers.getType().isSubtypeOf(tf.listType(_Modifier))) {
       throw new IllegalArgumentException("Expected " + tf.listType(_Modifier) + " but got " + $modifiers.getType() + " for $modifiers:" + $modifiers);
@@ -2140,7 +2140,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    
+    kwParams.put("decl", $decl);
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_pointerToMember_2 , $modifiers, $nestedName).asWithKeywordParameters().setParameters(kwParams);
