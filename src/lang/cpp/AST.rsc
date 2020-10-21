@@ -14,8 +14,6 @@ module lang::cpp::AST
 
 import lang::cpp::TypeSymbol;
 
-//extend analysis::m3::AST;
-
 data Declarator(list[Attribute] attributes = [], loc src = |unknown:///|, loc decl = |unknown:///|, bool isMacroExpansion = false)
     = \declarator(list[Declaration] pointerOperators, Name name)
     | \declarator(list[Declaration] pointerOperators, Name name, Expression initializer)
@@ -86,11 +84,6 @@ data Declaration(list[Attribute] attributes = [], loc src=|unknown:///|, bool is
     | \usingDirective(Name qualifiedName, loc decl = |unknown:///|)
     | \visibilityLabel(Modifier visibility) //no attributes
     
-    //| \etsEnum(Name name)
-    //| \etsStruct(Name name) //ElaboratedTypeSpecifier
-    //| \etsUnion(Name name)
-    //| \etsClass(Name name)
-    
     | \pointer(list[Modifier] modifiers)    // *
     | \pointerToMember(list[Modifier] modifiers, Name nestedName)
     | \reference()  // &
@@ -98,13 +91,6 @@ data Declaration(list[Attribute] attributes = [], loc src=|unknown:///|, bool is
     
     | \parameter(DeclSpecifier declSpecifier) //no attributes
     | \parameter(DeclSpecifier declSpecifier, Declarator declarator) //no attributes
-    
-    //| \declSpecifier(list[Modifier] modifiers, Type \type)
-    //| \declSpecifier(list[Modifier] modifiers, Type \type, Expression expression) //decltype and type_of
-    //| \initializerClause(Expression expression) Unneeded layer of abstraction?
-    //| \initializerList(list[Expression] clauses)
-    
-    //| \declarationEqualsInitializer(str name, Expression initializer) //weg //Que?
     
     | \template(list[Declaration] parameters, Declaration declaration, TypeSymbol \type) //no attributes
     | \sttClass(Name name, loc decl = |unknown:///|) //simpleTypeTemplateParameter //no attributes
@@ -191,7 +177,6 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved(), bool is
     | \throw()
     | \throw(Expression expression)         //throw exp, c++ only
     | \typeid(Expression expression)        //typeid exp, c++ only
-    //| \typeof(Expression expression)        //typeof exp, deprecated
     | \alignOf(Expression expression)       //__alignOf(exp), gcc only
     | \typeof(Expression expression)
     | \hasNothrowAssign(Expression expression)
@@ -237,13 +222,10 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved(), bool is
     | \false()
     | \nullptr()
     
-    //| \namedTypeSpecifier(list[Modifier] modifiers, Name name)
-    
     | \functionCall(Expression functionName, list[Expression] arguments)
     
     | \fieldReference(Expression fieldOwner, Name name, loc decl = |unknown:///|)
     | \fieldReferencePointerDeref(Expression fieldOwner, Name name, loc decl = |unknown:///|)
-    //| \constructorInitializer(list[Expression] arguments)
     | \new(Expression typeId)
     | \new(Expression typeId, Expression initializer)
     | \newWithArgs(list[Expression] arguments, Expression typeId)
@@ -361,9 +343,9 @@ data Type(loc src = |unknown:///|, bool isMacroExpansion = false) //no attribute
     | \double()
     | \bool()
     | \wchar_t()
-    | \typeof()     //needs an argument?
-    | \decltype()   //needs an argument?
-    | \auto()       //is this a type?
+    | \typeof()
+    | \decltype()
+    | \auto()
     | \char16_t()
     | \char32_t()
     | \int128()
