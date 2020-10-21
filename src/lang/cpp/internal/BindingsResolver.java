@@ -493,9 +493,7 @@ public class BindingsResolver {
 				return resolveGotoStatement((IASTGotoStatement) node);
 			if (node instanceof IASTIdExpression)
 				return resolveIdExpression((IASTIdExpression) node);
-			// Discouraged access
-			// if (node instanceof IASTInternalNameOwner)
-			// return resolveInternalNameOwner((IASTInternalNameOwner) node);
+			// IASTInternalNameOwner skipped, checked as CPPASTElaboratedTypeSpecifier
 			if (node instanceof IASTLabelStatement)
 				return resolveLabelStatement((IASTLabelStatement) node);
 			if (node instanceof IASTNamedTypeSpecifier)
@@ -524,10 +522,7 @@ public class BindingsResolver {
 				return resolveTemplatedTypeTemplateParameter((ICPPASTTemplatedTypeTemplateParameter) node);
 			if (node instanceof ICPPASTTemplateId)
 				return resolveTemplateId((ICPPASTTemplateId) node);
-			// Deprecated // TODO?
-			// if (node instanceof ICPPASTTypenameExpression)
-			// return resolveTypenameExpression((ICPPASTTypenameExpression)
-			// node);
+			// ICPPASTTypenameExpression is deprecated
 			if (node instanceof ICPPASTUsingDeclaration)
 				return resolveUsingDeclaration((ICPPASTUsingDeclaration) node);
 			if (node instanceof ICPPASTUsingDirective)
@@ -643,7 +638,6 @@ public class BindingsResolver {
 			out("resolveDeclarator has null name. " + node.getClass().getSimpleName() + ": " + node.getRawSignature());
 			return FIXME;
 		}
-
 		return resolveBinding(node.getName().resolveBinding());
 	}
 
