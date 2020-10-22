@@ -213,8 +213,8 @@ public class CDTParser {
 		String includeFilePath = include.substring(0, include.lastIndexOf('/') + 1);
 		String includeFileName = include.substring(include.lastIndexOf('/') + 1);
 		File currentFileDirectory;
-		if (currentFile.startsWith("|file:///")) {
-			currentFileDirectory = new File(new File(currentFile.substring("|file:///".length())).getParent(),
+		if (currentFile.startsWith("|file://")) {
+			currentFileDirectory = new File(new File(currentFile.substring("|file://".length())).getParent(),
 					includeFilePath);
 		} else {
 			currentFileDirectory = new File(new File(currentFile).getParentFile(), includeFilePath);
