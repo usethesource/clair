@@ -16,6 +16,19 @@
 	<scm>
 		<developerConnection>scm:git:https://github.com/cwi-swat/clair.git</developerConnection>			
 	</scm>
+
+  <repositories>  
+    <repository>
+      <id>releases</id>
+      <name>usethesource.io releases</name>
+      <url>https://nexus.usethesource.io/content/repositories/releases/</url>
+    </repository>
+    <repository>
+      <id>snapshots</id>
+      <name>usethesource.io releases</name>
+      <url>https://nexus.usethesource.io/content/repositories/snapshots/</url>
+    </repository>
+  </repositories>  
 	
 	<build>
 		<plugins>

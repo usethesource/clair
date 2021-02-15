@@ -1,10 +1,19 @@
 node {
-  stage 'Clone'
-  checkout scm
+  stage ('Clone') {
+    checkout scm
+  }
 
-  stage 'Build and Test'
-  def mvnHome = tool 'M3'
-  sh "${mvnHome}/bin/mvn -B clean install"
+  withMaven(maven: 'M3', jdk: 'jdk-oracle-8', mavenOpts: '-Xmx4G', options: [artifactsPublisher(disabled: true), junitPublisher(disabled: false)] ) {
+        stage('Compile & Bootstrap') {
+          sh "mvn clean compile package"
+        }
+
+        stage('Deploy') {
+          if (env.BRANCH_NAME == "master" || env.BRANCH_NAME == "jenkins-deploy") {
+            sh "mvn -DskipTests deploy"
+          }
+        }
+  }
 
   build job: '../rascal-eclipse-libraries/master', wait: false
 }
