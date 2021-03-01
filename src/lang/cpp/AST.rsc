@@ -262,6 +262,9 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved(), bool is
     | \isBaseOf(Expression lhs, Expression rhs)
     | \isTriviallyAssignable(Expression lhs, Expression rhs)
     
+    | \isConstructable(list[Expression] args)
+    | \isTriviallyConstructable(list[Expression] args)
+    
     // TypeId below
     | \typeId(DeclSpecifier declSpecifier)
     | \typeId(DeclSpecifier declSpecifier, Declarator abstractDeclarator)

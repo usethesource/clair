@@ -2130,9 +2130,24 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICPPASTNaryTypeIdExpression expression) {
-		// has typ
-		out("CPPNaryTypeIdExpression: " + expression.getRawSignature());
-		throw new RuntimeException("NYI at " + getSourceLocation(expression));
+		ISourceLocation loc = getSourceLocation(expression);
+		boolean isMacroExpansion = isMacroExpansion(expression);
+		IConstructor typ = tr.resolveType(expression);
+		IListWriter args = vf.listWriter();
+		Stream.of(expression.getOperands()).forEach(it -> {
+			it.accept(this);
+			args.append(stack.pop());
+		});
+		switch (expression.getOperator()) {
+		case __is_constructible:
+			stack.push(builder.Expression_isConstructable(args.done(), loc, typ, isMacroExpansion));
+			return PROCESS_ABORT;
+		case __is_trivially_constructible:
+			stack.push(builder.Expression_isTriviallyConstructable(args.done(), loc, typ, isMacroExpansion));
+			return PROCESS_ABORT;
+		default:
+			throw new RuntimeException("Operator " + expression.getOperator() + " unknown at " + loc + ", exiting");
+		}
 	}
 
 	public int visit(ICPPASTNewExpression expression) {

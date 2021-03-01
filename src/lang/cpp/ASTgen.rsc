@@ -176,7 +176,7 @@ str type2FactoryCall(Symbol t){
     "delete", "vectoredDelete", "globalDelete", "globalVectoredDelete", "lambda",
     "new", "globalNew", "newWithArgs", "globalNewWithArgs", "packExpansion", "simpleTypeConstructor",
     "integerConstant", "floatConstant", "charConstant", "stringLiteral", "this", "true", "false", "nullptr",
-    "isBaseOf", "isTriviallyAssignable"
+    "isBaseOf", "isTriviallyAssignable", "isConstructable", "isTriviallyConstructable"
     };
   bool hasTyp("Name", "conversionName") = true;
   default bool hasTyp(str _, str _) = false;

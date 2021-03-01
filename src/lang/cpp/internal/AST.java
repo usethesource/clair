@@ -290,6 +290,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"noexcept",_Expression,"expression");
   private static final Type _Expression_hasNothrowAssign_1 
     = tf.constructor(typestore,_Expression,"hasNothrowAssign",_Expression,"expression");
+  private static final Type _Expression_isConstructable_1 
+    = tf.constructor(typestore,_Expression,"isConstructable",tf.listType(_Expression),"args");
   private static final Type _Expression_plus_1 
     = tf.constructor(typestore,_Expression,"plus",_Expression,"expression");
   private static final Type _Expression_constructorInitializer_1 
@@ -316,6 +318,8 @@ public class AST {
     = tf.constructor(typestore,_Expression,"tilde",_Expression,"expression");
   private static final Type _Expression_multiplyAssign_2 
     = tf.constructor(typestore,_Expression,"multiplyAssign",_Expression,"lhs",_Expression,"rhs");
+  private static final Type _Expression_isTriviallyConstructable_1 
+    = tf.constructor(typestore,_Expression,"isTriviallyConstructable",tf.listType(_Expression),"args");
   private static final Type _Expression_sizeof_1 
     = tf.constructor(typestore,_Expression,"sizeof",_Expression,"expression");
   private static final Type _Expression_cast_2 
@@ -3277,6 +3281,21 @@ public class AST {
     return vf.constructor(_Expression_hasNothrowAssign_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
   }
   
+  public IConstructor Expression_isConstructable(IList $args, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
+      
+    if (!$args.getType().isSubtypeOf(tf.listType(_Expression))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $args.getType() + " for $args:" + $args);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Expression_isConstructable_1 , $args).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
   public IConstructor Expression_plus(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
       
     if (!$expression.getType().isSubtypeOf(_Expression)) {
@@ -3496,6 +3515,21 @@ public class AST {
     kwParams.put("typ", $typ);
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_multiplyAssign_2 , $lhs, $rhs).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Expression_isTriviallyConstructable(IList $args, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
+      
+    if (!$args.getType().isSubtypeOf(tf.listType(_Expression))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_Expression) + " but got " + $args.getType() + " for $args:" + $args);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    kwParams.put("typ", $typ);
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Expression_isTriviallyConstructable_1 , $args).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Expression_sizeof(IConstructor $expression, ISourceLocation $loc, IConstructor $typ, boolean $isMacroExpansion) {
