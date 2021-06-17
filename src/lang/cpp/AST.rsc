@@ -422,8 +422,7 @@ data Attribute(loc src = |unknown:///|) //no attributes
     | \gccAttributeList(list[Attribute] attributes)
 	;
     
-public map[str, list[loc]] classPaths =
-  ("vs14": [|file:///C:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2014.0/VC/include/|],
+public map[str, list[loc]] classPaths = (
   "vs12": [|file:///C:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2011.0/VC/include|,
     |file:///C:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2011.0/VC/atlmfc/include|,
     |file:///C:/Program%20Files%20(x86)/Windows%20Kits/8.0/Include/um|,
@@ -432,6 +431,11 @@ public map[str, list[loc]] classPaths =
     |file:///C:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2012.0/VC/atlmfc/include|,
     |file:///C:/Program%20Files%20(x86)/Windows%20Kits/8.1/Include/um|,
     |file:///C:/Program%20Files%20(x86)/Windows%20Kits/8.1/Include/shared|],
+  "vs15": [|file:///C:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2014.0/VC/include|,
+    |file:///C:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2014.0/VC/atlmfc/include|,
+    |file:///C:/Program%20Files%20(x86)/Windows%20Kits/8.1/Include/shared|,
+    |file:///C:/Program%20Files%20(x86)/Windows%20Kits/8.1/Include/um|,
+    |file:///C:/Program%20Files%20(x86)/Windows%20Kits/10/Include/10.0.10240.0/ucrt/|],
   "mingw": [|file:///C:/MinGW/include|, |file:///C:/MinGW/include/sys|, |file:///C:/MinGW/lib/gcc/mingw32/5.3.0/include|,
     |file:///C:/MinGW/lib/gcc/mingw32/5.3.0/include/c++|, |file:///C:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/mingw32|],
   "mac": [|file:///usr/include|,
