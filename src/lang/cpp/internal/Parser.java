@@ -13,6 +13,7 @@
 package lang.cpp.internal;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.time.Duration;
@@ -198,9 +199,11 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.core.runtime.CoreException;
-import org.rascalmpl.interpreter.IEvaluatorContext;
-import org.rascalmpl.interpreter.utils.RuntimeExceptionFactory;
+import org.rascalmpl.debug.IRascalMonitor;
+import org.rascalmpl.exceptions.RuntimeExceptionFactory;
+import org.rascalmpl.interpreter.Evaluator;
 import org.rascalmpl.uri.URIUtil;
+import org.rascalmpl.values.IRascalValueFactory;
 
 import io.usethesource.vallang.IBool;
 import io.usethesource.vallang.IConstructor;
@@ -217,12 +220,17 @@ import io.usethesource.vallang.IValueFactory;
 import io.usethesource.vallang.exceptions.FactParseError;
 import io.usethesource.vallang.exceptions.FactTypeUseException;
 import io.usethesource.vallang.io.StandardTextReader;
+import io.usethesource.vallang.type.TypeStore;
 
 @SuppressWarnings("restriction")
 public class Parser extends ASTVisitor {
 	private IValueFactory vf;
+	private IRascalValueFactory rvf;
+	private PrintWriter stdOut;
+	private PrintWriter stdErr;
+	private TypeStore ts;
+	private IRascalMonitor monitor;
 	private AST builder;
-	private IEvaluatorContext ctx;
 	private Stack<IConstructor> stack = new Stack<>();
 	private BindingsResolver br = new BindingsResolver();
 	private TypeResolver tr;
@@ -234,7 +242,8 @@ public class Parser extends ASTVisitor {
 
 	private ISetWriter declaredType;
 
-	public Parser(IValueFactory vf) {
+	public Parser(IValueFactory vf, IRascalValueFactory rvf, PrintWriter stdOut, PrintWriter stdErr, TypeStore ts,
+			IRascalMonitor monitor) {
 		super(true);
 		this.shouldVisitAmbiguousNodes = true;
 		this.shouldVisitImplicitNames = true;
@@ -242,23 +251,27 @@ public class Parser extends ASTVisitor {
 		this.shouldVisitTokens = true;
 
 		this.vf = vf;
+		this.rvf = rvf;
+		this.stdOut = stdOut;
+		this.stdErr = stdErr;
+		this.ts = ts;
+		this.monitor = monitor;
 		this.builder = new AST(vf);
 		this.tr = new TypeResolver(builder, vf);
 		this.declaredType = vf.setWriter();
 	}
 
-	public IList parseFiles(IList files, IList stdLib, IList includeDirs, IMap additionalMacros, IBool includeStdLib,
-			IEvaluatorContext ctx) {
-		setIEvaluatorContext(ctx);
+	public IList parseFiles(IList files, IList stdLib, IList includeDirs, IMap additionalMacros, IBool includeStdLib) {
 		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
 		this.stdLib = stdLib;
 
-		CDTParser parser = new CDTParser(stdLib, includeDirs, additionalMacros, includeStdLib.getValue(), ctx);
+		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, stdLib, includeDirs, additionalMacros,
+				includeStdLib.getValue());
 		Instant begin = Instant.now();
 		out("Beginning at " + begin.toString());
 		IListWriter asts = vf.listWriter();
 		for (IValue v : files) {
-			if (ctx.isInterrupted()) {
+			if (monitor.isCanceled()) {
 				break;
 			}
 			ISourceLocation file = (ISourceLocation) v;
@@ -273,14 +286,14 @@ public class Parser extends ASTVisitor {
 	}
 
 	public IValue parseCpp(ISourceLocation file, IList stdLib, IList includeDirs, IMap additionalMacros,
-			IBool includeStdLib, IEvaluatorContext ctx) {
-		setIEvaluatorContext(ctx);
+			IBool includeStdLib) {
 		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
 		this.stdLib = stdLib;
 
 		Instant begin = Instant.now();
 		out("Beginning at " + begin.toString());
-		CDTParser parser = new CDTParser(stdLib, includeDirs, additionalMacros, includeStdLib.getValue(), ctx);
+		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, stdLib, includeDirs, additionalMacros,
+				includeStdLib.getValue());
 		IASTTranslationUnit tu = parser.parseFile(file);
 		Instant between = Instant.now();
 		out("CDT took " + new Double(Duration.between(begin, between).toMillis()).doubleValue() / 1000 + "seconds");
@@ -295,13 +308,13 @@ public class Parser extends ASTVisitor {
 	}
 
 	public ITuple parseCppToM3AndAst(ISourceLocation file, IList stdLib, IList includeDirs, IMap additionalMacros,
-			IBool includeStdLib, IEvaluatorContext ctx) {
-		setIEvaluatorContext(ctx);
+			IBool includeStdLib) {
 		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
 		this.stdLib = stdLib;
 
 		IValue m3 = builder.M3_m3(file);
-		CDTParser parser = new CDTParser(stdLib, includeDirs, additionalMacros, includeStdLib.getValue(), ctx);
+		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, stdLib, includeDirs, additionalMacros,
+				includeStdLib.getValue());
 		IASTTranslationUnit tu = parser.parseFile(file);
 		IList comments = getCommentsFromTranslationUnit(tu);
 		ISet macroExpansions = getMacroExpansionsFromTranslationUnit(tu);
@@ -353,10 +366,9 @@ public class Parser extends ASTVisitor {
 		return Stream.of(tu.getComments()).map(this::getSourceLocation).collect(vf.listWriter());
 	}
 
-	public IList parseForComments(ISourceLocation file, IList includePath, IMap additionalMacros,
-			IEvaluatorContext ctx) {
-		setIEvaluatorContext(ctx);
-		CDTParser parser = new CDTParser(vf.listWriter().done(), includePath, additionalMacros, true, ctx);
+	public IList parseForComments(ISourceLocation file, IList includePath, IMap additionalMacros) {
+		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, vf.listWriter().done(), includePath,
+				additionalMacros, true);
 		IASTTranslationUnit tu = parser.parseFile(file);
 		return getCommentsFromTranslationUnit(tu);
 	}
@@ -407,19 +419,18 @@ public class Parser extends ASTVisitor {
 			declaredType.insert(vf.tuple(decl, typ));
 	}
 
-	public ISet parseForMacros(ISourceLocation file, IList includePath, IMap additionalMacros, IEvaluatorContext ctx) {
-		setIEvaluatorContext(ctx);
-		CDTParser parser = new CDTParser(vf.listWriter().done(), includePath, additionalMacros, true, ctx);
+	public ISet parseForMacros(ISourceLocation file, IList includePath, IMap additionalMacros) {
+		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, vf.listWriter().done(), includePath,
+				additionalMacros, true);
 		IASTTranslationUnit tu = parser.parseFile(file);
 		return getMacroExpansionsFromTranslationUnit(tu);
 	}
 
-	public IValue parseString(IString code, IEvaluatorContext ctx) throws CoreException {
-		return parseString(code, null, ctx);
+	public IValue parseString(IString code) throws CoreException {
+		return parseString(code, null/* , ctx */);
 	}
 
-	public IValue parseString(IString code, ISourceLocation loc, IEvaluatorContext ctx) throws CoreException {
-		setIEvaluatorContext(ctx);
+	public IValue parseString(IString code, ISourceLocation loc) throws CoreException {
 		stdLib = vf.listWriter().done();
 		FileContent fc = FileContent.create(loc == null ? "" : loc.toString(), code.getValue().toCharArray());
 		IScannerInfo si = new ScannerInfo();
@@ -443,12 +454,6 @@ public class Parser extends ASTVisitor {
 		return ast;
 	}
 
-	public void setIEvaluatorContext(IEvaluatorContext ctx) {
-		this.ctx = ctx;
-		br.setIEvaluatorContext(ctx);
-		tr.setIEvaluatorContext(ctx);
-	}
-
 	private int prefix = 0;
 
 	private String spaces() {
@@ -456,11 +461,11 @@ public class Parser extends ASTVisitor {
 	}
 
 	private void out(String msg) {
-		ctx.getOutPrinter().println(spaces() + msg.replace("\n", "\n" + spaces()));
+		stdOut.println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
 
 	private void err(String msg) {
-		ctx.getErrorPrinter().println(spaces() + msg.replace("\n", "\n" + spaces()));
+		stdErr.println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
 
 	public ISourceLocation getSourceLocation(IASTNode node) {
@@ -642,7 +647,7 @@ public class Parser extends ASTVisitor {
 		boolean isMacroExpansion = isMacroExpansion(tu);
 		IListWriter declarations = vf.listWriter();
 		declLoop: for (IASTDeclaration declaration : tu.getDeclarations()) {
-			if (ctx.isInterrupted()) {
+			if (monitor.isCanceled() || monitor instanceof Evaluator && ((Evaluator) monitor).isInterrupted()) {
 				declarations.append(builder.Declaration_problemDeclaration(
 						vf.sourceLocation(URIUtil.assumeCorrect("interrupted:///")), isMacroExpansion));
 				break;
@@ -2245,7 +2250,7 @@ public class Parser extends ASTVisitor {
 			typ = tr.resolveType(expression);
 		} catch (Throwable t) {
 			err("CPPASTCompoundStatement couldn't get type at " + loc);
-			t.printStackTrace(ctx.getErrorPrinter());
+			t.printStackTrace(stdErr);
 			typ = builder.TypeSymbol_any();
 		}
 		expression.getCompoundStatement().accept(this);

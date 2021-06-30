@@ -13,6 +13,7 @@
 package lang.cpp.internal;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,25 +36,30 @@ import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.rascalmpl.interpreter.IEvaluatorContext;
-import org.rascalmpl.interpreter.utils.RuntimeExceptionFactory;
+import org.rascalmpl.exceptions.RuntimeExceptionFactory;
 import org.rascalmpl.library.Prelude;
+import org.rascalmpl.values.IRascalValueFactory;
 
 import io.usethesource.vallang.IList;
 import io.usethesource.vallang.IMap;
 import io.usethesource.vallang.ISourceLocation;
 import io.usethesource.vallang.IString;
 import io.usethesource.vallang.ITuple;
+import io.usethesource.vallang.IValueFactory;
+import io.usethesource.vallang.type.TypeStore;
 
 @SuppressWarnings("restriction")
 public class CDTParser {
-	IEvaluatorContext ctx;
-
-	final IScannerInfo scannerInfo;
-	final InternalFileContentProvider ifcp;
-	final IIndex idx;
-	final int options;
-	final IParserLogService log;
+	private final IValueFactory vf;
+	private final IRascalValueFactory rvf;
+	private final PrintWriter stdOut;
+	private final PrintWriter stdErr;
+	private final TypeStore ts;
+	private final IScannerInfo scannerInfo;
+	private final InternalFileContentProvider ifcp;
+	private final IIndex idx;
+	private final int options;
+	private final IParserLogService log;
 
 	private final List<String> path;
 
@@ -115,9 +121,13 @@ public class CDTParser {
 //		standardMacros.put("__INTELLISENSE__", "1");
 	}
 
-	public CDTParser(IList stdLib, IList includePath, IMap additionalMacros, boolean includeStdLib,
-			IEvaluatorContext ctx) {
-		this.ctx = ctx;
+	public CDTParser(IValueFactory vf, IRascalValueFactory rvf, PrintWriter stdOut, PrintWriter stdErr, TypeStore ts,
+			IList stdLib, IList includePath, IMap additionalMacros, boolean includeStdLib) {
+		this.vf = vf;
+		this.rvf = rvf;
+		this.stdOut = stdOut;
+		this.stdErr = stdErr;
+		this.ts = ts;
 
 		Map<String, String> macros = new HashMap<String, String>();
 		additionalMacros.stream().map(ITuple.class::cast).forEach(tuple -> macros
@@ -143,8 +153,7 @@ public class CDTParser {
 			path.add(ResourcesPlugin.getWorkspace().getRoot().getProject("clair").getLocation().toString()
 					+ "/includes");
 		} catch (Throwable t) {
-			ctx.getOutPrinter()
-					.println("WARNING: ResourcesPlugin was null, can't get workspace; not overriding include files");
+			stdOut.println("WARNING: ResourcesPlugin was null, can't get workspace; not overriding include files");
 		}
 		includePath.stream().forEach(it -> path.add(locToPath((ISourceLocation) it)));
 		stdLib.stream().forEach(it -> path.add(locToPath((ISourceLocation) it)));
@@ -175,12 +184,12 @@ public class CDTParser {
 
 	public IASTTranslationUnit parseFile(ISourceLocation file) {
 		FileContent fc = FileContent.create(file.toString(),
-				((IString) new Prelude(ctx.getValueFactory()).readFile(file)).getValue().toCharArray());
+				((IString) new Prelude(vf, rvf, stdOut, ts).readFile(file)).getValue().toCharArray());
 
 		try {
 			return GPPLanguage.getDefault().getASTTranslationUnit(fc, scannerInfo, ifcp, idx, options, log);
 		} catch (CoreException e) {
-			throw RuntimeExceptionFactory.io(ctx.getValueFactory().string(e.getMessage()), null, null);
+			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
 		}
 	}
 
@@ -229,8 +238,8 @@ public class CDTParser {
 				return found;
 			}
 		}
-		ctx.getErrorPrinter().println("Include " + include + " for " + currentFile + " not found");
-		ctx.getErrorPrinter().flush();
+		stdErr.println("Include " + include + " for " + currentFile + " not found");
+		stdErr.flush();
 		return null;// TODO: restore exception here
 	}
 }

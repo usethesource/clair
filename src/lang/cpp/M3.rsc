@@ -116,5 +116,4 @@ tuple[M3, Declaration] createM3AndAstFromCppFile(loc file, list[loc] stdLib = cl
 }
 
 @javaClass{lang.cpp.internal.Parser}
-@reflect{need access to streams}
 java tuple[M3, Declaration] parseCppToM3AndAst(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false);
