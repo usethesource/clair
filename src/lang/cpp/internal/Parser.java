@@ -199,9 +199,8 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.core.runtime.CoreException;
-import org.rascalmpl.debug.IRascalMonitor;
 import org.rascalmpl.exceptions.RuntimeExceptionFactory;
-import org.rascalmpl.interpreter.Evaluator;
+import org.rascalmpl.ideservices.IDEServices;
 import org.rascalmpl.uri.URIUtil;
 import org.rascalmpl.values.IRascalValueFactory;
 
@@ -229,7 +228,7 @@ public class Parser extends ASTVisitor {
 	private PrintWriter stdOut;
 	private PrintWriter stdErr;
 	private TypeStore ts;
-	private IRascalMonitor monitor;
+	private IDEServices ideServices;
 	private AST builder;
 	private Stack<IConstructor> stack = new Stack<>();
 	private BindingsResolver br = new BindingsResolver();
@@ -243,7 +242,7 @@ public class Parser extends ASTVisitor {
 	private ISetWriter declaredType;
 
 	public Parser(IValueFactory vf, IRascalValueFactory rvf, PrintWriter stdOut, PrintWriter stdErr, TypeStore ts,
-			IRascalMonitor monitor) {
+			IDEServices ideServices) {
 		super(true);
 		this.shouldVisitAmbiguousNodes = true;
 		this.shouldVisitImplicitNames = true;
@@ -255,7 +254,7 @@ public class Parser extends ASTVisitor {
 		this.stdOut = stdOut;
 		this.stdErr = stdErr;
 		this.ts = ts;
-		this.monitor = monitor;
+		this.ideServices = ideServices;
 		this.builder = new AST(vf);
 		this.tr = new TypeResolver(builder, vf);
 		this.declaredType = vf.setWriter();
@@ -271,7 +270,7 @@ public class Parser extends ASTVisitor {
 		out("Beginning at " + begin.toString());
 		IListWriter asts = vf.listWriter();
 		for (IValue v : files) {
-			if (monitor.isCanceled()) {
+			if (ideServices.isCanceled()) {
 				break;
 			}
 			ISourceLocation file = (ISourceLocation) v;
@@ -647,7 +646,7 @@ public class Parser extends ASTVisitor {
 		boolean isMacroExpansion = isMacroExpansion(tu);
 		IListWriter declarations = vf.listWriter();
 		declLoop: for (IASTDeclaration declaration : tu.getDeclarations()) {
-			if (monitor.isCanceled() || monitor instanceof Evaluator && ((Evaluator) monitor).isInterrupted()) {
+			if (ideServices.isCanceled()) {
 				declarations.append(builder.Declaration_problemDeclaration(
 						vf.sourceLocation(URIUtil.assumeCorrect("interrupted:///")), isMacroExpansion));
 				break;
