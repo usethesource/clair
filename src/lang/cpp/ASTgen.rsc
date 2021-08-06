@@ -265,7 +265,7 @@ str type2FactoryCall(Symbol t){
       case \str() :  return "IString";
       case \datetime() : return "IDateTime";
       case \tuple(_) : return "ITuple";     
-      case \func(returnType, args, kwTypes) : return "ICallableValue";
+      case \func(_,_,_) : return "ICallableValue";
       case \alias(_,_,a) : return typeToJavaType(a);
       default : return "IValue";
     }
