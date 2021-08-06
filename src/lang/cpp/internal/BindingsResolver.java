@@ -12,6 +12,7 @@
  */
 package lang.cpp.internal;
 
+import java.io.PrintWriter;
 import java.net.URISyntaxException;
 
 import org.apache.commons.lang.StringUtils;
@@ -102,20 +103,20 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClassInstan
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.IPDOMCPPClassType;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.IPDOMCPPEnumType;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.IPDOMCPPTemplateParameter;
-import org.rascalmpl.interpreter.IEvaluatorContext;
 import org.rascalmpl.uri.URIUtil;
-import org.rascalmpl.values.ValueFactoryFactory;
 
 import io.usethesource.vallang.ISourceLocation;
 import io.usethesource.vallang.IValueFactory;
 
 @SuppressWarnings("restriction")
 public class BindingsResolver {
-	private final IValueFactory vf = ValueFactoryFactory.getValueFactory();
+	private final IValueFactory vf;
+	private final PrintWriter stdOut;
+	private final PrintWriter stdErr;
+
 	public final ISourceLocation UNKNOWN = makeBinding("UNKNOWN", null, null);
 	public final ISourceLocation NYI = makeBinding("NYI", null, null);
 	public final ISourceLocation FIXME = makeBinding("FIXME", null, null);
-	private IEvaluatorContext ctx;
 
 	private int prefix = 0;
 
@@ -124,11 +125,17 @@ public class BindingsResolver {
 	}
 
 	private void out(String msg) {
-//		ctx.getOutPrinter().println(spaces() + msg.replace("\n", "\n" + spaces()));
+		stdOut.println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
 
 	private void err(String msg) {
-//		ctx.getErrorPrinter().println(spaces() + msg.replace("\n", "\n" + spaces()));
+		stdErr.println(spaces() + msg.replace("\n", "\n" + spaces()));
+	}
+
+	public BindingsResolver(IValueFactory vf, PrintWriter stdOut, PrintWriter stdErr) {
+		this.vf = vf;
+		this.stdOut = stdOut;
+		this.stdErr = stdErr;
 	}
 
 	ISourceLocation resolveOwner(IBinding binding) throws URISyntaxException {
@@ -653,7 +660,4 @@ public class BindingsResolver {
 		}
 	}
 
-	public void setIEvaluatorContext(IEvaluatorContext ctx) {
-		this.ctx = ctx;
-	}
 }
