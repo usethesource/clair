@@ -250,28 +250,24 @@ str type2FactoryCall(Symbol t){
   }
   
   str typeToJavaType(Symbol t){
-    str result ;
-    
     switch(t){
-      case \adt(_,_) : result =  "IConstructor";
-      case \cons(_,_,_) : result =  "IConstructor";
-      case \int() : result =  "IInteger";
-      case \real() : result =  "IReal";
-      case \num() : result =  "INumber";
-      case \bool() : result =  "IBool";
-      case \list(_) : result =  "IList";
-      case \map(_,_) : result =  "IMap";
-      case \rel(_) : result =  "IRelation";
-      case \set(_) : result =  "ISet";
-      case \loc() : result =  "ISourceLocation";
-      case \str() :  result =  "IString";
-      case \datetime() : result =  "IDateTime";
-      case \tuple(_) : result =   "ITuple";     
-      case \alias(_,_,a) : result = typeToJavaType(a);
-      default : result = "IValue";
-      case \func(returnType, args, kwTypes): result = "ICallableValue";
+      case \adt(_,_) : return  "IConstructor";
+      case \cons(_,_,_) : return "IConstructor";
+      case \int() : return "IInteger";
+      case \real() : return "IReal";
+      case \num() : return "INumber";
+      case \bool() : return "IBool";
+      case \list(_) : return "IList";
+      case \map(_,_) : return "IMap";
+      case \rel(_) : return "IRelation";
+      case \set(_) : return "ISet";
+      case \loc() : return "ISourceLocation";
+      case \str() :  return "IString";
+      case \datetime() : return "IDateTime";
+      case \tuple(_) : return "ITuple";     
+      case \func(returnType, args, kwTypes) : return "ICallableValue";
+      case \alias(_,_,a) : return typeToJavaType(a);
+      default : return "IValue";
     }
-    
-    return result;
   }
     
