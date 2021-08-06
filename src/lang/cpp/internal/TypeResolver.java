@@ -12,6 +12,7 @@
  */
 package lang.cpp.internal;
 
+import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
@@ -81,7 +82,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExp
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfUnknownMember;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.IPDOMCPPClassType;
-import org.rascalmpl.interpreter.IEvaluatorContext;
 import org.rascalmpl.uri.URIUtil;
 
 import io.usethesource.vallang.IConstructor;
@@ -92,18 +92,18 @@ import io.usethesource.vallang.IValueFactory;
 
 @SuppressWarnings("restriction")
 public class TypeResolver {
-	private AST builder;
+	private final AST builder;
+	private final BindingsResolver br;
 	private final IValueFactory vf;
-	private IEvaluatorContext ctx;
-	private BindingsResolver br = new BindingsResolver();
+	private final PrintWriter stdOut;
+	private final PrintWriter stdErr;
 
-	public TypeResolver(AST builder, IValueFactory vf) {
+	public TypeResolver(AST builder, BindingsResolver br, IValueFactory vf, PrintWriter stdOut, PrintWriter stdErr) {
 		this.builder = builder;
+		this.br = br;
 		this.vf = vf;
-	}
-
-	public void setIEvaluatorContext(IEvaluatorContext ctx) {
-		this.ctx = ctx;
+		this.stdOut = stdOut;
+		this.stdErr = stdErr;
 	}
 
 	private int prefix = 0;
@@ -113,11 +113,11 @@ public class TypeResolver {
 	}
 
 	private void out(String msg) {
-		ctx.getOutPrinter().println(spaces() + msg.replace("\n", "\n" + spaces()));
+		stdOut.println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
 
 	private void err(String msg) {
-		ctx.getOutPrinter().println(spaces() + msg.replace("\n", "\n" + spaces()));
+		stdErr.println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
 
 	private ISourceLocation getSourceLocation(IASTNode node) {

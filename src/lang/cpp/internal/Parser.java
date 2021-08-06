@@ -224,16 +224,16 @@ import io.usethesource.vallang.type.TypeStore;
 
 @SuppressWarnings("restriction")
 public class Parser extends ASTVisitor {
-	private IValueFactory vf;
-	private IRascalValueFactory rvf;
-	private PrintWriter stdOut;
-	private PrintWriter stdErr;
-	private TypeStore ts;
-	private IRascalMonitor monitor;
-	private AST builder;
-	private Stack<IConstructor> stack = new Stack<>();
-	private BindingsResolver br = new BindingsResolver();
-	private TypeResolver tr;
+	private final IValueFactory vf;
+	private final IRascalValueFactory rvf;
+	private final PrintWriter stdOut;
+	private final PrintWriter stdErr;
+	private final TypeStore ts;
+	private final IRascalMonitor monitor;
+	private final AST builder;
+	private final Stack<IConstructor> stack = new Stack<>();
+	private final BindingsResolver br;
+	private final TypeResolver tr;
 
 	private boolean doProblemLogging = false;
 	private boolean toM3 = false;
@@ -257,7 +257,8 @@ public class Parser extends ASTVisitor {
 		this.ts = ts;
 		this.monitor = monitor;
 		this.builder = new AST(vf);
-		this.tr = new TypeResolver(builder, vf);
+		this.br = new BindingsResolver(vf, stdOut, stdErr);
+		this.tr = new TypeResolver(builder, br, vf, stdOut, stdErr);
 		this.declaredType = vf.setWriter();
 	}
 
