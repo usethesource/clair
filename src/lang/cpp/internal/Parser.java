@@ -276,7 +276,7 @@ public class Parser extends ASTVisitor {
 				break;
 			}
 			ISourceLocation file = (ISourceLocation) v;
-			IASTTranslationUnit tu = parser.parseFile(file);
+			IASTTranslationUnit tu = parser.parseFileAsCpp(file);
 			IValue result = convertCdtToRascal(tu, false);
 			asts.append(result);
 		}
