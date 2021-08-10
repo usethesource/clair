@@ -243,8 +243,8 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved(), bool is
     | \globalVectoredDelete(Expression expression)
     
     | \arraySubscriptExpression(Expression array, Expression argument)
-    | \arrayModifier(list[Attribute] attributes = [])
-    | \arrayModifier(Expression constExpression, list[Attribute] attributes = [])
+    | \arrayModifier(list[Modifier] modifiers, list[Attribute] attributes = [])
+    | \arrayModifier(list[Modifier] modifiers, Expression constExpression, list[Attribute] attributes = [])
     
     | \simpleTypeConstructor(DeclSpecifier declSpecifier, Expression initializer)
     
