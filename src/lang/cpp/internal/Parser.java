@@ -2222,18 +2222,17 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(IASTArrayModifier arrayModifier) {
-		if (arrayModifier instanceof ICASTArrayModifier)
-			throw new RuntimeException("NYI at " + getSourceLocation(arrayModifier));
 		ISourceLocation loc = getSourceLocation(arrayModifier);
 		boolean isMacroExpansion = isMacroExpansion(arrayModifier);
 		IList attributes = getAttributes(arrayModifier);
+		IList modifiers = getModifiers(arrayModifier);
 
 		IASTExpression constantExpression = arrayModifier.getConstantExpression();
 		if (constantExpression == null)
-			stack.push(builder.Expression_arrayModifier(attributes, loc, isMacroExpansion));
+			stack.push(builder.Expression_arrayModifier(modifiers, attributes, loc, isMacroExpansion));
 		else {
 			constantExpression.accept(this);
-			stack.push(builder.Expression_arrayModifier(stack.pop(), attributes, loc, isMacroExpansion));
+			stack.push(builder.Expression_arrayModifier(modifiers, stack.pop(), attributes, loc, isMacroExpansion));
 		}
 		return PROCESS_ABORT;
 	}
