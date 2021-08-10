@@ -2385,7 +2385,9 @@ public class Parser extends ASTVisitor {
 			visit((IASTProblemExpression) expression);
 		else if (expression instanceof CPPASTCompoundStatementExpression)
 			visit((CPPASTCompoundStatementExpression) expression);
-		else {
+		else if (expression instanceof CASTCompoundStatementExpression) {
+			visit((CASTCompoundStatementExpression) expression);
+		} else {
 			throw new RuntimeException("Expression: encountered non-implemented subtype "
 					+ expression.getClass().getName() + " at " + getSourceLocation(expression));
 		}
