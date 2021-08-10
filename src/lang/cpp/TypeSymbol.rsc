@@ -81,6 +81,9 @@ public data TypeSymbol
   | \unresolved()
   | \any()
   
+  //fix for null types in printf
+  | \__nullType()
+  
   ;
   
 public data TypeModifier
