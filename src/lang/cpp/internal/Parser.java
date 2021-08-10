@@ -2892,12 +2892,23 @@ public class Parser extends ASTVisitor {
 
 	public int visit(IASTFieldReference expression) {
 		ISourceLocation loc = getSourceLocation(expression);
+		boolean isMacroExpansion = isMacroExpansion(expression);
+		ISourceLocation decl = br.resolveBinding(expression);
+		IConstructor typ = tr.resolveType(expression);
+
 		if (expression instanceof ICPPASTFieldReference) {
 			// TODO: implement isTemplate
-			boolean isMacroExpansion = isMacroExpansion(expression);
-			ISourceLocation decl = br.resolveBinding(expression);
-			IConstructor typ = tr.resolveType(expression);
+			expression.getFieldOwner().accept(this);
+			IConstructor fieldOwner = stack.pop();
+			expression.getFieldName().accept(this);
+			IConstructor fieldName = stack.pop();
 
+			if (expression.isPointerDereference())
+				stack.push(builder.Expression_fieldReferencePointerDeref(fieldOwner, fieldName, loc, decl, typ,
+						isMacroExpansion));
+			else
+				stack.push(builder.Expression_fieldReference(fieldOwner, fieldName, loc, decl, typ, isMacroExpansion));
+		} else if (expression instanceof CASTFieldReference) {
 			expression.getFieldOwner().accept(this);
 			IConstructor fieldOwner = stack.pop();
 			expression.getFieldName().accept(this);
