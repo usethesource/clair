@@ -295,7 +295,7 @@ public class Parser extends ASTVisitor {
 		out("Beginning at " + begin.toString());
 		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, stdLib, includeDirs, additionalMacros,
 				includeStdLib.getValue());
-		IASTTranslationUnit tu = parser.parseFile(file);
+		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
 		Instant between = Instant.now();
 		out("CDT took " + new Double(Duration.between(begin, between).toMillis()).doubleValue() / 1000 + "seconds");
 		IValue result = convertCdtToRascal(tu, false);
@@ -316,7 +316,7 @@ public class Parser extends ASTVisitor {
 		IValue m3 = builder.M3_m3(file);
 		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, stdLib, includeDirs, additionalMacros,
 				includeStdLib.getValue());
-		IASTTranslationUnit tu = parser.parseFile(file);
+		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
 		IList comments = getCommentsFromTranslationUnit(tu);
 		ISet macroExpansions = getMacroExpansionsFromTranslationUnit(tu);
 		ISet macroDefinitions = getMacroDefinitionsFromTranslationUnit(tu);
@@ -370,7 +370,7 @@ public class Parser extends ASTVisitor {
 	public IList parseForComments(ISourceLocation file, IList includePath, IMap additionalMacros) {
 		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, vf.listWriter().done(), includePath,
 				additionalMacros, true);
-		IASTTranslationUnit tu = parser.parseFile(file);
+		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
 		return getCommentsFromTranslationUnit(tu);
 	}
 
@@ -423,7 +423,7 @@ public class Parser extends ASTVisitor {
 	public ISet parseForMacros(ISourceLocation file, IList includePath, IMap additionalMacros) {
 		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, vf.listWriter().done(), includePath,
 				additionalMacros, true);
-		IASTTranslationUnit tu = parser.parseFile(file);
+		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
 		return getMacroExpansionsFromTranslationUnit(tu);
 	}
 
