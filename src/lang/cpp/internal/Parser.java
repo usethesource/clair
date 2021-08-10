@@ -1827,6 +1827,8 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTEnumerationSpecifier declSpec) {
 		if (declSpec instanceof ICPPASTEnumerationSpecifier)
 			visit((ICPPASTEnumerationSpecifier) declSpec);
+		else if (declSpec instanceof ICASTEnumerationSpecifier)
+			visit((ICASTEnumerationSpecifier) declSpec);
 		else
 			throw new RuntimeException("NYI at " + getSourceLocation(declSpec));
 		return PROCESS_ABORT;
