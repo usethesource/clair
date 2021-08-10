@@ -3785,8 +3785,26 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(ICASTDesignator designator) {
-		err("Designator: " + designator.getRawSignature());
-		throw new RuntimeException("NYI at " + getSourceLocation(designator));
+		// TODO: deduplicate from ICPPASTDesignator
+		ISourceLocation loc = getSourceLocation(designator);
+		boolean isMacroExpansion = isMacroExpansion(designator);
+		if (designator instanceof ICASTArrayDesignator) {
+			((ICASTArrayDesignator) designator).getSubscriptExpression().accept(this);
+			stack.push(builder.Expression_arrayDesignator(stack.pop(), loc, isMacroExpansion));
+		} else if (designator instanceof ICASTFieldDesignator) {
+			((ICASTFieldDesignator) designator).getName().accept(this);
+			stack.push(builder.Expression_fieldDesignator(stack.pop(), loc, isMacroExpansion));
+		} else if (designator instanceof IGCCASTArrayRangeDesignator) {
+			((IGCCASTArrayRangeDesignator) designator).getRangeFloor().accept(this);
+			IConstructor rangeFloor = stack.pop();
+			((IGCCASTArrayRangeDesignator) designator).getRangeCeiling().accept(this);
+			IConstructor rangeCeiling = stack.pop();
+			stack.push(builder.Expression_arrayRangeDesignator(rangeFloor, rangeCeiling, loc, isMacroExpansion));
+		} else {
+			err("Designator: " + designator.getRawSignature());
+			throw new RuntimeException("Unknown Designator at " + getSourceLocation(designator));
+		}
+		return PROCESS_ABORT;
 	}
 
 	@Override
