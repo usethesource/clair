@@ -1163,8 +1163,18 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICASTDesignatedInitializer initializer) {
-		err("ICASTDesignatedInitializer: " + initializer.getRawSignature());
-		throw new RuntimeException("NYI at " + getSourceLocation(initializer));
+		ISourceLocation loc = getSourceLocation(initializer);
+		boolean isMacroExpansion = isMacroExpansion(initializer);
+
+		IListWriter designators = vf.listWriter();
+		Stream.of(initializer.getDesignators()).forEach(it -> {
+			it.accept(this);
+			designators.append(stack.pop());
+		});
+
+		initializer.getOperand().accept(this);
+		stack.push(builder.Expression_designatedInitializer(designators.done(), stack.pop(), loc, isMacroExpansion));
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTConstructorChainInitializer initializer) {
