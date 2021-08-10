@@ -1255,8 +1255,10 @@ public class Parser extends ASTVisitor {
 			visit((IASTFunctionDeclarator) declarator);
 		else if (declarator instanceof ICPPASTDeclarator)
 			visit((ICPPASTDeclarator) declarator);
-		else {
-			throw new RuntimeException("Unknown IASTDeclarator subclass " + declarator.getClass().getName() + "at "
+		else if (declarator instanceof CASTDeclarator) {
+			visit((CASTDeclarator) declarator);
+		} else {
+			throw new RuntimeException("Unknown IASTDeclarator subclass " + declarator.getClass().getName() + " at "
 					+ getSourceLocation(declarator));
 		}
 		return PROCESS_ABORT;
