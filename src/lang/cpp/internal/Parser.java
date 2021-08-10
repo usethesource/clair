@@ -703,7 +703,12 @@ public class Parser extends ASTVisitor {
 			visit((IASTImplicitName) name);
 		else if (name instanceof ICPPASTName)
 			visit((ICPPASTName) name);
-		else {
+		else if (name instanceof CASTName) {
+			ISourceLocation loc = getSourceLocation(name);
+			boolean isMacroExpansion = isMacroExpansion(name);
+			stack.push(builder.Name_name(name.toString(), loc, isMacroExpansion));
+			return PROCESS_ABORT;
+		} else {
 			err("No sub-interfaced IASTName? " + name.getClass().getName() + ": " + name.getRawSignature());
 			throw new RuntimeException("NYI at " + getSourceLocation(name));
 		}
