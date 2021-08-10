@@ -1856,8 +1856,22 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICASTDeclSpecifier declSpec) {
-		out("CDeclSpecifier: " + declSpec.getRawSignature());
-		throw new RuntimeException("NYI at " + getSourceLocation(declSpec));
+		if (declSpec instanceof ICASTCompositeTypeSpecifier)
+			visit((ICASTCompositeTypeSpecifier) declSpec);
+		if (declSpec instanceof ICASTElaboratedTypeSpecifier)
+			visit((ICASTElaboratedTypeSpecifier) declSpec);
+		if (declSpec instanceof ICASTEnumerationSpecifier)
+			visit((ICASTEnumerationSpecifier) declSpec);
+		if (declSpec instanceof ICASTSimpleDeclSpecifier)
+			visit((ICASTSimpleDeclSpecifier) declSpec);
+//		Not needed? Only adds `restrict` keyword
+//		if (declSpec instanceof ICASTTypedefNameSpecifier)
+//			visit((ICASTTypedefNameSpecifier) declSpec);
+		else {
+			out("CDeclSpecifier: " + declSpec.getRawSignature());
+			throw new RuntimeException("NYI at " + getSourceLocation(declSpec));
+		}
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTDeclSpecifier declSpec) {
