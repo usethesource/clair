@@ -1666,7 +1666,42 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICASTCompositeTypeSpecifier declSpec) {
-		throw new RuntimeException("C-style CompositeTypeSpecifier encountered at " + getSourceLocation(declSpec));
+		// TODO: add separate entries in AST, remove fixed empty baseSpecifiers
+		ISourceLocation loc = getSourceLocation(declSpec);
+		boolean isMacroExpansion = isMacroExpansion(declSpec);
+		ISourceLocation decl = br.resolveBinding(declSpec);
+		IConstructor typ = tr.resolveType(declSpec);
+		IList attributes = getAttributes(declSpec);
+		IList modifiers = getModifiers(declSpec);
+
+		declSpec.getName().accept(this);
+		IConstructor name = stack.pop();
+
+		IListWriter members = vf.listWriter();
+		Stream.of(declSpec.getMembers()).forEach(it -> {
+			it.accept(this);
+			members.append(stack.pop());
+		});
+
+		switch (declSpec.getKey()) {
+		case ICPPASTCompositeTypeSpecifier.k_struct:
+			stack.push(builder.DeclSpecifier_structFinal(modifiers, name, vf.listWriter().done(), members.done(),
+					attributes, loc, decl, isMacroExpansion));
+			break;
+		case ICPPASTCompositeTypeSpecifier.k_union:
+			stack.push(builder.DeclSpecifier_unionFinal(modifiers, name, vf.listWriter().done(), members.done(),
+					attributes, loc, decl, isMacroExpansion));
+			break;
+		case ICPPASTCompositeTypeSpecifier.k_class:
+			stack.push(builder.DeclSpecifier_classFinal(modifiers, name, vf.listWriter().done(), members.done(),
+					attributes, loc, decl, isMacroExpansion));
+			break;
+		default:
+			throw new RuntimeException(
+					"Unknown IASTCompositeTypeSpecifier code " + declSpec.getKey() + "at" + loc + ". Exiting");
+		}
+
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTCompositeTypeSpecifier declSpec) {
