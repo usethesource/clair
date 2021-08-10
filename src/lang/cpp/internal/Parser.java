@@ -2861,12 +2861,19 @@ public class Parser extends ASTVisitor {
 
 		expression.getLogicalConditionExpression().accept(this);
 		IConstructor condition = stack.pop();
-		expression.getPositiveResultExpression().accept(this);
-		IConstructor positive = stack.pop();
 		expression.getNegativeResultExpression().accept(this);
 		IConstructor negative = stack.pop();
 
-		stack.push(builder.Expression_conditional(condition, positive, negative, loc, typ, isMacroExpansion));
+		IASTExpression positiveResultExpression = expression.getPositiveResultExpression();
+		if (positiveResultExpression != null) {
+			positiveResultExpression.accept(this);
+			IConstructor positive = stack.pop();
+			stack.push(builder.Expression_conditional(condition, positive, negative, loc, typ, isMacroExpansion));
+
+		} else {// GNU extension: `?:`
+			stack.push(builder.Expression_conditional(condition, negative, loc, typ, isMacroExpansion));
+		}
+
 		return PROCESS_ABORT;
 	}
 
