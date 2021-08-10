@@ -2394,6 +2394,21 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
+	public int visit(CASTArraySubscriptExpression expression) {
+		// TODO: deduplicate from ICPPASTArraySubscriptExpression
+		ISourceLocation loc = getSourceLocation(expression);
+		boolean isMacroExpansion = isMacroExpansion(expression);
+		IConstructor typ = tr.resolveType(expression);
+
+		expression.getArrayExpression().accept(this);
+		IConstructor arrayExpression = stack.pop();
+		expression.getArgument().accept(this);
+		IConstructor argument = stack.pop();
+
+		stack.push(builder.Expression_arraySubscriptExpression(arrayExpression, argument, loc, typ, isMacroExpansion));
+		return PROCESS_ABORT;
+	}
+
 	public int visit(ICPPASTArraySubscriptExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		boolean isMacroExpansion = isMacroExpansion(expression);
