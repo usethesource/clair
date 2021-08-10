@@ -1898,6 +1898,28 @@ public class Parser extends ASTVisitor {
 		throw new RuntimeException("NYI at " + getSourceLocation(declSpec));
 	}
 
+	public int visit(ICASTEnumerationSpecifier declSpec) {
+		ISourceLocation loc = getSourceLocation(declSpec);
+		boolean isMacroExpansion = isMacroExpansion(declSpec);
+		ISourceLocation decl = br.resolveBinding(declSpec);
+		IConstructor typ = tr.resolveType(declSpec);
+		IList attributes = getAttributes(declSpec);
+		IList modifiers = getModifiers(declSpec);
+
+		declSpec.getName().accept(this);
+		IConstructor name = stack.pop();
+
+		IListWriter enumerators = vf.listWriter();
+		Stream.of(declSpec.getEnumerators()).forEach(it -> {
+			it.accept(this);
+			enumerators.append(stack.pop());
+		});
+
+		stack.push(builder.DeclSpecifier_enum(modifiers, name, enumerators.done(), attributes, loc, decl,
+				isMacroExpansion));
+		return PROCESS_ABORT;
+	}
+
 	public int visit(ICPPASTEnumerationSpecifier declSpec) {
 		ISourceLocation loc = getSourceLocation(declSpec);
 		boolean isMacroExpansion = isMacroExpansion(declSpec);
