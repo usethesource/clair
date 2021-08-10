@@ -213,6 +213,7 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved(), bool is
     | \idExpression(Name name, loc decl = |unknown:///|)
     | \integerLiteral(int number)
     | \conditional(Expression condition, Expression positive, Expression negative)
+    | \conditional(Expression condition, Expression negative)
     
     | \integerConstant(str \value)
     | \floatConstant(str \value)
