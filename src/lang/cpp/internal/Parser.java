@@ -286,6 +286,29 @@ public class Parser extends ASTVisitor {
 		return asts.done();
 	}
 
+	public IValue parseC(ISourceLocation file, IList stdLib, IList includeDirs, IMap additionalMacros,
+			IBool includeStdLib) {
+		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
+		this.stdLib = stdLib;
+
+//		Instant begin = Instant.now();
+//		out("Beginning at " + begin.toString());
+		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, stdLib, includeDirs, additionalMacros,
+				includeStdLib.getValue());
+		IASTTranslationUnit tu = parser.parseFileAsC(file);
+//		Instant between = Instant.now();
+//		out("CDT took " + new Double(Duration.between(begin, between).toMillis()).doubleValue() / 1000 + "seconds");
+		IValue result = convertCdtToRascal(tu, false);
+//		Instant done = Instant.now();
+//		out("Marshalling took " + new Double(Duration.between(between, done).toMillis()).doubleValue() / 1000
+//				+ "seconds");
+		if (result == null) {
+			throw RuntimeExceptionFactory.parseError(file, null, null);
+		}
+		return result;
+
+	}
+
 	public IValue parseCpp(ISourceLocation file, IList stdLib, IList includeDirs, IMap additionalMacros,
 			IBool includeStdLib) {
 		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
