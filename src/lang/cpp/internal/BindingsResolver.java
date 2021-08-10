@@ -114,9 +114,9 @@ public class BindingsResolver {
 	private final PrintWriter stdOut;
 	private final PrintWriter stdErr;
 
-	public final ISourceLocation UNKNOWN = makeBinding("UNKNOWN", null, null);
-	public final ISourceLocation NYI = makeBinding("NYI", null, null);
-	public final ISourceLocation FIXME = makeBinding("FIXME", null, null);
+	public final ISourceLocation UNKNOWN;
+	public final ISourceLocation NYI;
+	public final ISourceLocation FIXME;
 
 	private int prefix = 0;
 
@@ -136,6 +136,10 @@ public class BindingsResolver {
 		this.vf = vf;
 		this.stdOut = stdOut;
 		this.stdErr = stdErr;
+
+		this.UNKNOWN = makeBinding("UNKNOWN", null, null);
+		this.NYI = makeBinding("NYI", null, null);
+		this.FIXME = makeBinding("FIXME", null, null);
 	}
 
 	ISourceLocation resolveOwner(IBinding binding) throws URISyntaxException {
