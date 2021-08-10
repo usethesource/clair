@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
@@ -182,7 +183,18 @@ public class CDTParser {
 		};
 	}
 
-	public IASTTranslationUnit parseFile(ISourceLocation file) {
+	public IASTTranslationUnit parseFileAsC(ISourceLocation file) {
+		FileContent fc = FileContent.create(file.toString(),
+				((IString) new Prelude(vf, rvf, stdOut, ts).readFile(file)).getValue().toCharArray());
+
+		try {
+			return GCCLanguage.getDefault().getASTTranslationUnit(fc, scannerInfo, ifcp, idx, options, log);
+		} catch (CoreException e) {
+			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
+		}
+	}
+
+	public IASTTranslationUnit parseFileAsCpp(ISourceLocation file) {
 		FileContent fc = FileContent.create(file.toString(),
 				((IString) new Prelude(vf, rvf, stdOut, ts).readFile(file)).getValue().toCharArray());
 
@@ -238,7 +250,7 @@ public class CDTParser {
 				return found;
 			}
 		}
-		stdErr.println("Include " + include + " for " + currentFile + " not found");
+//		stdErr.println("Include " + include + " for " + currentFile + " not found");
 		stdErr.flush();
 		return null;// TODO: restore exception here
 	}
