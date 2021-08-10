@@ -1765,9 +1765,36 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
+	public int visit(ICASTElaboratedTypeSpecifier declSpec) {
+		// TODO: deduplicate with IASTElaboratedTypeSpecifier
+		ISourceLocation loc = getSourceLocation(declSpec);
+		boolean isMacroExpansion = isMacroExpansion(declSpec);
+		ISourceLocation decl = br.resolveBinding(declSpec);
+		IList modifiers = getModifiers(declSpec);
+
+		declSpec.getName().accept(this);
+		switch (declSpec.getKind()) {
+		case ICASTElaboratedTypeSpecifier.k_enum:
+			stack.push(builder.DeclSpecifier_etsEnum(modifiers, stack.pop(), loc, decl, isMacroExpansion));
+			break;
+		case ICASTElaboratedTypeSpecifier.k_struct:
+			stack.push(builder.DeclSpecifier_etsStruct(modifiers, stack.pop(), loc, decl, isMacroExpansion));
+			break;
+		case ICASTElaboratedTypeSpecifier.k_union:
+			stack.push(builder.DeclSpecifier_etsUnion(modifiers, stack.pop(), loc, decl, isMacroExpansion));
+			break;
+		default:
+			throw new RuntimeException(
+					"ICASTElaboratedTypeSpecifier encountered unknown kind " + declSpec.getKind() + " at " + loc);
+		}
+		return PROCESS_ABORT;
+	}
+
 	public int visit(IASTElaboratedTypeSpecifier declSpec) {
 		ISourceLocation loc = getSourceLocation(declSpec);
-		if (declSpec instanceof ICPPASTElaboratedTypeSpecifier) {
+		if (declSpec instanceof ICASTElaboratedTypeSpecifier) {
+			visit((ICASTElaboratedTypeSpecifier) declSpec);
+		} else if (declSpec instanceof ICPPASTElaboratedTypeSpecifier) {
 			boolean isMacroExpansion = isMacroExpansion(declSpec);
 			ISourceLocation decl = br.resolveBinding(declSpec);
 			IList modifiers = getModifiers(declSpec);
