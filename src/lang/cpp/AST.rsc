@@ -282,7 +282,7 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved(), bool is
     
     // Designators below
     | \arrayDesignator(Expression subscript)
-    | \fieldDesignator(Expression fieldName)
+    | \fieldDesignator(Name fieldName)
     | \arrayRangeDesignator(Expression rangeFloor, Expression rangeCeiling) //gcc-only
     
     // Captures
