@@ -1044,7 +1044,17 @@ public class Parser extends ASTVisitor {
 			}
 			addDeclaredType(br.resolveBinding(definition.getDeclarator()), tr.resolveType(definition.getDeclarator()));
 		} else { // C Function definition
-			throw new RuntimeException("Encountered C function definition at " + loc + ", NYI");
+			// TODO: add separate AST entry and remove fixed empty memberinitializers and
+			// attributes
+			definition.getDeclSpecifier().accept(this);
+			IConstructor declSpecifier = stack.pop();
+			definition.getDeclarator().accept(this);
+			IConstructor declarator = stack.pop();
+
+			definition.getBody().accept(this);
+			stack.push(builder.Declaration_functionDefinition(declSpecifier, declarator, vf.listWriter().done(),
+					stack.pop(), vf.listWriter().done(), loc, isMacroExpansion));
+			addDeclaredType(br.resolveBinding(definition.getDeclarator()), tr.resolveType(definition.getDeclarator()));
 		}
 		return PROCESS_ABORT;
 	}
