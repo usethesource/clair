@@ -1344,8 +1344,43 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(ICASTKnRFunctionDeclarator declarator) {
-		err("CKnRFunctionDeclarator: " + declarator.getRawSignature());
-		throw new RuntimeException("NYI at " + getSourceLocation(declarator));
+		// TODO: check nestedDeclarator and initializer
+		ISourceLocation loc = getSourceLocation(declarator);
+		boolean isMacroExpansion = isMacroExpansion(declarator);
+		ISourceLocation decl = br.resolveBinding(declarator);
+		IList modifiers = getModifiers(declarator);
+
+		// TODO: fix when name == null
+//		IConstructor name = builder.Name_name("", vf.sourceLocation(loc, loc.getOffset(), 0), isMacroExpansion);
+//		IASTName _name = declarator.getName();
+//		if (_name != null) {
+//			_name.accept(this);
+//			name = stack.pop();
+//		}
+
+		IListWriter parameterNames = vf.listWriter();
+		Stream.of(declarator.getParameterNames()).forEach(it -> {
+			it.accept(this);
+			parameterNames.append(stack.pop());
+		});
+
+		IListWriter parameterDeclarations = vf.listWriter();
+		Stream.of(declarator.getParameterDeclarations()).forEach(it -> {
+			it.accept(this);
+			parameterDeclarations.append(stack.pop());
+		});
+
+		IListWriter pointerOperators = vf.listWriter();
+		Stream.of(declarator.getPointerOperators()).forEach(it -> {
+			it.accept(this);
+			pointerOperators.append(stack.pop());
+		});
+
+		stack.push(builder.Declarator_knrFunctionDeclarator(pointerOperators.done(), modifiers, parameterNames.done(),
+				parameterDeclarations.done(), loc, decl, isMacroExpansion));
+		return PROCESS_ABORT;
+	}
+
 	}
 
 	public int visit(ICPPASTDeclarator declarator) {
