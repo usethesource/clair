@@ -31,6 +31,7 @@ data Declarator(list[Attribute] attributes = [], loc src = |unknown:///|, loc de
     | \arrayDeclarator(list[Declaration] pointerOperators, Name name, list[Expression] arrayModifier, Expression initializer)
     | \arrayDeclaratorNested(list[Declaration] pointerOperators, Declarator declarator, list[Expression] arrayModifier)
     | \arrayDeclaratorNested(list[Declaration] pointerOperators, Declarator declarator, list[Expression] arrayModifier, Expression initializer)
+    | \knrFunctionDeclarator(list[Declaration] pointerOperators, list[Modifier] modifiers, list[Name] parameterNames, list[Declaration] parameterDeclarations)
     
     //quick fix
     | \missingDeclarator() //no attributes
