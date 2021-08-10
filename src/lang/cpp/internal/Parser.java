@@ -1334,6 +1334,8 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTStandardFunctionDeclarator declarator) {
 		if (declarator instanceof ICPPASTFunctionDeclarator)
 			visit((ICPPASTFunctionDeclarator) declarator);
+		else if (declarator instanceof CASTFunctionDeclarator)
+			visit((CASTFunctionDeclarator) declarator);
 		else {
 			throw new RuntimeException("Unknown StandardFunctionDeclarator subtype " + declarator.getClass().getName()
 					+ " at " + getSourceLocation(declarator) + ". Exiting");
