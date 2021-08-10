@@ -2670,6 +2670,8 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTArraySubscriptExpression expression) {
 		if (expression instanceof ICPPASTArraySubscriptExpression)
 			visit((ICPPASTArraySubscriptExpression) expression);
+		else if (expression instanceof CASTArraySubscriptExpression)
+			visit((CASTArraySubscriptExpression) expression);
 		else
 			throw new RuntimeException("NYI at " + getSourceLocation(expression));
 		return PROCESS_ABORT;
