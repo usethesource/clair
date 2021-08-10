@@ -1487,6 +1487,45 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
+	public int visit(CASTFunctionDeclarator declarator) {
+		// TODO: check nestedDeclarator and initializer
+		// TODO: add separate AST node, remove fixed empty virtSpecifiers
+		// exceptionSpecifiers
+		ISourceLocation loc = getSourceLocation(declarator);
+		boolean isMacroExpansion = isMacroExpansion(declarator);
+		ISourceLocation decl = br.resolveBinding(declarator);
+//		IConstructor typ = tr.resolveType(declarator);
+		IList attributes = getAttributes(declarator);
+		IList modifiers = getModifiers(declarator);
+
+		// TODO: fix when name == null
+		IConstructor name = builder.Name_name("", vf.sourceLocation(loc, loc.getOffset(), 0), isMacroExpansion);
+		IASTName _name = declarator.getName();
+		if (_name != null) {
+			_name.accept(this);
+			name = stack.pop();
+		}
+
+		IListWriter parameters = vf.listWriter();
+		Stream.of(declarator.getParameters()).forEach(it -> {
+			it.accept(this);
+			parameters.append(stack.pop());
+		});
+		if (declarator.takesVarArgs())
+			parameters.append(builder.Declaration_varArgs(getTokenSourceLocation(declarator, "..."), isMacroExpansion));
+
+		IListWriter pointerOperators = vf.listWriter();
+		Stream.of(declarator.getPointerOperators()).forEach(it -> {
+			it.accept(this);
+			pointerOperators.append(stack.pop());
+		});
+
+		stack.push(builder.Declarator_functionDeclarator(pointerOperators.done(), modifiers, name, parameters.done(),
+				vf.listWriter().done(), attributes, loc, decl, isMacroExpansion));
+
+		return PROCESS_ABORT;
+	}
+
 	public int visit(ICPPASTFunctionDeclarator declarator) {
 		// TODO: check refQualifier and declaresParameterPack
 		ISourceLocation loc = getSourceLocation(declarator);
