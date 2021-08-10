@@ -1381,6 +1381,32 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
+	public int visit(CASTDeclarator declarator) {
+		// TODO: deduplicate with ICPPASTDeclarator
+		ISourceLocation loc = getSourceLocation(declarator);
+		boolean isMacroExpansion = isMacroExpansion(declarator);
+		ISourceLocation decl = br.resolveBinding(declarator);
+		IList attributes = getAttributes(declarator);
+
+		declarator.getName().accept(this);
+		IConstructor name = stack.pop();
+
+		IListWriter pointerOperators = vf.listWriter();
+		Stream.of(declarator.getPointerOperators()).forEach(it -> {
+			it.accept(this);
+			pointerOperators.append(stack.pop());
+		});
+
+		IASTInitializer initializer = declarator.getInitializer();
+		if (initializer == null) {
+			stack.push(builder.Declarator_declarator(pointerOperators.done(), name, attributes, loc, decl,
+					isMacroExpansion));
+		} else {
+			initializer.accept(this);
+			stack.push(builder.Declarator_declarator(pointerOperators.done(), name, stack.pop(), attributes, loc, decl,
+					isMacroExpansion));
+		}
+		return PROCESS_ABORT;
 	}
 
 	public int visit(ICPPASTDeclarator declarator) {
