@@ -181,7 +181,7 @@ str type2FactoryCall(Symbol t){
   bool hasTyp("Name", "conversionName") = true;
   default bool hasTyp(str _, str _) = false;
   
-  bool hasAttrs("Declarator", str cname) = cname != "missingDeclarator";
+  bool hasAttrs("Declarator", str cname) = cname notin {"missingDeclarator", "knrFunctionDeclarator"};
   bool hasAttrs("DeclSpecifier", str cname) = cname notin
     {"etsEnum", "etsStruct", "etsUnion", "etsClass", "namedTypeSpecifier", /*"struct", "union", "class",*/ "msThrowEllipsis" };
   bool hasAttrs("Declaration", str cname) = cname notin
