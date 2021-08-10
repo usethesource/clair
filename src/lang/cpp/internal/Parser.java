@@ -1975,6 +1975,126 @@ public class Parser extends ASTVisitor {
 		throw new RuntimeException("NYI at " + getSourceLocation(declSpec));
 	}
 
+	public int visit(ICASTSimpleDeclSpecifier declSpec) {
+		// TODO: deduplicate with ICPPASTSimpleDeclSpecifier
+		ISourceLocation loc = getSourceLocation(declSpec);
+		boolean isMacroExpansion = isMacroExpansion(declSpec);
+		IConstructor typ = tr.resolveType(declSpec);
+		IList attributes = getAttributes(declSpec);
+		IList modifiers = getModifiers(declSpec);
+
+		switch (declSpec.getType()) {
+		case IASTSimpleDeclSpecifier.t_unspecified: {
+			ISourceLocation location = null;
+			if (modifiers.isEmpty()) {
+				location = vf.sourceLocation(loc, loc.getOffset(), 0);
+			} else {
+				ISourceLocation before = (ISourceLocation) modifiers.get(modifiers.size() - 1).asWithKeywordParameters()
+						.getParameter("src");
+				location = vf.sourceLocation(before, before.getOffset() + before.getLength(), 0);
+			}
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_unspecified(location, isMacroExpansion), attributes, loc, isMacroExpansion));
+			break;
+		}
+		case IASTSimpleDeclSpecifier.t_void:
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_void(getTokenSourceLocation(declSpec, "void"), isMacroExpansion), attributes, loc,
+					isMacroExpansion));
+			break;
+		case IASTSimpleDeclSpecifier.t_char:
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_char(getTokenSourceLocation(declSpec, "char"), isMacroExpansion), attributes, loc,
+					isMacroExpansion));
+			break;
+		case IASTSimpleDeclSpecifier.t_int:
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_integer(getTokenSourceLocation(declSpec, "int"), isMacroExpansion), attributes, loc,
+					isMacroExpansion));
+			break;
+		case IASTSimpleDeclSpecifier.t_float:
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_float(getTokenSourceLocation(declSpec, "float"), isMacroExpansion), attributes, loc,
+					isMacroExpansion));
+			break;
+		case IASTSimpleDeclSpecifier.t_double:
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_double(getTokenSourceLocation(declSpec, "double"), isMacroExpansion), attributes, loc,
+					isMacroExpansion));
+			break;
+		case IASTSimpleDeclSpecifier.t_bool:
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_bool(getTokenSourceLocation(declSpec, "bool"), isMacroExpansion), attributes, loc,
+					isMacroExpansion));
+			break;
+		case IASTSimpleDeclSpecifier.t_wchar_t:
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_wchar_t(getTokenSourceLocation(declSpec, "wchar_t"), isMacroExpansion), attributes,
+					loc, isMacroExpansion));
+			break;
+		case IASTSimpleDeclSpecifier.t_typeof:
+			declSpec.getDeclTypeExpression().accept(this);
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_typeof(getTokenSourceLocation(declSpec, "typeof"), isMacroExpansion), stack.pop(),
+					attributes, loc, isMacroExpansion));
+			break;
+		case IASTSimpleDeclSpecifier.t_decltype:
+			declSpec.getDeclTypeExpression().accept(this);
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_decltype(getTokenSourceLocation(declSpec, "decltype"), isMacroExpansion), stack.pop(),
+					attributes, loc, isMacroExpansion));
+			break;
+		case IASTSimpleDeclSpecifier.t_auto:
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_auto(getTokenSourceLocation(declSpec, "auto"), isMacroExpansion), attributes, loc,
+					isMacroExpansion));
+			break;
+		case IASTSimpleDeclSpecifier.t_char16_t:
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_char16_t(getTokenSourceLocation(declSpec, "char16_t"), isMacroExpansion), attributes,
+					loc, isMacroExpansion));
+			break;
+		case IASTSimpleDeclSpecifier.t_char32_t:
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_char32_t(getTokenSourceLocation(declSpec, "char32_t"), isMacroExpansion), attributes,
+					loc, isMacroExpansion));
+			break;
+		case IASTSimpleDeclSpecifier.t_int128:
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_int128(getTokenSourceLocation(declSpec, "__int128"), isMacroExpansion), attributes,
+					loc, isMacroExpansion));
+			break;
+		case IASTSimpleDeclSpecifier.t_float128:
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_float128(getTokenSourceLocation(declSpec, "__float128"), isMacroExpansion), attributes,
+					loc, isMacroExpansion));
+			break;
+		case IASTSimpleDeclSpecifier.t_decimal32:
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_decimal128(getTokenSourceLocation(declSpec, "_Decimal32"), isMacroExpansion),
+					attributes, loc, isMacroExpansion));
+			break;
+		case IASTSimpleDeclSpecifier.t_decimal64:
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_decimal64(getTokenSourceLocation(declSpec, "_Decimal64"), isMacroExpansion),
+					attributes, loc, isMacroExpansion));
+			break;
+		case IASTSimpleDeclSpecifier.t_decimal128:
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
+					builder.Type_decimal128(getTokenSourceLocation(declSpec, "_Decimal128"), isMacroExpansion),
+					attributes, loc, isMacroExpansion));
+			break;
+		case IASTSimpleDeclSpecifier.t_decltype_auto:
+			stack.push(builder.DeclSpecifier_declSpecifier(modifiers, builder.Type_declTypeAuto(loc, isMacroExpansion),
+					attributes, loc, isMacroExpansion));
+			break;
+		default:
+			throw new RuntimeException(
+					"Unknown IASTSimpleDeclSpecifier kind " + declSpec.getType() + " at " + loc + ". Exiting");
+		}
+		return PROCESS_ABORT;
+	}
+
 	public int visit(ICPPASTSimpleDeclSpecifier declSpec) {
 		ISourceLocation loc = getSourceLocation(declSpec);
 		boolean isMacroExpansion = isMacroExpansion(declSpec);
