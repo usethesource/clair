@@ -285,10 +285,6 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved(), bool is
     | \fieldDesignator(Expression fieldName)
     | \arrayRangeDesignator(Expression rangeFloor, Expression rangeCeiling) //gcc-only
     
-    | \designatedInitializer(list[Expression] designators, Expression operand)
-    
-    | \designatedInitializer(list[Expression] designators, Expression operand)
-    
     // Captures
     | \capture(Name name, loc decl = |unknown:///|)
     | \captureByRef(Name name, loc decl = |unknown:///|)
