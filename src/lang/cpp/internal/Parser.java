@@ -1848,6 +1848,9 @@ public class Parser extends ASTVisitor {
 		if (declSpec instanceof ICPPASTSimpleDeclSpecifier) {
 			visit((ICPPASTSimpleDeclSpecifier) declSpec);
 			return PROCESS_ABORT;
+		} else if (declSpec instanceof ICASTSimpleDeclSpecifier) {
+			visit((ICASTSimpleDeclSpecifier) declSpec);
+			return PROCESS_ABORT;
 		}
 		throw new RuntimeException("NYI: C SimpleDeclSpecifier");
 	}
