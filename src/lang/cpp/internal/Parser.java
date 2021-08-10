@@ -2634,6 +2634,23 @@ public class Parser extends ASTVisitor {
 		throw new RuntimeException("NYI at " + getSourceLocation(expression));
 	}
 
+	public int visit(CASTCompoundStatementExpression expression) {
+		// TODO: Deduplicate from CPPASTCompoundStatementExpression
+		ISourceLocation loc = getSourceLocation(expression);
+		boolean isMacroExpansion = isMacroExpansion(expression);
+		IConstructor typ;
+		try {
+			typ = tr.resolveType(expression);
+		} catch (Throwable t) {
+			err("CASTCompoundStatement couldn't get type at " + loc);
+			t.printStackTrace(stdErr);
+			typ = builder.TypeSymbol_any();
+		}
+		expression.getCompoundStatement().accept(this);
+		stack.push(builder.Expression_compoundStatementExpression(stack.pop(), loc, typ, isMacroExpansion));
+		return PROCESS_ABORT;
+	}
+
 	public int visit(CPPASTCompoundStatementExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		boolean isMacroExpansion = isMacroExpansion(expression);
