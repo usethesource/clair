@@ -516,7 +516,8 @@ public class Parser extends ASTVisitor {
 			return vf.sourceLocation(vf.sourceLocation(fileName), astFileLocation.getNodeOffset(),
 					astFileLocation.getNodeLength());
 		}
-		return vf.sourceLocation(URIUtil.assumeCorrect("unknown:///", "", ""));
+		return vf.sourceLocation(URIUtil.rootLocation("unknown"), 0, 0);
+//		return vf.sourceLocation(URIUtil.assumeCorrect("unknown:///", "", ""));
 	}
 
 	public ISourceLocation getTokenSourceLocation(IASTNode node, String literal) {
