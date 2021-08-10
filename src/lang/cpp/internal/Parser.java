@@ -1063,20 +1063,19 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTParameterDeclaration parameterDeclaration) {
 		ISourceLocation loc = getSourceLocation(parameterDeclaration);
 		boolean isMacroExpansion = isMacroExpansion(parameterDeclaration);
-		if (parameterDeclaration instanceof ICPPASTParameterDeclaration) {
-			// TODO: add isParameterPack()
-			ICPPASTParameterDeclaration declaration = (ICPPASTParameterDeclaration) parameterDeclaration;
-
-			declaration.getDeclSpecifier().accept(this);
+		if (parameterDeclaration instanceof ICPPASTParameterDeclaration
+				|| parameterDeclaration instanceof CASTParameterDeclaration) {
+			// TODO: add isParameterPack() for ICPPASTParameterDeclaration
+			parameterDeclaration.getDeclSpecifier().accept(this);
 			IConstructor declSpecifier = stack.pop();
-			if (declaration.getDeclarator() == null)
+			if (parameterDeclaration.getDeclarator() == null)
 				stack.push(builder.Declaration_parameter(declSpecifier, loc, isMacroExpansion));
 			else {
-				declaration.getDeclarator().accept(this);
+				parameterDeclaration.getDeclarator().accept(this);
 				stack.push(builder.Declaration_parameter(declSpecifier, stack.pop(), loc, isMacroExpansion));
 			}
 		} else {
-			throw new RuntimeException("NYI: C ParameterDeclaration at " + loc);
+			throw new RuntimeException("NYI: ParameterDeclaration at " + loc);
 		}
 		return PROCESS_ABORT;
 	}
