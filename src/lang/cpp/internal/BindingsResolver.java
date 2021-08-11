@@ -130,11 +130,11 @@ public class BindingsResolver {
 	}
 
 	private void out(String msg) {
-		stdOut.println(spaces() + msg.replace("\n", "\n" + spaces()));
+//		stdOut.println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
 
 	private void err(String msg) {
-		stdErr.println(spaces() + msg.replace("\n", "\n" + spaces()));
+//		stdErr.println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
 
 	public BindingsResolver(IValueFactory vf, PrintWriter stdOut, PrintWriter stdErr) {
