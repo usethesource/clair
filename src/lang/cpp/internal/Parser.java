@@ -344,6 +344,33 @@ public class Parser extends ASTVisitor {
 		return result;
 	}
 
+	public ITuple parseCToM3AndAst(ISourceLocation file, IList stdLib, IList includeDirs, IMap additionalMacros,
+			IBool includeStdLib) {
+		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
+		this.stdLib = stdLib;
+
+		IValue m3 = builder.M3_m3(file);
+		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, stdLib, includeDirs, additionalMacros,
+				includeStdLib.getValue());
+		IASTTranslationUnit tu = parser.parseFileAsC(file);
+		IList comments = getCommentsFromTranslationUnit(tu);
+		ISet macroExpansions = getMacroExpansionsFromTranslationUnit(tu);
+		ISet macroDefinitions = getMacroDefinitionsFromTranslationUnit(tu);
+		ISet methodOverrides = getMethodOverrides(tu);
+
+		m3 = m3.asWithKeywordParameters().setParameter("comments", comments);
+		m3 = m3.asWithKeywordParameters().setParameter("macroExpansions", macroExpansions);
+		m3 = m3.asWithKeywordParameters().setParameter("macroDefinitions", macroDefinitions);
+		m3 = m3.asWithKeywordParameters().setParameter("methodOverrides", methodOverrides);
+		m3 = setM3IncludeInformationFromTranslationUnit(tu, m3);
+
+		declaredType = vf.setWriter();
+		IValue result = convertCdtToRascal(tu, true);
+		m3 = m3.asWithKeywordParameters().setParameter("declaredType", declaredType.done());
+
+		return vf.tuple(m3, result);
+	}
+
 	public ITuple parseCppToM3AndAst(ISourceLocation file, IList stdLib, IList includeDirs, IMap additionalMacros,
 			IBool includeStdLib) {
 		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
