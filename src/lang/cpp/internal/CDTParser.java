@@ -250,7 +250,7 @@ public class CDTParser {
 				return found;
 			}
 		}
-//		stdErr.println("Include " + include + " for " + currentFile + " not found");
+		stdErr.println("Include " + include + " for " + currentFile + " not found");
 		stdErr.flush();
 		return null;// TODO: restore exception here
 	}
