@@ -40,6 +40,8 @@ import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemType;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -418,6 +420,9 @@ public class BindingsResolver {
 		// ICPPBasicType, CPPPointerType, ICPPReferenceType, CPPQualifierType
 		if (type instanceof ICPPBinding) // ITypedef
 			return ASTTypeUtil.getQualifiedName((ICPPBinding) type);
+		if (type instanceof IProblemType
+				&& ((IProblemType) type).getID() == ISemanticProblem.BINDING_KNR_PARAMETER_DECLARATION_NOT_FOUND)
+			return "$undeclaredKnRParameter";
 		return type.toString().replace(" ", ".");
 	}
 
