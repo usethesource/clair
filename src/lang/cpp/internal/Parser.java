@@ -667,6 +667,8 @@ public class Parser extends ASTVisitor {
 				modifiers.append(builder.Modifier_volatile(getTokenSourceLocation(node, "volatile"), isMacroExpansion));
 			if (((ICASTArrayModifier) node).isRestrict())
 				modifiers.append(builder.Modifier_restrict(getTokenSourceLocation(node, "restrict"), isMacroExpansion));
+			if (((ICASTArrayModifier) node).isConst())
+				modifiers.append(builder.Modifier_const(getTokenSourceLocation(node, "const"), isMacroExpansion));
 		} else if (node instanceof ICPPASTFunctionDeclarator) {
 			if (((ICPPASTFunctionDeclarator) node).isConst())
 				modifiers.append(builder.Modifier_const(getTokenSourceLocation(node, "const"), isMacroExpansion));
