@@ -32,6 +32,7 @@ public data M3(
   rel[loc directive, loc resolved] includeResolution = {},
   rel[loc decl, TypeSymbol typ] declaredType = {},
   rel[loc decl, loc visiblity] memberAccessModifiers = {},
+  rel[loc decl, loc src] functionDefinitions = {},
   list[loc] comments = []
 );
 

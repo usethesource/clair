@@ -254,6 +254,7 @@ public class Parser extends ASTVisitor {
 	private IList stdLib;
 
 	private ISetWriter declaredType;
+	private ISetWriter functionDefinitions;
 
 	public Parser(IValueFactory vf, IRascalValueFactory rvf, PrintWriter stdOut, PrintWriter stdErr, TypeStore ts,
 			IRascalMonitor monitor) {
@@ -273,6 +274,7 @@ public class Parser extends ASTVisitor {
 		this.br = new BindingsResolver(vf, stdOut, stdErr);
 		this.tr = new TypeResolver(builder, br, vf, stdOut, stdErr);
 		this.declaredType = vf.setWriter();
+		this.functionDefinitions = vf.setWriter();
 	}
 
 	public IList parseFiles(IList files, IList stdLib, IList includeDirs, IMap additionalMacros, IBool includeStdLib) {
@@ -365,8 +367,10 @@ public class Parser extends ASTVisitor {
 		m3 = setM3IncludeInformationFromTranslationUnit(tu, m3);
 
 		declaredType = vf.setWriter();
+		functionDefinitions = vf.setWriter();
 		IValue result = convertCdtToRascal(tu, true);
 		m3 = m3.asWithKeywordParameters().setParameter("declaredType", declaredType.done());
+		m3 = m3.asWithKeywordParameters().setParameter("functionDefinitions", functionDefinitions.done());
 
 		return vf.tuple(m3, result);
 	}
@@ -392,8 +396,10 @@ public class Parser extends ASTVisitor {
 		m3 = setM3IncludeInformationFromTranslationUnit(tu, m3);
 
 		declaredType = vf.setWriter();
+		functionDefinitions = vf.setWriter();
 		IValue result = convertCdtToRascal(tu, true);
 		m3 = m3.asWithKeywordParameters().setParameter("declaredType", declaredType.done());
+		m3 = m3.asWithKeywordParameters().setParameter("functionDefinition", functionDefinitions.done());
 
 		return vf.tuple(m3, result);
 	}
@@ -481,6 +487,11 @@ public class Parser extends ASTVisitor {
 	private void addDeclaredType(ISourceLocation decl, IConstructor typ) {
 		if (toM3)
 			declaredType.insert(vf.tuple(decl, typ));
+	}
+
+	private void addFunctionDefinition(ISourceLocation decl, ISourceLocation loc) {
+		if (toM3)
+			functionDefinitions.insert(vf.tuple(decl, loc));
 	}
 
 	public ISet parseForMacros(ISourceLocation file, IList includePath, IMap additionalMacros) {
@@ -1084,7 +1095,6 @@ public class Parser extends ASTVisitor {
 				stack.push(builder.Declaration_functionDefinition(declSpecifier, declarator, memberInitializers.done(),
 						stack.pop(), attributes, loc, isMacroExpansion));
 			}
-			addDeclaredType(br.resolveBinding(definition.getDeclarator()), tr.resolveType(definition.getDeclarator()));
 		} else { // C Function definition
 			// TODO: add separate AST entry and remove fixed empty memberinitializers and
 			// attributes
@@ -1096,8 +1106,9 @@ public class Parser extends ASTVisitor {
 			definition.getBody().accept(this);
 			stack.push(builder.Declaration_functionDefinition(declSpecifier, declarator, vf.listWriter().done(),
 					stack.pop(), vf.listWriter().done(), loc, isMacroExpansion));
-			addDeclaredType(br.resolveBinding(definition.getDeclarator()), tr.resolveType(definition.getDeclarator()));
 		}
+		addDeclaredType(br.resolveBinding(definition.getDeclarator()), tr.resolveType(definition.getDeclarator()));
+		addFunctionDefinition(br.resolveBinding(definition.getDeclarator()), loc);
 		return PROCESS_ABORT;
 	}
 
