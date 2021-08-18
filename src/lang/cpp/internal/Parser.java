@@ -273,8 +273,16 @@ public class Parser extends ASTVisitor {
 		this.builder = new AST(vf);
 		this.br = new BindingsResolver(vf, stdOut, stdErr);
 		this.tr = new TypeResolver(builder, br, vf, stdOut, stdErr);
-		this.declaredType = vf.setWriter();
-		this.functionDefinitions = vf.setWriter();
+
+		reset();
+	}
+
+	private void reset() {
+		toM3 = false;
+		includeStdLib = false;
+		stdLib = vf.listWriter().done();
+		declaredType = vf.setWriter();
+		functionDefinitions = vf.setWriter();
 	}
 
 	public IList parseFiles(IList files, IList stdLib, IList includeDirs, IMap additionalMacros, IBool includeStdLib) {
@@ -298,6 +306,7 @@ public class Parser extends ASTVisitor {
 		Instant done = Instant.now();
 		out("Parsing and marshalling " + files.size() + " files took "
 				+ new Double(Duration.between(begin, done).toMillis()).doubleValue() / 1000 + "seconds");
+		reset();
 		return asts.done();
 	}
 
@@ -317,6 +326,7 @@ public class Parser extends ASTVisitor {
 //		Instant done = Instant.now();
 //		out("Marshalling took " + new Double(Duration.between(between, done).toMillis()).doubleValue() / 1000
 //				+ "seconds");
+		reset();
 		if (result == null) {
 			throw RuntimeExceptionFactory.parseError(file, null, null);
 		}
@@ -340,6 +350,7 @@ public class Parser extends ASTVisitor {
 		Instant done = Instant.now();
 		out("Marshalling took " + new Double(Duration.between(between, done).toMillis()).doubleValue() / 1000
 				+ "seconds");
+		reset();
 		if (result == null) {
 			throw RuntimeExceptionFactory.parseError(file, null, null);
 		}
@@ -372,6 +383,7 @@ public class Parser extends ASTVisitor {
 		m3 = m3.asWithKeywordParameters().setParameter("declaredType", declaredType.done());
 		m3 = m3.asWithKeywordParameters().setParameter("functionDefinitions", functionDefinitions.done());
 
+		reset();
 		return vf.tuple(m3, result);
 	}
 
@@ -401,6 +413,7 @@ public class Parser extends ASTVisitor {
 		m3 = m3.asWithKeywordParameters().setParameter("declaredType", declaredType.done());
 		m3 = m3.asWithKeywordParameters().setParameter("functionDefinition", functionDefinitions.done());
 
+		reset();
 		return vf.tuple(m3, result);
 	}
 
@@ -440,6 +453,7 @@ public class Parser extends ASTVisitor {
 		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, vf.listWriter().done(), includePath,
 				additionalMacros, true);
 		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
+		reset();
 		return getCommentsFromTranslationUnit(tu);
 	}
 
@@ -504,11 +518,12 @@ public class Parser extends ASTVisitor {
 		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, vf.listWriter().done(), includePath,
 				additionalMacros, true);
 		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
+		reset();
 		return getMacroExpansionsFromTranslationUnit(tu);
 	}
 
 	public IValue parseString(IString code) throws CoreException {
-		return parseString(code, null/* , ctx */);
+		return parseString(code, null);
 	}
 
 	public IValue parseString(IString code, ISourceLocation loc) throws CoreException {
@@ -519,7 +534,9 @@ public class Parser extends ASTVisitor {
 		int options = ILanguage.OPTION_PARSE_INACTIVE_CODE;
 		IParserLogService log = new DefaultLogService();
 		IASTTranslationUnit tu = GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, null, options, log);
-		return convertCdtToRascal(tu, false);
+		IValue result = convertCdtToRascal(tu, false);
+		reset();
+		return result;
 	}
 
 	public IValue convertCdtToRascal(IASTTranslationUnit translationUnit, boolean toM3) {
@@ -574,7 +591,6 @@ public class Parser extends ASTVisitor {
 					astFileLocation.getNodeLength());
 		}
 		return vf.sourceLocation(URIUtil.rootLocation("unknown"), 0, 0);
-//		return vf.sourceLocation(URIUtil.assumeCorrect("unknown:///", "", ""));
 	}
 
 	public ISourceLocation getTokenSourceLocation(IASTNode node, String literal) {
