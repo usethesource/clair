@@ -418,6 +418,7 @@ public class BindingsResolver {
 
 	private String printType(IType type) {
 		// ICPPBasicType, CPPPointerType, ICPPReferenceType, CPPQualifierType
+		// TODO: fix typedefs
 		if (type instanceof ICPPBinding) // ITypedef
 			return ASTTypeUtil.getQualifiedName((ICPPBinding) type);
 		if (type instanceof IProblemType
