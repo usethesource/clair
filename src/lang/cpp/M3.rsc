@@ -134,6 +134,11 @@ rel[loc, loc] makeEntry(Declaration declaration, loc current) {
   }
 }
 
+M3 createM3FromCFile(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false) {
+  tuple[M3,Declaration] m3AndAst = parseCToM3AndAst(file, stdLib = stdLib, includeDirs = includeDirs, additionalMacros = additionalMacros, includeStdLib = includeStdLib);
+  return javaAstToM3(m3AndAst<1>, model = m3AndAst<0>);
+}
+
 M3 createM3FromCppFile(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false) {
   tuple[M3,Declaration] m3AndAst = parseCppToM3AndAst(file, stdLib = stdLib, includeDirs = includeDirs, additionalMacros = additionalMacros, includeStdLib = includeStdLib);
   return javaAstToM3(m3AndAst<1>, model = m3AndAst<0>);
