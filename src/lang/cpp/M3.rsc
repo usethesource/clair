@@ -16,6 +16,7 @@ extend analysis::m3::Core;
 
 import IO;
 import Node;
+import String;
 import lang::cpp::AST;
 import lang::cpp::TypeSymbol;
 
@@ -33,7 +34,15 @@ public data M3(
   rel[loc decl, TypeSymbol typ] declaredType = {},
   rel[loc decl, loc visiblity] memberAccessModifiers = {},
   rel[loc decl, loc src] functionDefinitions = {},
-  list[loc] comments = []
+  rel[loc decl, loc src] cFunctionsToNoArgs = {},
+  rel[loc decl, loc impl] declarationToDefinition = {},
+  rel[loc directive, loc file] unresolvedIncludes = {},
+  list[loc] comments = [],
+  
+  rel[loc includer, loc includee] requires = {},
+  rel[loc provider, loc providee] provides = {},
+  rel[loc decl, loc file] partOf = {},
+  rel[loc caller, loc callee] callGraph = {}
 );
 
 /* methodInvocations: functionName is bracketed, !functionName.expression.decl?, !(getName(functionName.expression) in {"pmArrow","pmDot","star"}) : empty
@@ -54,8 +63,27 @@ M3 javaAstToM3(Declaration tu, M3 model = m3(tu.src.top)) {
       functionName is bracketed, functionName.expression.decl?}
     ;
   model.memberAccessModifiers = deriveAccessModifiers(tu);
+  model.declarationToDefinition = model.declarations<1,0> o model.functionDefinitions;
+  model.cFunctionsToNoArgs = {<function, loseCArgs(function)> | function <- model.functionDefinitions<0>};
+  
+  model.requires = {<model.id, pretty(resolved)> | resolved <- model.includeResolution<1>};
+  model.provides = {<definition.top, declaration.top> | <declaration, definition> <- model.declarationToDefinition};
+  model.partOf = {<function, model.id> | <function,_> <- model.functionDefinitions};
+  model.callGraph = extractCallGraph(tu);
+  
   return model;
 }
+
+rel[loc caller, loc callee] extractCallGraph(Declaration ast) = extractCallGraph({ast});
+rel[loc caller, loc callee] extractCallGraph(set[Declaration] asts)
+  = { <caller.declarator.decl, c.decl> | ast <- asts, /Declaration caller := ast, caller has declarator, /Expression c := caller, c has decl,
+      c.decl.scheme notin {"cpp+class", "cpp+enumerator", "cpp+field", "cpp+parameter", "cpp+typedef", "cpp+variable", "c+variable"} };		//Over-approximation
+
+loc pretty(loc subject) = |<subject.scheme>://<pretty(subject.path)>|;
+str pretty(str path) = replaceAll(path, "\\", "/");
+
+loc loseCArgs(loc subject) = subject.scheme=="c+function"?|c+function://<loseCArgs(subject.path)>|:subject;
+str loseCArgs(str path) = "<path[..findFirst(path,"(")]>()";
 
 rel[loc, loc] deriveAccessModifiers(Declaration tu) {
   result = {};
