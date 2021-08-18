@@ -12,7 +12,9 @@
  */
 package lang.cpp.internal;
 
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.net.URISyntaxException;
 
 import org.apache.commons.lang.StringUtils;
@@ -23,12 +25,14 @@ import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -114,6 +118,9 @@ import org.rascalmpl.uri.URIUtil;
 
 import io.usethesource.vallang.ISourceLocation;
 import io.usethesource.vallang.IValueFactory;
+import io.usethesource.vallang.exceptions.FactParseError;
+import io.usethesource.vallang.exceptions.FactTypeUseException;
+import io.usethesource.vallang.io.StandardTextReader;
 
 @SuppressWarnings("restriction")
 public class BindingsResolver {
@@ -427,15 +434,49 @@ public class BindingsResolver {
 		return type.toString().replace(" ", ".");
 	}
 
+	public ISourceLocation getSourceLocation(IASTNode node) {
+		IASTFileLocation astFileLocation = node.getFileLocation();
+
+		if (astFileLocation != null) {
+			String fileName = astFileLocation.getFileName();
+			fileName = fileName.replace('\\', '/');
+			try {
+				return vf.sourceLocation(
+						(ISourceLocation) new StandardTextReader().read(vf, new StringReader(fileName)),
+						astFileLocation.getNodeOffset(), astFileLocation.getNodeLength());
+			} catch (FactParseError | FactTypeUseException | IOException e) {
+			}
+			if (!fileName.startsWith("/")) {
+				fileName = "/" + fileName;
+			}
+			try {
+				return vf.sourceLocation(
+						(ISourceLocation) new StandardTextReader().read(vf, new StringReader(fileName)),
+						astFileLocation.getNodeOffset(), astFileLocation.getNodeLength());
+			} catch (FactParseError | FactTypeUseException | IOException e) {
+			}
+			return vf.sourceLocation(vf.sourceLocation(fileName), astFileLocation.getNodeOffset(),
+					astFileLocation.getNodeLength());
+		}
+		return vf.sourceLocation(URIUtil.rootLocation("unknown"), 0, 0);
+//		return vf.sourceLocation(URIUtil.assumeCorrect("unknown:///", "", ""));
+	}
+
 	private ISourceLocation resolveCFunction(CFunction binding) throws URISyntaxException {
 		String scheme = "c+function";
 		StringBuilder parameters = new StringBuilder("(");
-		for (IParameter parameter : binding.getParameters()) {
-			if (parameters.length() > 1)
-				parameters.append(',');
-			parameters.append(printType(parameter.getType()));
+		try {
+			for (IParameter parameter : binding.getParameters()) {// getParameters can throw ClassCastException
+				if (parameters.length() > 1)
+					parameters.append(',');
+				parameters.append(printType(parameter.getType()));
+			}
+			parameters.append(')');
+		} catch (ClassCastException e) {
+			stdErr.println("Encountered ClassCastException in CDT for binding " + binding.getName() + " in "
+					+ getSourceLocation(binding.getDeclarations()[0]));
+			parameters = new StringBuilder("($$internalError)");
 		}
-		parameters.append(')');
 
 		ISourceLocation decl = URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()),
 				scheme);
