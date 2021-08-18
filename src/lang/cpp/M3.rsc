@@ -154,3 +154,32 @@ java tuple[M3, Declaration] parseCppToM3AndAst(loc file, list[loc] stdLib = clas
 
 @javaClass{lang.cpp.internal.Parser}
 java tuple[M3, Declaration] parseCToM3AndAst(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false);
+
+M3 composeCppM3(loc id, set[M3] models) {
+  M3 comp = composeM3(id, models); 
+  
+  comp.extends = {*model.extends | model <- models};
+  comp.methodInvocations = {*model.methodInvocations | model <- models};
+  comp.fieldAccess = {*model.fieldAccess | model <- models};
+  comp.typeDependency = {*model.typeDependency | model <- models};
+  comp.methodOverrides = {*model.methodOverrides | model <- models};
+  comp.macroExpansions = {*model.macroExpansions | model <- models};
+  comp.macroDefinitions = {*model.macroDefinitions | model <- models};
+  comp.includeDirectives = {*model.includeDirectives | model <- models};
+  comp.inactiveIncludes = {*model.inactiveIncludes | model <- models};
+  comp.includeResolution = {*model.includeResolution | model <- models};
+  comp.memberAccessModifiers = {*model.memberAccessModifiers | model <- models};
+  comp.declaredType = {*model.declaredType | model <- models};
+  comp.functionDefinitions = {*model.functionDefinitions | model <- models};
+  comp.cFunctionsToNoArgs = {*model.cFunctionsToNoArgs | model <- models};
+  comp.declarationToDefinition = {*model.declarationToDefinition | model <- models};
+  comp.unresolvedIncludes = {*model.unresolvedIncludes | model <- models};
+  comp.comments = [*model.comments | model <- models];
+
+  comp.requires = {*model.requires | model <- models};
+  comp.provides = {*model.provides | model <- models};
+  comp.partOf = {*model.partOf | model <- models};
+  comp.callGraph = {*model.callGraph | model <- models};
+  
+  return comp;
+}
