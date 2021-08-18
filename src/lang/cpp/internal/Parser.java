@@ -447,6 +447,7 @@ public class Parser extends ASTVisitor {
 		ISetWriter includeDirectives = vf.setWriter();
 		ISetWriter inactiveIncludes = vf.setWriter();
 		ISetWriter includeResolution = vf.setWriter();
+		ISetWriter unresolvedIncludes = vf.setWriter();
 		Stream.of(tu.getIncludeDirectives()).forEach(it -> {
 			ISourceLocation include = vf.sourceLocation(URIUtil.rootScheme("unknown"));
 			try {
@@ -455,18 +456,23 @@ public class Parser extends ASTVisitor {
 			} catch (URISyntaxException e) {
 				// Shouldn't happen
 			}
-			if (it.isActive())
+			if (it.isActive()) {
+				if (!it.isResolved()) {
+					unresolvedIncludes.insert(vf.tuple(include, getSourceLocation(it)));
+				}
 				includeDirectives.insert(vf.tuple(include, getSourceLocation(it)));
-			else
+				ISourceLocation path = "" == it.getPath() ? vf.sourceLocation(URIUtil.rootScheme("unresolved"))
+						: vf.sourceLocation(it.getPath());
+				includeResolution.insert(vf.tuple(include, path));
+			} else {
 				inactiveIncludes.insert(vf.tuple(include, getSourceLocation(it)));
-			ISourceLocation path = "" == it.getPath() ? vf.sourceLocation(URIUtil.rootScheme("unresolved"))
-					: vf.sourceLocation(it.getPath());
-			includeResolution.insert(vf.tuple(include, path));
+			}
 		});
 
 		m3 = m3.asWithKeywordParameters().setParameter("includeDirectives", includeDirectives.done());
 		m3 = m3.asWithKeywordParameters().setParameter("inactiveIncludes", inactiveIncludes.done());
 		m3 = m3.asWithKeywordParameters().setParameter("includeResolution", includeResolution.done());
+		m3 = m3.asWithKeywordParameters().setParameter("unresolvedIncludes", unresolvedIncludes.done());
 		return m3;
 	}
 
