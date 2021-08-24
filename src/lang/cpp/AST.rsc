@@ -450,7 +450,7 @@ public map[str, list[loc]] classPaths = (
     );
 
 @javaClass{lang.cpp.internal.Parser}  
-java Declaration parseC(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false);
+java Declaration parseC(loc file, list[loc] stdLib = [], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false);
 
 @javaClass{lang.cpp.internal.Parser}  
 java Declaration parseCpp(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false);

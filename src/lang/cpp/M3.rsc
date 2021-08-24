@@ -134,7 +134,7 @@ rel[loc, loc] makeEntry(Declaration declaration, loc current) {
   }
 }
 
-M3 createM3FromCFile(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false) {
+M3 createM3FromCFile(loc file, list[loc] stdLib = [], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false) {
   tuple[M3,Declaration] m3AndAst = parseCToM3AndAst(file, stdLib = stdLib, includeDirs = includeDirs, additionalMacros = additionalMacros, includeStdLib = includeStdLib);
   return javaAstToM3(m3AndAst<1>, model = m3AndAst<0>);
 }
@@ -144,7 +144,7 @@ M3 createM3FromCppFile(loc file, list[loc] stdLib = classPaths["vs12"], list[loc
   return javaAstToM3(m3AndAst<1>, model = m3AndAst<0>);
 }
 
-tuple[M3, Declaration] createM3AndAstFromCFile(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false) {
+tuple[M3, Declaration] createM3AndAstFromCFile(loc file, list[loc] stdLib = [], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false) {
   tuple[M3,Declaration] m3AndAst = parseCToM3AndAst(file, stdLib = stdLib, includeDirs = includeDirs, additionalMacros = additionalMacros, includeStdLib = includeStdLib);
   return <javaAstToM3(m3AndAst<1>, model = m3AndAst<0>),m3AndAst<1>>;
 }
@@ -158,7 +158,7 @@ tuple[M3, Declaration] createM3AndAstFromCppFile(loc file, list[loc] stdLib = cl
 java tuple[M3, Declaration] parseCppToM3AndAst(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false);
 
 @javaClass{lang.cpp.internal.Parser}
-java tuple[M3, Declaration] parseCToM3AndAst(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false);
+java tuple[M3, Declaration] parseCToM3AndAst(loc file, list[loc] stdLib = [], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false);
 
 M3 composeCppM3(loc id, set[M3] models) {
   M3 comp = composeM3(id, models); 
