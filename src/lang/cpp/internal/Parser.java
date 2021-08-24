@@ -365,7 +365,15 @@ public class Parser extends ASTVisitor {
 		IValue m3 = builder.M3_m3(file);
 		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, stdLib, includeDirs, additionalMacros,
 				includeStdLib.getValue());
-		IASTTranslationUnit tu = parser.parseFileAsC(file);
+		IASTTranslationUnit tu = null;
+		try {
+			tu = parser.parseFileAsC(file);
+		} catch (ClassCastException e) {
+			// Encountered this in UNIX C files
+			IListWriter error = vf.listWriter();
+			error.append(builder.Declaration_problemDeclaration(URIUtil.rootLocation("ClassCastException"), false));
+			return vf.tuple(m3, builder.Declaration_translationUnit(error.done(), file, false));
+		}
 		IList comments = getCommentsFromTranslationUnit(tu);
 		ISet macroExpansions = getMacroExpansionsFromTranslationUnit(tu);
 		ISet macroDefinitions = getMacroDefinitionsFromTranslationUnit(tu);
