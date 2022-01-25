@@ -37,6 +37,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.rascalmpl.debug.IRascalMonitor;
 import org.rascalmpl.exceptions.RuntimeExceptionFactory;
 import org.rascalmpl.library.Prelude;
 import org.rascalmpl.values.IRascalValueFactory;
@@ -56,6 +57,7 @@ public class CDTParser {
 	private final PrintWriter stdOut;
 	private final PrintWriter stdErr;
 	private final TypeStore ts;
+	private final IRascalMonitor monitor;
 	private final IScannerInfo scannerInfo;
 	private final InternalFileContentProvider ifcp;
 	private final IIndex idx;
@@ -123,12 +125,13 @@ public class CDTParser {
 	}
 
 	public CDTParser(IValueFactory vf, IRascalValueFactory rvf, PrintWriter stdOut, PrintWriter stdErr, TypeStore ts,
-			IList stdLib, IList includePath, IMap additionalMacros, boolean includeStdLib) {
+			IRascalMonitor monitor, IList stdLib, IList includePath, IMap additionalMacros, boolean includeStdLib) {
 		this.vf = vf;
 		this.rvf = rvf;
 		this.stdOut = stdOut;
 		this.stdErr = stdErr;
 		this.ts = ts;
+		this.monitor = monitor;
 
 		Map<String, String> macros = new HashMap<String, String>();
 		additionalMacros.stream().map(ITuple.class::cast).forEach(tuple -> macros
@@ -185,7 +188,7 @@ public class CDTParser {
 
 	public IASTTranslationUnit parseFileAsC(ISourceLocation file) {
 		FileContent fc = FileContent.create(file.toString(),
-				((IString) new Prelude(vf, rvf, stdOut, ts).readFile(file)).getValue().toCharArray());
+				((IString) new Prelude(vf, rvf, stdOut, ts, monitor).readFile(file)).getValue().toCharArray());
 
 		try {
 			return GCCLanguage.getDefault().getASTTranslationUnit(fc, scannerInfo, ifcp, idx, options, log);
@@ -196,7 +199,7 @@ public class CDTParser {
 
 	public IASTTranslationUnit parseFileAsCpp(ISourceLocation file) {
 		FileContent fc = FileContent.create(file.toString(),
-				((IString) new Prelude(vf, rvf, stdOut, ts).readFile(file)).getValue().toCharArray());
+				((IString) new Prelude(vf, rvf, stdOut, ts, monitor).readFile(file)).getValue().toCharArray());
 
 		try {
 			return GPPLanguage.getDefault().getASTTranslationUnit(fc, scannerInfo, ifcp, idx, options, log);

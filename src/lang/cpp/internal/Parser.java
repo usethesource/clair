@@ -289,13 +289,15 @@ public class Parser extends ASTVisitor {
 		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
 		this.stdLib = stdLib;
 
-		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, stdLib, includeDirs, additionalMacros,
+		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, monitor, stdLib, includeDirs, additionalMacros,
 				includeStdLib.getValue());
+		monitor.jobStart("CDT parseFiles");
 		Instant begin = Instant.now();
 		out("Beginning at " + begin.toString());
 		IListWriter asts = vf.listWriter();
 		for (IValue v : files) {
-			if (monitor.isCanceled()) {
+			if (monitor.jobIsCanceled("CDT parseFiles")) {
+				monitor.jobEnd("CDT parseFiles", false);
 				break;
 			}
 			ISourceLocation file = (ISourceLocation) v;
@@ -307,6 +309,7 @@ public class Parser extends ASTVisitor {
 		out("Parsing and marshalling " + files.size() + " files took "
 				+ new Double(Duration.between(begin, done).toMillis()).doubleValue() / 1000 + "seconds");
 		reset();
+		monitor.jobEnd("CDT parseFiles", true);
 		return asts.done();
 	}
 
@@ -317,7 +320,7 @@ public class Parser extends ASTVisitor {
 
 //		Instant begin = Instant.now();
 //		out("Beginning at " + begin.toString());
-		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, stdLib, includeDirs, additionalMacros,
+		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, monitor, stdLib, includeDirs, additionalMacros,
 				includeStdLib.getValue());
 		IASTTranslationUnit tu = parser.parseFileAsC(file);
 //		Instant between = Instant.now();
@@ -341,7 +344,7 @@ public class Parser extends ASTVisitor {
 
 		Instant begin = Instant.now();
 		out("Beginning at " + begin.toString());
-		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, stdLib, includeDirs, additionalMacros,
+		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, monitor, stdLib, includeDirs, additionalMacros,
 				includeStdLib.getValue());
 		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
 		Instant between = Instant.now();
@@ -363,7 +366,7 @@ public class Parser extends ASTVisitor {
 		this.stdLib = stdLib;
 
 		IValue m3 = builder.M3_m3(file);
-		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, stdLib, includeDirs, additionalMacros,
+		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, monitor, stdLib, includeDirs, additionalMacros,
 				includeStdLib.getValue());
 		IASTTranslationUnit tu = null;
 		try {
@@ -401,7 +404,7 @@ public class Parser extends ASTVisitor {
 		this.stdLib = stdLib;
 
 		IValue m3 = builder.M3_m3(file);
-		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, stdLib, includeDirs, additionalMacros,
+		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, monitor, stdLib, includeDirs, additionalMacros,
 				includeStdLib.getValue());
 		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
 		IList comments = getCommentsFromTranslationUnit(tu);
@@ -458,7 +461,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public IList parseForComments(ISourceLocation file, IList includePath, IMap additionalMacros) {
-		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, vf.listWriter().done(), includePath,
+		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, monitor, vf.listWriter().done(), includePath,
 				additionalMacros, true);
 		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
 		reset();
@@ -523,7 +526,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public ISet parseForMacros(ISourceLocation file, IList includePath, IMap additionalMacros) {
-		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, vf.listWriter().done(), includePath,
+		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, monitor, vf.listWriter().done(), includePath,
 				additionalMacros, true);
 		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
 		reset();
@@ -754,10 +757,13 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(tu);
 		boolean isMacroExpansion = isMacroExpansion(tu);
 		IListWriter declarations = vf.listWriter();
+		monitor.jobStart("ClaiR AST marshalling");
 		declLoop: for (IASTDeclaration declaration : tu.getDeclarations()) {
-			if (monitor.isCanceled() || monitor instanceof Evaluator && ((Evaluator) monitor).isInterrupted()) {
+			if (monitor.jobIsCanceled("ClaiR AST marshalling")
+					|| monitor instanceof Evaluator && ((Evaluator) monitor).isInterrupted()) {
 				declarations.append(builder.Declaration_problemDeclaration(
 						vf.sourceLocation(URIUtil.assumeCorrect("interrupted:///")), isMacroExpansion));
+				monitor.jobEnd("ClaiR AST marshalling", false);
 				break;
 			}
 			ISourceLocation declLoc = getSourceLocation(declaration);
@@ -775,6 +781,7 @@ public class Parser extends ASTVisitor {
 
 		IConstructor translationUnit = builder.Declaration_translationUnit(declarations.done(), loc, isMacroExpansion);
 		stack.push(translationUnit);
+		monitor.jobEnd("ClaiR AST marshalling", true);
 		return PROCESS_ABORT;
 	}
 
