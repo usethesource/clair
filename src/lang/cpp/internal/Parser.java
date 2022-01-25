@@ -291,13 +291,13 @@ public class Parser extends ASTVisitor {
 
 		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, monitor, stdLib, includeDirs, additionalMacros,
 				includeStdLib.getValue());
-		monitor.jobStart("CDT parseFiles");
+		monitor.jobStart("ClaiR parseFiles");
 		Instant begin = Instant.now();
 		out("Beginning at " + begin.toString());
 		IListWriter asts = vf.listWriter();
 		for (IValue v : files) {
-			if (monitor.jobIsCanceled("CDT parseFiles")) {
-				monitor.jobEnd("CDT parseFiles", false);
+			if (monitor.jobIsCanceled("ClaiR parseFiles")) {
+				monitor.jobEnd("ClaiR parseFiles", false);
 				break;
 			}
 			ISourceLocation file = (ISourceLocation) v;
@@ -309,7 +309,7 @@ public class Parser extends ASTVisitor {
 		out("Parsing and marshalling " + files.size() + " files took "
 				+ new Double(Duration.between(begin, done).toMillis()).doubleValue() / 1000 + "seconds");
 		reset();
-		monitor.jobEnd("CDT parseFiles", true);
+		monitor.jobEnd("ClaiR parseFiles", true);
 		return asts.done();
 	}
 
