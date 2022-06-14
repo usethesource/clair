@@ -13,6 +13,15 @@ ClaiR provides a mapping from the Eclipse CDT open C and C++ front-end to a Rasc
 * Use <https://update.rascal-mpl.org/libs> as an update site. Hit `Add` to save it for future updates.
 * Select `clair_feature` in the list of libraries and follow the instructions.
 
+## How to make a project depend on ClaiR
+
+To make your own Rascal project be able to use ClaiR you have to add it as a dependency to an Eclipse project:
+
+* In `META-INF/MANIFEST.MF` add `Require-Bundle: rascal_eclipse, clair`
+* In `META-INF/RASCAL.MF` add `Require-Libraries: |lib://clair|`
+
+A Clair "jar" will appear in the Rascal Explorer View as a library next to the other standard libraries of Rascal.
+
 ## How to run
 * In Eclipse's Project Explorer, right click a project's folder and select *Rascal Console*. The console should open inside Eclipse's terminal window with the title "Rascal [**project: <Project Name>**, mode: debug]". If, instead, it shows "project: none", make sure you clicked the project and the project is actually open.
 * Import ClaiR into the console by running `import lang::cpp::AST;`.
