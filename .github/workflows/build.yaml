@@ -1,4 +1,4 @@
-name: Build and Deploy Flybytes
+name: Build and Deploy ClaiR
 on:
   push:
     branches:
