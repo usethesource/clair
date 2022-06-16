@@ -21,12 +21,7 @@
     <repository>
       <id>releases</id>
       <name>usethesource.io releases</name>
-      <url>https://nexus.usethesource.io/content/repositories/releases/</url>
-    </repository>
-    <repository>
-      <id>snapshots</id>
-      <name>usethesource.io releases</name>
-      <url>https://nexus.usethesource.io/content/repositories/snapshots/</url>
+      <url>https://releases.usethesource.io/maven</url>
     </repository>
   </repositories>  
 	
