@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>io.usethesource</groupId>
 		<artifactId>pom_parent</artifactId>
-		<version>0.5.0</version>
+		<version>0.6.0</version>
 	</parent>
 
 	<artifactId>clair</artifactId>
@@ -17,54 +17,64 @@
 		<developerConnection>scm:git:https://github.com/cwi-swat/clair.git</developerConnection>			
 	</scm>
 
-  <repositories>  
-    <repository>
-      <id>releases</id>
-      <name>usethesource.io releases</name>
-      <url>https://releases.usethesource.io/maven</url>
-    </repository>
-  </repositories>  
+        <repositories>
+            <!--to find the pom-parent-->
+            <repository>
+                <id>releases</id>
+                <name>usethesource.io releases</name>
+                <url>https://releases.usethesource.io/maven</url>
+            </repository>
+        </repositories>
 	
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.rascalmpl</groupId>
-				<artifactId>rascal-maven-plugin</artifactId>
-				<version>0.2.17</version>
-				<configuration>
-					<errorsAsWarnings>false</errorsAsWarnings>
-					<bin>${project.build.outputDirectory}</bin>
-					<srcs>
-						<src>${project.basedir}/src</src>
-					</srcs>
-					<sourceLookup>|lib://clair/|</sourceLookup>
-					<srcIgnores>
-						<ignore>${project.basedir}/src/lang/cpp/SConcrete.rsc</ignore>
-						<ignore>${project.basedir}/src/lang/cpp/ST.rsc</ignore>
-						<ignore>${project.basedir}/src/lang/cpp/Test.rsc</ignore>
-						<ignore>${project.basedir}/src/lang/cpp/IDE.rsc</ignore>
-						<ignore>${project.basedir}/src/SLEPaper.rsc</ignore>
-						<ignore>${project.basedir}/src/test</ignore>
-					</srcIgnores>
-					<enableStandardLibrary>true</enableStandardLibrary>
-				</configuration>
-				<executions>
-					<execution>
-						<id>it-compile</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>it-package</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>package</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-</project>
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.0</version>
+                    <configuration>
+                        <compilerArgument>-parameters</compilerArgument> <!-- make sure parameters are compiled by name into the jar -->
+                        <release>11</release>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.rascalmpl</groupId>
+                    <artifactId>rascal-maven-plugin</artifactId>
+                    <version>0.2.17</version>
+                    <configuration>
+                        <errorsAsWarnings>false</errorsAsWarnings>
+                        <bin>${project.build.outputDirectory}</bin>
+                        <srcs>
+                            <src>${project.basedir}/src</src>
+                        </srcs>
+                        <sourceLookup>|lib://clair/|</sourceLookup>
+                        <srcIgnores>
+                            <ignore>${project.basedir}/src/lang/cpp/SConcrete.rsc</ignore>
+                            <ignore>${project.basedir}/src/lang/cpp/ST.rsc</ignore>
+                            <ignore>${project.basedir}/src/lang/cpp/Test.rsc</ignore>
+                            <ignore>${project.basedir}/src/lang/cpp/IDE.rsc</ignore>
+                            <ignore>${project.basedir}/src/SLEPaper.rsc</ignore>
+                            <ignore>${project.basedir}/src/test</ignore>
+                        </srcIgnores>
+                        <enableStandardLibrary>true</enableStandardLibrary>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>it-compile</id>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>it-package</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>package</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </build>
+    </project>
