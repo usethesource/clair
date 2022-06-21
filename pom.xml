@@ -17,6 +17,14 @@
 		<developerConnection>scm:git:https://github.com/cwi-swat/clair.git</developerConnection>			
 	</scm>
 
+        <repositories>
+            <!--to find the pom-parent-->
+            <repository>
+                <id>releases</id>
+                <name>usethesource.io releases</name>
+                <url>https://releases.usethesource.io/maven</url>
+            </repository>
+        </repositories>
 	
         <build>
             <plugins>
