@@ -7,9 +7,8 @@ ClaiR provides a mapping from the Eclipse CDT open C and C++ front-end to a Rasc
 ## Required software
 * Eclipse 2019-06 with CDT (C/C++ Development Tools) (see [here](https://www.eclipse.org/downloads/packages/release/2019-06/r/eclipse-ide-cc-developers)).
 * Rascal (you need an older version until we fix #27 and #30):
-   * download the Rascal update site 0.19.x: https://releases.usethesource.io/maven/org/rascalmpl/rascal-update-site/0.19.0/
-   * add it as a local archive to eclipe
-   * install the Rascal plugin from the local archive
+   * add the Rascal update site 0.19.x: https://update.rascal-mpl.org/archive/0.19.0/
+   * install the Rascal plugin from that site
 
 ## How to install ClaiR into Eclipse
 * In the `Help` menu, select `Install New Software`.
