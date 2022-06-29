@@ -1,4 +1,4 @@
-name: Build and Deploy ClaiR
+name: Build and Deploy 
 on:
   push:
     branches:
@@ -26,9 +26,6 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-
-      - name: Test with Maven
-        run: mvn -B --update-snapshots compile test
 
       - name: Attach artifact
         id: build-artifact
