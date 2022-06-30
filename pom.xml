@@ -27,6 +27,24 @@
         </repositories>
 	
         <build>
+            <resources>
+                <resource>
+                    <directory>src</directory>
+                    <excludes>
+                        <exclude>**/*.java</exclude>
+                        <exclude>**/*.class</exclude>
+                    </excludes>
+                </resource>
+                <resource>
+                    <directory>.</directory>
+                    <filtering>false</filtering>
+                    <includes>
+                        <include>META-INF/RASCAL.MF</include>
+                        <include>src/**/*.rsc</include>
+                    </includes>
+                </resource>
+            </resources>
+
             <sourceDirectory>src</sourceDirectory>
             <plugins>
                 <plugin>
