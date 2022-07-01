@@ -232,7 +232,7 @@ str type2FactoryCall(Symbol t){
       case \num() : return "double";
       case \bool() : return "boolean";
       case \str() :  return "String";
-      case \label(_, x) : return typeToSimpleJavaType(x);
+      case Symbol::\label(_, x) : return typeToSimpleJavaType(x);
       default : return typeToJavaType(t);
     }
   }
@@ -244,7 +244,7 @@ str type2FactoryCall(Symbol t){
       case \num() : return "<access> instanceof IInteger ? (double)((IInteger)<access>).intValue() : ((IReal)<access>).doubleValue()";
       case \bool() : return "((IBool)<access>).getValue()";
       case \str() :  return "((IString)<access>).getValue()";
-      case \label(_,x) : return javaResult(x, access);
+      case Symbol::\label(_,x) : return javaResult(x, access);
       default : return "(<typeToJavaType(t)>)<access>";
     }
   }
