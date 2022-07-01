@@ -14,6 +14,9 @@ You need Rascal, and Either Eclipse or VScode or the standalone Rascal jar:
    * Use the extension view in VScode to install Rascal
 * Or, Rascal commandline (see [here](https://www.rascal-mpl.org/start/))
 
+CAVEAT: currently both VScode and Eclipse Rascal releases have issues with Maven projects that
+depend on libraries such as clair. Please sit tight while we fix these.
+
 ## How to use ClaiR once you have Rascal installed:
 
 * Create an empty project "myproject" in a folder named "myproject"
@@ -26,8 +29,43 @@ You need Rascal, and Either Eclipse or VScode or the standalone Rascal jar:
     <version>0.3.0</version>
 </dependency>
 ```
+* And (optionally) add in `pom.xml` this to be able to run `mvn rascal:console` and the Rascal compiler:
+```
+<plugins>
+    <plugin>
+        <groupId>org.rascalmpl</groupId>
+        <artifactId>rascal-maven-plugin</artifactId>
+        <version>0.7.3</version>
+        <configuration>
+            <bin>${project.build.outputDirectory}</bin>
+            <srcs>
+                <src>${project.basedir}/src</src>
+            </srcs>
+        </configuration>
+        <executions>
+            <execution>
+                <id>rascal-compile</id>
+                <phase>compile</phase>
+                <goals>
+                    <goal>compile</goal>
+                </goals>
+            </execution>
+            <execution>
+                <id>rascal-package</id>
+                <phase>pre-package</phase>
+                <goals>
+                    <goal>package</goal>
+                </goals>
+            </execution>
+        </executions>
+    </plugin>
+</plugins>
+
+```
+* note to skip running the Rascal compiler: `mvn compile -Drascal.compile.skip`
 
 ## How to run
+* On the commandline, in your own project, run `mvn rascal:console`, or
 * In Eclipse's Project Explorer, right click a project's folder and select *Rascal Console*. The console should open inside Eclipse's terminal window with the title "Rascal [**project: <Project Name>**, mode: debug]". If, instead, it shows "project: none", make sure you clicked the project and the project is actually open.
 * Or in VScode start a Rascal terminal from the command pallette, or from the "Start Rascal Terminal" action in an Rascal editor.
 * Import ClaiR into the console by running `import lang::cpp::AST;`.
