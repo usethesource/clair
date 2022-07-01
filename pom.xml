@@ -2,31 +2,49 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>io.usethesource</groupId>
-		<artifactId>pom_parent</artifactId>
-		<version>0.6.0</version>
-	</parent>
-
 	<artifactId>clair</artifactId>
 	<groupId>org.rascalmpl</groupId>
-	<version>0.3.0-SNAPSHOT</version>
-	<packaging>eclipse-plugin</packaging>
+	<version>0.4.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	
 	<scm>
-		<developerConnection>scm:git:https://github.com/cwi-swat/clair.git</developerConnection>			
+            <developerConnection>scm:git:https://github.com/cwi-swat/clair.git</developerConnection>			
 	</scm>
 
         <repositories>
-            <!--to find the pom-parent-->
             <repository>
                 <id>releases</id>
                 <name>usethesource.io releases</name>
                 <url>https://releases.usethesource.io/maven</url>
             </repository>
         </repositories>
+        <pluginRepositories>
+            <pluginRepository>
+                <id>usethesource</id>
+                <url>https://releases.usethesource.io/maven/</url>
+            </pluginRepository>
+        </pluginRepositories>
 	
         <build>
+            <resources>
+                <resource>
+                    <directory>src</directory>
+                    <excludes>
+                        <exclude>**/*.java</exclude>
+                        <exclude>**/*.class</exclude>
+                    </excludes>
+                </resource>
+                <resource>
+                    <directory>.</directory>
+                    <filtering>false</filtering>
+                    <includes>
+                        <include>META-INF/RASCAL.MF</include>
+                        <include>src/**/*.rsc</include>
+                    </includes>
+                </resource>
+            </resources>
+
+            <sourceDirectory>src</sourceDirectory>
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -40,7 +58,7 @@
                 <plugin>
                     <groupId>org.rascalmpl</groupId>
                     <artifactId>rascal-maven-plugin</artifactId>
-                    <version>0.2.17</version>
+                    <version>0.8.2</version>
                     <configuration>
                         <errorsAsWarnings>false</errorsAsWarnings>
                         <bin>${project.build.outputDirectory}</bin>
@@ -77,4 +95,20 @@
                 </plugin>
             </plugins>
         </build>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>org.rascalmpl</groupId>
+            <artifactId>rascal</artifactId>
+            <version>0.23.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.rascalmpl</groupId>
+            <artifactId>rascal-cdt-repackaged</artifactId>
+            <version>0.2.0</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
     </project>
