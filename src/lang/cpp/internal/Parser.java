@@ -235,7 +235,6 @@ import io.usethesource.vallang.exceptions.FactTypeUseException;
 import io.usethesource.vallang.io.StandardTextReader;
 import io.usethesource.vallang.type.TypeStore;
 
-@SuppressWarnings("restriction")
 public class Parser extends ASTVisitor {
 	private final IValueFactory vf;
 	private final IRascalValueFactory rvf;
@@ -307,7 +306,7 @@ public class Parser extends ASTVisitor {
 		}
 		Instant done = Instant.now();
 		out("Parsing and marshalling " + files.size() + " files took "
-				+ new Double(Duration.between(begin, done).toMillis()).doubleValue() / 1000 + "seconds");
+				+ (Duration.between(begin, done).toMillis() * 1.0d) / 1000 + "seconds");
 		reset();
 		monitor.jobEnd("ClaiR parseFiles", true);
 		return asts.done();
@@ -348,10 +347,10 @@ public class Parser extends ASTVisitor {
 				includeStdLib.getValue());
 		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
 		Instant between = Instant.now();
-		out("CDT took " + new Double(Duration.between(begin, between).toMillis()).doubleValue() / 1000 + "seconds");
+		out("CDT took " + (Duration.between(begin, between).toMillis() * 1.0d) / 1000 + "seconds");
 		IValue result = convertCdtToRascal(tu, false);
 		Instant done = Instant.now();
-		out("Marshalling took " + new Double(Duration.between(between, done).toMillis()).doubleValue() / 1000
+		out("Marshalling took " + (Duration.between(between, done).toMillis() * 1.0d) / 1000
 				+ "seconds");
 		reset();
 		if (result == null) {
@@ -808,9 +807,6 @@ public class Parser extends ASTVisitor {
 
 	public int visit(IASTImplicitName name) {
 		err("IASTImplicitName " + name.getRawSignature());
-		boolean alternate = name.isAlternate();
-		boolean operator = name.isOperator();
-		IASTName _lastName = name.getLastName();
 		throw new RuntimeException("NYI at " + getSourceLocation(name));
 	}
 
@@ -1760,7 +1756,6 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(declSpec);
 		boolean isMacroExpansion = isMacroExpansion(declSpec);
 		ISourceLocation decl = br.resolveBinding(declSpec);
-		IConstructor typ = tr.resolveType(declSpec);
 		IList attributes = getAttributes(declSpec);
 		IList modifiers = getModifiers(declSpec);
 
@@ -1798,7 +1793,6 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(declSpec);
 		boolean isMacroExpansion = isMacroExpansion(declSpec);
 		ISourceLocation decl = br.resolveBinding(declSpec);
-		IConstructor typ = tr.resolveType(declSpec);
 		IList attributes = getAttributes(declSpec);
 		IList modifiers = getModifiers(declSpec);
 
@@ -1992,7 +1986,6 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(declSpec);
 		boolean isMacroExpansion = isMacroExpansion(declSpec);
 		ISourceLocation decl = br.resolveBinding(declSpec);
-		IConstructor typ = tr.resolveType(declSpec);
 		IList attributes = getAttributes(declSpec);
 		IList modifiers = getModifiers(declSpec);
 
@@ -2014,7 +2007,6 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(declSpec);
 		boolean isMacroExpansion = isMacroExpansion(declSpec);
 		ISourceLocation decl = br.resolveBinding(declSpec);
-		IConstructor typ = tr.resolveType(declSpec);
 		IList attributes = getAttributes(declSpec);
 		IList modifiers = getModifiers(declSpec);
 
@@ -2069,7 +2061,6 @@ public class Parser extends ASTVisitor {
 		// TODO: deduplicate with ICPPASTSimpleDeclSpecifier
 		ISourceLocation loc = getSourceLocation(declSpec);
 		boolean isMacroExpansion = isMacroExpansion(declSpec);
-		IConstructor typ = tr.resolveType(declSpec);
 		IList attributes = getAttributes(declSpec);
 		IList modifiers = getModifiers(declSpec);
 
@@ -2188,7 +2179,6 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTSimpleDeclSpecifier declSpec) {
 		ISourceLocation loc = getSourceLocation(declSpec);
 		boolean isMacroExpansion = isMacroExpansion(declSpec);
-		IConstructor typ = tr.resolveType(declSpec);
 		IList attributes = getAttributes(declSpec);
 		IList modifiers = getModifiers(declSpec);
 
@@ -3725,7 +3715,6 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(baseSpecifier);
 		boolean isMacroExpansion = isMacroExpansion(baseSpecifier);
 		ISourceLocation decl = br.resolveBinding(baseSpecifier);
-		IConstructor typ = tr.resolveType(baseSpecifier);
 
 		IListWriter modifiers = vf.listWriter();
 		switch (baseSpecifier.getVisibility()) {
@@ -3798,7 +3787,6 @@ public class Parser extends ASTVisitor {
 		// unimplemented");
 		if (templateParameter instanceof ICPPASTSimpleTypeTemplateParameter) {
 			ISourceLocation decl = br.resolveBinding((ICPPASTSimpleTypeTemplateParameter) templateParameter);
-			IConstructor typ = tr.resolveType(templateParameter);
 
 			ICPPASTSimpleTypeTemplateParameter parameter = (ICPPASTSimpleTypeTemplateParameter) templateParameter;
 			parameter.getName().accept(this);

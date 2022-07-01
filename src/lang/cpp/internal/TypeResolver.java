@@ -67,7 +67,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation.Operator;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.c.CStructure;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitTemplateTypeParameter;
@@ -91,7 +90,6 @@ import io.usethesource.vallang.IListWriter;
 import io.usethesource.vallang.ISourceLocation;
 import io.usethesource.vallang.IValueFactory;
 
-@SuppressWarnings("restriction")
 public class TypeResolver {
 	private final AST builder;
 	private final BindingsResolver br;
@@ -522,7 +520,6 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveICPPAliasTemplate(ICPPAliasTemplate type) {
-		IType _type = type.getType();
 		throw new RuntimeException("NYI: resolveICPPAliasTemplate");
 	}
 
@@ -561,7 +558,7 @@ public class TypeResolver {
 			ICPPTemplateArgument arg = templateParameterMap.getArgument(it);
 			if (arg.isNonTypeValue())
 				throw new RuntimeException("Bla");
-			IType typeValue = arg.getTypeValue();
+			// IType typeValue = arg.getTypeValue();
 			// err("TemplateArgument " + typeValue.getClass().getSimpleName());
 			// err("typeValue " + type);
 
@@ -573,8 +570,8 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveICPPUnaryTypeTransformation(ICPPUnaryTypeTransformation type) {
-		Operator operator = type.getOperator();
-		IType operand = type.getOperand();
+		// Operator operator = type.getOperator();
+		// IType operand = type.getOperand();
 		throw new RuntimeException("NYI: resolveICPPUnaryTypeTransformation");
 	}
 

@@ -50,7 +50,6 @@ import io.usethesource.vallang.ITuple;
 import io.usethesource.vallang.IValueFactory;
 import io.usethesource.vallang.type.TypeStore;
 
-@SuppressWarnings("restriction")
 public class CDTParser {
 	private final IValueFactory vf;
 	private final IRascalValueFactory rvf;

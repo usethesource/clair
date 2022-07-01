@@ -10,13 +10,10 @@ import io.usethesource.vallang.IConstructor;
 import io.usethesource.vallang.IList;
 import io.usethesource.vallang.IString;
 import io.usethesource.vallang.IValue;
-import io.usethesource.vallang.IValueFactory;
 
 public class STHelper {
-	private final IValueFactory vf;
 
-	public STHelper(IValueFactory vf) {
-		this.vf = vf;
+	public STHelper() {
 	}
 
 	private IValue searchForVariable(IString name, Environment env) {

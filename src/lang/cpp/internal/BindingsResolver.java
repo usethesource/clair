@@ -17,7 +17,6 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.net.URISyntaxException;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -122,21 +121,13 @@ import io.usethesource.vallang.exceptions.FactParseError;
 import io.usethesource.vallang.exceptions.FactTypeUseException;
 import io.usethesource.vallang.io.StandardTextReader;
 
-@SuppressWarnings("restriction")
 public class BindingsResolver {
 	private final IValueFactory vf;
-	private final PrintWriter stdOut;
 	private final PrintWriter stdErr;
 
 	public final ISourceLocation UNKNOWN;
 	public final ISourceLocation NYI;
 	public final ISourceLocation FIXME;
-
-	private int prefix = 0;
-
-	private String spaces() {
-		return StringUtils.repeat(" ", prefix);
-	}
 
 	private void out(String msg) {
 //		stdOut.println(spaces() + msg.replace("\n", "\n" + spaces()));
@@ -148,7 +139,6 @@ public class BindingsResolver {
 
 	public BindingsResolver(IValueFactory vf, PrintWriter stdOut, PrintWriter stdErr) {
 		this.vf = vf;
-		this.stdOut = stdOut;
 		this.stdErr = stdErr;
 
 		this.UNKNOWN = makeBinding("UNKNOWN", null, null);
