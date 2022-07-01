@@ -12,6 +12,7 @@
  */
 package lang.cpp.internal;
 
+import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
@@ -68,6 +69,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation.Operator;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.c.CStructure;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateTypeArgument;
@@ -81,7 +83,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExp
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfUnknownMember;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.IPDOMCPPClassType;
-import org.rascalmpl.interpreter.IEvaluatorContext;
 import org.rascalmpl.uri.URIUtil;
 
 import io.usethesource.vallang.IConstructor;
@@ -92,18 +93,18 @@ import io.usethesource.vallang.IValueFactory;
 
 @SuppressWarnings("restriction")
 public class TypeResolver {
-	private AST builder;
+	private final AST builder;
+	private final BindingsResolver br;
 	private final IValueFactory vf;
-	private IEvaluatorContext ctx;
-	private BindingsResolver br = new BindingsResolver();
+	private final PrintWriter stdOut;
+	private final PrintWriter stdErr;
 
-	public TypeResolver(AST builder, IValueFactory vf) {
+	public TypeResolver(AST builder, BindingsResolver br, IValueFactory vf, PrintWriter stdOut, PrintWriter stdErr) {
 		this.builder = builder;
+		this.br = br;
 		this.vf = vf;
-	}
-
-	public void setIEvaluatorContext(IEvaluatorContext ctx) {
-		this.ctx = ctx;
+		this.stdOut = stdOut;
+		this.stdErr = stdErr;
 	}
 
 	private int prefix = 0;
@@ -113,11 +114,11 @@ public class TypeResolver {
 	}
 
 	private void out(String msg) {
-		ctx.getOutPrinter().println(spaces() + msg.replace("\n", "\n" + spaces()));
+		stdOut.println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
 
 	private void err(String msg) {
-		ctx.getOutPrinter().println(spaces() + msg.replace("\n", "\n" + spaces()));
+		stdErr.println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
 
 	private ISourceLocation getSourceLocation(IASTNode node) {
@@ -323,7 +324,60 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveICBasicType(ICBasicType type) {
-		throw new RuntimeException("NYI: resolveICBasicType");
+		// TODO: deduplicate from ICPPBasicType
+		IListWriter modifiers = vf.listWriter();
+		if (type.isSigned())
+			modifiers.append(builder.TypeModifier_signed());
+		if (type.isUnsigned())
+			modifiers.append(builder.TypeModifier_unsigned());
+		if (type.isShort())
+			modifiers.append(builder.TypeModifier_short());
+		if (type.isLong())
+			modifiers.append(builder.TypeModifier_long());
+		if (type.isLongLong())
+			modifiers.append(builder.TypeModifier_longlong());
+		if (type.isComplex())
+			modifiers.append(builder.TypeModifier_complex());
+		if (type.isImaginary())
+			modifiers.append(builder.TypeModifier_imaginary());
+
+		builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_unspecified());
+		switch (type.getKind()) {
+		case eUnspecified:
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_unspecified());
+		case eVoid:
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_void());
+		case eChar:
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_char());
+		case eWChar:
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_wchar());
+		case eInt:
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_int());
+		case eFloat:
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_float());
+		case eDouble:
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_double());
+		case eBoolean:
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_boolean());
+		case eChar16:
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_boolean());
+		case eChar32:
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_char32());
+		case eNullPtr:
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_nullPtr());
+		case eInt128:
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_int128());
+		case eFloat128:
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_float128());
+		case eDecimal32:
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_decimal32());
+		case eDecimal64:
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_decimal64());
+		case eDecimal128:
+			return builder.TypeSymbol_basicType(modifiers.done(), builder.TypeSymbol_decimal128());
+		default:
+			throw new RuntimeException("Unknown ICBasicType kind " + type.getKind().name());
+		}
 	}
 
 	private IConstructor resolveICPPBasicType(ICPPBasicType type) {
@@ -395,7 +449,13 @@ public class TypeResolver {
 			;
 		if (type instanceof ICPPClassType)
 			return resolveICPPClassType((ICPPClassType) type);
+		if (type instanceof CStructure)
+			return resolveCStructure((CStructure) type);
 		throw new RuntimeException("NYI: resolveICompositeType");
+	}
+
+	private IConstructor resolveCStructure(CStructure type) {
+		return builder.TypeSymbol_struct(getDecl(type));
 	}
 
 	private IConstructor resolveICPPClassType(ICPPClassType type) {
@@ -540,7 +600,13 @@ public class TypeResolver {
 	private IConstructor resolveIFunctionType(IFunctionType type) {
 		IConstructor returnType = resolveType(type.getReturnType());
 		IListWriter parameterTypes = vf.listWriter();
-		Stream.of(type.getParameterTypes()).forEach(it -> parameterTypes.append(resolveType(it)));
+		Stream.of(type.getParameterTypes()).forEach(it -> {
+			if (it == null) {// null types in printf
+				parameterTypes.append(builder.TypeSymbol___nullType());
+			} else {
+				parameterTypes.append(resolveType(it));
+			}
+		});
 		if (type.takesVarArgs())
 			return builder.TypeSymbol_functionTypeVarArgs(returnType, parameterTypes.done());
 		return builder.TypeSymbol_functionType(returnType, parameterTypes.done());

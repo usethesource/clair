@@ -31,6 +31,7 @@ data Declarator(list[Attribute] attributes = [], loc src = |unknown:///|, loc de
     | \arrayDeclarator(list[Declaration] pointerOperators, Name name, list[Expression] arrayModifier, Expression initializer)
     | \arrayDeclaratorNested(list[Declaration] pointerOperators, Declarator declarator, list[Expression] arrayModifier)
     | \arrayDeclaratorNested(list[Declaration] pointerOperators, Declarator declarator, list[Expression] arrayModifier, Expression initializer)
+    | \knrFunctionDeclarator(list[Declaration] pointerOperators, list[Modifier] modifiers, list[Name] parameterNames, list[Declaration] parameterDeclarations)
     
     //quick fix
     | \missingDeclarator() //no attributes
@@ -212,6 +213,7 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved(), bool is
     | \idExpression(Name name, loc decl = |unknown:///|)
     | \integerLiteral(int number)
     | \conditional(Expression condition, Expression positive, Expression negative)
+    | \conditional(Expression condition, Expression negative)
     
     | \integerConstant(str \value)
     | \floatConstant(str \value)
@@ -241,8 +243,8 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved(), bool is
     | \globalVectoredDelete(Expression expression)
     
     | \arraySubscriptExpression(Expression array, Expression argument)
-    | \arrayModifier(list[Attribute] attributes = [])
-    | \arrayModifier(Expression constExpression, list[Attribute] attributes = [])
+    | \arrayModifier(list[Modifier] modifiers, list[Attribute] attributes = [])
+    | \arrayModifier(list[Modifier] modifiers, Expression constExpression, list[Attribute] attributes = [])
     
     | \simpleTypeConstructor(DeclSpecifier declSpecifier, Expression initializer)
     
@@ -280,7 +282,7 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved(), bool is
     
     // Designators below
     | \arrayDesignator(Expression subscript)
-    | \fieldDesignator(Expression fieldName)
+    | \fieldDesignator(Name fieldName)
     | \arrayRangeDesignator(Expression rangeFloor, Expression rangeCeiling) //gcc-only
     
     // Captures
@@ -446,6 +448,9 @@ public map[str, list[loc]] classPaths = (
                 |file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include|
      ]
     );
+
+@javaClass{lang.cpp.internal.Parser}  
+java Declaration parseC(loc file, list[loc] stdLib = [], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false);
 
 @javaClass{lang.cpp.internal.Parser}  
 java Declaration parseCpp(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false);

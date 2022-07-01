@@ -142,7 +142,7 @@ str type2FactoryCall(Symbol t){
   //  return ""; 
   //}
   
-  str declareMakers(adt(str name, list[Symbol] _), set[Production] cs) 
+  str declareMakers(adt(str _, list[Symbol] _), set[Production] cs) 
      = "<for (c <- cs) {>
        '<declareMaker(c)>
        '<}>";
@@ -181,7 +181,7 @@ str type2FactoryCall(Symbol t){
   bool hasTyp("Name", "conversionName") = true;
   default bool hasTyp(str _, str _) = false;
   
-  bool hasAttrs("Declarator", str cname) = cname != "missingDeclarator";
+  bool hasAttrs("Declarator", str cname) = cname notin {"missingDeclarator", "knrFunctionDeclarator"};
   bool hasAttrs("DeclSpecifier", str cname) = cname notin
     {"etsEnum", "etsStruct", "etsUnion", "etsClass", "namedTypeSpecifier", /*"struct", "union", "class",*/ "msThrowEllipsis" };
   bool hasAttrs("Declaration", str cname) = cname notin
@@ -193,7 +193,7 @@ str type2FactoryCall(Symbol t){
   bool hasAttrs("Statement", str cname) = cname != "problem";
   default bool hasAttrs(_, _) = false;
   
-  str declareMaker(Production::cons(label(str cname, Symbol typ:adt(str typeName, list[Symbol] ps)), list[Symbol] args, list[Symbol] _ /*kwTypes*/,set[Attr] _)) 
+  str declareMaker(Production::cons(label(str cname, Symbol typ:adt(str typeName, list[Symbol] _)), list[Symbol] args, list[Symbol] _ /*kwTypes*/,set[Attr] _)) 
      = "public <typeToJavaType(typ)> <typeName>_<cname>(<(declareConsArgs(args)+(hasAttrs(typeName,cname)?", IList $attributes":"")+((typeName=="TypeSymbol"||typeName=="TypeModifier"||typeName=="M3")?"":", ISourceLocation $loc"+(hasDecl(typeName, cname)?", ISourceLocation $decl":"")+(hasTyp(typeName, cname)?", IConstructor $typ":"")+(typeName in {"Attribute", "TypeSymbol", "TypeModifier", "M3"}?"":", boolean $isMacroExpansion")))[2..]>) {
        '  <for (label(str l, Symbol t) <- args) { str argName = argToSimpleJavaArg(l, t); str argType = type2FactoryCall(t);>  
        '  if (!<argName>.getType().isSubtypeOf(<argType>)) {
@@ -250,28 +250,24 @@ str type2FactoryCall(Symbol t){
   }
   
   str typeToJavaType(Symbol t){
-    str result ;
-    
     switch(t){
-      case \adt(_,_) : result =  "IConstructor";
-      case \cons(_,_,_) : result =  "IConstructor";
-      case \int() : result =  "IInteger";
-      case \real() : result =  "IReal";
-      case \num() : result =  "INumber";
-      case \bool() : result =  "IBool";
-      case \list(_) : result =  "IList";
-      case \map(_,_) : result =  "IMap";
-      case \rel(_) : result =  "IRelation";
-      case \set(_) : result =  "ISet";
-      case \loc() : result =  "ISourceLocation";
-      case \str() :  result =  "IString";
-      case \datetime() : result =  "IDateTime";
-      case \tuple(_) : result =   "ITuple";     
-      case \func(returnType, args): result = "ICallableValue";
-      case \alias(_,_,a) : result = typeToJavaType(a);
-      default : result = "IValue";
+      case \adt(_,_) : return  "IConstructor";
+      case \cons(_,_,_) : return "IConstructor";
+      case \int() : return "IInteger";
+      case \real() : return "IReal";
+      case \num() : return "INumber";
+      case \bool() : return "IBool";
+      case \list(_) : return "IList";
+      case \map(_,_) : return "IMap";
+      case \rel(_) : return "IRelation";
+      case \set(_) : return "ISet";
+      case \loc() : return "ISourceLocation";
+      case \str() :  return "IString";
+      case \datetime() : return "IDateTime";
+      case \tuple(_) : return "ITuple";     
+      case \func(_,_,_) : return "ICallableValue";
+      case \alias(_,_,a) : return typeToJavaType(a);
+      default : return "IValue";
     }
-    
-    return result;
   }
     

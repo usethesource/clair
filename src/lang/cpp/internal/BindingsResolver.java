@@ -12,6 +12,9 @@
  */
 package lang.cpp.internal;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringReader;
 import java.net.URISyntaxException;
 
 import org.apache.commons.lang.StringUtils;
@@ -22,21 +25,27 @@ import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
+import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemType;
+import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -93,6 +102,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableTemplatePartialSpecialization;
 import org.eclipse.cdt.core.index.IIndexBinding;
+import org.eclipse.cdt.internal.core.dom.parser.c.CEnumeration;
+import org.eclipse.cdt.internal.core.dom.parser.c.CFunction;
+import org.eclipse.cdt.internal.core.dom.parser.c.CVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPTwoPhaseBinding;
@@ -102,20 +114,23 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClassInstan
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.IPDOMCPPClassType;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.IPDOMCPPEnumType;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.IPDOMCPPTemplateParameter;
-import org.rascalmpl.interpreter.IEvaluatorContext;
 import org.rascalmpl.uri.URIUtil;
-import org.rascalmpl.values.ValueFactoryFactory;
 
 import io.usethesource.vallang.ISourceLocation;
 import io.usethesource.vallang.IValueFactory;
+import io.usethesource.vallang.exceptions.FactParseError;
+import io.usethesource.vallang.exceptions.FactTypeUseException;
+import io.usethesource.vallang.io.StandardTextReader;
 
 @SuppressWarnings("restriction")
 public class BindingsResolver {
-	private final IValueFactory vf = ValueFactoryFactory.getValueFactory();
-	public final ISourceLocation UNKNOWN = makeBinding("UNKNOWN", null, null);
-	public final ISourceLocation NYI = makeBinding("NYI", null, null);
-	public final ISourceLocation FIXME = makeBinding("FIXME", null, null);
-	private IEvaluatorContext ctx;
+	private final IValueFactory vf;
+	private final PrintWriter stdOut;
+	private final PrintWriter stdErr;
+
+	public final ISourceLocation UNKNOWN;
+	public final ISourceLocation NYI;
+	public final ISourceLocation FIXME;
 
 	private int prefix = 0;
 
@@ -124,11 +139,21 @@ public class BindingsResolver {
 	}
 
 	private void out(String msg) {
-//		ctx.getOutPrinter().println(spaces() + msg.replace("\n", "\n" + spaces()));
+//		stdOut.println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
 
 	private void err(String msg) {
-//		ctx.getErrorPrinter().println(spaces() + msg.replace("\n", "\n" + spaces()));
+//		stdErr.println(spaces() + msg.replace("\n", "\n" + spaces()));
+	}
+
+	public BindingsResolver(IValueFactory vf, PrintWriter stdOut, PrintWriter stdErr) {
+		this.vf = vf;
+		this.stdOut = stdOut;
+		this.stdErr = stdErr;
+
+		this.UNKNOWN = makeBinding("UNKNOWN", null, null);
+		this.NYI = makeBinding("NYI", null, null);
+		this.FIXME = makeBinding("FIXME", null, null);
 	}
 
 	ISourceLocation resolveOwner(IBinding binding) throws URISyntaxException {
@@ -184,6 +209,12 @@ public class BindingsResolver {
 	private ISourceLocation resolveIVariable(IVariable binding) throws URISyntaxException {
 		if (binding instanceof ICPPVariable)
 			return resolveICPPVariable((ICPPVariable) binding);
+		else if (binding instanceof IField)
+			return resolveIField((IField) binding);
+		else if (binding instanceof IParameter)
+			return resolveIParameter((IParameter) binding);
+		else if (binding instanceof CVariable)
+			return resolveCVariable((CVariable) binding);
 		throw new RuntimeException("NYI: IVariable");
 	}
 
@@ -232,7 +263,9 @@ public class BindingsResolver {
 	private ISourceLocation resolveIFunction(IFunction binding) throws URISyntaxException {
 		if (binding instanceof ICPPFunction)
 			return resolveICPPFunction((ICPPFunction) binding);
-		throw new RuntimeException("NYI: C IFunction");
+		if (binding instanceof CFunction)
+			return resolveCFunction((CFunction) binding);
+		throw new RuntimeException("NYI: unknown IFunction");
 	}
 
 	private ISourceLocation resolveIEnumerator(IEnumerator binding) throws URISyntaxException {
@@ -243,6 +276,8 @@ public class BindingsResolver {
 	private ISourceLocation resolveIEnumeration(IEnumeration binding) throws URISyntaxException {
 		if (binding instanceof ICPPEnumeration)
 			return resolveICPPEnumeration((ICPPEnumeration) binding);
+		if (binding instanceof CEnumeration)
+			return resolveCEnumeration((CEnumeration) binding);
 		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
 		throw new RuntimeException("NYI");
 	}
@@ -284,6 +319,19 @@ public class BindingsResolver {
 
 	private ISourceLocation resolveICPPUnknownBinding(ICPPUnknownBinding binding) {
 		throw new RuntimeException("Trying to resolve ICPPUnknownBinding");
+	}
+
+	private ISourceLocation resolveIField(IField binding) throws URISyntaxException {
+		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), "cpp+field");
+	}
+
+	private ISourceLocation resolveIParameter(IParameter binding) throws URISyntaxException {
+		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()),
+				"cpp+parameter");
+	}
+
+	private ISourceLocation resolveCVariable(CVariable binding) throws URISyntaxException {
+		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), "c+variable");
 	}
 
 	private ISourceLocation resolveICPPVariable(ICPPVariable binding) throws URISyntaxException {
@@ -377,9 +425,63 @@ public class BindingsResolver {
 
 	private String printType(IType type) {
 		// ICPPBasicType, CPPPointerType, ICPPReferenceType, CPPQualifierType
+		// TODO: fix typedefs
 		if (type instanceof ICPPBinding) // ITypedef
 			return ASTTypeUtil.getQualifiedName((ICPPBinding) type);
+		if (type instanceof IProblemType
+				&& ((IProblemType) type).getID() == ISemanticProblem.BINDING_KNR_PARAMETER_DECLARATION_NOT_FOUND)
+			return "$undeclaredKnRParameter";
 		return type.toString().replace(" ", ".");
+	}
+
+	public ISourceLocation getSourceLocation(IASTNode node) {
+		IASTFileLocation astFileLocation = node.getFileLocation();
+
+		if (astFileLocation != null) {
+			String fileName = astFileLocation.getFileName();
+			fileName = fileName.replace('\\', '/');
+			try {
+				return vf.sourceLocation(
+						(ISourceLocation) new StandardTextReader().read(vf, new StringReader(fileName)),
+						astFileLocation.getNodeOffset(), astFileLocation.getNodeLength());
+			} catch (FactParseError | FactTypeUseException | IOException e) {
+			}
+			if (!fileName.startsWith("/")) {
+				fileName = "/" + fileName;
+			}
+			try {
+				return vf.sourceLocation(
+						(ISourceLocation) new StandardTextReader().read(vf, new StringReader(fileName)),
+						astFileLocation.getNodeOffset(), astFileLocation.getNodeLength());
+			} catch (FactParseError | FactTypeUseException | IOException e) {
+			}
+			return vf.sourceLocation(vf.sourceLocation(fileName), astFileLocation.getNodeOffset(),
+					astFileLocation.getNodeLength());
+		}
+		return vf.sourceLocation(URIUtil.rootLocation("unknown"), 0, 0);
+//		return vf.sourceLocation(URIUtil.assumeCorrect("unknown:///", "", ""));
+	}
+
+	private ISourceLocation resolveCFunction(CFunction binding) throws URISyntaxException {
+		String scheme = "c+function";
+		StringBuilder parameters = new StringBuilder("(");
+		try {
+			for (IParameter parameter : binding.getParameters()) {// getParameters can throw ClassCastException
+				if (parameters.length() > 1)
+					parameters.append(',');
+				parameters.append(printType(parameter.getType()));
+			}
+			parameters.append(')');
+		} catch (ClassCastException e) {
+			stdErr.println("Encountered ClassCastException in CDT for binding " + binding.getName() + " in "
+					+ getSourceLocation(binding.getDeclarations()[0]));
+			parameters = new StringBuilder("($$internalError)");
+		}
+
+		ISourceLocation decl = URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()),
+				scheme);
+		decl = URIUtil.changePath(decl, decl.getPath() + parameters.toString());
+		return decl;
 	}
 
 	private ISourceLocation resolveICPPFunction(ICPPFunction binding) throws URISyntaxException {
@@ -417,6 +519,10 @@ public class BindingsResolver {
 				scheme);
 		decl = URIUtil.changePath(decl, decl.getPath() + parameters.toString());
 		return decl;
+	}
+
+	private ISourceLocation resolveCEnumeration(CEnumeration binding) throws URISyntaxException {
+		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), "c+enum");
 	}
 
 	private ISourceLocation resolveICPPEnumeration(ICPPEnumeration binding) throws URISyntaxException {
@@ -466,13 +572,11 @@ public class BindingsResolver {
 	private ISourceLocation resolveICompositeType(ICompositeType binding) throws URISyntaxException {
 		if (binding instanceof ICPPClassType)
 			return resolveICPPClassType((ICPPClassType) binding);
-		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
-		throw new RuntimeException("NYI");
+		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), "c+struct");
 	}
 
-	private ISourceLocation resolveICExternalBinding(ICExternalBinding binding) {
-		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
-		throw new RuntimeException("NYI");
+	private ISourceLocation resolveICExternalBinding(ICExternalBinding binding) throws URISyntaxException {
+		return URIUtil.changePath(URIUtil.rootLocation("c+externalBinding"), binding.getName());
 	}
 
 	public ISourceLocation resolveBinding(IASTNameOwner node) {
@@ -653,7 +757,4 @@ public class BindingsResolver {
 		}
 	}
 
-	public void setIEvaluatorContext(IEvaluatorContext ctx) {
-		this.ctx = ctx;
-	}
 }
