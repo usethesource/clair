@@ -2,29 +2,28 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>io.usethesource</groupId>
-		<artifactId>pom_parent</artifactId>
-		<version>0.6.0</version>
-	</parent>
-
 	<artifactId>clair</artifactId>
 	<groupId>org.rascalmpl</groupId>
 	<version>0.4.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	
 	<scm>
-		<developerConnection>scm:git:https://github.com/cwi-swat/clair.git</developerConnection>			
+            <developerConnection>scm:git:https://github.com/cwi-swat/clair.git</developerConnection>			
 	</scm>
 
         <repositories>
-            <!--to find the pom-parent-->
             <repository>
                 <id>releases</id>
                 <name>usethesource.io releases</name>
                 <url>https://releases.usethesource.io/maven</url>
             </repository>
         </repositories>
+        <pluginRepositories>
+            <pluginRepository>
+                <id>usethesource</id>
+                <url>https://releases.usethesource.io/maven/</url>
+            </pluginRepository>
+        </pluginRepositories>
 	
         <build>
             <resources>
