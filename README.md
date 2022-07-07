@@ -19,14 +19,13 @@ depend on libraries such as clair. Please sit tight while we fix these.
 
 ## How to use ClaiR once you have Rascal installed:
 
-* Create an empty project "myproject" in a folder named "myproject"
-* In `META-INF/RASCAL.MF` add `Project-Name: myproject` `Source: src` and `Require-Libraries: |lib://clair|
+* Create an empty project "myproject" in a folder named "myproject" using the `newRascalProject` function from `util::Reflective`.
 * In `pom.xml` add:
 ```
 <dependency>
     <groupId>org.rascalmpl</groupId>
     <artifactId>clair</artifactId>
-    <version>0.3.0</version>
+    <version>0.4.0</version>
 </dependency>
 ```
 * And (optionally) add in `pom.xml` this to be able to run `mvn rascal:console` and the Rascal compiler:
