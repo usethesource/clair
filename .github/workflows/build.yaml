@@ -11,6 +11,7 @@ on:
 
 jobs:
   builds:
+    if: ${{ !(github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, '[maven-release-plugin]')) }}
     runs-on: ubuntu-latest
 
     steps:
