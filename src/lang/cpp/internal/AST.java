@@ -25,7 +25,7 @@ import io.usethesource.vallang.IValueFactory;
 import io.usethesource.vallang.type.Type;
 import io.usethesource.vallang.type.TypeFactory;
 import io.usethesource.vallang.type.TypeStore;
-
+  
 public class AST {
   private static TypeStore typestore = new TypeStore();
   private static TypeFactory tf = TypeFactory.getInstance();
