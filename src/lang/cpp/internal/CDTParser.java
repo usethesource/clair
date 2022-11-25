@@ -1,5 +1,5 @@
 /** 
- * Copyright (c) 2016-2020, Rodin Aarssen, Centrum Wiskunde & Informatica (CWI) 
+ * Copyright (c) 2016-2022, Rodin Aarssen, Centrum Wiskunde & Informatica (CWI) 
  * All rights reserved. 
  *  
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met: 
@@ -187,23 +187,25 @@ public class CDTParser {
 
 	public IASTTranslationUnit parseFileAsC(ISourceLocation file) {
 		FileContent fc = FileContent.create(file.toString(),
-				((IString) new Prelude(vf, rvf, stdOut, ts, monitor).readFile(file)).getValue().toCharArray());
+				// TODO: parametrize charset
+				((IString) Prelude.readFile(vf, false, file, "UTF8", false)).getValue().toCharArray());
 
 		try {
 			return GCCLanguage.getDefault().getASTTranslationUnit(fc, scannerInfo, ifcp, idx, options, log);
 		} catch (CoreException e) {
-			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
+			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()));
 		}
 	}
 
 	public IASTTranslationUnit parseFileAsCpp(ISourceLocation file) {
 		FileContent fc = FileContent.create(file.toString(),
-				((IString) new Prelude(vf, rvf, stdOut, ts, monitor).readFile(file)).getValue().toCharArray());
+				// TODO: parametrize charset
+				((IString) Prelude.readFile(vf, false, file, "UTF8", false)).getValue().toCharArray());
 
 		try {
 			return GPPLanguage.getDefault().getASTTranslationUnit(fc, scannerInfo, ifcp, idx, options, log);
 		} catch (CoreException e) {
-			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()), null, null);
+			throw RuntimeExceptionFactory.io(vf.string(e.getMessage()));
 		}
 	}
 
