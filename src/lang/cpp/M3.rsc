@@ -49,13 +49,14 @@ public data M3(
  *                    functionName is functionCall: already in recursion
  * modifiers: probably incomplete
  */
-M3 javaAstToM3(Declaration tu, M3 model = m3(tu.src.top)) {
+M3 cppASTToM3(Declaration tu, M3 model = m3(tu.src.top)) {
   model.declarations = {<declarator.decl, declarator.src> | /Declarator declarator := tu, declarator has name, !(declarator.name is abstractEmptyName)};
   model.uses = { <physical,logical> | /Declaration d := tu, /node n := d, n.src?, loc physical := n.src, n.decl?, loc logical := n.decl};
   model.modifiers = {<declarator.decl,unset(modifier)> | /Declaration d := tu, d.declarator?, Declarator declarator := d.declarator, modifier <- d.declSpecifier.modifiers}
                + {<declarator.decl,unset(modifier)> | /Declaration d := tu, d.declarators?, Declarator declarator <- d.declarators, modifier <- d.declSpecifier.modifiers}
                + {<d.decl,unset(modifier)> | /DeclSpecifier d := tu, d.baseSpecifiers?, bs <- d.baseSpecifiers, modifier <- bs.modifiers};
   model.extends = {<base.decl,derived.decl> | /DeclSpecifier derived := tu, derived.baseSpecifiers?, base <- derived.baseSpecifiers};
+  model.functionDefinitions = { <declarator.decl, f.src> | /f:functionDefinition(_, Declarator declarator, _, Statement body) := tu, declarator.decl?};
   model.methodInvocations
     = {<declarator.decl, functionName.decl> | /functionDefinition(_, Declarator declarator, _, Statement body) := tu, /functionCall(Expression functionName,_) := body,
       functionName.decl?}
@@ -136,22 +137,22 @@ rel[loc, loc] makeEntry(Declaration declaration, loc current) {
 
 M3 createM3FromCFile(loc file, list[loc] stdLib = [], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false) {
   tuple[M3,Declaration] m3AndAst = parseCToM3AndAst(file, stdLib = stdLib, includeDirs = includeDirs, additionalMacros = additionalMacros, includeStdLib = includeStdLib);
-  return javaAstToM3(m3AndAst<1>, model = m3AndAst<0>);
+  return cppASTToM3(m3AndAst<1>, model = m3AndAst<0>);
 }
 
 M3 createM3FromCppFile(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false) {
   tuple[M3,Declaration] m3AndAst = parseCppToM3AndAst(file, stdLib = stdLib, includeDirs = includeDirs, additionalMacros = additionalMacros, includeStdLib = includeStdLib);
-  return javaAstToM3(m3AndAst<1>, model = m3AndAst<0>);
+  return cppASTToM3(m3AndAst<1>, model = m3AndAst<0>);
 }
 
 tuple[M3, Declaration] createM3AndAstFromCFile(loc file, list[loc] stdLib = [], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false) {
   tuple[M3,Declaration] m3AndAst = parseCToM3AndAst(file, stdLib = stdLib, includeDirs = includeDirs, additionalMacros = additionalMacros, includeStdLib = includeStdLib);
-  return <javaAstToM3(m3AndAst<1>, model = m3AndAst<0>),m3AndAst<1>>;
+  return <cppASTToM3(m3AndAst<1>, model = m3AndAst<0>),m3AndAst<1>>;
 }
 
 tuple[M3, Declaration] createM3AndAstFromCppFile(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false) {
   tuple[M3,Declaration] m3AndAst = parseCppToM3AndAst(file, stdLib = stdLib, includeDirs = includeDirs, additionalMacros = additionalMacros, includeStdLib = includeStdLib);
-  return <javaAstToM3(m3AndAst<1>, model = m3AndAst<0>),m3AndAst<1>>;
+  return <cppASTToM3(m3AndAst<1>, model = m3AndAst<0>),m3AndAst<1>>;
 }
 
 @javaClass{lang.cpp.internal.Parser}
