@@ -56,7 +56,6 @@ M3 cppASTToM3(Declaration tu, M3 model = m3(tu.src.top)) {
                + {<declarator.decl,unset(modifier)> | /Declaration d := tu, d.declarators?, Declarator declarator <- d.declarators, modifier <- d.declSpecifier.modifiers}
                + {<d.decl,unset(modifier)> | /DeclSpecifier d := tu, d.baseSpecifiers?, bs <- d.baseSpecifiers, modifier <- bs.modifiers};
   model.extends = {<base.decl,derived.decl> | /DeclSpecifier derived := tu, derived.baseSpecifiers?, base <- derived.baseSpecifiers};
-  model.functionDefinitions = { <declarator.decl, f.src> | /f:functionDefinition(_, Declarator declarator, _, Statement body) := tu, declarator.decl?};
   model.methodInvocations
     = {<declarator.decl, functionName.decl> | /functionDefinition(_, Declarator declarator, _, Statement body) := tu, /functionCall(Expression functionName,_) := body,
       functionName.decl?}

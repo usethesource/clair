@@ -421,7 +421,7 @@ public class Parser extends ASTVisitor {
 		functionDefinitions = vf.setWriter();
 		IValue result = convertCdtToRascal(tu, true);
 		m3 = m3.asWithKeywordParameters().setParameter("declaredType", declaredType.done());
-		m3 = m3.asWithKeywordParameters().setParameter("functionDefinition", functionDefinitions.done());
+		m3 = m3.asWithKeywordParameters().setParameter("functionDefinitions", functionDefinitions.done());
 
 		reset();
 		return vf.tuple(m3, result);
