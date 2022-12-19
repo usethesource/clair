@@ -392,6 +392,7 @@ public class Parser extends ASTVisitor {
 		IValue result = convertCdtToRascal(tu, true);
 		m3 = m3.asWithKeywordParameters().setParameter("declaredType", declaredType.done());
 		m3 = m3.asWithKeywordParameters().setParameter("functionDefinitions", functionDefinitions.done());
+		m3 = m3.asWithKeywordParameters().setParameter("containment", br.getContainmentRelation());
 
 		reset();
 		return vf.tuple(m3, result);
@@ -422,6 +423,7 @@ public class Parser extends ASTVisitor {
 		IValue result = convertCdtToRascal(tu, true);
 		m3 = m3.asWithKeywordParameters().setParameter("declaredType", declaredType.done());
 		m3 = m3.asWithKeywordParameters().setParameter("functionDefinitions", functionDefinitions.done());
+		m3 = m3.asWithKeywordParameters().setParameter("containment", br.getContainmentRelation());
 
 		reset();
 		return vf.tuple(m3, result);
