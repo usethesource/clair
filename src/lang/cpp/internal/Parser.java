@@ -302,6 +302,8 @@ public class Parser extends ASTVisitor {
 			ISourceLocation file = (ISourceLocation) v;
 			IASTTranslationUnit tu = parser.parseFileAsCpp(file);
 			IValue result = convertCdtToRascal(tu, false);
+			ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", file.getPath());
+			result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
 			asts.append(result);
 		}
 		Instant done = Instant.now();
@@ -325,6 +327,8 @@ public class Parser extends ASTVisitor {
 //		Instant between = Instant.now();
 //		out("CDT took " + new Double(Duration.between(begin, between).toMillis()).doubleValue() / 1000 + "seconds");
 		IValue result = convertCdtToRascal(tu, false);
+		ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", file.getPath());
+		result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
 //		Instant done = Instant.now();
 //		out("Marshalling took " + new Double(Duration.between(between, done).toMillis()).doubleValue() / 1000
 //				+ "seconds");
@@ -349,6 +353,8 @@ public class Parser extends ASTVisitor {
 		Instant between = Instant.now();
 		out("CDT took " + (Duration.between(begin, between).toMillis() * 1.0d) / 1000 + "seconds");
 		IValue result = convertCdtToRascal(tu, false);
+		ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", file.getPath());
+		result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
 		Instant done = Instant.now();
 		out("Marshalling took " + (Duration.between(between, done).toMillis() * 1.0d) / 1000
 				+ "seconds");
@@ -365,7 +371,8 @@ public class Parser extends ASTVisitor {
 		this.stdLib = stdLib;
 
 		IValue m3 = builder.M3_m3(file);
-		br.setTranslationUnit(URIUtil.correctLocation("cpp+translationUnit", "", file.getPath()));
+		ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", file.getPath());
+		br.setTranslationUnit(tuDecl);
 		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, monitor, stdLib, includeDirs, additionalMacros,
 				includeStdLib.getValue());
 		IASTTranslationUnit tu = null;
@@ -391,6 +398,7 @@ public class Parser extends ASTVisitor {
 		declaredType = vf.setWriter();
 		functionDefinitions = vf.setWriter();
 		IValue result = convertCdtToRascal(tu, true);
+		((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
 		m3 = m3.asWithKeywordParameters().setParameter("declaredType", declaredType.done());
 		m3 = m3.asWithKeywordParameters().setParameter("functionDefinitions", functionDefinitions.done());
 		m3 = m3.asWithKeywordParameters().setParameter("containment", br.getContainmentRelation());
@@ -405,7 +413,8 @@ public class Parser extends ASTVisitor {
 		this.stdLib = stdLib;
 
 		IValue m3 = builder.M3_m3(file);
-		br.setTranslationUnit(URIUtil.correctLocation("cpp+translationUnit", "", file.getPath()));
+		ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", file.getPath());
+		br.setTranslationUnit(tuDecl);
 		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, monitor, stdLib, includeDirs, additionalMacros,
 				includeStdLib.getValue());
 		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
@@ -423,6 +432,7 @@ public class Parser extends ASTVisitor {
 		declaredType = vf.setWriter();
 		functionDefinitions = vf.setWriter();
 		IValue result = convertCdtToRascal(tu, true);
+		result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
 		m3 = m3.asWithKeywordParameters().setParameter("declaredType", declaredType.done());
 		m3 = m3.asWithKeywordParameters().setParameter("functionDefinitions", functionDefinitions.done());
 		m3 = m3.asWithKeywordParameters().setParameter("containment", br.getContainmentRelation());
@@ -549,6 +559,8 @@ public class Parser extends ASTVisitor {
 		IParserLogService log = new DefaultLogService();
 		IASTTranslationUnit tu = GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, null, options, log);
 		IValue result = convertCdtToRascal(tu, false);
+		ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", loc.getPath());
+		result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
 		reset();
 		return result;
 	}
@@ -563,7 +575,10 @@ public class Parser extends ASTVisitor {
 		IConstructor ast = stack.pop();
 		err("Superfluous nodes on the stack after converting:");
 		stack.iterator().forEachRemaining(it -> err(it.toString()));
-		return ast;
+		ISourceLocation file = getSourceLocation(translationUnit);
+		ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", file.getPath());
+		return ast.asWithKeywordParameters().setParameter("decl", tuDecl);
+		// return ast;
 	}
 
 	private int prefix = 0;
@@ -760,6 +775,9 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = getSourceLocation(tu);
 		boolean isMacroExpansion = isMacroExpansion(tu);
 		IListWriter declarations = vf.listWriter();
+		ISourceLocation tuLoc = getSourceLocation(tu);
+		ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", tuLoc.getPath());
+		
 		monitor.jobStart("ClaiR AST marshalling");
 		declLoop: for (IASTDeclaration declaration : tu.getDeclarations()) {
 			if (monitor.jobIsCanceled("ClaiR AST marshalling")
@@ -783,6 +801,8 @@ public class Parser extends ASTVisitor {
 		}
 
 		IConstructor translationUnit = builder.Declaration_translationUnit(declarations.done(), loc, isMacroExpansion);
+		translationUnit = translationUnit.asWithKeywordParameters().setParameter("decl", tuDecl);
+
 		stack.push(translationUnit);
 		monitor.jobEnd("ClaiR AST marshalling", true);
 		return PROCESS_ABORT;
