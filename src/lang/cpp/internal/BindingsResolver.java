@@ -243,7 +243,7 @@ public class BindingsResolver {
 			scheme = "cpp+typedef";
 		}
 		
-		return ownedBinding(binding, scheme)
+		return ownedBinding(binding, scheme);
 		// return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), scheme);
 	}
 
