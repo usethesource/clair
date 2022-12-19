@@ -57,7 +57,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
@@ -154,8 +153,15 @@ public class BindingsResolver {
 		return result;
 	}
 
+
+	/**
+	 * Always call at the start of processing a translation unit.
+	 * Will also clear the previous containment relation, if any.
+	 * @param tu
+	 */
 	public void setTranslationUnit(ISourceLocation tu) {
 		translationUnit = tu;
+		containment = vf.setWriter();
 	}
 
 	public BindingsResolver(IValueFactory vf, PrintWriter stdOut, PrintWriter stdErr) {
