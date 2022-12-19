@@ -57,6 +57,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTReferenceOperator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
@@ -133,6 +134,8 @@ public class BindingsResolver {
 
 	public ISetWriter containment;
 
+	private ISourceLocation translationUnit;
+
 	private void out(String msg) {
 //		stdOut.println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
@@ -151,11 +154,15 @@ public class BindingsResolver {
 		return result;
 	}
 
+	public void setTranslationUnit(ISourceLocation tu) {
+		translationUnit = tu;
+	}
+
 	public BindingsResolver(IValueFactory vf, PrintWriter stdOut, PrintWriter stdErr) {
 		this.vf = vf;
 		this.stdErr = stdErr;
 		this.containment = vf.setWriter();
-		
+		this.translationUnit = URIUtil.rootLocation("cpp+translationUnit");
 		this.UNKNOWN = makeBinding("UNKNOWN", null, null);
 		this.NYI = makeBinding("NYI", null, null);
 		this.FIXME = makeBinding("FIXME", null, null);
@@ -170,7 +177,7 @@ public class BindingsResolver {
 	
 	private ISourceLocation resolveOwner(IBinding binding) throws URISyntaxException {
 		if (binding == null) {
-			return URIUtil.rootLocation("cpp");
+			return translationUnit;
 		}
 
 		IBinding owner = binding.getOwner();
@@ -179,7 +186,7 @@ public class BindingsResolver {
 			return FIXME;
 		}
 		if (owner == null) {
-			return URIUtil.rootLocation("cpp");
+			return translationUnit;
 		}
 		else {
 			return resolveBinding(owner);

@@ -365,6 +365,7 @@ public class Parser extends ASTVisitor {
 		this.stdLib = stdLib;
 
 		IValue m3 = builder.M3_m3(file);
+		br.setTranslationUnit(URIUtil.correctLocation("cpp+translationUnit", "", file.getPath()));
 		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, monitor, stdLib, includeDirs, additionalMacros,
 				includeStdLib.getValue());
 		IASTTranslationUnit tu = null;
@@ -404,6 +405,7 @@ public class Parser extends ASTVisitor {
 		this.stdLib = stdLib;
 
 		IValue m3 = builder.M3_m3(file);
+		br.setTranslationUnit(URIUtil.correctLocation("cpp+translationUnit", "", file.getPath()));
 		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, monitor, stdLib, includeDirs, additionalMacros,
 				includeStdLib.getValue());
 		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
