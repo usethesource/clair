@@ -69,7 +69,7 @@ data DeclSpecifier(list[Attribute] attributes = [], loc src = |unknown:///|, boo
     ;
     
 data Declaration(list[Attribute] attributes = [], loc src=|unknown:///|, bool isMacroExpansion = false)
-    = \translationUnit(list[Declaration] declarations) //no attributes
+    = \translationUnit(list[Declaration] declarations, loc decl=|unknown:///|) //no attributes
     | \simpleDeclaration(DeclSpecifier declSpecifier, list[Declarator] declarators)
     | \functionDefinition(Expression returnSpec, Declarator declarator, Statement body)//? //no attributes
     | \defaultedFunctionDefinition(DeclSpecifier declSpecifier, list[Expression] memberInitializer, Declarator declarator)

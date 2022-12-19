@@ -398,7 +398,7 @@ public class Parser extends ASTVisitor {
 		declaredType = vf.setWriter();
 		functionDefinitions = vf.setWriter();
 		IValue result = convertCdtToRascal(tu, true);
-		((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
+		result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
 		m3 = m3.asWithKeywordParameters().setParameter("declaredType", declaredType.done());
 		m3 = m3.asWithKeywordParameters().setParameter("functionDefinitions", functionDefinitions.done());
 		m3 = m3.asWithKeywordParameters().setParameter("containment", br.getContainmentRelation());
