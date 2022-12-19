@@ -69,7 +69,7 @@ data DeclSpecifier(list[Attribute] attributes = [], loc src = |unknown:///|, boo
     ;
     
 data Declaration(list[Attribute] attributes = [], loc src=|unknown:///|, bool isMacroExpansion = false)
-    = \translationUnit(list[Declaration] declarations) //no attributes
+    = \translationUnit(list[Declaration] declarations, loc decl=|unknown:///|) //no attributes
     | \simpleDeclaration(DeclSpecifier declSpecifier, list[Declarator] declarators)
     | \functionDefinition(Expression returnSpec, Declarator declarator, Statement body)//? //no attributes
     | \defaultedFunctionDefinition(DeclSpecifier declSpecifier, list[Expression] memberInitializer, Declarator declarator)
@@ -446,7 +446,9 @@ public map[str, list[loc]] classPaths = (
   "mac-xcode": [|file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include/c++/4.2.1|,
                 |file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include/c++/4.2.1/tr1|,
                 |file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include|,
-                |file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1|
+                |file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1|,
+                |file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/|,
+                |file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/Kernel.framework/Versions/A/Headers|
      ]
     );
 
