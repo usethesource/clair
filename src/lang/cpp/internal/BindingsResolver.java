@@ -244,7 +244,6 @@ public class BindingsResolver {
 		}
 		
 		return ownedBinding(binding, scheme);
-		// return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), scheme);
 	}
 
 	private ISourceLocation resolveIProblemBinding(IProblemBinding binding) {
@@ -270,12 +269,10 @@ public class BindingsResolver {
 		}
 
 		return ownedBinding(binding, "cpp+macro");
-		// return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), "cpp+macro");
 	}
 
 	private ISourceLocation resolveILabel(ILabel binding) throws URISyntaxException {
 		return ownedBinding(binding, "cpp+label");
-		// return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), "cpp+label");
 	}
 
 	private ISourceLocation resolveIIndexBinding(IIndexBinding binding) {
@@ -296,8 +293,6 @@ public class BindingsResolver {
 
 	private ISourceLocation resolveIEnumerator(IEnumerator binding) throws URISyntaxException {
 		return ownedBinding(binding, "cpp+enumerator");
-		// return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()),
-		// 		"cpp+enumerator");
 	}
 
 	private ISourceLocation resolveIEnumeration(IEnumeration binding) throws URISyntaxException {
@@ -342,9 +337,7 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation resolveICPPInternalBinding(ICPPInternalBinding binding) throws URISyntaxException {
-		// String scheme = ;
 		return ownedBinding(binding, "cpp+internal");
-		// return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), scheme);
 	}
 
 	private ISourceLocation resolveICPPUnknownBinding(ICPPUnknownBinding binding) {
@@ -353,18 +346,14 @@ public class BindingsResolver {
 
 	private ISourceLocation resolveIField(IField binding) throws URISyntaxException {
 		return ownedBinding(binding, "cpp+field");
-		// return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), "cpp+field");
 	}
 
 	private ISourceLocation resolveIParameter(IParameter binding) throws URISyntaxException {
-		return ownedBinding(binding, null)
-		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()),
-				"cpp+parameter");
+		return ownedBinding(binding, "cpp+parameter");
 	}
 
 	private ISourceLocation resolveCVariable(CVariable binding) throws URISyntaxException {
 		return ownedBinding(binding, "c+variable");
-		// return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), );
 	}
 
 	private ISourceLocation resolveICPPVariable(ICPPVariable binding) throws URISyntaxException {
@@ -400,13 +389,10 @@ public class BindingsResolver {
 		}
 
 		return ownedBinding(binding, scheme);
-		// return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), scheme);
 	}
 
 	private ISourceLocation resolveICPPUsingDeclaration(ICPPUsingDeclaration binding) throws URISyntaxException {
 		return ownedBinding(binding, "cpp+usingDeclaration");
-		// return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()),
-		// 		"cpp+usingDeclaration");
 	}
 
 	private ISourceLocation resolveICPPTemplateParameter(ICPPTemplateParameter binding) throws URISyntaxException {
@@ -428,7 +414,6 @@ public class BindingsResolver {
 		}
 
 		return ownedBinding(binding, scheme);
-		// return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), scheme);
 	}
 
 	private ISourceLocation resolveICPPTemplateDefinition(ICPPTemplateDefinition binding) throws URISyntaxException {
@@ -464,7 +449,6 @@ public class BindingsResolver {
 		}
 
 		return ownedBinding(binding, scheme);
-		// return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), scheme);
 	}
 
 	private ISourceLocation resolveICPPSpecialization(ICPPSpecialization binding) {
@@ -482,7 +466,6 @@ public class BindingsResolver {
 		}
 
 		return ownedBinding(binding, scheme);
-		// return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), scheme);
 	}
 
 	private ISourceLocation resolveICPPMember(ICPPMember binding) {
@@ -607,7 +590,7 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation resolveCEnumeration(CEnumeration binding) throws URISyntaxException {
-		return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), "c+enum");
+		return ownedBinding(binding, "c+enum");
 	}
 
 	private ISourceLocation resolveICPPEnumeration(ICPPEnumeration binding) throws URISyntaxException {
@@ -623,7 +606,6 @@ public class BindingsResolver {
 		}
 
 		return ownedBinding(binding, scheme);
-		// return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), scheme);
 	}
 
 	private ISourceLocation resolveICPPClassType(ICPPClassType binding) throws URISyntaxException {
@@ -663,7 +645,6 @@ public class BindingsResolver {
 		}
 
 		return ownedBinding(binding, scheme);
-		// return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), scheme);
 	}
 
 	private ISourceLocation resolveICPPAliasTemplateInstance(ICPPAliasTemplateInstance binding) {
@@ -677,7 +658,6 @@ public class BindingsResolver {
 		}
 
 		return ownedBinding(binding, "c+struct");
-		// return URIUtil.changeScheme(URIUtil.getChildLocation(resolveOwner(binding), binding.getName()), "c+struct");
 	}
 
 	private ISourceLocation resolveICExternalBinding(ICExternalBinding binding) throws URISyntaxException {
