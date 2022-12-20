@@ -176,7 +176,14 @@ public class BindingsResolver {
 	
 	private ISourceLocation ownedBinding(IBinding binding, String scheme) throws URISyntaxException {
 		ISourceLocation ownerLocation = resolveOwner(binding);
-		ISourceLocation location = URIUtil.changeScheme(URIUtil.getChildLocation(ownerLocation, binding.getName()), scheme);
+		ISourceLocation location = null;
+
+		if ("cpp+translationUnit".equals(ownerLocation.getScheme())) {
+			location = URIUtil.correctLocation(scheme, "", binding.getName());
+		}
+		else {
+			location = URIUtil.changeScheme(URIUtil.getChildLocation(ownerLocation, binding.getName()), scheme);
+		}
 		containment.append(vf.tuple(ownerLocation, location));
 		return location;
 	}
