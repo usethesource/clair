@@ -288,25 +288,32 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation resolveIProblemBinding(IProblemBinding binding, ISourceLocation origin) {
-		err("IProblemBinding: " + binding.toString());
+		err("IProblemBinding: " + binding.toString() + " @ " + origin);
+		// TODO: JV encode the origin in here?
 		return makeBinding("cpp+problem", binding.getMessage(), null);
 	}
 
 	private ISourceLocation resolveIMacroBinding(IMacroBinding binding, ISourceLocation origin) throws URISyntaxException {
 		if (binding.isDynamic()) {
 			String className = binding.getClass().getSimpleName();
-			if ("CounterMacro".equals(className))
+			if ("CounterMacro".equals(className)) {
 				return makeBinding("cpp+dynamicMacro", null, "counter");
-			if ("DateMacro".equals(className))
+			}
+			if ("DateMacro".equals(className)) {
 				return makeBinding("cpp+dynamicMacro", null, "date");
-			if ("FileMacro".equals(className))
+			}
+			if ("FileMacro".equals(className)) {
 				return makeBinding("cpp+dynamicMacro", null, "file");
-			if ("LineMacro".equals(className))
+			}
+			if ("LineMacro".equals(className)) {
 				return makeBinding("cpp+dynamicMacro", null, "line");
-			if ("TimeMacro".equals(className))
+			}
+			if ("TimeMacro".equals(className)) {
 				return makeBinding("cpp+dynamicMacro", null, "time");
+			}
+
 			err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
-			throw new RuntimeException("Encountered unknown dynamic MacroBinding " + className);
+			throw new RuntimeException("Encountered unknown dynamic MacroBinding " + className + " @ " + origin);
 		}
 
 		return ownedBinding(binding, "cpp+macro", origin);
@@ -318,7 +325,7 @@ public class BindingsResolver {
 
 	private ISourceLocation resolveIIndexBinding(IIndexBinding binding, ISourceLocation origin) {
 		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI " + binding.getClass().getSimpleName() + " @ " + origin);
 	}
 
 	private ISourceLocation resolveIFunction(IFunction binding, ISourceLocation origin) throws URISyntaxException {
@@ -343,8 +350,8 @@ public class BindingsResolver {
 		if (binding instanceof CEnumeration) {
 			return resolveCEnumeration((CEnumeration) binding, origin);
 		}
-		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
-		throw new RuntimeException("NYI");
+		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding + " @ " + origin);
+		throw new RuntimeException("NYI" + binding.getClass().getSimpleName() + ": " + binding + " @ " + origin);
 	}
 
 	private ISourceLocation resolveICPPBinding(ICPPBinding binding, ISourceLocation origin) throws URISyntaxException {
@@ -374,6 +381,9 @@ public class BindingsResolver {
 			return resolveICPPInternalBinding((ICPPInternalBinding) binding, origin);
 		if (binding instanceof ICPPUnknownBinding)
 			return resolveICPPUnknownBinding((ICPPUnknownBinding) binding, origin);
+
+		// TODO: JV: do something with origin here?
+		// FIXME: Rodin, why not throw an exception here?
 		return makeBinding("UNKNOWN3", null, null);
 	}
 
@@ -382,7 +392,7 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation resolveICPPUnknownBinding(ICPPUnknownBinding binding, ISourceLocation origin) {
-		throw new RuntimeException("Trying to resolve ICPPUnknownBinding");
+		throw new RuntimeException("Trying to resolve ICPPUnknownBinding " + origin);
 	}
 
 	private ISourceLocation resolveIField(IField binding, ISourceLocation origin) throws URISyntaxException {
@@ -493,8 +503,8 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation resolveICPPSpecialization(ICPPSpecialization binding, ISourceLocation origin) {
-		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
-		throw new RuntimeException("NYI");
+		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding + " @ " + origin);
+		throw new RuntimeException("NYI"+ binding.getClass().getSimpleName() + ": " + binding + " @ " + origin);
 	}
 
 	private ISourceLocation resolveICPPNamespace(ICPPNamespace binding, ISourceLocation origin) throws URISyntaxException {
@@ -510,8 +520,8 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation resolveICPPMember(ICPPMember binding, ISourceLocation origin) {
-		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
-		throw new RuntimeException("NYI");
+		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding + " @ " + origin);
+		throw new RuntimeException("NYI" + binding.getClass().getSimpleName() + ": " + binding + " @ " + origin);
 	}
 
 	private String printType(IType type) {
@@ -788,6 +798,9 @@ public class BindingsResolver {
 			err("Caught URISyntaxException, return UNKNOWN");
 			err(e.getMessage());
 		}
+
+		// TODO: include the source location here somehow?
+		// FIXME: Rodin, why not throw an exception here?
 		return makeBinding("UNKNOWN4", null, null);
 	}
 
