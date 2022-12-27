@@ -450,7 +450,7 @@ public class Parser extends ASTVisitor {
 		bindings.stream().filter(ICPPMethod.class::isInstance).forEach(override -> {
 			Stream.of(ClassTypeHelper.findOverridden((ICPPMethod) override)).forEach(base -> {
 				try {
-					methodOverrides.insert(vf.tuple(br.resolveBinding(base), br.resolveBinding(override)));
+					methodOverrides.insert(vf.tuple(br.resolveBinding(base, getSourceLocation(tu)), br.resolveBinding(override, getSourceLocation(tu))));
 				} catch (FactTypeUseException | URISyntaxException e) {
 					err("Got FactTypeUseException\n" + e.getMessage());
 				}
@@ -462,7 +462,7 @@ public class Parser extends ASTVisitor {
 	public ISet getMacroDefinitionsFromTranslationUnit(IASTTranslationUnit tu) {
 		return Stream.of(tu.getMacroDefinitions()).map(it -> {
 			try {
-				return vf.tuple(br.resolveBinding(it.getName().resolveBinding()), getSourceLocation(it));
+				return vf.tuple(br.resolveBinding(it.getName().resolveBinding(), getSourceLocation(it)), getSourceLocation(it));
 			} catch (URISyntaxException e) {
 				return vf.tuple(vf.sourceLocation(URIUtil.rootScheme("unknown")), getSourceLocation(it));
 			}
@@ -519,7 +519,7 @@ public class Parser extends ASTVisitor {
 		Stream.of(tu.getMacroExpansions()).forEach(it -> {
 			ISourceLocation decl;
 			try {
-				decl = br.resolveBinding(it.getMacroReference().resolveBinding());
+				decl = br.resolveBinding(it.getMacroReference().resolveBinding(), getSourceLocation(it));
 			} catch (URISyntaxException e) {
 				decl = vf.sourceLocation(URIUtil.rootScheme("unknown"));
 			}
@@ -1210,21 +1210,26 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTSimpleDeclaration declaration) {
-		ISourceLocation loc = getSourceLocation(declaration);
-		boolean isMacroExpansion = isMacroExpansion(declaration);
-		IList attributes = getAttributes(declaration);
+		try {
+			ISourceLocation loc = getSourceLocation(declaration);
+			boolean isMacroExpansion = isMacroExpansion(declaration);
+			IList attributes = getAttributes(declaration);
 
-		declaration.getDeclSpecifier().accept(this);
-		IConstructor declSpecifier = stack.pop();
+			declaration.getDeclSpecifier().accept(this);
+			IConstructor declSpecifier = stack.pop();
 
-		IListWriter declarators = vf.listWriter();
-		Stream.of(declaration.getDeclarators()).forEach(it -> {
-			it.accept(this);
-			declarators.append(stack.pop());
-			addDeclaredType(br.resolveBinding(it), tr.resolveType(it));
-		});
-		stack.push(builder.Declaration_simpleDeclaration(declSpecifier, declarators.done(), attributes, loc,
-				isMacroExpansion));
+			IListWriter declarators = vf.listWriter();
+			Stream.of(declaration.getDeclarators()).forEach(it -> {
+				it.accept(this);
+				declarators.append(stack.pop());
+				addDeclaredType(br.resolveBinding(it), tr.resolveType(it));
+			});
+			stack.push(builder.Declaration_simpleDeclaration(declSpecifier, declarators.done(), attributes, loc,
+					isMacroExpansion));
+		}
+		catch (RuntimeException e) {
+			throw new RuntimeException("AST at " + getSourceLocation(declaration) + " failed", e);
+		}
 		return PROCESS_ABORT;
 	}
 
