@@ -208,6 +208,7 @@ public class BindingsResolver {
 
 	public ISourceLocation resolveBinding(IBinding binding, ISourceLocation origin) throws URISyntaxException {
 		if (binding == null) {
+			// TODO Rodin; is this the right way?
 			return makeBinding("unresolvedBinding", origin.getAuthority(), origin.getPath());
 		}
 		if (binding instanceof ICExternalBinding) { 
