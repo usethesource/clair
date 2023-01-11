@@ -195,8 +195,7 @@ public class BindingsResolver {
 
 		IBinding owner = binding.getOwner();
 		if (binding.equals(owner)) {
-			// err("Binding " + binding + " has itself as owner??");
-			return makeBinding("circularBinding", origin.getAuthority(), origin.getPath());
+			return URIUtil.changeScheme(origin, "circularBinding+" + origin.getScheme());
 		}
 		if (owner == null) {
 			return translationUnit;
@@ -206,49 +205,53 @@ public class BindingsResolver {
 		}
 	}
 
-	public ISourceLocation resolveBinding(IBinding binding, ISourceLocation origin) throws URISyntaxException {
-		if (binding == null) {
-			// TODO Rodin; is this the right way?
-			return makeBinding("unresolvedBinding", origin.getAuthority(), origin.getPath());
+	public ISourceLocation resolveBinding(IBinding binding, ISourceLocation origin) {
+		try {
+			if (binding == null) {
+				return URIUtil.changeScheme(origin, "unresolvedBinding+" + origin.getScheme());
+			}
+			if (binding instanceof ICExternalBinding) { 
+				return resolveICExternalBinding((ICExternalBinding) binding, origin);
+			}
+			if (binding instanceof ICompositeType) {
+				return resolveICompositeType((ICompositeType) binding, origin);
+			}
+			if (binding instanceof IEnumeration) {
+				return resolveIEnumeration((IEnumeration) binding, origin);
+			}
+			if (binding instanceof IEnumerator) {
+				return resolveIEnumerator((IEnumerator) binding, origin);
+			}
+			if (binding instanceof IFunction) {
+				return resolveIFunction((IFunction) binding, origin);
+			}
+			if (binding instanceof IIndexBinding) {
+				return resolveIIndexBinding((IIndexBinding) binding, origin);
+			}
+			if (binding instanceof ILabel) {
+				return resolveILabel((ILabel) binding, origin);
+			}
+			if (binding instanceof IMacroBinding) {
+				return resolveIMacroBinding((IMacroBinding) binding, origin);
+			}
+			if (binding instanceof IProblemBinding) {
+				return resolveIProblemBinding((IProblemBinding) binding, origin);
+			}
+			if (binding instanceof ITypedef) {
+				return resolveITypedef((ITypedef) binding, origin);
+			}
+			if (binding instanceof IVariable) {
+				return resolveIVariable((IVariable) binding, origin);
+			}
+			if (binding instanceof ICPPBinding) {
+				return resolveICPPBinding((ICPPBinding) binding, origin);
+			}
+			if (binding instanceof ICPPTwoPhaseBinding) {
+				return resolveICPPTwoPhaseBinding((ICPPTwoPhaseBinding) binding, origin);
+			}
 		}
-		if (binding instanceof ICExternalBinding) { 
-			return resolveICExternalBinding((ICExternalBinding) binding, origin);
-		}
-		if (binding instanceof ICompositeType) {
-			return resolveICompositeType((ICompositeType) binding, origin);
-		}
-		if (binding instanceof IEnumeration) {
-			return resolveIEnumeration((IEnumeration) binding, origin);
-		}
-		if (binding instanceof IEnumerator) {
-			return resolveIEnumerator((IEnumerator) binding, origin);
-		}
-		if (binding instanceof IFunction) {
-			return resolveIFunction((IFunction) binding, origin);
-		}
-		if (binding instanceof IIndexBinding) {
-			return resolveIIndexBinding((IIndexBinding) binding, origin);
-		}
-		if (binding instanceof ILabel) {
-			return resolveILabel((ILabel) binding, origin);
-		}
-		if (binding instanceof IMacroBinding) {
-			return resolveIMacroBinding((IMacroBinding) binding, origin);
-		}
-		if (binding instanceof IProblemBinding) {
-			return resolveIProblemBinding((IProblemBinding) binding, origin);
-		}
-		if (binding instanceof ITypedef) {
-			return resolveITypedef((ITypedef) binding, origin);
-		}
-		if (binding instanceof IVariable) {
-			return resolveIVariable((IVariable) binding, origin);
-		}
-		if (binding instanceof ICPPBinding) {
-			return resolveICPPBinding((ICPPBinding) binding, origin);
-		}
-		if (binding instanceof ICPPTwoPhaseBinding) {
-			return resolveICPPTwoPhaseBinding((ICPPTwoPhaseBinding) binding, origin);
+		catch (URISyntaxException e) {
+			throw new RuntimeException("Unexpected error in URI syntax", e);
 		}
 		
 		throw new RuntimeException("Encountered unknown Binding: " + binding.getName());
@@ -290,8 +293,13 @@ public class BindingsResolver {
 
 	private ISourceLocation resolveIProblemBinding(IProblemBinding binding, ISourceLocation origin) {
 		err("IProblemBinding: " + binding.toString() + " @ " + origin);
-		// TODO: JV encode the origin in here?
-		return makeBinding("cpp+problem", binding.getMessage(), null);
+	
+		try {
+			return URIUtil.changeQuery(URIUtil.changeScheme(origin, "problemBinding+" + origin.getScheme()), "message=" + binding.getMessage());
+		} 
+		catch (URISyntaxException e) {
+			throw new RuntimeException("could not create problem binding URI", e);
+		}
 	}
 
 	private ISourceLocation resolveIMacroBinding(IMacroBinding binding, ISourceLocation origin) throws URISyntaxException {
@@ -383,9 +391,7 @@ public class BindingsResolver {
 		if (binding instanceof ICPPUnknownBinding)
 			return resolveICPPUnknownBinding((ICPPUnknownBinding) binding, origin);
 
-		// TODO: JV: do something with origin here?
-		// FIXME: Rodin, why not throw an exception here?
-		return makeBinding("UNKNOWN3", null, null);
+		return URIUtil.changeScheme(origin, "unknownBinding+" + origin.getScheme());
 	}
 
 	private ISourceLocation resolveICPPInternalBinding(ICPPInternalBinding binding, ISourceLocation origin) throws URISyntaxException {
@@ -717,7 +723,7 @@ public class BindingsResolver {
 		return URIUtil.changePath(URIUtil.rootLocation("c+externalBinding"), binding.getName());
 	}
 
-	public ISourceLocation resolveBinding(IASTNameOwner node) {
+	public ISourceLocation resolveBinding(IASTNameOwner node, ISourceLocation origin) {
 		try {
 			if (node instanceof IASTCompositeTypeSpecifier) {
 				return resolveCompositeTypeSpecifier((IASTCompositeTypeSpecifier) node);
@@ -800,9 +806,13 @@ public class BindingsResolver {
 			err(e.getMessage());
 		}
 
-		// TODO: include the source location here somehow?
-		// FIXME: Rodin, why not throw an exception here?
-		return makeBinding("UNKNOWN4", null, null);
+		try {
+			return URIUtil.changeScheme(origin, "unknownBinding+" + origin.getScheme());
+		} catch (URISyntaxException e) {
+			assert false;
+			// the original URI would have to be broken then
+			throw new RuntimeException(e);
+		}
 	}
 
 	private ISourceLocation resolveUsingDeclaration(ICPPASTUsingDeclaration node) throws URISyntaxException {

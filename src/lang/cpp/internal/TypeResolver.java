@@ -129,22 +129,17 @@ public class TypeResolver {
 	}
 
 	private ISourceLocation getDecl(IBinding binding, ISourceLocation origin) {
-		try {
 			return br.resolveBinding(binding, origin);
-		} catch (URISyntaxException e) {
-			err("Warning: could not resolve " + binding);
-			return br.makeBinding("typUnknown", null, null);
-		}
 	}
 
 	private IList handleTemplateParameters(ICPPASTTemplateDeclaration declaration) {
 		IListWriter parameters = vf.listWriter();
 		Stream.of(declaration.getTemplateParameters()).forEach(it -> {
 			if (it instanceof ICPPASTSimpleTypeTemplateParameter) {
-				parameters.append(br.resolveBinding(((ICPPASTSimpleTypeTemplateParameter) it)));
+				parameters.append(br.resolveBinding(((ICPPASTSimpleTypeTemplateParameter) it), getSourceLocation(it)));
 			}
 			else if (it instanceof ICPPASTTemplatedTypeTemplateParameter) {
-				parameters.append(br.resolveBinding((ICPPASTTemplatedTypeTemplateParameter) it));
+				parameters.append(br.resolveBinding((ICPPASTTemplatedTypeTemplateParameter) it, getSourceLocation(it)));
 			}
 			else if (it instanceof ICPPASTParameterDeclaration) {
 				// default values needed?
@@ -196,7 +191,7 @@ public class TypeResolver {
 			out(it.getRawSignature());
 			templateArguments.append(resolveType(it));
 		});
-		IConstructor ret = builder.TypeSymbol_classSpecialization(br.resolveBinding(node), templateArguments.done());
+		IConstructor ret = builder.TypeSymbol_classSpecialization(br.resolveBinding(node, getSourceLocation(node)), templateArguments.done());
 		out(ret.toString());
 		return ret;
 	}
@@ -646,12 +641,8 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveIEnumeration(IEnumeration type, ISourceLocation origin) {
-		try {
 			ISourceLocation decl = br.resolveBinding(type, origin);
 			return builder.TypeSymbol_enumeration(decl);
-		} catch (URISyntaxException e) {
-			throw new RuntimeException("Could not resolve IEnumeration" + type + " @ " + origin);
-		}
 	}
 
 	private IConstructor resolveIFunctionType(IFunctionType type, ISourceLocation origin) {
