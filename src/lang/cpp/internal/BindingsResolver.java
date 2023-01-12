@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.net.URISyntaxException;
+import java.util.UUID;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -127,7 +128,6 @@ public class BindingsResolver {
 	private final IValueFactory vf;
 	private final PrintWriter stdErr;
 
-	public final ISourceLocation UNKNOWN;
 	public final ISourceLocation NYI;
 	public final ISourceLocation FIXME;
 
@@ -169,13 +169,12 @@ public class BindingsResolver {
 		this.stdErr = stdErr;
 		this.containment = vf.setWriter();
 		this.translationUnit = URIUtil.rootLocation("cpp+translationUnit");
-		this.UNKNOWN = makeBinding("UNKNOWN", null, null);
 		this.NYI = makeBinding("NYI", null, null);
 		this.FIXME = makeBinding("FIXME", null, null);
 	}
 	
-	private ISourceLocation ownedBinding(IBinding binding, String scheme) throws URISyntaxException {
-		ISourceLocation ownerLocation = resolveOwner(binding);
+	private ISourceLocation ownedBinding(IBinding binding, String scheme, ISourceLocation origin) throws URISyntaxException {
+		ISourceLocation ownerLocation = resolveOwner(binding, origin);
 		ISourceLocation location = null;
 
 		if ("cpp+translationUnit".equals(ownerLocation.getScheme())) {
@@ -188,73 +187,102 @@ public class BindingsResolver {
 		return location;
 	}
 	
-	private ISourceLocation resolveOwner(IBinding binding) throws URISyntaxException {
+	private ISourceLocation resolveOwner(IBinding binding, ISourceLocation origin) throws URISyntaxException {
 		if (binding == null) {
 			return translationUnit;
 		}
 
 		IBinding owner = binding.getOwner();
 		if (binding.equals(owner)) {
-			// err("Binding " + binding + " has itself as owner??");
-			return FIXME;
+			return URIUtil.correctLocation("circular", "", UUID.randomUUID().toString());
 		}
 		if (owner == null) {
 			return translationUnit;
 		}
 		else {
-			return resolveBinding(owner);
+			return resolveBinding(owner, origin);
 		}
 	}
 
-	public ISourceLocation resolveBinding(IBinding binding) throws URISyntaxException {
-		if (binding instanceof ICExternalBinding)
-			return resolveICExternalBinding((ICExternalBinding) binding);
-		if (binding instanceof ICompositeType)
-			return resolveICompositeType((ICompositeType) binding);
-		if (binding instanceof IEnumeration)
-			return resolveIEnumeration((IEnumeration) binding);
-		if (binding instanceof IEnumerator)
-			return resolveIEnumerator((IEnumerator) binding);
-		if (binding instanceof IFunction)
-			return resolveIFunction((IFunction) binding);
-		if (binding instanceof IIndexBinding)
-			return resolveIIndexBinding((IIndexBinding) binding);
-		if (binding instanceof ILabel)
-			return resolveILabel((ILabel) binding);
-		if (binding instanceof IMacroBinding)
-			return resolveIMacroBinding((IMacroBinding) binding);
-		if (binding instanceof IProblemBinding)
-			return resolveIProblemBinding((IProblemBinding) binding);
-		if (binding instanceof ITypedef)
-			return resolveITypedef((ITypedef) binding);
-		if (binding instanceof IVariable)
-			return resolveIVariable((IVariable) binding);
-		if (binding instanceof ICPPBinding)
-			return resolveICPPBinding((ICPPBinding) binding);
-		if (binding instanceof ICPPTwoPhaseBinding)
-			return resolveICPPTwoPhaseBinding((ICPPTwoPhaseBinding) binding);
-		if (binding == null)
-			return makeBinding("UNKNOWN1", null, null);
+	public static ISourceLocation failedBinding(String scheme) {
+		return URIUtil.correctLocation(scheme, "", UUID.randomUUID().toString());
+	}
+
+	public ISourceLocation resolveBinding(IBinding binding, ISourceLocation origin) {
+		try {
+			if (binding == null) {
+				return failedBinding("unresolved");
+			}
+			if (binding instanceof ICExternalBinding) { 
+				return resolveICExternalBinding((ICExternalBinding) binding, origin);
+			}
+			if (binding instanceof ICompositeType) {
+				return resolveICompositeType((ICompositeType) binding, origin);
+			}
+			if (binding instanceof IEnumeration) {
+				return resolveIEnumeration((IEnumeration) binding, origin);
+			}
+			if (binding instanceof IEnumerator) {
+				return resolveIEnumerator((IEnumerator) binding, origin);
+			}
+			if (binding instanceof IFunction) {
+				return resolveIFunction((IFunction) binding, origin);
+			}
+			if (binding instanceof IIndexBinding) {
+				return resolveIIndexBinding((IIndexBinding) binding, origin);
+			}
+			if (binding instanceof ILabel) {
+				return resolveILabel((ILabel) binding, origin);
+			}
+			if (binding instanceof IMacroBinding) {
+				return resolveIMacroBinding((IMacroBinding) binding, origin);
+			}
+			if (binding instanceof IProblemBinding) {
+				return resolveIProblemBinding((IProblemBinding) binding, origin);
+			}
+			if (binding instanceof ITypedef) {
+				return resolveITypedef((ITypedef) binding, origin);
+			}
+			if (binding instanceof IVariable) {
+				return resolveIVariable((IVariable) binding, origin);
+			}
+			if (binding instanceof ICPPBinding) {
+				return resolveICPPBinding((ICPPBinding) binding, origin);
+			}
+			if (binding instanceof ICPPTwoPhaseBinding) {
+				return resolveICPPTwoPhaseBinding((ICPPTwoPhaseBinding) binding, origin);
+			}
+		}
+		catch (URISyntaxException e) {
+			throw new RuntimeException("Unexpected error in URI syntax", e);
+		}
+		
 		throw new RuntimeException("Encountered unknown Binding: " + binding.getName());
 	}
 
-	private ISourceLocation resolveICPPTwoPhaseBinding(ICPPTwoPhaseBinding binding) {
+	private ISourceLocation resolveICPPTwoPhaseBinding(ICPPTwoPhaseBinding binding, ISourceLocation origin) {
 		throw new RuntimeException("Trying to resolve ICPPTwoPhaseBinding " + binding.getClass().getSimpleName());
 	}
 
-	private ISourceLocation resolveIVariable(IVariable binding) throws URISyntaxException {
-		if (binding instanceof ICPPVariable)
-			return resolveICPPVariable((ICPPVariable) binding);
-		else if (binding instanceof IField)
-			return resolveIField((IField) binding);
-		else if (binding instanceof IParameter)
-			return resolveIParameter((IParameter) binding);
-		else if (binding instanceof CVariable)
-			return resolveCVariable((CVariable) binding);
-		throw new RuntimeException("NYI: IVariable");
+	private ISourceLocation resolveIVariable(IVariable binding, ISourceLocation origin) throws URISyntaxException {
+		if (binding instanceof ICPPVariable) {
+			return resolveICPPVariable((ICPPVariable) binding, origin);
+		}
+		else if (binding instanceof IField) {
+			return resolveIField((IField) binding, origin);
+		}
+		else if (binding instanceof IParameter) {
+			return resolveIParameter((IParameter) binding, origin);
+		}
+		else if (binding instanceof CVariable) {
+			return resolveCVariable((CVariable) binding, origin);
+		}
+		else {
+			throw new RuntimeException("NYI: IVariable");
+		}
 	}
 
-	private ISourceLocation resolveITypedef(ITypedef binding) throws URISyntaxException {
+	private ISourceLocation resolveITypedef(ITypedef binding, ISourceLocation origin) throws URISyntaxException {
 		String scheme;
 		if (binding instanceof ICPPAliasTemplateInstance) {
 			scheme = "cpp+aliasTemplateInstance";
@@ -263,120 +291,150 @@ public class BindingsResolver {
 			scheme = "cpp+typedef";
 		}
 		
-		return ownedBinding(binding, scheme);
+		return ownedBinding(binding, scheme, origin);
 	}
 
-	private ISourceLocation resolveIProblemBinding(IProblemBinding binding) {
-		err("IProblemBinding: " + binding.toString());
-		return makeBinding("cpp+problem", binding.getMessage(), null);
+	private ISourceLocation resolveIProblemBinding(IProblemBinding binding, ISourceLocation origin) {
+		err("IProblemBinding: " + binding.toString() + " @ " + origin);
+	
+		try {
+			return URIUtil.changeQuery(failedBinding("problem"), "message=" + binding.getMessage());
+		} 
+		catch (URISyntaxException e) {
+			throw new RuntimeException("could not create problem binding URI", e);
+		}
 	}
 
-	private ISourceLocation resolveIMacroBinding(IMacroBinding binding) throws URISyntaxException {
+	private ISourceLocation resolveIMacroBinding(IMacroBinding binding, ISourceLocation origin) throws URISyntaxException {
 		if (binding.isDynamic()) {
 			String className = binding.getClass().getSimpleName();
-			if ("CounterMacro".equals(className))
+			if ("CounterMacro".equals(className)) {
 				return makeBinding("cpp+dynamicMacro", null, "counter");
-			if ("DateMacro".equals(className))
+			}
+			if ("DateMacro".equals(className)) {
 				return makeBinding("cpp+dynamicMacro", null, "date");
-			if ("FileMacro".equals(className))
+			}
+			if ("FileMacro".equals(className)) {
 				return makeBinding("cpp+dynamicMacro", null, "file");
-			if ("LineMacro".equals(className))
+			}
+			if ("LineMacro".equals(className)) {
 				return makeBinding("cpp+dynamicMacro", null, "line");
-			if ("TimeMacro".equals(className))
+			}
+			if ("TimeMacro".equals(className)) {
 				return makeBinding("cpp+dynamicMacro", null, "time");
+			}
+
 			err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
-			throw new RuntimeException("Encountered unknown dynamic MacroBinding " + className);
+			throw new RuntimeException("Encountered unknown dynamic MacroBinding " + className + " @ " + origin);
 		}
 
-		return ownedBinding(binding, "cpp+macro");
+		return ownedBinding(binding, "cpp+macro", origin);
 	}
 
-	private ISourceLocation resolveILabel(ILabel binding) throws URISyntaxException {
-		return ownedBinding(binding, "cpp+label");
+	private ISourceLocation resolveILabel(ILabel binding, ISourceLocation origin) throws URISyntaxException {
+		return ownedBinding(binding, "cpp+label", origin);
 	}
 
-	private ISourceLocation resolveIIndexBinding(IIndexBinding binding) {
+	private ISourceLocation resolveIIndexBinding(IIndexBinding binding, ISourceLocation origin) {
 		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
-		throw new RuntimeException("NYI");
+		throw new RuntimeException("NYI " + binding.getClass().getSimpleName() + " @ " + origin);
 	}
 
-	private ISourceLocation resolveIFunction(IFunction binding) throws URISyntaxException {
+	private ISourceLocation resolveIFunction(IFunction binding, ISourceLocation origin) throws URISyntaxException {
 		if (binding instanceof ICPPFunction) {
-			return resolveICPPFunction((ICPPFunction) binding);
+			return resolveICPPFunction((ICPPFunction) binding, origin);
 		}
 		
 		if (binding instanceof CFunction) {
-			return resolveCFunction((CFunction) binding);
+			return resolveCFunction((CFunction) binding, origin);
 		}
 		throw new RuntimeException("NYI: unknown IFunction");
 	}
 
-	private ISourceLocation resolveIEnumerator(IEnumerator binding) throws URISyntaxException {
-		return ownedBinding(binding, "cpp+enumerator");
+	private ISourceLocation resolveIEnumerator(IEnumerator binding, ISourceLocation origin) throws URISyntaxException {
+		return ownedBinding(binding, "cpp+enumerator", origin);
 	}
 
-	private ISourceLocation resolveIEnumeration(IEnumeration binding) throws URISyntaxException {
+	private ISourceLocation resolveIEnumeration(IEnumeration binding, ISourceLocation origin) throws URISyntaxException {
 		if (binding instanceof ICPPEnumeration) {
-			return resolveICPPEnumeration((ICPPEnumeration) binding);
+			return resolveICPPEnumeration((ICPPEnumeration) binding, origin);
 		}
 		if (binding instanceof CEnumeration) {
-			return resolveCEnumeration((CEnumeration) binding);
+			return resolveCEnumeration((CEnumeration) binding, origin);
 		}
-		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
-		throw new RuntimeException("NYI");
+		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding + " @ " + origin);
+		throw new RuntimeException("NYI" + binding.getClass().getSimpleName() + ": " + binding + " @ " + origin);
 	}
 
-	private ISourceLocation resolveICPPBinding(ICPPBinding binding) throws URISyntaxException {
-		if (binding instanceof ICPPAliasTemplateInstance)
-			return resolveICPPAliasTemplateInstance((ICPPAliasTemplateInstance) binding);
-		if (binding instanceof ICPPClassType)
-			return resolveICPPClassType((ICPPClassType) binding);
-		if (binding instanceof ICPPEnumeration)
-			return resolveICPPEnumeration((ICPPEnumeration) binding);
-		if (binding instanceof ICPPFunction)
-			return resolveICPPFunction((ICPPFunction) binding);
-		if (binding instanceof ICPPMember)
-			return resolveICPPMember((ICPPMember) binding);
-		if (binding instanceof ICPPNamespace)
-			return resolveICPPNamespace((ICPPNamespace) binding);
-		if (binding instanceof ICPPSpecialization)
-			return resolveICPPSpecialization((ICPPSpecialization) binding);
-		if (binding instanceof ICPPTemplateDefinition)
-			return resolveICPPTemplateDefinition((ICPPTemplateDefinition) binding);
-		if (binding instanceof ICPPTemplateParameter)
-			return resolveICPPTemplateParameter((ICPPTemplateParameter) binding);
-		if (binding instanceof ICPPUsingDeclaration)
-			return resolveICPPUsingDeclaration((ICPPUsingDeclaration) binding);
-		if (binding instanceof ICPPVariable)
-			return resolveICPPVariable((ICPPVariable) binding);
-		if (binding instanceof ICPPInternalBinding)
-			return resolveICPPInternalBinding((ICPPInternalBinding) binding);
-		if (binding instanceof ICPPUnknownBinding)
-			return resolveICPPUnknownBinding((ICPPUnknownBinding) binding);
-		return makeBinding("UNKNOWN3", null, null);
+	private ISourceLocation resolveICPPBinding(ICPPBinding binding, ISourceLocation origin) throws URISyntaxException {
+		if (binding instanceof ICPPAliasTemplateInstance) {
+			return resolveICPPAliasTemplateInstance((ICPPAliasTemplateInstance) binding, origin);
+		}
+		if (binding instanceof ICPPClassType) {
+			return resolveICPPClassType((ICPPClassType) binding, origin);
+		}
+		if (binding instanceof ICPPEnumeration) {
+			return resolveICPPEnumeration((ICPPEnumeration) binding, origin);
+		}
+		if (binding instanceof ICPPFunction) {
+			return resolveICPPFunction((ICPPFunction) binding, origin);
+		}
+		if (binding instanceof ICPPMember) {
+			return resolveICPPMember((ICPPMember) binding, origin);
+		}
+		if (binding instanceof ICPPNamespace) {
+			return resolveICPPNamespace((ICPPNamespace) binding, origin);
+		}
+		if (binding instanceof ICPPSpecialization) {
+			return resolveICPPSpecialization((ICPPSpecialization) binding, origin);
+		}
+		if (binding instanceof ICPPTemplateDefinition) {
+			return resolveICPPTemplateDefinition((ICPPTemplateDefinition) binding, origin);
+		}
+		if (binding instanceof ICPPTemplateParameter) {
+			return resolveICPPTemplateParameter((ICPPTemplateParameter) binding, origin);
+		}
+		if (binding instanceof ICPPUsingDeclaration) {
+			return resolveICPPUsingDeclaration((ICPPUsingDeclaration) binding, origin);
+		}
+		if (binding instanceof ICPPVariable) {
+			return resolveICPPVariable((ICPPVariable) binding, origin);
+		}
+		if (binding instanceof ICPPInternalBinding) {
+			return resolveICPPInternalBinding((ICPPInternalBinding) binding, origin);
+		}
+		if (binding instanceof ICPPUnknownBinding) {
+			return resolveICPPUnknownBinding((ICPPUnknownBinding) binding, origin);
+		}
+
+		return unknown(); 
 	}
 
-	private ISourceLocation resolveICPPInternalBinding(ICPPInternalBinding binding) throws URISyntaxException {
-		return ownedBinding(binding, "cpp+internal");
+	private ISourceLocation unknown() {
+		return URIUtil.correctLocation("unknown", "", UUID.randomUUID().toString());
 	}
 
-	private ISourceLocation resolveICPPUnknownBinding(ICPPUnknownBinding binding) {
-		throw new RuntimeException("Trying to resolve ICPPUnknownBinding");
+	private ISourceLocation resolveICPPInternalBinding(ICPPInternalBinding binding, ISourceLocation origin) throws URISyntaxException {
+		return ownedBinding(binding, "cpp+internal", origin);
 	}
 
-	private ISourceLocation resolveIField(IField binding) throws URISyntaxException {
-		return ownedBinding(binding, "cpp+field");
+	private ISourceLocation resolveICPPUnknownBinding(ICPPUnknownBinding binding, ISourceLocation origin) {
+		throw new RuntimeException("Trying to resolve ICPPUnknownBinding " + origin);
 	}
 
-	private ISourceLocation resolveIParameter(IParameter binding) throws URISyntaxException {
-		return ownedBinding(binding, "cpp+parameter");
+	private ISourceLocation resolveIField(IField binding, ISourceLocation origin) throws URISyntaxException {
+		return ownedBinding(binding, "cpp+field", origin);
 	}
 
-	private ISourceLocation resolveCVariable(CVariable binding) throws URISyntaxException {
-		return ownedBinding(binding, "c+variable");
+	private ISourceLocation resolveIParameter(IParameter binding, ISourceLocation origin) throws URISyntaxException {
+		return ownedBinding(binding, "cpp+parameter", origin);
 	}
 
-	private ISourceLocation resolveICPPVariable(ICPPVariable binding) throws URISyntaxException {
+	private ISourceLocation resolveCVariable(CVariable binding, ISourceLocation origin) throws URISyntaxException {
+		return ownedBinding(binding, "c+variable", origin);
+	}
+
+	private ISourceLocation resolveICPPVariable(ICPPVariable binding, ISourceLocation origin) throws URISyntaxException {
 		String scheme;
 		if (binding instanceof ICPPField) {
 			if (binding instanceof ICPPFieldTemplate) {
@@ -408,20 +466,20 @@ public class BindingsResolver {
 			scheme = "cpp+variable";
 		}
 
-		return ownedBinding(binding, scheme);
+		return ownedBinding(binding, scheme, origin);
 	}
 
-	private ISourceLocation resolveICPPUsingDeclaration(ICPPUsingDeclaration binding) throws URISyntaxException {
-		return ownedBinding(binding, "cpp+usingDeclaration");
+	private ISourceLocation resolveICPPUsingDeclaration(ICPPUsingDeclaration binding, ISourceLocation origin) throws URISyntaxException {
+		return ownedBinding(binding, "cpp+usingDeclaration", origin);
 	}
 
-	private ISourceLocation resolveICPPTemplateParameter(ICPPTemplateParameter binding) throws URISyntaxException {
+	private ISourceLocation resolveICPPTemplateParameter(ICPPTemplateParameter binding, ISourceLocation origin) throws URISyntaxException {
 		String scheme;
 		if (binding instanceof ICPPTemplateNonTypeParameter) {
-			return resolveICPPVariable((ICPPTemplateNonTypeParameter) binding);
+			return resolveICPPVariable((ICPPTemplateNonTypeParameter) binding, origin);
 		}
 		else if (binding instanceof ICPPTemplateTemplateParameter) {
-			return resolveICPPClassType((ICPPTemplateTemplateParameter) binding);
+			return resolveICPPClassType((ICPPTemplateTemplateParameter) binding, origin);
 		}
 		else if (binding instanceof ICPPTemplateTypeParameter) {
 			scheme = "cpp+templateTypeParameter";
@@ -433,10 +491,10 @@ public class BindingsResolver {
 			scheme = "cpp+templateParameter";
 		}
 
-		return ownedBinding(binding, scheme);
+		return ownedBinding(binding, scheme, origin);
 	}
 
-	private ISourceLocation resolveICPPTemplateDefinition(ICPPTemplateDefinition binding) throws URISyntaxException {
+	private ISourceLocation resolveICPPTemplateDefinition(ICPPTemplateDefinition binding, ISourceLocation origin) throws URISyntaxException {
 		String scheme;
 		if (binding instanceof ICPPAliasTemplate) {
 			scheme = "cpp+aliasTemplate";
@@ -446,20 +504,20 @@ public class BindingsResolver {
 		}
 		else if (binding instanceof ICPPPartiallySpecializable) {
 			if (binding instanceof ICPPClassTemplate) {
-				return resolveICPPClassType((ICPPClassTemplate) binding);
+				return resolveICPPClassType((ICPPClassTemplate) binding, origin);
 			}
 			else if (binding instanceof ICPPVariableTemplate) {
-				return resolveICPPVariable((ICPPVariableTemplate) binding);
+				return resolveICPPVariable((ICPPVariableTemplate) binding, origin);
 			}
 			else {
 				throw new RuntimeException("resolveICPPTemplateDefinition encountered unknown type");
 			}
 		} else if (binding instanceof ICPPPartialSpecialization) {
 			if (binding instanceof ICPPClassTemplatePartialSpecialization) {
-				return resolveICPPClassType((ICPPClassTemplatePartialSpecialization) binding);
+				return resolveICPPClassType((ICPPClassTemplatePartialSpecialization) binding, origin);
 			}
 			else if (binding instanceof ICPPVariableTemplatePartialSpecialization) {
-				return resolveICPPVariable((ICPPVariableTemplatePartialSpecialization) binding);
+				return resolveICPPVariable((ICPPVariableTemplatePartialSpecialization) binding, origin);
 			}
 			else {
 				throw new RuntimeException("resolveICPPTemplateDefinition encountered unknown type");
@@ -468,15 +526,15 @@ public class BindingsResolver {
 			scheme = "cpp+templateDefinition";
 		}
 
-		return ownedBinding(binding, scheme);
+		return ownedBinding(binding, scheme, origin);
 	}
 
-	private ISourceLocation resolveICPPSpecialization(ICPPSpecialization binding) {
-		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
-		throw new RuntimeException("NYI");
+	private ISourceLocation resolveICPPSpecialization(ICPPSpecialization binding, ISourceLocation origin) {
+		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding + " @ " + origin);
+		throw new RuntimeException("NYI"+ binding.getClass().getSimpleName() + ": " + binding + " @ " + origin);
 	}
 
-	private ISourceLocation resolveICPPNamespace(ICPPNamespace binding) throws URISyntaxException {
+	private ISourceLocation resolveICPPNamespace(ICPPNamespace binding, ISourceLocation origin) throws URISyntaxException {
 		String scheme;
 		if (binding instanceof ICPPNamespaceAlias) {
 			scheme = "cpp+namespaceAlias";
@@ -485,12 +543,12 @@ public class BindingsResolver {
 			scheme = "cpp+namespace";
 		}
 
-		return ownedBinding(binding, scheme);
+		return ownedBinding(binding, scheme, origin);
 	}
 
-	private ISourceLocation resolveICPPMember(ICPPMember binding) {
-		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
-		throw new RuntimeException("NYI");
+	private ISourceLocation resolveICPPMember(ICPPMember binding, ISourceLocation origin) {
+		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding + " @ " + origin);
+		throw new RuntimeException("NYI" + binding.getClass().getSimpleName() + ": " + binding + " @ " + origin);
 	}
 
 	private String printType(IType type) {
@@ -537,7 +595,7 @@ public class BindingsResolver {
 		return vf.sourceLocation(URIUtil.rootLocation("unknown"), 0, 0);
 	}
 
-	private ISourceLocation resolveCFunction(CFunction binding) throws URISyntaxException {
+	private ISourceLocation resolveCFunction(CFunction binding, ISourceLocation origin) throws URISyntaxException {
 		String scheme = "c+function";
 		StringBuilder parameters = new StringBuilder("(");
 		try {
@@ -553,7 +611,7 @@ public class BindingsResolver {
 			parameters = new StringBuilder("($$internalError)");
 		}
 
-		ISourceLocation owner = resolveOwner(binding);
+		ISourceLocation owner = resolveOwner(binding, origin);
 		ISourceLocation decl = URIUtil.changeScheme(URIUtil.getChildLocation(owner, binding.getName()), scheme);
 		decl = URIUtil.changePath(decl, decl.getPath() + parameters.toString());
 
@@ -561,7 +619,7 @@ public class BindingsResolver {
 		return decl;
 	}
 
-	private ISourceLocation resolveICPPFunction(ICPPFunction binding) throws URISyntaxException {
+	private ISourceLocation resolveICPPFunction(ICPPFunction binding, ISourceLocation origin) throws URISyntaxException {
 		String scheme;
 		if (binding instanceof ICPPDeferredFunction) {
 			scheme = "cpp+deferredFunction";
@@ -601,7 +659,7 @@ public class BindingsResolver {
 		}
 		parameters.append(')');
 
-		ISourceLocation parentDecl = resolveOwner(binding);
+		ISourceLocation parentDecl = resolveOwner(binding, origin);
 		ISourceLocation decl = URIUtil.changeScheme(URIUtil.getChildLocation(parentDecl, binding.getName()),
 				scheme);
 		decl = URIUtil.changePath(decl, decl.getPath() + parameters.toString());
@@ -609,11 +667,11 @@ public class BindingsResolver {
 		return decl;
 	}
 
-	private ISourceLocation resolveCEnumeration(CEnumeration binding) throws URISyntaxException {
-		return ownedBinding(binding, "c+enum");
+	private ISourceLocation resolveCEnumeration(CEnumeration binding, ISourceLocation origin) throws URISyntaxException {
+		return ownedBinding(binding, "c+enum", origin);
 	}
 
-	private ISourceLocation resolveICPPEnumeration(ICPPEnumeration binding) throws URISyntaxException {
+	private ISourceLocation resolveICPPEnumeration(ICPPEnumeration binding, ISourceLocation origin) throws URISyntaxException {
 		String scheme;
 		if (binding instanceof ICPPEnumerationSpecialization) {
 			scheme = "cpp+enumSpecialization";
@@ -625,10 +683,10 @@ public class BindingsResolver {
 			scheme = "cpp+enum";
 		}
 
-		return ownedBinding(binding, scheme);
+		return ownedBinding(binding, scheme, origin);
 	}
 
-	private ISourceLocation resolveICPPClassType(ICPPClassType binding) throws URISyntaxException {
+	private ISourceLocation resolveICPPClassType(ICPPClassType binding, ISourceLocation origin) throws URISyntaxException {
 		String scheme;
 		if (binding instanceof ICPPClassSpecialization) {
 			if (binding instanceof ICPPClassTemplatePartialSpecializationSpecialization) {
@@ -650,6 +708,7 @@ public class BindingsResolver {
 		} else if (binding instanceof ICPPDeferredClassInstance) {
 			scheme = "cpp+deferredClassInstance";
 		}
+
 		else if (binding instanceof ICPPUnknownMemberClass) {
 			if (binding instanceof ICPPUnknownMemberClassInstance) {
 				scheme = "cpp+unknownMemberClassInstance";
@@ -664,27 +723,27 @@ public class BindingsResolver {
 			scheme = "cpp+class";
 		}
 
-		return ownedBinding(binding, scheme);
+		return ownedBinding(binding, scheme, origin);
 	}
 
-	private ISourceLocation resolveICPPAliasTemplateInstance(ICPPAliasTemplateInstance binding) {
+	private ISourceLocation resolveICPPAliasTemplateInstance(ICPPAliasTemplateInstance binding, ISourceLocation origin) {
 		err("Trying to resolve " + binding.getClass().getSimpleName() + ": " + binding);
 		throw new RuntimeException("NYI");
 	}
 
-	private ISourceLocation resolveICompositeType(ICompositeType binding) throws URISyntaxException {
+	private ISourceLocation resolveICompositeType(ICompositeType binding, ISourceLocation origin) throws URISyntaxException {
 		if (binding instanceof ICPPClassType) {
-			return resolveICPPClassType((ICPPClassType) binding);
+			return resolveICPPClassType((ICPPClassType) binding, origin);
 		}
 
-		return ownedBinding(binding, "c+struct");
+		return ownedBinding(binding, "c+struct", origin);
 	}
 
-	private ISourceLocation resolveICExternalBinding(ICExternalBinding binding) throws URISyntaxException {
+	private ISourceLocation resolveICExternalBinding(ICExternalBinding binding, ISourceLocation origin) throws URISyntaxException {
 		return URIUtil.changePath(URIUtil.rootLocation("c+externalBinding"), binding.getName());
 	}
 
-	public ISourceLocation resolveBinding(IASTNameOwner node) {
+	public ISourceLocation resolveBinding(IASTNameOwner node, ISourceLocation origin) {
 		try {
 			if (node instanceof IASTCompositeTypeSpecifier) {
 				return resolveCompositeTypeSpecifier((IASTCompositeTypeSpecifier) node);
@@ -763,53 +822,53 @@ public class BindingsResolver {
 			// if (node instanceof IGNUASTGotoStatement)
 			// return resolveGnuGotoStatement((IGNUASTGotoStatement) node);
 		} catch (URISyntaxException e) {
-			err("Caught URISyntaxException, return UNKNOWN");
 			err(e.getMessage());
 		}
-		return makeBinding("UNKNOWN4", null, null);
+
+		return failedBinding("unknown");
 	}
 
 	private ISourceLocation resolveUsingDeclaration(ICPPASTUsingDeclaration node) throws URISyntaxException {
-		return resolveBinding(node.getName().resolveBinding());
+		return resolveBinding(node.getName().resolveBinding(), getSourceLocation(node));
 	}
 
 	private ISourceLocation resolveUsingDirective(ICPPASTUsingDirective node) throws URISyntaxException {
-		return resolveBinding(node.getQualifiedName().resolveBinding());
+		return resolveBinding(node.getQualifiedName().resolveBinding(), getSourceLocation(node));
 	}
 
 	private ISourceLocation resolveTemplateId(ICPPASTTemplateId node) throws URISyntaxException {
-		return resolveBinding(node.resolveBinding());
+		return resolveBinding(node.resolveBinding(), getSourceLocation(node));
 	}
 
 	private ISourceLocation resolveTemplatedTypeTemplateParameter(ICPPASTTemplatedTypeTemplateParameter node)
 			throws URISyntaxException {
-		return resolveBinding(node.getName().resolveBinding());
+		return resolveBinding(node.getName().resolveBinding(), getSourceLocation(node));
 	}
 
 	private ISourceLocation resolveSimpleTypeTemplateParameter(ICPPASTSimpleTypeTemplateParameter node)
 			throws URISyntaxException {
-		return resolveBinding(node.getName().resolveBinding());
+		return resolveBinding(node.getName().resolveBinding(), getSourceLocation(node));
 	}
 
 	private ISourceLocation resolveQualifiedName(ICPPASTQualifiedName node) throws URISyntaxException {
-		return resolveBinding(node.resolveBinding());
+		return resolveBinding(node.resolveBinding(), getSourceLocation(node));
 	}
 
 	private ISourceLocation resolvePointerToMember(ICPPASTPointerToMember node) throws URISyntaxException {
-		return resolveBinding(node.getName().resolveBinding());
+		return resolveBinding(node.getName().resolveBinding(), getSourceLocation(node));
 	}
 
 	private ISourceLocation resolveNamespaceDefinition(ICPPASTNamespaceDefinition node) throws URISyntaxException {
-		return resolveBinding(node.getName().resolveBinding());
+		return resolveBinding(node.getName().resolveBinding(), getSourceLocation(node));
 	}
 
 	private ISourceLocation resolveNamespaceAlias(ICPPASTNamespaceAlias node) throws URISyntaxException {
-		return resolveBinding(node.getAlias().resolveBinding());
+		return resolveBinding(node.getAlias().resolveBinding(), getSourceLocation(node));
 	}
 
 	private ISourceLocation resolveConstructorChainInitializer(ICPPASTConstructorChainInitializer node)
 			throws URISyntaxException {
-		return resolveBinding(node.getMemberInitializerId().resolveBinding());
+		return resolveBinding(node.getMemberInitializerId().resolveBinding(), getSourceLocation(node));
 	}
 
 	private ISourceLocation resolveCapture(ICPPASTCapture node) throws URISyntaxException {
@@ -818,15 +877,15 @@ public class BindingsResolver {
 			out("Resolving this capture; returning dummy value");
 			return FIXME;
 		}
-		return resolveBinding(name.resolveBinding());
+		return resolveBinding(name.resolveBinding(), getSourceLocation(node));
 	}
 
 	private ISourceLocation resolveBaseSpecifier(ICPPASTBaseSpecifier node) throws URISyntaxException {
-		return resolveBinding(node.getNameSpecifier().resolveBinding());
+		return resolveBinding(node.getNameSpecifier().resolveBinding(), getSourceLocation(node));
 	}
 
 	private ISourceLocation resolveAliasDeclaration(ICPPASTAliasDeclaration node) throws URISyntaxException {
-		return resolveBinding(node.getAlias().resolveBinding());
+		return resolveBinding(node.getAlias().resolveBinding(), getSourceLocation(node));
 	}
 
 	private ISourceLocation resolvePreprocessorMacroDefinition(IASTPreprocessorMacroDefinition node) {
@@ -835,35 +894,35 @@ public class BindingsResolver {
 
 	private ISourceLocation resolveNamedTypeSpecifier(IASTNamedTypeSpecifier node) throws URISyntaxException {
 		IBinding binding = node.getName().resolveBinding();
-		return resolveBinding(binding);
+		return resolveBinding(binding, getSourceLocation(node));
 	}
 
 	private ISourceLocation resolveLabelStatement(IASTLabelStatement node) throws URISyntaxException {
-		return resolveBinding(node.getName().resolveBinding());
+		return resolveBinding(node.getName().resolveBinding(), getSourceLocation(node));
 	}
 
 	private ISourceLocation resolveIdExpression(IASTIdExpression node) throws URISyntaxException {
-		return resolveBinding(node.getName().resolveBinding());
+		return resolveBinding(node.getName().resolveBinding(), getSourceLocation(node));
 	}
 
 	private ISourceLocation resolveGotoStatement(IASTGotoStatement node) throws URISyntaxException {
-		return resolveBinding(node.getName().resolveBinding());
+		return resolveBinding(node.getName().resolveBinding(), getSourceLocation(node));
 	}
 
 	private ISourceLocation resolveFieldReference(IASTFieldReference node) throws URISyntaxException {
-		return resolveBinding(node.getFieldName().resolveBinding());
+		return resolveBinding(node.getFieldName().resolveBinding(), getSourceLocation(node));
 	}
 
 	private ISourceLocation resolveEnumerator(IASTEnumerator node) throws URISyntaxException {
-		return resolveBinding(node.getName().resolveBinding());
+		return resolveBinding(node.getName().resolveBinding(), getSourceLocation(node));
 	}
 
 	private ISourceLocation resolveEnumerationSpecifier(IASTEnumerationSpecifier node) throws URISyntaxException {
-		return resolveBinding(node.getName().resolveBinding());
+		return resolveBinding(node.getName().resolveBinding(), getSourceLocation(node));
 	}
 
 	private ISourceLocation resolveElaboratedTypeSpecifier(IASTElaboratedTypeSpecifier node) throws URISyntaxException {
-		return resolveBinding(node.getName().resolveBinding());
+		return resolveBinding(node.getName().resolveBinding(), getSourceLocation(node));
 	}
 
 	private ISourceLocation resolveDeclarator(IASTDeclarator node) throws URISyntaxException {
@@ -871,17 +930,18 @@ public class BindingsResolver {
 			out("resolveDeclarator has null name. " + node.getClass().getSimpleName() + ": " + node.getRawSignature());
 			return FIXME;
 		}
-		return resolveBinding(node.getName().resolveBinding());
+		return resolveBinding(node.getName().resolveBinding(), getSourceLocation(node));
 	}
 
 	private ISourceLocation resolveCompositeTypeSpecifier(IASTCompositeTypeSpecifier node) throws URISyntaxException {
-		return resolveBinding(node.getName().resolveBinding());
+		return resolveBinding(node.getName().resolveBinding(), getSourceLocation(node));
 	}
 
 	public ISourceLocation makeBinding(String scheme, String authority, String path) {
 		try {
 			return vf.sourceLocation(scheme, authority, path);
 		} catch (URISyntaxException e) {
+			assert false;
 			throw new RuntimeException("Should not happen", e);
 		}
 	}

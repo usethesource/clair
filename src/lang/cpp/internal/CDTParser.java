@@ -52,11 +52,7 @@ import io.usethesource.vallang.type.TypeStore;
 
 public class CDTParser {
 	private final IValueFactory vf;
-	private final IRascalValueFactory rvf;
-	private final PrintWriter stdOut;
 	private final PrintWriter stdErr;
-	private final TypeStore ts;
-	private final IRascalMonitor monitor;
 	private final IScannerInfo scannerInfo;
 	private final InternalFileContentProvider ifcp;
 	private final IIndex idx;
@@ -126,12 +122,8 @@ public class CDTParser {
 	public CDTParser(IValueFactory vf, IRascalValueFactory rvf, PrintWriter stdOut, PrintWriter stdErr, TypeStore ts,
 			IRascalMonitor monitor, IList stdLib, IList includePath, IMap additionalMacros, boolean includeStdLib) {
 		this.vf = vf;
-		this.rvf = rvf;
-		this.stdOut = stdOut;
 		this.stdErr = stdErr;
-		this.ts = ts;
-		this.monitor = monitor;
-
+		
 		Map<String, String> macros = new HashMap<String, String>();
 		additionalMacros.stream().map(ITuple.class::cast).forEach(tuple -> macros
 				.put(tuple.get(0).toString().replace("\"", ""), tuple.get(1).toString().replace("\"", "")));

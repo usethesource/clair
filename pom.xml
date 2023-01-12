@@ -58,7 +58,7 @@
                 <plugin>
                     <groupId>org.rascalmpl</groupId>
                     <artifactId>rascal-maven-plugin</artifactId>
-                    <version>0.10.4</version>
+                    <version>0.14.6</version>
                     <configuration>
                         <errorsAsWarnings>false</errorsAsWarnings>
                         <bin>${project.build.outputDirectory}</bin>
@@ -67,8 +67,6 @@
                         </srcs>
                         <sourceLookup>|lib://clair/|</sourceLookup>
                         <srcIgnores>
-                            <ignore>${project.basedir}/src/lang/cpp/SConcrete.rsc</ignore>
-                            <ignore>${project.basedir}/src/lang/cpp/ST.rsc</ignore>
                             <ignore>${project.basedir}/src/lang/cpp/Test.rsc</ignore>
                             <ignore>${project.basedir}/src/lang/cpp/IDE.rsc</ignore>
                             <ignore>${project.basedir}/src/SLEPaper.rsc</ignore>
@@ -83,6 +81,26 @@
                             <goals>
                                 <goal>compile</goal>
                             </goals>
+                        </execution>
+                        <execution>
+                            <id>default-cli</id>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>tutor</goal>
+                            </goals>
+                            <configuration>
+                                <enableStandardLibrary>true</enableStandardLibrary>
+                                <errorsAsWarnings>false</errorsAsWarnings>
+                                <bin>${project.build.outputDirectory}</bin>
+                                <sources>|http://github.com/usethesource/clair</sources>
+                                <issues>|http://github.com/usethesource/clair/issues</issues>
+                                <license>${project.basedir}/LICENSE</license>
+                                <srcs>
+                                    <src>${project.basedir}/src</src>
+                                </srcs>
+                                <ignores>
+                                </ignores>
+                            </configuration>
                         </execution>
                         <execution>
                             <id>it-package</id>

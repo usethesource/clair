@@ -38,10 +38,7 @@
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
-		<nature>rascal_eclipse.rascal_nature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
-		<nature>org.eclipse.pde.PluginNature</nature>
-		<nature>rascal_eclipse.term_nature</nature>
 	</natures>
 	<filteredResources>
 		<filter>
