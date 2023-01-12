@@ -148,7 +148,7 @@ public class TypeResolver {
 			}
 			else {
 				throw new RuntimeException(
-						"Encountered unknown template parameter type " + it.getClass().getSimpleName() + "@ " + getSourceLocation(declaration));
+						"Encountered unknown template parameter type " + it.getClass().getSimpleName() + " @ " + getSourceLocation(declaration));
 			}
 		});
 		return parameters.done();
@@ -488,8 +488,7 @@ public class TypeResolver {
 			return resolveICPPUnknownMemberClass((ICPPUnknownMemberClass) type, origin);
 		}
 		if (type instanceof IPDOMCPPClassType) {
-			// TODO: JV, Rodin, there was nothing here? 
-			;
+			throw new RuntimeException("NYI: resolveICompositeType " + type + " @ " + origin);	
 		}
 		if (type instanceof ICPPClassType) {
 			return resolveICPPClassType((ICPPClassType) type, origin);
@@ -525,12 +524,15 @@ public class TypeResolver {
 		Stream.of(parameterMap.getAllParameterPositions()).forEach(it -> {
 			ICPPTemplateArgument arg = parameterMap.getArgument(it);
 			if (arg != null) {
-				if (arg.isTypeValue())
+				if (arg.isTypeValue()) {
 					templateParameters.append(resolveType(arg.getTypeValue(), origin));
-				else
+				}
+				else {
 					templateParameters.append(resolveType(arg.getNonTypeEvaluation().getType(), origin));
+				}
 			} else {
-				// TODO: Rodin, why is this empty?
+				assert false;
+				throw new RuntimeException("unexpected null argument in resolveICPPClassSpecialization @ " + origin);
 			}
 		});
 		return builder.TypeSymbol_classSpecialization(decl, templateParameters.done());
@@ -722,7 +724,8 @@ public class TypeResolver {
 					else
 						templateParameters.append(resolveType(arg.getNonTypeEvaluation().getType(), origin));
 				} else {
-					// TODO: Rodin, why is this empty?
+					assert false;
+					throw new RuntimeException("unexpected null argument in resolveITypedef @ " + origin);
 				}
 			});
 
