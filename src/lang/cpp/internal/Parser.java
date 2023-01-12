@@ -2595,7 +2595,7 @@ public class Parser extends ASTVisitor {
 	public int visit(ICPPASTLambdaExpression expression) {
 		ISourceLocation loc = getSourceLocation(expression);
 		boolean isMacroExpansion = isMacroExpansion(expression);
-		ISourceLocation decl = br.UNKNOWN;
+		ISourceLocation decl = URIUtil.correctLocation("missingDecl", "", "");
 		IConstructor typ = tr.resolveType(expression);
 		CaptureDefault captureDefault = expression.getCaptureDefault();
 
