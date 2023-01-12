@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.net.URISyntaxException;
+import java.util.UUID;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -193,7 +194,7 @@ public class BindingsResolver {
 
 		IBinding owner = binding.getOwner();
 		if (binding.equals(owner)) {
-			return URIUtil.changeScheme(origin, "circularBinding+" + origin.getScheme());
+			return URIUtil.correctLocation("circular", "", UUID.randomUUID().toString());
 		}
 		if (owner == null) {
 			return translationUnit;
@@ -203,10 +204,14 @@ public class BindingsResolver {
 		}
 	}
 
+	public static ISourceLocation failedBinding(String scheme) {
+		return URIUtil.correctLocation(scheme, "", UUID.randomUUID().toString());
+	}
+
 	public ISourceLocation resolveBinding(IBinding binding, ISourceLocation origin) {
 		try {
 			if (binding == null) {
-				return URIUtil.changeScheme(origin, "unresolvedBinding+" + origin.getScheme());
+				return failedBinding("unresolved");
 			}
 			if (binding instanceof ICExternalBinding) { 
 				return resolveICExternalBinding((ICExternalBinding) binding, origin);
@@ -293,7 +298,7 @@ public class BindingsResolver {
 		err("IProblemBinding: " + binding.toString() + " @ " + origin);
 	
 		try {
-			return URIUtil.changeQuery(URIUtil.changeScheme(origin, "problemBinding+" + origin.getScheme()), "message=" + binding.getMessage());
+			return URIUtil.changeQuery(failedBinding("problem"), "message=" + binding.getMessage());
 		} 
 		catch (URISyntaxException e) {
 			throw new RuntimeException("could not create problem binding URI", e);
@@ -362,34 +367,51 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation resolveICPPBinding(ICPPBinding binding, ISourceLocation origin) throws URISyntaxException {
-		if (binding instanceof ICPPAliasTemplateInstance) 
+		if (binding instanceof ICPPAliasTemplateInstance) {
 			return resolveICPPAliasTemplateInstance((ICPPAliasTemplateInstance) binding, origin);
-		if (binding instanceof ICPPClassType)
+		}
+		if (binding instanceof ICPPClassType) {
 			return resolveICPPClassType((ICPPClassType) binding, origin);
-		if (binding instanceof ICPPEnumeration)
+		}
+		if (binding instanceof ICPPEnumeration) {
 			return resolveICPPEnumeration((ICPPEnumeration) binding, origin);
-		if (binding instanceof ICPPFunction)
+		}
+		if (binding instanceof ICPPFunction) {
 			return resolveICPPFunction((ICPPFunction) binding, origin);
-		if (binding instanceof ICPPMember)
+		}
+		if (binding instanceof ICPPMember) {
 			return resolveICPPMember((ICPPMember) binding, origin);
-		if (binding instanceof ICPPNamespace)
+		}
+		if (binding instanceof ICPPNamespace) {
 			return resolveICPPNamespace((ICPPNamespace) binding, origin);
-		if (binding instanceof ICPPSpecialization)
+		}
+		if (binding instanceof ICPPSpecialization) {
 			return resolveICPPSpecialization((ICPPSpecialization) binding, origin);
-		if (binding instanceof ICPPTemplateDefinition)
+		}
+		if (binding instanceof ICPPTemplateDefinition) {
 			return resolveICPPTemplateDefinition((ICPPTemplateDefinition) binding, origin);
-		if (binding instanceof ICPPTemplateParameter)
+		}
+		if (binding instanceof ICPPTemplateParameter) {
 			return resolveICPPTemplateParameter((ICPPTemplateParameter) binding, origin);
-		if (binding instanceof ICPPUsingDeclaration)
+		}
+		if (binding instanceof ICPPUsingDeclaration) {
 			return resolveICPPUsingDeclaration((ICPPUsingDeclaration) binding, origin);
-		if (binding instanceof ICPPVariable)
+		}
+		if (binding instanceof ICPPVariable) {
 			return resolveICPPVariable((ICPPVariable) binding, origin);
-		if (binding instanceof ICPPInternalBinding)
+		}
+		if (binding instanceof ICPPInternalBinding) {
 			return resolveICPPInternalBinding((ICPPInternalBinding) binding, origin);
-		if (binding instanceof ICPPUnknownBinding)
+		}
+		if (binding instanceof ICPPUnknownBinding) {
 			return resolveICPPUnknownBinding((ICPPUnknownBinding) binding, origin);
+		}
 
-		return URIUtil.changeScheme(origin, "unknownBinding+" + origin.getScheme());
+		return unknown(); 
+	}
+
+	private ISourceLocation unknown() {
+		return URIUtil.correctLocation("unknown", "", UUID.randomUUID().toString());
 	}
 
 	private ISourceLocation resolveICPPInternalBinding(ICPPInternalBinding binding, ISourceLocation origin) throws URISyntaxException {
@@ -803,13 +825,7 @@ public class BindingsResolver {
 			err(e.getMessage());
 		}
 
-		try {
-			return URIUtil.changeScheme(origin, "unknownBinding+" + origin.getScheme());
-		} catch (URISyntaxException e) {
-			assert false;
-			// the original URI would have to be broken then
-			throw new RuntimeException(e);
-		}
+		return failedBinding("unknown");
 	}
 
 	private ISourceLocation resolveUsingDeclaration(ICPPASTUsingDeclaration node) throws URISyntaxException {

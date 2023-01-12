@@ -21,6 +21,7 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
@@ -483,7 +484,7 @@ public class Parser extends ASTVisitor {
 		ISetWriter includeResolution = vf.setWriter();
 		ISetWriter unresolvedIncludes = vf.setWriter();
 		Stream.of(tu.getIncludeDirectives()).forEach(it -> {
-			ISourceLocation include = vf.sourceLocation(URIUtil.rootScheme("unknown"));
+			ISourceLocation include = BindingsResolver.failedBinding("unknown");
 			try {
 				include = vf.sourceLocation(it.isSystemInclude() ? "cpp+systemInclude" : "cpp+include", null,
 						it.getName().toString());
@@ -610,7 +611,7 @@ public class Parser extends ASTVisitor {
 			return vf.sourceLocation(vf.sourceLocation(fileName), astFileLocation.getNodeOffset(),
 					astFileLocation.getNodeLength());
 		}
-		return vf.sourceLocation(URIUtil.rootLocation("unknown"), 0, 0);
+		return vf.sourceLocation(URIUtil.correctLocation("unknown", "", UUID.randomUUID().toString()), 0, 0);
 	}
 
 	public ISourceLocation getTokenSourceLocation(IASTNode node, String literal) {
@@ -3704,7 +3705,7 @@ public class Parser extends ASTVisitor {
 		if (typeId instanceof IASTProblemTypeId) {
 			if (typeId.getRawSignature().equals("...") || typeId.getRawSignature().contains("_THROW1("))
 				stack.push(builder.Expression_typeId(
-						builder.DeclSpecifier_msThrowEllipsis(loc, vf.sourceLocation("unknown:///"), false), loc,
+						builder.DeclSpecifier_msThrowEllipsis(loc, BindingsResolver.failedBinding("unknown"), false), loc,
 						isMacroExpansion));
 			else {
 				out("ProblemTypeId " + typeId.getClass().getSimpleName() + ": " + typeId.getRawSignature());
