@@ -119,8 +119,7 @@ public class CDTParser {
 //		standardMacros.put("__INTELLISENSE__", "1");
 	}
 
-	public CDTParser(IValueFactory vf, IRascalValueFactory rvf, PrintWriter stdOut, PrintWriter stdErr, TypeStore ts,
-			IRascalMonitor monitor, IList stdLib, IList includePath, IMap additionalMacros, boolean includeStdLib) {
+	public CDTParser(IValueFactory vf, PrintWriter stdOut, PrintWriter stdErr, IList stdLib, IList includePath, IMap additionalMacros, boolean includeStdLib) {
 		this.vf = vf;
 		this.stdErr = stdErr;
 		
