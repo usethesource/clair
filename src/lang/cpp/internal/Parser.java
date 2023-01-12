@@ -289,7 +289,7 @@ public class Parser extends ASTVisitor {
 		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
 		this.stdLib = stdLib;
 
-		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, monitor, stdLib, includeDirs, additionalMacros,
+		CDTParser parser = new CDTParser(vf, stdOut, stdErr, stdLib, includeDirs, additionalMacros,
 				includeStdLib.getValue());
 		monitor.jobStart("ClaiR parseFiles");
 		Instant begin = Instant.now();
@@ -322,7 +322,7 @@ public class Parser extends ASTVisitor {
 
 //		Instant begin = Instant.now();
 //		out("Beginning at " + begin.toString());
-		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, monitor, stdLib, includeDirs, additionalMacros,
+		CDTParser parser = new CDTParser(vf, stdOut, stdErr, stdLib, includeDirs, additionalMacros,
 				includeStdLib.getValue());
 		IASTTranslationUnit tu = parser.parseFileAsC(file);
 //		Instant between = Instant.now();
@@ -348,7 +348,7 @@ public class Parser extends ASTVisitor {
 
 		Instant begin = Instant.now();
 		out("Beginning at " + begin.toString());
-		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, monitor, stdLib, includeDirs, additionalMacros,
+		CDTParser parser = new CDTParser(vf, stdOut, stdErr, stdLib, includeDirs, additionalMacros,
 				includeStdLib.getValue());
 		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
 		Instant between = Instant.now();
@@ -374,7 +374,7 @@ public class Parser extends ASTVisitor {
 		IValue m3 = builder.M3_m3(file);
 		ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", file.getPath());
 		br.setTranslationUnit(tuDecl);
-		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, monitor, stdLib, includeDirs, additionalMacros,
+		CDTParser parser = new CDTParser(vf,stdOut, stdErr, stdLib, includeDirs, additionalMacros,
 				includeStdLib.getValue());
 		IASTTranslationUnit tu = null;
 		try {
@@ -416,7 +416,7 @@ public class Parser extends ASTVisitor {
 		IValue m3 = builder.M3_m3(file);
 		ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", file.getPath());
 		br.setTranslationUnit(tuDecl);
-		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, monitor, stdLib, includeDirs, additionalMacros,
+		CDTParser parser = new CDTParser(vf, stdOut, stdErr, stdLib, includeDirs, additionalMacros,
 				includeStdLib.getValue());
 		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
 		IList comments = getCommentsFromTranslationUnit(tu);
@@ -471,7 +471,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public IList parseForComments(ISourceLocation file, IList includePath, IMap additionalMacros) {
-		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, monitor, vf.listWriter().done(), includePath,
+		CDTParser parser = new CDTParser(vf, stdOut, stdErr, vf.listWriter().done(), includePath,
 				additionalMacros, true);
 		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
 		reset();
@@ -531,7 +531,7 @@ public class Parser extends ASTVisitor {
 	}
 
 	public ISet parseForMacros(ISourceLocation file, IList includePath, IMap additionalMacros) {
-		CDTParser parser = new CDTParser(vf, rvf, stdOut, stdErr, ts, monitor, vf.listWriter().done(), includePath,
+		CDTParser parser = new CDTParser(vf, stdOut, stdErr, vf.listWriter().done(), includePath,
 				additionalMacros, true);
 		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
 		reset();
