@@ -13,6 +13,7 @@
 package lang.cpp.internal;
 
 import java.io.PrintWriter;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
@@ -123,8 +124,9 @@ public class TypeResolver {
 		if (astFileLocation != null) {
 			return vf.sourceLocation(vf.sourceLocation(astFileLocation.getFileName()), astFileLocation.getNodeOffset(),
 					astFileLocation.getNodeLength());
-		} else
-			return vf.sourceLocation(URIUtil.assumeCorrect("unknown:///", "", ""));
+		} else {
+			return vf.sourceLocation(URIUtil.assumeCorrect("unknown:///", "", UUID.randomUUID().toString()));
+		}
 	}
 
 	private ISourceLocation getDecl(IBinding binding, ISourceLocation origin) {
