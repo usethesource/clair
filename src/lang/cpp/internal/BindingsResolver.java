@@ -127,7 +127,6 @@ public class BindingsResolver {
 	private final IValueFactory vf;
 	private final PrintWriter stdErr;
 
-	public final ISourceLocation UNKNOWN;
 	public final ISourceLocation NYI;
 	public final ISourceLocation FIXME;
 
@@ -169,7 +168,6 @@ public class BindingsResolver {
 		this.stdErr = stdErr;
 		this.containment = vf.setWriter();
 		this.translationUnit = URIUtil.rootLocation("cpp+translationUnit");
-		this.UNKNOWN = makeBinding("UNKNOWN", null, null);
 		this.NYI = makeBinding("NYI", null, null);
 		this.FIXME = makeBinding("FIXME", null, null);
 	}
@@ -802,7 +800,6 @@ public class BindingsResolver {
 			// if (node instanceof IGNUASTGotoStatement)
 			// return resolveGnuGotoStatement((IGNUASTGotoStatement) node);
 		} catch (URISyntaxException e) {
-			err("Caught URISyntaxException, return UNKNOWN");
 			err(e.getMessage());
 		}
 
