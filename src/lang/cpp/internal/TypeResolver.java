@@ -13,7 +13,6 @@
 package lang.cpp.internal;
 
 import java.io.PrintWriter;
-import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
@@ -529,7 +528,7 @@ public class TypeResolver {
 				else
 					templateParameters.append(resolveType(arg.getNonTypeEvaluation().getType(), origin));
 			} else {
-
+				// TODO: Rodin, why is this empty?
 			}
 		});
 		return builder.TypeSymbol_classSpecialization(decl, templateParameters.done());
@@ -710,13 +709,22 @@ public class TypeResolver {
 	private IConstructor resolveITypedef(ITypedef type, ISourceLocation origin) {
 		if (type instanceof ICPPAliasTemplateInstance) {
 			ICPPAliasTemplateInstance ati = (ICPPAliasTemplateInstance) type;
-			IListWriter templateArguments = vf.listWriter();
-			Stream.of(ati.getTemplateArguments()).forEach(it -> {
-				// TODO: JV,Rodin check this?
-				templateArguments.append(resolveType(it.getOriginalTypeValue(), origin));
+			IListWriter templateParameters = vf.listWriter();
+			
+			ICPPTemplateParameterMap parameterMap = ati.getTemplateParameterMap();
+			Stream.of(parameterMap.getAllParameterPositions()).forEach(it -> {
+				ICPPTemplateArgument arg = parameterMap.getArgument(it);
+				if (arg != null) {
+					if (arg.isTypeValue())
+						templateParameters.append(resolveType(arg.getTypeValue(), origin));
+					else
+						templateParameters.append(resolveType(arg.getNonTypeEvaluation().getType(), origin));
+				} else {
+					// TODO: Rodin, why is this empty?
+				}
 			});
-			// TODO:Rodin I don't know if getSpecializedBinding is the right thing to do.
-			return builder.TypeSymbol_aliasTemplate(getDecl(ati.getSpecializedBinding(), origin), templateArguments.done());
+
+			return builder.TypeSymbol_aliasTemplate(getDecl(ati.getSpecializedBinding(), origin), templateParameters.done());
 		}
 		
 		return builder.TypeSymbol_typedef(resolveType(type.getType(), origin));
