@@ -27,7 +27,7 @@ import IO;
 //}
 
 str license = "/** 
-              ' * Copyright (c) 2016-2020, Rodin Aarssen, Centrum Wiskunde & Informatica (CWI)
+              ' * Copyright (c) 2016-2023, Rodin Aarssen, Centrum Wiskunde & Informatica (CWI)
               ' * All rights reserved.
               ' *
               ' * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -149,7 +149,8 @@ str type2FactoryCall(Symbol t){
   
   bool hasDecl("Declarator", str _) = true;
   bool hasDecl("DeclSpecifier", "declSpecifier") = false;
-  bool hasDecl("DeclSpecifier", str _) = true;
+  bool hasDecl("DeclSpecifier", "unknownDeclSpecifier") = false;
+  bool hasDecl("DeclSpecifier", str _) = true; // strange that this is not a default
   bool hasDecl("Declaration", str cname)
     = cname in {"enumerator", "usingDirective", "sttClass", "sttTypename", "tttParameter", "tttParameterWithDefault", "baseSpecifier", "namespaceDefinition", "namespaceDefinitionInline", "usingDeclaration", "namespaceAlias", "alias", "pointerToMember"};
   bool hasDecl("Expression", str cname)
@@ -183,7 +184,7 @@ str type2FactoryCall(Symbol t){
   
   bool hasAttrs("Declarator", str cname) = cname notin {"missingDeclarator", "knrFunctionDeclarator"};
   bool hasAttrs("DeclSpecifier", str cname) = cname notin
-    {"etsEnum", "etsStruct", "etsUnion", "etsClass", "namedTypeSpecifier", /*"struct", "union", "class",*/ "msThrowEllipsis" };
+    {"etsEnum", "etsStruct", "etsUnion", "etsClass", "namedTypeSpecifier", /*"struct", "union", "class",*/ "msThrowEllipsis", "unknownDeclSpecifier" };
   bool hasAttrs("Declaration", str cname) = cname notin
     {"translationUnit", /*"functionDefinition", */ "asmDeclaration", "enumerator", "visibilityLabel",
     "parameter", "template", "sttClass", "sttTypename", "tttParameter", "tttParameterWithDefault", "baseSpecifier", "virtSpecifier",

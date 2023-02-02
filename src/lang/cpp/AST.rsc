@@ -66,6 +66,7 @@ data DeclSpecifier(list[Attribute] attributes = [], loc src = |unknown:///|, boo
     
      // Non-standard MSVC throw ellipsis
     | \msThrowEllipsis() //no attributes
+    | unknownDeclSpecifier() // if the parser doesn't understand it
     ;
     
 data Declaration(list[Attribute] attributes = [], loc src=|unknown:///|, bool isMacroExpansion = false)
@@ -124,6 +125,7 @@ data Declaration(list[Attribute] attributes = [], loc src=|unknown:///|, bool is
     | \varArgs() //encoding for ellipsis in f(x, ...); //no attributes
     
     | \problemDeclaration() //no attributes
+    | unknownDeclaration() // if the parser doesn't understand it
     ;
 
 
@@ -291,7 +293,7 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved(), bool is
     | \captureThisPtr()
     
     | \problemExpression()
-    
+    | \unknownExpression() // if the parser doesn't understand it
     ;                       
  
 data Name(loc src = |unknown:///|, bool isMacroExpansion = false) //no attributes
@@ -337,6 +339,7 @@ data Statement(list[Attribute] attributes = [], loc src = |unknown:///|, bool is
     | \catchAll(Statement body)    
     
     | \problem(str raw) //no attributes
+    | unknownStatement() // if the parser doesn't understand it
     ;           
   
 data Type(loc src = |unknown:///|, bool isMacroExpansion = false) //no attributes

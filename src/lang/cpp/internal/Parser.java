@@ -1229,7 +1229,14 @@ public class Parser extends ASTVisitor {
 			boolean isMacroExpansion = isMacroExpansion(declaration);
 			IList attributes = getAttributes(declaration);
 
-			declaration.getDeclSpecifier().accept(this);
+			IASTDeclSpecifier decl = declaration.getDeclSpecifier();
+			if (decl != null) {
+				decl.accept(this);
+			}
+			else {
+				stack.push(builder.DeclSpecifier_unknownDeclSpecifier(loc, isMacroExpansion));
+			}
+
 			IConstructor declSpecifier = stack.pop();
 
 			IListWriter declarators = vf.listWriter();
