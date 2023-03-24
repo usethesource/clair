@@ -13,7 +13,6 @@
 package lang.cpp.internal;
 
 import java.io.PrintWriter;
-import java.util.UUID;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
@@ -22,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
@@ -82,8 +80,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfDependentExp
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeOfUnknownMember;
 import org.eclipse.cdt.internal.core.index.IIndexType;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.IPDOMCPPClassType;
-import org.rascalmpl.uri.URIUtil;
-
 import io.usethesource.vallang.IConstructor;
 import io.usethesource.vallang.IList;
 import io.usethesource.vallang.IListWriter;
@@ -95,14 +91,14 @@ public class TypeResolver {
 	private final BindingsResolver br;
 	private final IValueFactory vf;
 	private final PrintWriter stdOut;
-	private final PrintWriter stdErr;
+	private final Locations locs;
 
-	public TypeResolver(AST builder, BindingsResolver br, IValueFactory vf, PrintWriter stdOut, PrintWriter stdErr) {
+	public TypeResolver(AST builder, BindingsResolver br, Locations locs, IValueFactory vf, PrintWriter stdOut) {
 		this.builder = builder;
 		this.br = br;
 		this.vf = vf;
 		this.stdOut = stdOut;
-		this.stdErr = stdErr;
+		this.locs = locs;
 	}
 
 	private int prefix = 0;
@@ -114,21 +110,7 @@ public class TypeResolver {
 	private void out(String msg) {
 		stdOut.println(spaces() + msg.replace("\n", "\n" + spaces()));
 	}
-
-	private void err(String msg) {
-		stdErr.println(spaces() + msg.replace("\n", "\n" + spaces()));
-	}
-
-	private ISourceLocation getSourceLocation(IASTNode node) {
-		IASTFileLocation astFileLocation = node.getFileLocation();
-		if (astFileLocation != null) {
-			return vf.sourceLocation(vf.sourceLocation(astFileLocation.getFileName()), astFileLocation.getNodeOffset(),
-					astFileLocation.getNodeLength());
-		} else {
-			return vf.sourceLocation(URIUtil.assumeCorrect("unknown:///", "", UUID.randomUUID().toString()));
-		}
-	}
-
+	
 	private ISourceLocation getDecl(IBinding binding, ISourceLocation origin) {
 			return br.resolveBinding(binding, origin);
 	}
@@ -137,18 +119,18 @@ public class TypeResolver {
 		IListWriter parameters = vf.listWriter();
 		Stream.of(declaration.getTemplateParameters()).forEach(it -> {
 			if (it instanceof ICPPASTSimpleTypeTemplateParameter) {
-				parameters.append(br.resolveBinding(((ICPPASTSimpleTypeTemplateParameter) it), getSourceLocation(it)));
+				parameters.append(br.resolveBinding(((ICPPASTSimpleTypeTemplateParameter) it), locs.forNode(it)));
 			}
 			else if (it instanceof ICPPASTTemplatedTypeTemplateParameter) {
-				parameters.append(br.resolveBinding((ICPPASTTemplatedTypeTemplateParameter) it, getSourceLocation(it)));
+				parameters.append(br.resolveBinding((ICPPASTTemplatedTypeTemplateParameter) it, locs.forNode(it)));
 			}
 			else if (it instanceof ICPPASTParameterDeclaration) {
 				// default values needed?
-				parameters.append(getDecl(((ICPPASTParameterDeclaration) it).getDeclarator().getName().resolveBinding(), getSourceLocation(it)));
+				parameters.append(getDecl(((ICPPASTParameterDeclaration) it).getDeclarator().getName().resolveBinding(), locs.forNode(it)));
 			}
 			else {
 				throw new RuntimeException(
-						"Encountered unknown template parameter type " + it.getClass().getSimpleName() + " @ " + getSourceLocation(declaration));
+						"Encountered unknown template parameter type " + it.getClass().getSimpleName() + " @ " + locs.forNode(declaration));
 			}
 		});
 		return parameters.done();
@@ -168,7 +150,7 @@ public class TypeResolver {
 
 	private IConstructor resolveICPPASTDeclarator(ICPPASTDeclarator node) {
 		IBinding binding = node.getName().resolveBinding();
-		ISourceLocation origin = getSourceLocation(node.getName());
+		ISourceLocation origin = locs.forNode(node.getName());
 		if (binding instanceof IVariable) {
 			return resolveType(((IVariable) binding).getType(), origin);
 		}
@@ -182,7 +164,7 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveIASTExpression(IASTExpression node) {
-		return resolveType(node.getExpressionType(), getSourceLocation(node));
+		return resolveType(node.getExpressionType(), locs.forNode(node));
 	}
 
 	private IConstructor resolveICPPASTTemplateId(ICPPASTTemplateId node) {
@@ -192,7 +174,7 @@ public class TypeResolver {
 			out(it.getRawSignature());
 			templateArguments.append(resolveType(it));
 		});
-		IConstructor ret = builder.TypeSymbol_classSpecialization(br.resolveBinding(node, getSourceLocation(node)), templateArguments.done());
+		IConstructor ret = builder.TypeSymbol_classSpecialization(br.resolveBinding(node, locs.forNode(node)), templateArguments.done());
 		out(ret.toString());
 		return ret;
 	}
@@ -201,7 +183,7 @@ public class TypeResolver {
 		IASTDeclaration declaration = node.getDeclaration();
 		if (declaration instanceof IASTSimpleDeclaration) {
 			IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) node.getDeclaration()).getDeclSpecifier();
-			ISourceLocation origin = getSourceLocation(declSpec);
+			ISourceLocation origin = locs.forNode(declSpec);
 			if (declSpec instanceof ICPPASTCompositeTypeSpecifier) {
 				switch (((ICPPASTCompositeTypeSpecifier) declSpec).getKey()) {
 				case ICPPASTCompositeTypeSpecifier.k_class:
@@ -214,14 +196,14 @@ public class TypeResolver {
 					binding = ((ICPPASTCompositeTypeSpecifier) declSpec).getName().resolveBinding();
 					return builder.TypeSymbol_cUnionTemplate(getDecl(binding, origin), handleTemplateParameters(node));
 				default:
-					out(getSourceLocation(node).toString());
+					out(locs.forNode(node).toString());
 					throw new RuntimeException("ICPPASTCompositeTypeSpecifier not implemented: " + origin);
 				}
 			} else if (declSpec instanceof ICPPASTSimpleDeclSpecifier
 					|| declSpec instanceof ICPPASTNamedTypeSpecifier) {
 				IASTDeclarator[] declarators = ((IASTSimpleDeclaration) declaration).getDeclarators();
 				if (declarators.length != 1) {
-					out("Variable template with unexpected #declarators at " + getSourceLocation(node));
+					out("Variable template with unexpected #declarators at " + locs.forNode(node));
 				}
 				return builder.TypeSymbol_variableTemplate(getDecl(declarators[0].getName().resolveBinding(), origin),
 						handleTemplateParameters(node));
@@ -240,22 +222,22 @@ public class TypeResolver {
 					int kind = ((ICPPASTElaboratedTypeSpecifier) declSpec).getKind();
 					throw new RuntimeException(
 							"Encountered template declaration with unknown ElaboratedTypeSpecifier kind " + kind
-									+ " at " + getSourceLocation(node));
+									+ " at " + locs.forNode(node));
 				}
 			} else {
 				throw new RuntimeException("Unknown template declaree " + declaration.getClass().getSimpleName() + " @ " + origin);
 			}
 		} else if (declaration instanceof ICPPASTFunctionDefinition) {
 			IBinding binding = ((ICPPASTFunctionDefinition) declaration).getDeclarator().getName().resolveBinding();
-			return builder.TypeSymbol_functionTemplate(getDecl(binding, getSourceLocation(declaration)), handleTemplateParameters(node));
+			return builder.TypeSymbol_functionTemplate(getDecl(binding, locs.forNode(declaration)), handleTemplateParameters(node));
 		} else if (declaration instanceof ICPPASTTemplateDeclaration) {
 			IConstructor templatedTemplate = resolveICPPASTTemplateDeclaration((ICPPASTTemplateDeclaration) declaration);
 			return builder.TypeSymbol_templateTemplate(templatedTemplate, handleTemplateParameters(node));
 		} else if (declaration instanceof ICPPASTAliasDeclaration) {
 			IBinding binding = ((ICPPASTAliasDeclaration) declaration).getAlias().resolveBinding();
-			return builder.TypeSymbol_aliasTemplate(getDecl(binding, getSourceLocation(declaration)), handleTemplateParameters(node));
+			return builder.TypeSymbol_aliasTemplate(getDecl(binding, locs.forNode(declaration)), handleTemplateParameters(node));
 		} else {
-			throw new RuntimeException("Unknown template declaree at " + getSourceLocation(node));
+			throw new RuntimeException("Unknown template declaree at " + locs.forNode(node));
 		}
 	}
 
