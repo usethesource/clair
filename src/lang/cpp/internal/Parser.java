@@ -1193,7 +1193,7 @@ public class Parser extends ASTVisitor {
 	public int visit(IASTSimpleDeclaration declaration) {
 		try {
 			ISourceLocation loc = locs.forNode(declaration);
-			stdErr.println("simple decl at " + loc);
+			
 			boolean isMacroExpansion = isMacroExpansion(declaration);
 			IList attributes = getAttributes(declaration);
 
@@ -1209,10 +1209,7 @@ public class Parser extends ASTVisitor {
 			stack.push(builder.Declaration_simpleDeclaration(declSpecifier, declarators.done(), attributes, loc,
 					isMacroExpansion));
 		}
-		// catch (RuntimeException e) {
-		// 	throw new RuntimeException("AST at " + locs.forNode(declaration) + " failed", e);
-		// } 
-		finally {}
+		
 		return PROCESS_ABORT;
 	}
 

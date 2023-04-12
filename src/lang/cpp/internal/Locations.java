@@ -29,8 +29,7 @@ public class Locations {
 	public ISourceLocation forNode(IASTNode node) {
 		try {
 		IASTFileLocation astFileLocation = node.getFileLocation();
-			stdErr.println(node);
-			stdErr.println(astFileLocation);
+
 		if (astFileLocation != null) {
 			String fileName = astFileLocation.getFileName();
 
@@ -40,7 +39,6 @@ public class Locations {
 			fileName = fileName.replace('\\', '/');
 
 			if (fileName.trim().startsWith("|")) {
-				stdErr.println("fileName starts with |");
 				try {
 					ISourceLocation tmp = (ISourceLocation) locParser.read(vf, TypeFactory.getInstance().sourceLocationType(), new StringReader(fileName));
 					
@@ -49,7 +47,7 @@ public class Locations {
 							astFileLocation.getNodeOffset(), 
 							astFileLocation.getNodeLength());
 				} catch (FactParseError | FactTypeUseException | IOException e) {
-					stdErr.println("WAT? " + e);
+		
 					return unknownPreciseLoc();
 				}
 			}
