@@ -1191,24 +1191,23 @@ public class Parser extends ASTVisitor {
 	}
 
 	public int visit(IASTSimpleDeclaration declaration) {
-		try {
-			ISourceLocation loc = locs.forNode(declaration);
-			
-			boolean isMacroExpansion = isMacroExpansion(declaration);
-			IList attributes = getAttributes(declaration);
+		ISourceLocation loc = locs.forNode(declaration);
+		
+		boolean isMacroExpansion = isMacroExpansion(declaration);
+		IList attributes = getAttributes(declaration);
 
-			declaration.getDeclSpecifier().accept(this);
-			IConstructor declSpecifier = stack.pop();
+		declaration.getDeclSpecifier().accept(this);
+		IConstructor declSpecifier = stack.pop();
 
-			IListWriter declarators = vf.listWriter();
-			Stream.of(declaration.getDeclarators()).forEach(it -> {
-				it.accept(this);
-				declarators.append(stack.pop());
-				addDeclaredType(br.resolveBinding(it, locs.forNode(it)), tr.resolveType(it));
-			});
-			stack.push(builder.Declaration_simpleDeclaration(declSpecifier, declarators.done(), attributes, loc,
-					isMacroExpansion));
-		}
+		IListWriter declarators = vf.listWriter();
+		Stream.of(declaration.getDeclarators()).forEach(it -> {
+			it.accept(this);
+			declarators.append(stack.pop());
+			addDeclaredType(br.resolveBinding(it, locs.forNode(it)), tr.resolveType(it));
+		});
+		stack.push(builder.Declaration_simpleDeclaration(declSpecifier, declarators.done(), attributes, loc,
+				isMacroExpansion));
+		
 		
 		return PROCESS_ABORT;
 	}
