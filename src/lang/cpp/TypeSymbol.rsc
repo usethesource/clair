@@ -100,5 +100,4 @@ data TypeModifier
   | \const()
   | \volatile()
   | \restrict()
-  
   ;
