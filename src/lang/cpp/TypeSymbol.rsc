@@ -14,7 +14,7 @@ module lang::cpp::TypeSymbol
 
 import lang::cpp::AST;
 
-public data TypeSymbol
+data TypeSymbol
   = \unspecified()
   | \void()
   | \char()
@@ -50,6 +50,7 @@ public data TypeSymbol
   
   | \classSpecialization(loc decl, list[TypeSymbol] templateArguments)
   | \enumerationSpecialization(loc specializedBinding, list[TypeSymbol] templateArguments)
+  | \aliasTemplateInstance(loc instantiatedTemplate, list[TypeSymbol] templateArguments)
   
   | \templateTypeParameter(loc owner, loc decl)
   | \implicitTemplateTypeParameter(loc owner, int position) //no decl?
@@ -86,7 +87,7 @@ public data TypeSymbol
   
   ;
   
-public data TypeModifier
+data TypeModifier
   = \signed()
   | \unsigned()
   | \short()

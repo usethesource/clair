@@ -701,17 +701,20 @@ public class TypeResolver {
 			Stream.of(parameterMap.getAllParameterPositions()).forEach(it -> {
 				ICPPTemplateArgument arg = parameterMap.getArgument(it);
 				if (arg != null) {
-					if (arg.isTypeValue())
+					if (arg.isTypeValue()) {
 						templateParameters.append(resolveType(arg.getTypeValue(), origin));
-					else
+					}
+					else {
 						templateParameters.append(resolveType(arg.getNonTypeEvaluation().getType(), origin));
-				} else {
+					}
+				} 
+				else {
 					assert false;
 					throw new RuntimeException("unexpected null argument in resolveITypedef @ " + origin);
 				}
 			});
 
-			return builder.TypeSymbol_aliasTemplate(getDecl(ati.getSpecializedBinding(), origin), templateParameters.done());
+			return builder.TypeSymbol_aliasTemplateInstance(getDecl(ati.getSpecializedBinding(), origin), templateParameters.done());
 		}
 		
 		return builder.TypeSymbol_typedef(resolveType(type.getType(), origin));
