@@ -57,20 +57,18 @@ public class CDTParser {
 
 	private final List<String> path;
 
-	public CDTParser(IValueFactory vf, PrintWriter stdOut, PrintWriter stdErr, IList stdLib, IList includePath, IMap standardMacros, IMap additionalMacros, ISet ignoredStandardMacros, boolean includeStdLib) {
+	public CDTParser(IValueFactory vf, PrintWriter stdOut, PrintWriter stdErr, IList stdLib, IList includePath, IMap standardMacros, IMap additionalMacros, boolean includeStdLib) {
 		this.vf = vf;
 		this.stdErr = stdErr;
-		
-		
 
 		Map<String, String> macros = new HashMap<String, String>();
 		additionalMacros.stream()
 			.map(ITuple.class::cast)
-			.forEach(tuple -> macros.put(((IString) tuple.get(0)).getValue, ((IString) tuple.get(1)).getValue()));
+			.forEach(tuple -> macros.put(((IString) tuple.get(0)).getValue(), ((IString) tuple.get(1)).getValue()));
 
 		standardMacros.stream()
 			.map(ITuple.class::cast)
-			.forEach(tuple -> macros.put(((IString) tuple.get(0)).getValue, ((IString) tuple.get(1)).getValue()));
+			.forEach(tuple -> macros.put(((IString) tuple.get(0)).getValue(), ((IString) tuple.get(1)).getValue()));
 
 
 		this.scannerInfo = new ScannerInfo(macros, null);

@@ -276,11 +276,11 @@ public class Parser extends ASTVisitor {
 		functionDefinitions = vf.setWriter();
 	}
 
-	public IList parseFiles(IList files, IList stdLib, IList includeDirs, IMap standardMacros, IMap additionalMacros, ISet ignoredStandardMacros, IBool includeStdLib) {
+	public IList parseFiles(IList files, IList stdLib, IList includeDirs, IMap standardMacros, IMap additionalMacros, IBool includeStdLib) {
 		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
 		this.stdLib = stdLib;
 
-		CDTParser parser = new CDTParser(vf, stdOut, stdErr, stdLib, includeDirs, standardMacros, additionalMacros, ignoredStandardMacros,
+		CDTParser parser = new CDTParser(vf, stdOut, stdErr, stdLib, includeDirs, standardMacros, additionalMacros,
 				includeStdLib.getValue());
 		monitor.jobStart("ClaiR parseFiles");
 		Instant begin = Instant.now();
@@ -461,9 +461,9 @@ public class Parser extends ASTVisitor {
 		return Stream.of(tu.getComments()).map(locs::forNode).collect(vf.listWriter());
 	}
 
-	public IList parseForComments(ISourceLocation file, IList includePath, IMap additionalMacros) {
+	public IList parseForComments(ISourceLocation file, IList includePath, IMap standardMacros, IMap additionalMacros) {
 		CDTParser parser = new CDTParser(vf, stdOut, stdErr, vf.listWriter().done(), includePath,
-				additionalMacros, true);
+				standardMacros, additionalMacros, true);
 		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
 		reset();
 		return getCommentsFromTranslationUnit(tu);
@@ -523,9 +523,9 @@ public class Parser extends ASTVisitor {
 			functionDefinitions.insert(vf.tuple(decl, loc));
 	}
 
-	public ISet parseForMacros(ISourceLocation file, IList includePath, IMap additionalMacros) {
+	public ISet parseForMacros(ISourceLocation file, IList includePath, IMap standardMacros, IMap additionalMacros) {
 		CDTParser parser = new CDTParser(vf, stdOut, stdErr, vf.listWriter().done(), includePath,
-				additionalMacros, true);
+				standardMacros, additionalMacros, true);
 		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
 		reset();
 		return getMacroExpansionsFromTranslationUnit(tu);
