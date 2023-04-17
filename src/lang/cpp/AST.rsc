@@ -452,7 +452,7 @@ public map[str, list[loc]] classPaths = (
      ]
     );
 
-map[str, str] standardMacros = (
+map[str, str] provideStandardMacros() = (
 		"_M_IX86": "600",
 		"_WIN32": "1",
 		// "_MSC_VER": "1400"
@@ -506,13 +506,13 @@ map[str, str] standardMacros = (
 );
 
 @javaClass{lang.cpp.internal.Parser}  
-java Declaration parseC(loc file, list[loc] stdLib = [], list[loc] includeDirs = [], map[str,str] standardMacros=standardMacros, map[str,str] additionalMacros = (), bool includeStdLib = false);
+java Declaration parseC(loc file, list[loc] stdLib = [], list[loc] includeDirs = [], map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false);
 
 @javaClass{lang.cpp.internal.Parser}  
-java Declaration parseCpp(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] standardMacros=standardMacros, map[str,str] additionalMacros = (), bool includeStdLib = false);
+java Declaration parseCpp(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false);
 
 @javaClass{lang.cpp.internal.Parser}  
-java list[Declaration] parseFiles(list[loc] files, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [],  map[str,str] standardMacros=standardMacros, map[str,str] additionalMacros = (), bool includeStdLib = false);
+java list[Declaration] parseFiles(list[loc] files, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [],  map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false);
 
 @javaClass{lang.cpp.internal.Parser}  
 java Declaration parseString(str code);
@@ -521,8 +521,8 @@ java Declaration parseString(str code);
 java Declaration parseString(str code, loc l);
 
 @javaClass{lang.cpp.internal.Parser}
-java list[loc] parseForComments(loc file, list[loc] includePaths = classPaths["vs12"],  map[str,str] standardMacros=standardMacros, map[str,str] additionalMacros = ());
+java list[loc] parseForComments(loc file, list[loc] includePaths = classPaths["vs12"],  map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = ());
 
 @javaClass{lang.cpp.internal.Parser}
-java rel[loc,loc] parseForMacros(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] standardMacros=standardMacros, map[str,str] additionalMacros = ());
+java rel[loc,loc] parseForMacros(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = ());
 
