@@ -276,11 +276,11 @@ public class Parser extends ASTVisitor {
 		functionDefinitions = vf.setWriter();
 	}
 
-	public IList parseFiles(IList files, IList stdLib, IList includeDirs, IMap additionalMacros, IBool includeStdLib) {
+	public IList parseFiles(IList files, IList stdLib, IList includeDirs, IMap standardMacros, IMap additionalMacros, ISet ignoredStandardMacros, IBool includeStdLib) {
 		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
 		this.stdLib = stdLib;
 
-		CDTParser parser = new CDTParser(vf, stdOut, stdErr, stdLib, includeDirs, additionalMacros,
+		CDTParser parser = new CDTParser(vf, stdOut, stdErr, stdLib, includeDirs, standardMacros, additionalMacros, ignoredStandardMacros,
 				includeStdLib.getValue());
 		monitor.jobStart("ClaiR parseFiles");
 		Instant begin = Instant.now();
@@ -306,14 +306,14 @@ public class Parser extends ASTVisitor {
 		return asts.done();
 	}
 
-	public IValue parseC(ISourceLocation file, IList stdLib, IList includeDirs, IMap additionalMacros,
+	public IValue parseC(ISourceLocation file, IList stdLib, IList includeDirs, IMap standardMacros, IMap additionalMacros,
 			IBool includeStdLib) {
 		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
 		this.stdLib = stdLib;
 
 //		Instant begin = Instant.now();
 //		out("Beginning at " + begin.toString());
-		CDTParser parser = new CDTParser(vf, stdOut, stdErr, stdLib, includeDirs, additionalMacros,
+		CDTParser parser = new CDTParser(vf, stdOut, stdErr, stdLib, includeDirs, standardMacros, additionalMacros,
 				includeStdLib.getValue());
 		IASTTranslationUnit tu = parser.parseFileAsC(file);
 //		Instant between = Instant.now();
@@ -332,14 +332,14 @@ public class Parser extends ASTVisitor {
 
 	}
 
-	public IValue parseCpp(ISourceLocation file, IList stdLib, IList includeDirs, IMap additionalMacros,
+	public IValue parseCpp(ISourceLocation file, IList stdLib, IList includeDirs, IMap standardMacros, IMap additionalMacros,
 			IBool includeStdLib) {
 		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
 		this.stdLib = stdLib;
 
 		Instant begin = Instant.now();
 		out("Beginning at " + begin.toString());
-		CDTParser parser = new CDTParser(vf, stdOut, stdErr, stdLib, includeDirs, additionalMacros,
+		CDTParser parser = new CDTParser(vf, stdOut, stdErr, stdLib, includeDirs, standardMacros, additionalMacros,
 				includeStdLib.getValue());
 		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
 		Instant between = Instant.now();
@@ -357,7 +357,7 @@ public class Parser extends ASTVisitor {
 		return result;
 	}
 
-	public ITuple parseCToM3AndAst(ISourceLocation file, IList stdLib, IList includeDirs, IMap additionalMacros,
+	public ITuple parseCToM3AndAst(ISourceLocation file, IList stdLib, IList includeDirs, IMap standardMacros, IMap additionalMacros,
 			IBool includeStdLib) {
 		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
 		this.stdLib = stdLib;
@@ -365,7 +365,7 @@ public class Parser extends ASTVisitor {
 		IValue m3 = builder.M3_m3(file);
 		ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", file.getPath());
 		br.setTranslationUnit(tuDecl);
-		CDTParser parser = new CDTParser(vf,stdOut, stdErr, stdLib, includeDirs, additionalMacros,
+		CDTParser parser = new CDTParser(vf,stdOut, stdErr, stdLib, includeDirs, standardMacros, additionalMacros,
 				includeStdLib.getValue());
 		IASTTranslationUnit tu = null;
 		try {
@@ -399,7 +399,7 @@ public class Parser extends ASTVisitor {
 		return vf.tuple(m3, result);
 	}
 
-	public ITuple parseCppToM3AndAst(ISourceLocation file, IList stdLib, IList includeDirs, IMap additionalMacros,
+	public ITuple parseCppToM3AndAst(ISourceLocation file, IList stdLib, IList includeDirs, IMap standardMacros, IMap additionalMacros,
 			IBool includeStdLib) {
 		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
 		this.stdLib = stdLib;
@@ -407,7 +407,7 @@ public class Parser extends ASTVisitor {
 		IValue m3 = builder.M3_m3(file);
 		ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", file.getPath());
 		br.setTranslationUnit(tuDecl);
-		CDTParser parser = new CDTParser(vf, stdOut, stdErr, stdLib, includeDirs, additionalMacros,
+		CDTParser parser = new CDTParser(vf, stdOut, stdErr, stdLib, includeDirs, standardMacros, additionalMacros,
 				includeStdLib.getValue());
 		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
 		IList comments = getCommentsFromTranslationUnit(tu);
