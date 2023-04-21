@@ -544,7 +544,7 @@ public class Parser extends ASTVisitor {
 		IParserLogService log = new DefaultLogService();
 		IASTTranslationUnit tu = GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, null, options, log);
 		IValue result = convertCdtToRascal(tu, false);
-		ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", loc.getPath());
+		ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", loc == null ? "" : loc.getPath());
 		result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
 		reset();
 		return result;
