@@ -20,6 +20,9 @@ import String;
 import lang::cpp::AST;
 import lang::cpp::TypeSymbol;
 
+import Relation;
+import analysis::graphs::Graph;
+
 public data M3(
   rel[loc base, loc derived] extends = {},
   rel[loc caller, loc callee] methodInvocations = {},
@@ -191,4 +194,42 @@ M3 composeCppM3(loc id, set[M3] models) {
   comp.callGraph = {*model.callGraph | model <- models};
   
   return comp;
+}
+
+test bool modelConsistencyAddressBook() {
+   tm = createM3AndAstFromCppFile(|project://clair/src/test/phonebook.cpp|);
+   m = tm<0>;
+   t = tm<1>;
+   decls = m.declarations<name>;
+
+   // nothing that is contained here does not not have a declaration, except the outermost translationUnit
+   assert m.declarations<name> - m.containment<to> - top(m.containment) == {};
+   
+   // everything in the containment relation has been declared somewhere
+   assert carrier(m.containment) - decls == {};
+
+   // everything in the declarations relation is contained somewhere
+   assert decls - carrier(m.containment) == {};
+
+   // all uses point to actual declarations
+   assert m.uses<name> - m.declarations<name> == {};
+
+   // in this example, all declarations are used at least once
+   assert m.declarations<name> - m.uses<name> == {};
+
+   // nothing in the AST that has a decl is not declared
+   assert all(/node n := t && n.decl? && n.decl in decls);
+
+   // all nodes have a .src attribute
+   assert all(/node n := t && loc _ := n.src?|unknown:///|);
+
+   // all sibling ast's are next to each other in the right order
+   for(/[*_,node a, node b, *_] := t, 
+        loc al := a.src?|unknown:///|, al.offset?,
+        loc bl := b.src?|unknown:///|, bl.offset?
+    ) {
+      assert al.offset + al.length <= bl.offset;
+    }
+
+   return true;
 }
