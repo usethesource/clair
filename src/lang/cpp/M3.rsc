@@ -52,6 +52,7 @@ public data M3(
 M3 cppASTToM3(Declaration tu, M3 model = m3(tu.src.top)) {
   model.declarations 
     = {<declarator.decl, declarator.src> | /Declarator declarator := tu, declarator has name, !(declarator.name is abstractEmptyName)} 
+    + {<declSpec.decl, declSpec.src> | /DeclSpecifier declSpec := tu, declSpec has name, !(declSpec.name is abstractEmptyName)} 
     + {<tu.decl, tu.src>}
     ;
   model.uses = { <physical,logical> | /Declaration d := tu, /node n := d, n.src?, loc physical := n.src, n.decl?, loc logical := n.decl};
