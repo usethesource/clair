@@ -3,72 +3,69 @@
  *
  * > I need the code for a simple phonebook database written from scratch in C++, in object-oriented style. 
  * > Could you generate that?
+ * 
+ * It does not necessarily work but it does exercise a number of c++ name and type analysis features.
  */
-#include <iostream>
-#include <string>
-#include <vector>
-
-using namespace std;
+void strncpy(char* dst, const char* src, int len) { return; /* dummy */}
+int strcmp(const char* a, const char* b) { return 0; /* dummy */}
 
 class Contact {
 public:
-    Contact(string name, string phoneNumber) {
-        this->name = name;
-        this->phoneNumber = phoneNumber;
+    Contact(const char* name, const char* phoneNumber) {
+        strncpy(this->name, name, sizeof(this->name) - 1);
+        strncpy(this->phoneNumber, phoneNumber, sizeof(this->phoneNumber) - 1);
+        this->name[sizeof(this->name) - 1] = '\0';
+        this->phoneNumber[sizeof(this->phoneNumber) - 1] = '\0';
     }
-    string getName() {
+    const char* getName() const {
         return name;
     }
-    string getPhoneNumber() {
+    const char* getPhoneNumber() const {
         return phoneNumber;
     }
 private:
-    string name;
-    string phoneNumber;
+    char name[256];
+    char phoneNumber[256];
 };
 
 class Phonebook {
 public:
-    void addContact(Contact contact) {
-        contacts.push_back(contact);
+    Phonebook() {
+        contacts = new Contact*[MAX_CONTACTS];
+        numContacts = 0;
     }
-    vector<Contact> searchByName(string name) {
-        vector<Contact> matchingContacts;
-        for (int i = 0; i < contacts.size(); i++) {
-            if (contacts[i].getName() == name) {
-                matchingContacts.push_back(contacts[i]);
+    ~Phonebook() {
+        for (int i = 0; i < numContacts; i++) {
+            delete contacts[i];
+        }
+        delete[] contacts;
+    }
+    void addContact(const Contact& contact) {
+        contacts[numContacts++] = new Contact(contact.getName(), contact.getPhoneNumber());
+    }
+    Contact** searchByName(const char* name, int* numMatches) const {
+        Contact** matchingContacts = new Contact*[MAX_CONTACTS];
+        *numMatches = 0;
+        for (int i = 0; i < numContacts; i++) {
+            if (strcmp(contacts[i]->getName(), name) == 0) {
+                matchingContacts[(*numMatches)++] = contacts[i];
             }
         }
         return matchingContacts;
     }
-    vector<Contact> searchByPhoneNumber(string phoneNumber) {
-        vector<Contact> matchingContacts;
-        for (int i = 0; i < contacts.size(); i++) {
-            if (contacts[i].getPhoneNumber() == phoneNumber) {
-                matchingContacts.push_back(contacts[i]);
+    Contact** searchByPhoneNumber(const char* phoneNumber, int* numMatches) const {
+        Contact** matchingContacts = new Contact*[MAX_CONTACTS];
+        *numMatches = 0;
+        for (int i = 0; i < numContacts; i++) {
+            if (strcmp(contacts[i]->getPhoneNumber(), phoneNumber) == 0) {
+                matchingContacts[(*numMatches)++] = contacts[i];
             }
         }
         return matchingContacts;
     }
 private:
-    vector<Contact> contacts;
+    static const int MAX_CONTACTS = 1000;
+    Contact** contacts;
+    int numContacts;
 };
 
-int main() {
-    Phonebook phonebook;
-    phonebook.addContact(Contact("John Smith", "555-1234"));
-    phonebook.addContact(Contact("Jane Doe", "555-5678"));
-    phonebook.addContact(Contact("Bob Johnson", "555-9012"));
-
-    vector<Contact> matchingContacts = phonebook.searchByName("Jane Doe");
-    for (int i = 0; i < matchingContacts.size(); i++) {
-        cout << matchingContacts[i].getName() << " " << matchingContacts[i].getPhoneNumber() << endl;
-    }
-
-    matchingContacts = phonebook.searchByPhoneNumber("555-9012");
-    for (int i = 0; i < matchingContacts.size(); i++) {
-        cout << matchingContacts[i].getName() << " " << matchingContacts[i].getPhoneNumber() << endl;
-    }
-
-    return 0;
-}
