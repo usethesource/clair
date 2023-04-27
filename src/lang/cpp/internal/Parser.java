@@ -208,6 +208,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CASTName;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTParameterDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.core.runtime.CoreException;
 import org.rascalmpl.debug.IRascalMonitor;
 import org.rascalmpl.exceptions.RuntimeExceptionFactory;
@@ -2639,52 +2640,66 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = locs.forNode(expression);
 		boolean isMacroExpansion = isMacroExpansion(expression);
 		IConstructor typ = tr.resolveType(expression);
-		// if (expression.isNewTypeId())
-		// err("WARNING: ICPPASTNewExpression \"" + expression.getRawSignature()
-		// + "\" has isNewTypeId=true");
-		// else
-		// err("WARNING: ICPPASTNewExpression \"" + expression.getRawSignature()
-		// + "\" has isNewTypeId=false");
-
+		
 		expression.getTypeId().accept(this);
 		IConstructor typeId = stack.pop();
+		IBinding constructor = CPPSemantics.findImplicitlyCalledConstructor(expression);
+		ISourceLocation decl = constructor != null ? br.resolveBinding(constructor, loc) : URIUtil.rootLocation("noConstructor");
 
 		IASTInitializerClause[] _placementArguments = expression.getPlacementArguments();
 		IASTInitializer _initializer = expression.getInitializer();
+		final IListWriter placementArguments = vf.listWriter();
+		IConstructor initializer = null;
+
 		if (_placementArguments != null) {
-			IListWriter placementArguments = vf.listWriter();
 			Stream.of(_placementArguments).forEach(it -> {
 				it.accept(this);
 				placementArguments.append(stack.pop());
 			});
-			if (_initializer == null) {
-				if (expression.isGlobal())
-					stack.push(builder.Expression_globalNewWithArgs(placementArguments.done(), typeId, loc, typ,
-							isMacroExpansion));
-				else
-					stack.push(builder.Expression_newWithArgs(placementArguments.done(), typeId, loc, typ,
-							isMacroExpansion));
-			} else {
-				_initializer.accept(this);
-				if (expression.isGlobal())
-					stack.push(builder.Expression_globalNewWithArgs(placementArguments.done(), typeId, stack.pop(), loc,
-							typ, isMacroExpansion));
-				else
-					stack.push(builder.Expression_newWithArgs(placementArguments.done(), typeId, stack.pop(), loc, typ,
-							isMacroExpansion));
-			}
-		} else if (_initializer == null) {
-			if (expression.isGlobal())
-				stack.push(builder.Expression_globalNew(typeId, loc, typ, isMacroExpansion));
-			else
-				stack.push(builder.Expression_new(typeId, loc, typ, isMacroExpansion));
-		} else {
-			_initializer.accept(this);
-			if (expression.isGlobal())
-				stack.push(builder.Expression_globalNew(typeId, stack.pop(), loc, typ, isMacroExpansion));
-			else
-				stack.push(builder.Expression_new(typeId, stack.pop(), loc, typ, isMacroExpansion));
 		}
+
+		if (_initializer != null) {
+			_initializer.accept(this);
+			initializer = stack.pop();
+		}
+
+		if (_placementArguments != null) {
+			if (expression.isGlobal()) {
+				if (initializer == null) {
+					stack.push(builder.Expression_globalNewWithArgs(placementArguments.done(), typeId, loc, decl, typ, isMacroExpansion));
+				}
+				else {
+					stack.push(builder.Expression_globalNewWithArgs(placementArguments.done(), typeId, initializer, loc, decl, typ, isMacroExpansion));
+				}
+			}
+			else {
+				if (_initializer == null) {
+					stack.push(builder.Expression_newWithArgs(placementArguments.done(), typeId, loc, decl, typ, isMacroExpansion));
+				}
+				else {
+					stack.push(builder.Expression_newWithArgs(placementArguments.done(), typeId, initializer, loc, decl, typ, isMacroExpansion));
+				}
+			}
+		}
+		else {
+			if (expression.isGlobal()) {
+				if (_initializer == null) {
+					stack.push(builder.Expression_globalNew(typeId, loc, decl, typ, isMacroExpansion));
+				}
+				else {
+					stack.push(builder.Expression_globalNew(typeId, initializer, loc, decl, typ, isMacroExpansion));
+				}
+			}
+			else {
+				if (initializer == null) {
+					stack.push(builder.Expression_new(typeId, loc, decl, typ, isMacroExpansion));
+				}
+				else {
+					stack.push(builder.Expression_new(typeId, initializer, loc, decl, typ, isMacroExpansion));
+				}
+			}
+		}
+		
 		return PROCESS_ABORT;
 	}
 
