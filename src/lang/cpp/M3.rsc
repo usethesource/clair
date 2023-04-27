@@ -64,11 +64,18 @@ M3 cppASTToM3(Declaration tu, M3 model = m3(tu.src.top)) {
                + {<d.decl,unset(modifier)> | /DeclSpecifier d := tu, d.baseSpecifiers?, bs <- d.baseSpecifiers, modifier <- bs.modifiers};
   model.extends = {<base.decl,derived.decl> | /DeclSpecifier derived := tu, derived.baseSpecifiers?, base <- derived.baseSpecifiers};
   model.methodInvocations
-    = {<declarator.decl, functionName.decl> | /functionDefinition(_, Declarator declarator, _, Statement body) := tu, /functionCall(Expression functionName,_) := body,
-      functionName.decl?}
-    + {<declarator.decl, functionName.expression.decl> | /functionDefinition(_, Declarator declarator, _, Statement body) := tu, /functionCall(Expression functionName,_) := body,
-      functionName is bracketed, functionName.expression.decl?}
-    ;
+    = { // direct function calls 
+        *{<declarator.decl, functionName.decl> | /functionCall(Expression functionName, _) := body, functionName.decl?},
+
+        // calls via brackets
+        *{<declarator.decl, functionName.expression.decl> | /functionCall(Expression functionName, _) := body, functionName is bracketed, functionName.expression.decl?},
+    
+        // constructor calls
+        *{<declarator.decl, e.decl> | /Expression e := body, e is new || e is newWithArgs || e is globalNew || e is globalNewWithArgs, e.decl?, e.decl != |noConstructor:///|}
+      
+      | /functionDefinition(_, Declarator declarator, _, Statement body) := tu
+      }
+      ;
   model.memberAccessModifiers = deriveAccessModifiers(tu);
   model.declarationToDefinition = model.declarations<1,0> o model.functionDefinitions;
   model.cFunctionsToNoArgs = {<function, loseCArgs(function)> | function <- model.functionDefinitions<0>};
