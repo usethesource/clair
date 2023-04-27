@@ -153,7 +153,7 @@ str type2FactoryCall(Symbol t){
   bool hasDecl("Declaration", str cname)
     = cname in {"enumerator", "usingDirective", "sttClass", "sttTypename", "tttParameter", "tttParameterWithDefault", "baseSpecifier", "namespaceDefinition", "namespaceDefinitionInline", "usingDeclaration", "namespaceAlias", "alias", "pointerToMember"};
   bool hasDecl("Expression", str cname)
-    = cname in {"idExpression", "fieldReference", "fieldReferencePointerDeref", "templateId", "constructorChainInitializer", "capture", "captureByRef"};
+    = cname in {"new", "newWithArgs", "globalNew", "globalNewWithArgs", "idExpression", "fieldReference", "fieldReferencePointerDeref", "templateId", "constructorChainInitializer", "capture", "captureByRef"};
   bool hasDecl("Statement", str cname) = cname in {"label", "goto"};
   bool hasDecl("Name", "qualifiedName") = true;
   bool hasDecl("Name", "templateId") = true;
