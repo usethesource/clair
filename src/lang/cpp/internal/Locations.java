@@ -18,12 +18,10 @@ import io.usethesource.vallang.type.TypeFactory;
 
 public class Locations {
     private final IValueFactory vf;
-	private final PrintWriter stdErr;
     private final StandardTextReader locParser = new StandardTextReader();
     
     public Locations(IValueFactory vf, PrintWriter stdErr) {
         this.vf = vf;
-        this.stdErr = stdErr;
     }
 
 	public ISourceLocation forNode(IASTNode node) {
