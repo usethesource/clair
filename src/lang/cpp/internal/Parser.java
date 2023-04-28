@@ -2644,7 +2644,7 @@ public class Parser extends ASTVisitor {
 		expression.getTypeId().accept(this);
 		IConstructor typeId = stack.pop();
 		IBinding constructor = CPPSemantics.findImplicitlyCalledConstructor(expression);
-		ISourceLocation decl = constructor != null ? br.resolveBinding(constructor, loc) : URIUtil.rootLocation("noConstructor");
+		ISourceLocation decl = constructor != null ? br.resolveBinding(constructor, loc) : null;
 
 		IASTInitializerClause[] _placementArguments = expression.getPlacementArguments();
 		IASTInitializer _initializer = expression.getInitializer();

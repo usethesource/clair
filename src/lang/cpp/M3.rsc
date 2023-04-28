@@ -17,6 +17,7 @@ extend analysis::m3::Core;
 import IO;
 import Node;
 import String;
+import Set;
 import lang::cpp::AST;
 import lang::cpp::TypeSymbol;
 
@@ -71,7 +72,7 @@ M3 cppASTToM3(Declaration tu, M3 model = m3(tu.src.top)) {
         *{<declarator.decl, functionName.expression.decl> | /functionCall(Expression functionName, _) := body, functionName is bracketed, functionName.expression.decl?},
     
         // constructor calls
-        *{<declarator.decl, e.decl> | /Expression e := body, e is new || e is newWithArgs || e is globalNew || e is globalNewWithArgs, e.decl?, e.decl != |noConstructor:///|}
+        *{<declarator.decl, e.decl> | /Expression e := body, e is new || e is newWithArgs || e is globalNew || e is globalNewWithArgs, e.decl?}
       
       | /functionDefinition(_, Declarator declarator, _, Statement body) := tu
       }
@@ -223,6 +224,9 @@ test bool modelConsistencyAddressBook() {
 
    // in this example, all declarations are used at least once
    assert m.declarations<name> - m.uses<name> == {};
+
+   // m.declarations is one-to-one
+   assert size(m.declarations<name>) == size(m.declarations);
 
    // nothing in the AST that has a decl is not declared
    assert all(/node n := t && n.decl? && n.decl in decls);

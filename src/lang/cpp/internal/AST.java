@@ -874,7 +874,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_functionDeclaratorNested_6 , $pointerOperators, $modifiers, $declarator, $parameters, $virtSpecifiers, $initializer).asWithKeywordParameters().setParameters(kwParams);
@@ -899,7 +899,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_functionDeclarator_3 , $pointerOperators, $name, $parameters).asWithKeywordParameters().setParameters(kwParams);
@@ -932,7 +932,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_functionDeclaratorWithES_5 , $pointerOperators, $modifiers, $name, $parameters, $virtSpecifiers).asWithKeywordParameters().setParameters(kwParams);
@@ -969,7 +969,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_functionDeclaratorNoexcept_6 , $pointerOperators, $modifiers, $name, $parameters, $virtSpecifiers, $noexceptExpression).asWithKeywordParameters().setParameters(kwParams);
@@ -994,7 +994,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_arrayDeclaratorNested_3 , $pointerOperators, $declarator, $arrayModifier).asWithKeywordParameters().setParameters(kwParams);
@@ -1031,7 +1031,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_functionDeclarator_6 , $pointerOperators, $modifiers, $name, $parameters, $virtSpecifiers, $trailingReturnType).asWithKeywordParameters().setParameters(kwParams);
@@ -1056,7 +1056,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_declarator_3 , $pointerOperators, $name, $initializer).asWithKeywordParameters().setParameters(kwParams);
@@ -1085,7 +1085,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_arrayDeclarator_4 , $pointerOperators, $name, $arrayModifier, $initializer).asWithKeywordParameters().setParameters(kwParams);
@@ -1106,7 +1106,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_declarator_2 , $pointerOperators, $name).asWithKeywordParameters().setParameters(kwParams);
@@ -1117,7 +1117,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_missingDeclarator_0 ).asWithKeywordParameters().setParameters(kwParams);
@@ -1154,7 +1154,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_functionDeclaratorWithES_6 , $pointerOperators, $modifiers, $name, $parameters, $virtSpecifiers, $exceptionSpecification).asWithKeywordParameters().setParameters(kwParams);
@@ -1181,7 +1181,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_knrFunctionDeclarator_4 , $pointerOperators, $modifiers, $parameterNames, $parameterDeclarations).asWithKeywordParameters().setParameters(kwParams);
@@ -1206,7 +1206,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_fieldDeclarator_3 , $pointerOperators, $name, $bitFieldSize).asWithKeywordParameters().setParameters(kwParams);
@@ -1231,7 +1231,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_arrayDeclarator_3 , $pointerOperators, $name, $arrayModifier).asWithKeywordParameters().setParameters(kwParams);
@@ -1264,7 +1264,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_functionDeclarator_5 , $pointerOperators, $modifiers, $name, $parameters, $virtSpecifiers).asWithKeywordParameters().setParameters(kwParams);
@@ -1293,7 +1293,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_fieldDeclarator_4 , $pointerOperators, $name, $bitFieldSize, $initializer).asWithKeywordParameters().setParameters(kwParams);
@@ -1326,7 +1326,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_functionDeclaratorNested_5 , $pointerOperators, $modifiers, $declarator, $parameters, $virtSpecifiers).asWithKeywordParameters().setParameters(kwParams);
@@ -1355,7 +1355,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declarator_arrayDeclaratorNested_4 , $pointerOperators, $declarator, $arrayModifier, $initializer).asWithKeywordParameters().setParameters(kwParams);
@@ -1385,7 +1385,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_struct_4 , $modifiers, $name, $baseSpecifiers, $members).asWithKeywordParameters().setParameters(kwParams);
@@ -1410,7 +1410,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_class_3 , $modifiers, $name, $members).asWithKeywordParameters().setParameters(kwParams);
@@ -1439,7 +1439,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_enum_4 , $modifiers, $baseType, $name, $enumerators).asWithKeywordParameters().setParameters(kwParams);
@@ -1458,7 +1458,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_etsEnum_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
@@ -1487,7 +1487,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_classFinal_4 , $modifiers, $name, $baseSpecifiers, $members).asWithKeywordParameters().setParameters(kwParams);
@@ -1512,7 +1512,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_struct_3 , $modifiers, $name, $members).asWithKeywordParameters().setParameters(kwParams);
@@ -1548,7 +1548,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_msThrowEllipsis_0 ).asWithKeywordParameters().setParameters(kwParams);
@@ -1573,7 +1573,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_union_3 , $modifiers, $name, $members).asWithKeywordParameters().setParameters(kwParams);
@@ -1602,7 +1602,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_union_4 , $modifiers, $name, $baseSpecifiers, $members).asWithKeywordParameters().setParameters(kwParams);
@@ -1642,7 +1642,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_etsStruct_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
@@ -1667,7 +1667,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_enumScoped_3 , $modifiers, $name, $enumerators).asWithKeywordParameters().setParameters(kwParams);
@@ -1692,7 +1692,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_enumOpaque_3 , $modifiers, $baseType, $name).asWithKeywordParameters().setParameters(kwParams);
@@ -1711,7 +1711,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_namedTypeSpecifier_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
@@ -1740,7 +1740,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_class_4 , $modifiers, $name, $baseSpecifiers, $members).asWithKeywordParameters().setParameters(kwParams);
@@ -1759,7 +1759,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_etsUnion_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
@@ -1788,7 +1788,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_unionFinal_4 , $modifiers, $name, $baseSpecifiers, $members).asWithKeywordParameters().setParameters(kwParams);
@@ -1817,7 +1817,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_enumScoped_4 , $modifiers, $baseType, $name, $enumerators).asWithKeywordParameters().setParameters(kwParams);
@@ -1836,7 +1836,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_etsClass_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
@@ -1857,7 +1857,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_enumScopedOpaque_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
@@ -1886,7 +1886,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_structFinal_4 , $modifiers, $name, $baseSpecifiers, $members).asWithKeywordParameters().setParameters(kwParams);
@@ -1911,7 +1911,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_enum_3 , $modifiers, $name, $enumerators).asWithKeywordParameters().setParameters(kwParams);
@@ -1936,7 +1936,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_DeclSpecifier_enumScopedOpaque_3 , $modifiers, $baseType, $name).asWithKeywordParameters().setParameters(kwParams);
@@ -1956,7 +1956,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_sttClass_2 , $name, $defaultType).asWithKeywordParameters().setParameters(kwParams);
@@ -1975,7 +1975,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_enumerator_2 , $name, $value).asWithKeywordParameters().setParameters(kwParams);
@@ -2022,7 +2022,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_tttParameter_2 , $nestedParameters, $name).asWithKeywordParameters().setParameters(kwParams);
@@ -2043,7 +2043,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_namespaceDefinitionInline_2 , $name, $declarations).asWithKeywordParameters().setParameters(kwParams);
@@ -2058,7 +2058,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_enumerator_1 , $name).asWithKeywordParameters().setParameters(kwParams);
@@ -2113,7 +2113,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_tttParameterWithDefault_3 , $nestedParameters, $name, $defaultValue).asWithKeywordParameters().setParameters(kwParams);
@@ -2164,7 +2164,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_pointerToMember_2 , $modifiers, $nestedName).asWithKeywordParameters().setParameters(kwParams);
@@ -2277,7 +2277,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_namespaceDefinition_2 , $name, $declarations).asWithKeywordParameters().setParameters(kwParams);
@@ -2296,7 +2296,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_baseSpecifier_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
@@ -2339,7 +2339,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_sttClass_1 , $name).asWithKeywordParameters().setParameters(kwParams);
@@ -2407,7 +2407,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_namespaceAlias_2 , $alias, $mapping).asWithKeywordParameters().setParameters(kwParams);
@@ -2428,7 +2428,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_alias_2 , $alias, $mappingTypeId).asWithKeywordParameters().setParameters(kwParams);
@@ -2443,7 +2443,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_sttTypename_1 , $name).asWithKeywordParameters().setParameters(kwParams);
@@ -2544,7 +2544,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_baseSpecifier_1 , $modifiers).asWithKeywordParameters().setParameters(kwParams);
@@ -2580,7 +2580,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_usingDeclaration_2 , $modifiers, $name).asWithKeywordParameters().setParameters(kwParams);
@@ -2616,7 +2616,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_usingDirective_1 , $qualifiedName).asWithKeywordParameters().setParameters(kwParams);
@@ -2683,7 +2683,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_sttTypename_2 , $name, $defaultType).asWithKeywordParameters().setParameters(kwParams);
@@ -2744,7 +2744,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     kwParams.put("typ", $typ);
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_newWithArgs_2 , $arguments, $typeId).asWithKeywordParameters().setParameters(kwParams);
@@ -3069,7 +3069,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_constructorChainInitializer_2 , $name, $initializer).asWithKeywordParameters().setParameters(kwParams);
@@ -3126,7 +3126,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     kwParams.put("typ", $typ);
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_globalNewWithArgs_2 , $arguments, $typeId).asWithKeywordParameters().setParameters(kwParams);
@@ -3179,7 +3179,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     kwParams.put("typ", $typ);
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_newWithArgs_3 , $arguments, $typeId, $initializer).asWithKeywordParameters().setParameters(kwParams);
@@ -3243,7 +3243,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     kwParams.put("typ", $typ);
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_globalNewWithArgs_3 , $arguments, $typeId, $initializer).asWithKeywordParameters().setParameters(kwParams);
@@ -3300,7 +3300,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     kwParams.put("typ", $typ);
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_fieldReferencePointerDeref_2 , $fieldOwner, $name).asWithKeywordParameters().setParameters(kwParams);
@@ -3475,7 +3475,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     kwParams.put("typ", $typ);
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_globalNew_1 , $typeId).asWithKeywordParameters().setParameters(kwParams);
@@ -3547,7 +3547,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_capture_1 , $name).asWithKeywordParameters().setParameters(kwParams);
@@ -3932,7 +3932,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     kwParams.put("typ", $typ);
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_new_2 , $typeId, $initializer).asWithKeywordParameters().setParameters(kwParams);
@@ -4137,7 +4137,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     kwParams.put("typ", $typ);
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_globalNew_2 , $typeId, $initializer).asWithKeywordParameters().setParameters(kwParams);
@@ -4459,7 +4459,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     kwParams.put("typ", $typ);
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_new_1 , $typeId).asWithKeywordParameters().setParameters(kwParams);
@@ -4564,7 +4564,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_captureByRef_1 , $name).asWithKeywordParameters().setParameters(kwParams);
@@ -4866,7 +4866,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     kwParams.put("typ", $typ);
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_idExpression_1 , $name).asWithKeywordParameters().setParameters(kwParams);
@@ -4945,7 +4945,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     kwParams.put("typ", $typ);
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Expression_fieldReference_2 , $fieldOwner, $name).asWithKeywordParameters().setParameters(kwParams);
@@ -5461,7 +5461,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Statement_label_2 , $name, $nestedStatement).asWithKeywordParameters().setParameters(kwParams);
@@ -5603,7 +5603,7 @@ public class AST {
       kwParams.put("attributes", $attributes);
     }
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Statement_goto_1 , $name).asWithKeywordParameters().setParameters(kwParams);
@@ -7311,7 +7311,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Name_templateId_2 , $name, $argumentTypes).asWithKeywordParameters().setParameters(kwParams);
@@ -7379,7 +7379,7 @@ public class AST {
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
     
     kwParams.put("src", $loc);
-    kwParams.put("decl", $decl);
+    if ($decl != null) { kwParams.put("decl", $decl); }
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Name_qualifiedName_2 , $qualifiers, $lastName).asWithKeywordParameters().setParameters(kwParams);
