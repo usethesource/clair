@@ -25,7 +25,7 @@ import Relation;
 import analysis::graphs::Graph;
 import analysis::m3::Registry;
 
-public data M3(
+data M3(
   rel[loc base, loc derived] extends = {},
   rel[loc caller, loc callee] methodInvocations = {},
   rel[loc field, loc accesser] fieldAccess = {},
@@ -82,7 +82,6 @@ M3 cppASTToM3(Declaration tu, M3 model = m3(tu.src.top)) {
   model.declarationToDefinition = model.declarations<1,0> o model.functionDefinitions;
   model.cFunctionsToNoArgs = {<function, loseCArgs(function)> | function <- model.functionDefinitions<0>};
   
-  // TODO: change this after we "untransitived" includeResolution
   model.requires = {<model.id, pretty(resolved)> | resolved <- model.includeResolution<1>};
   model.provides = {<definition.top, declaration.top> | <declaration, definition> <- model.declarationToDefinition};
   model.partOf = {<function, model.id> | <function,_> <- model.functionDefinitions};
@@ -92,9 +91,11 @@ M3 cppASTToM3(Declaration tu, M3 model = m3(tu.src.top)) {
 }
 
 rel[loc caller, loc callee] extractCallGraph(Declaration ast) = extractCallGraph({ast});
+
+@synopsis{extracts dependencies between every declaration and every name that is used in it, that is not-not a "call"}
 rel[loc caller, loc callee] extractCallGraph(set[Declaration] asts)
   = { <caller.declarator.decl, c.decl> | ast <- asts, /Declaration caller := ast, caller has declarator, /Expression c := caller, c has decl,
-      c.decl.scheme notin {"cpp+class", "cpp+enumerator", "cpp+field", "cpp+parameter", "cpp+typedef", "cpp+variable", "c+variable"} };		//Over-approximation
+      c.decl.scheme notin {"cpp+class", "cpp+enumerator", "cpp+field", "cpp+parameter", "cpp+typedef", "cpp+variable", "c+variable", "unknown", "cpp+unknown"} };		//Over-approximation
 
 loc pretty(loc subject) = |<subject.scheme>://<pretty(subject.path)>|;
 str pretty(str path) = replaceAll(path, "\\", "/");
