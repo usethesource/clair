@@ -82,6 +82,7 @@ M3 cppASTToM3(Declaration tu, M3 model = m3(tu.src.top)) {
   model.declarationToDefinition = model.declarations<1,0> o model.functionDefinitions;
   model.cFunctionsToNoArgs = {<function, loseCArgs(function)> | function <- model.functionDefinitions<0>};
   
+  // TODO: change this after we "untransitived" includeResolution
   model.requires = {<model.id, pretty(resolved)> | resolved <- model.includeResolution<1>};
   model.provides = {<definition.top, declaration.top> | <declaration, definition> <- model.declarationToDefinition};
   model.partOf = {<function, model.id> | <function,_> <- model.functionDefinitions};

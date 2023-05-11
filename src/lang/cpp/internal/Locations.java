@@ -26,46 +26,46 @@ public class Locations {
 
 	public ISourceLocation forNode(IASTNode node) {
 		try {
-		IASTFileLocation astFileLocation = node.getFileLocation();
+			IASTFileLocation astFileLocation = node.getFileLocation();
 
-		if (astFileLocation != null) {
-			String fileName = astFileLocation.getFileName();
+			if (astFileLocation != null) {
+				String fileName = astFileLocation.getFileName();
 
-			// TODO: JV; I find this looking kind of tricky. Where would the wrong
-			// slashes come from and should we not solve the problem at the source?
-			// is there a way to get a "File" abstraction or Resource from CDT?
-			fileName = fileName.replace('\\', '/');
+				ISourceLocation tmp = forStringPath(fileName);
 
-			if (fileName.trim().startsWith("|")) {
-				try {
-					ISourceLocation tmp = (ISourceLocation) locParser.read(vf, TypeFactory.getInstance().sourceLocationType(), new StringReader(fileName));
-					
-					return vf.sourceLocation(
-							tmp,
-							astFileLocation.getNodeOffset(), 
-							astFileLocation.getNodeLength());
-				} catch (FactParseError | FactTypeUseException | IOException e) {
-		
-					return unknownPreciseLoc();
-				}
-			}
-
-			if (!fileName.startsWith("/")) {
-				fileName = "/" + fileName;
-			}
-
-			return vf.sourceLocation(
-						vf.sourceLocation(fileName), 
+				return vf.sourceLocation(
+						tmp,
 						astFileLocation.getNodeOffset(),
-						astFileLocation.getNodeLength()
-					);
+						astFileLocation.getNodeLength());
+			}
+
+			return unknownPreciseLoc();
+		} 
+		catch (RuntimeException e) {
+			throw new RuntimeException("AST at " + node + " failed", e);
+		}
+	}
+
+	public ISourceLocation forStringPath(String fileName) {
+		// TODO: JV; I find this looking kind of tricky. Where would the wrong
+		// slashes come from and should we not solve the problem at the source?
+		// is there a way to get a "File" abstraction or Resource from CDT?
+		fileName = fileName.replace('\\', '/');
+
+		if (fileName.trim().startsWith("|")) {
+			try {
+				return (ISourceLocation) locParser.read(vf, TypeFactory.getInstance().sourceLocationType(),
+						new StringReader(fileName));
+			} catch (FactParseError | FactTypeUseException | IOException e) {
+				return unknownPreciseLoc();
+			}
 		}
 
-		return unknownPreciseLoc();
-	}
-	catch (RuntimeException e) {
-		throw new RuntimeException("AST at " + node + " failed", e);
-	}
+		if (!fileName.startsWith("/")) {
+			fileName = "/" + fileName;
+		}
+
+		return vf.sourceLocation(fileName);
 	}
 
 	private ISourceLocation unknownPreciseLoc() {

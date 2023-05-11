@@ -6,6 +6,9 @@
  * 
  * It does not necessarily work but it does exercise a number of c++ name and type analysis features.
  */
+
+#include <stdio.h>
+
 void strncpy(char* dst, const char* src, int len) { return; /* dummy */}
 int strcmp(const char* a, const char* b) { return 0; /* dummy */}
 
