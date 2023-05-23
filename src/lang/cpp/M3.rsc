@@ -26,6 +26,7 @@ import analysis::graphs::Graph;
 import analysis::m3::Registry;
 
 data M3(
+  set[loc name] implicitDeclarations = {},
   rel[loc base, loc derived] extends = {},
   rel[loc caller, loc callee] methodInvocations = {},
   rel[loc field, loc accesser] fieldAccess = {},
@@ -181,6 +182,7 @@ java tuple[M3, Declaration] parseCToM3AndAst(loc file, list[loc] stdLib = [], li
 M3 composeCppM3(loc id, set[M3] models) {
   M3 comp = composeM3(id, models); 
   
+  comp.implicitDeclarations = {*model.implicitDeclarations | model <- models};
   comp.extends = {*model.extends | model <- models};
   comp.methodInvocations = {*model.methodInvocations | model <- models};
   comp.fieldAccess = {*model.fieldAccess | model <- models};
@@ -230,7 +232,7 @@ test bool modelConsistencyAddressBook() {
     assert decls - carrier(m.containment) == {};
 
     // all uses point to actual declarations
-    assert m.uses<name> - m.declarations<name> == {};
+    assert m.uses<name> - m.declarations<name> - m.implicitDeclarations == {};
 
     // in this example, all declarations are used at least once
     assert m.declarations<name> - m.uses<name> == {};

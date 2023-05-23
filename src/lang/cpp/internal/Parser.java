@@ -249,6 +249,7 @@ public class Parser extends ASTVisitor {
 	private ISetWriter declaredType;
 	private ISetWriter functionDefinitions;
 	private ISetWriter newResolutions;
+	private ISetWriter implicitDeclarations;
 
 	public Parser(IValueFactory vf, IRascalValueFactory rvf, PrintWriter stdOut, PrintWriter stdErr, 
 			IRascalMonitor monitor) {
@@ -276,6 +277,7 @@ public class Parser extends ASTVisitor {
 		stdLib = vf.listWriter().done();
 		declaredType = vf.setWriter();
 		functionDefinitions = vf.setWriter();
+		implicitDeclarations = vf.setWriter();
 		newResolutions = vf.setWriter();
 	}
 
@@ -391,6 +393,7 @@ public class Parser extends ASTVisitor {
 
 		declaredType = vf.setWriter();
 		functionDefinitions = vf.setWriter();
+		implicitDeclarations = vf.setWriter();
 		newResolutions = vf.setWriter();
 		IValue result = convertCdtToRascal(tu, true);
 
@@ -402,6 +405,7 @@ public class Parser extends ASTVisitor {
 		m3 = m3.asWithKeywordParameters().setParameter("declaredType", declaredType.done());
 		m3 = m3.asWithKeywordParameters().setParameter("functionDefinitions", functionDefinitions.done());
 		m3 = m3.asWithKeywordParameters().setParameter("containment", br.getContainmentRelation());
+		m3 = m3.asWithKeywordParameters().setParameter("implicitDeclarations", implicitDeclarations.done());
 
 		reset();
 		return vf.tuple(m3, result);
@@ -441,6 +445,7 @@ public class Parser extends ASTVisitor {
 		m3 = m3.asWithKeywordParameters().setParameter("declaredType", declaredType.done());
 		m3 = m3.asWithKeywordParameters().setParameter("functionDefinitions", functionDefinitions.done());
 		m3 = m3.asWithKeywordParameters().setParameter("containment", br.getContainmentRelation());
+		m3 = m3.asWithKeywordParameters().setParameter("implicitDeclarations", implicitDeclarations.done());
 
 		reset();
 		return vf.tuple(m3, result);
@@ -2677,6 +2682,14 @@ public class Parser extends ASTVisitor {
 		if (decl != null && newDecl != null) {
 			newResolutions.append(vf.tuple(newDecl, decl));
 		}
+
+		// we always introduce an implicit `cpp+new` that is used in methodInvocations
+		// and because we annotate the tree with `decl` to this, they also end up in the uses
+		// relation of M3. Therefore we add them here so we can check completeness and accuracy
+		// of the decls, uses and containment relation even though these quasi-constructors have
+		// never been declared anywwhere.
+		implicitDeclarations.insert(newDecl);
+		
 
 		IASTInitializerClause[] _placementArguments = expression.getPlacementArguments();
 		IASTInitializer _initializer = expression.getInitializer();
