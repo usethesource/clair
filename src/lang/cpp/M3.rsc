@@ -26,7 +26,7 @@ import analysis::graphs::Graph;
 import analysis::m3::Registry;
 
 data M3(
-  set[loc name] implicitDeclarations = {},
+  set[loc] implicitDeclarations = {},
   rel[loc base, loc derived] extends = {},
   rel[loc caller, loc callee] methodInvocations = {},
   rel[loc field, loc accesser] fieldAccess = {},
