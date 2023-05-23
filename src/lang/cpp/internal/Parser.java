@@ -490,27 +490,25 @@ public class Parser extends ASTVisitor {
 		ISetWriter includeResolution = vf.setWriter();
 		ISetWriter unresolvedIncludes = vf.setWriter();
 		Stream.of(tu.getIncludeDirectives()).forEach(it -> {
+			ISourceLocation include = BindingsResolver.failedBinding("unknown");
 			try {
-				ISourceLocation include = locs.forStringPath(it.getPath());				
-
-				if (it.isActive()) {
-					if (!it.isResolved()) {
-						unresolvedIncludes.insert(vf.tuple(vf.sourceLocation("cpp+include", "", it.getName().toString()), locs.forNode(it)));
-					}
-
-					includeDirectives.insert(vf.tuple(include, locs.forNode(it)));
-					
-					ISourceLocation path = "" == it.getPath() 
-						? vf.sourceLocation(URIUtil.rootScheme("unresolved"))
-						: vf.sourceLocation(it.getPath())
-						;
-					includeResolution.insert(vf.tuple(include, path));
-				} else {
-					inactiveIncludes.insert(vf.tuple(include, locs.forNode(it)));
+				include = vf.sourceLocation(it.isSystemInclude() ? "cpp+systemInclude" : "cpp+include", null,
+						it.getName().toString());
+			} catch (URISyntaxException e) {
+				// Shouldn't happen
+			}
+			if (it.isActive()) {
+				if (!it.isResolved()) {
+					unresolvedIncludes.insert(vf.tuple(include, locs.forNode(it)));
 				}
-			} 
-			catch (URISyntaxException e) {
-				stdErr.println("Could not create an unresolved include location for " + it);
+				includeDirectives.insert(vf.tuple(include, locs.forNode(it)));
+				ISourceLocation path = "" == it.getPath() 
+					? vf.sourceLocation(URIUtil.rootScheme("unresolved"))
+					: vf.sourceLocation(it.getPath())
+					;
+				includeResolution.insert(vf.tuple(include, path));
+			} else {
+				inactiveIncludes.insert(vf.tuple(include, locs.forNode(it)));
 			}
 		});
 
