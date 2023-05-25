@@ -453,14 +453,67 @@ public map[str, list[loc]] classPaths = (
      ]
     );
 
-@javaClass{lang.cpp.internal.Parser}  
-java Declaration parseC(loc file, list[loc] stdLib = [], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false);
+map[str, str] provideStandardMacros() = (
+		"_M_IX86": "600",
+		"_WIN32": "1",
+		// "_MSC_VER": "1400"
+		"__cdecl": "",
+		"__fastcall": "",
+		"__restrict": "",
+		"__sptr": "",
+		"__stdcall": "",
+		"__unaligned": "",
+		"__uptr": "",
+		"__w64": "",
+		"__forceinline": "__inline",
+		"__int8": "char",
+		"__int16": "short",
+		"__int32": "int",
+		"__int64": "long long",
+
+		// additional:
+		"_MSC_VER": "1700",
+		"__cplusplus": "199711L",
+		"__thiscall": "",
+		"_CHAR16T": "",
+		"_NATIVE_WCHAR_T_DEFINED": "1",
+		"__nullptr": "nullptr",
+		"_MSC_EXTENSIONS": "1",
+		"__inline": "inline",
+		"__ptr32": "",
+		"__ptr64": "",
+		"__interface": "struct",
+
+		"__pragma(A)": "",
+		"__identifier(A)": "A",
+//		"__declspec(A)": "",
+		"_stdcall": "",
+
+		"_USE_DECLSPECS_FOR_SAL": "0",
+		"_DLL": "1",
+
+		"NDEBUG": "",
+		"WIN32": "",
+		"_WINDOWS": "",
+		"_WIN32_DCOM": "",
+		"_USRDLL": "",
+		"SSCF1_INCLUDED": "",
+		"LOGGINGTRACING_INCLUDED": "",
+		"_WINDLL": "",
+		"_UNICODE": "",
+		"UNICODE": "",
+		"_AFXDLL": ""
+//		"__INTELLISENSE__": "1"
+);
 
 @javaClass{lang.cpp.internal.Parser}  
-java Declaration parseCpp(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false);
+java Declaration parseC(loc file, list[loc] stdLib = [], list[loc] includeDirs = [], map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false);
 
 @javaClass{lang.cpp.internal.Parser}  
-java list[Declaration] parseFiles(list[loc] files, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] additionalMacros = (), bool includeStdLib = false);
+java Declaration parseCpp(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false);
+
+@javaClass{lang.cpp.internal.Parser}  
+java list[Declaration] parseFiles(list[loc] files, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [],  map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false);
 
 @javaClass{lang.cpp.internal.Parser}  
 java Declaration parseString(str code);
@@ -469,8 +522,8 @@ java Declaration parseString(str code);
 java Declaration parseString(str code, loc l);
 
 @javaClass{lang.cpp.internal.Parser}
-java list[loc] parseForComments(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ());
+java list[loc] parseForComments(loc file, list[loc] includePaths = classPaths["vs12"],  map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = ());
 
 @javaClass{lang.cpp.internal.Parser}
-java rel[loc,loc] parseForMacros(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] additionalMacros = ());
+java rel[loc,loc] parseForMacros(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = ());
 

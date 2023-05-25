@@ -57,72 +57,19 @@ public class CDTParser {
 
 	private final List<String> path;
 
-	private static final Map<String, String> standardMacros;
-
-	static {
-		standardMacros = new HashMap<>();
-		// from WinDiscoveredPathInfo.java:
-		standardMacros.put("_M_IX86", "600");
-		standardMacros.put("_WIN32", "1");
-		// macros.put("_MSC_VER", "1400");
-		standardMacros.put("__cdecl", "");
-		standardMacros.put("__fastcall", "");
-		standardMacros.put("__restrict", "");
-		standardMacros.put("__sptr", "");
-		standardMacros.put("__stdcall", "");
-		standardMacros.put("__unaligned", "");
-		standardMacros.put("__uptr", "");
-		standardMacros.put("__w64", "");
-		standardMacros.put("__forceinline", "__inline");
-		standardMacros.put("__int8", "char");
-		standardMacros.put("__int16", "short");
-		standardMacros.put("__int32", "int");
-		standardMacros.put("__int64", "long long");
-
-		// additional:
-		standardMacros.put("_MSC_VER", "1700");
-		standardMacros.put("__cplusplus", "199711L");
-		standardMacros.put("__thiscall", "");
-		standardMacros.put("_CHAR16T", "");
-		standardMacros.put("_NATIVE_WCHAR_T_DEFINED", "1");
-		standardMacros.put("__nullptr", "nullptr");
-		standardMacros.put("_MSC_EXTENSIONS", "1");
-		standardMacros.put("__inline", "inline");
-		standardMacros.put("__ptr32", "");
-		standardMacros.put("__ptr64", "");
-		standardMacros.put("__interface", "struct");
-
-		standardMacros.put("__pragma(A)", "");
-		standardMacros.put("__identifier(A)", "A");
-//		standardMacros.put("__declspec(A)", "");
-		standardMacros.put("_stdcall", "");
-
-		standardMacros.put("_USE_DECLSPECS_FOR_SAL", "0");
-		standardMacros.put("_DLL", "1");
-
-		standardMacros.put("NDEBUG", "");
-		standardMacros.put("WIN32", "");
-		standardMacros.put("_WINDOWS", "");
-		standardMacros.put("_WIN32_DCOM", "");
-		standardMacros.put("_USRDLL", "");
-		standardMacros.put("SSCF1_INCLUDED", "");
-		standardMacros.put("LOGGINGTRACING_INCLUDED", "");
-		standardMacros.put("_WINDLL", "");
-		standardMacros.put("_UNICODE", "");
-		standardMacros.put("UNICODE", "");
-		standardMacros.put("_AFXDLL", "");
-
-//		standardMacros.put("__INTELLISENSE__", "1");
-	}
-
-	public CDTParser(IValueFactory vf, PrintWriter stdOut, PrintWriter stdErr, IList stdLib, IList includePath, IMap additionalMacros, boolean includeStdLib) {
+	public CDTParser(IValueFactory vf, PrintWriter stdOut, PrintWriter stdErr, IList stdLib, IList includePath, IMap standardMacros, IMap additionalMacros, boolean includeStdLib) {
 		this.vf = vf;
 		this.stdErr = stdErr;
-		
+
 		Map<String, String> macros = new HashMap<String, String>();
-		additionalMacros.stream().map(ITuple.class::cast).forEach(tuple -> macros
-				.put(tuple.get(0).toString().replace("\"", ""), tuple.get(1).toString().replace("\"", "")));
-		macros.putAll(standardMacros);
+		additionalMacros.stream()
+			.map(ITuple.class::cast)
+			.forEach(tuple -> macros.put(((IString) tuple.get(0)).getValue(), ((IString) tuple.get(1)).getValue()));
+
+		standardMacros.stream()
+			.map(ITuple.class::cast)
+			.forEach(tuple -> macros.put(((IString) tuple.get(0)).getValue(), ((IString) tuple.get(1)).getValue()));
+
 
 		this.scannerInfo = new ScannerInfo(macros, null);
 
