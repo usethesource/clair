@@ -1242,7 +1242,8 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(IASTSimpleDeclaration declaration) {
+	private int visit(IASTSimpleDeclaration declaration) {
+		at(declaration);
 		ISourceLocation loc = locs.forNode(declaration);
 		
 		boolean isMacroExpansion = isMacroExpansion(declaration);
@@ -1268,6 +1269,7 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(IASTInitializer initializer) {
+		at(initializer);
 		if (initializer instanceof IASTEqualsInitializer)
 			visit((IASTEqualsInitializer) initializer);
 		else if (initializer instanceof IASTInitializerList)
@@ -1287,7 +1289,8 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(IASTEqualsInitializer initializer) {
+	private int visit(IASTEqualsInitializer initializer) {
+		at(initializer);
 		ISourceLocation loc = locs.forNode(initializer);
 		boolean isMacroExpansion = isMacroExpansion(initializer);
 		initializer.getInitializerClause().accept(this);
@@ -1295,7 +1298,8 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(IASTInitializerList initializer) {
+	private int visit(IASTInitializerList initializer) {
+		at(initializer);
 		// TODO: cpp: check isPackExpansion, maybe getSize
 		ISourceLocation loc = locs.forNode(initializer);
 		boolean isMacroExpansion = isMacroExpansion(initializer);
@@ -1308,7 +1312,8 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICASTDesignatedInitializer initializer) {
+	private int visit(ICASTDesignatedInitializer initializer) {
+		at(initializer);
 		ISourceLocation loc = locs.forNode(initializer);
 		boolean isMacroExpansion = isMacroExpansion(initializer);
 
@@ -1323,7 +1328,8 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICPPASTConstructorChainInitializer initializer) {
+	private int visit(ICPPASTConstructorChainInitializer initializer) {
+		at(initializer);
 		// TODO: check isPackExpansion
 		ISourceLocation loc = locs.forNode(initializer);
 		boolean isMacroExpansion = isMacroExpansion(initializer);
@@ -1339,7 +1345,7 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICPPASTConstructorInitializer initializer) {
+	pr int visit(ICPPASTConstructorInitializer initializer) {
 		ISourceLocation loc = locs.forNode(initializer);
 		boolean isMacroExpansion = isMacroExpansion(initializer);
 
