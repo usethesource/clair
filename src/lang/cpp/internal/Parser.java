@@ -1345,7 +1345,8 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	pr int visit(ICPPASTConstructorInitializer initializer) {
+	private int visit(ICPPASTConstructorInitializer initializer) {
+		at(initializer);
 		ISourceLocation loc = locs.forNode(initializer);
 		boolean isMacroExpansion = isMacroExpansion(initializer);
 
@@ -1359,7 +1360,8 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICPPASTDesignatedInitializer initializer) {
+	private int visit(ICPPASTDesignatedInitializer initializer) {
+		at(initializer);
 		ISourceLocation loc = locs.forNode(initializer);
 		boolean isMacroExpansion = isMacroExpansion(initializer);
 
@@ -1375,8 +1377,8 @@ public class Parser extends ASTVisitor {
 	}
 
 	// InitializerClauses
-
-	public int visit(IASTInitializerClause initializerClause) {
+	private int visit(IASTInitializerClause initializerClause) {
+		at(initializerClause);
 		if (initializerClause instanceof IASTExpression)
 			visit((IASTExpression) initializerClause);
 		else if (initializerClause instanceof IASTInitializerList)
