@@ -285,6 +285,7 @@ public class Parser extends ASTVisitor {
 		functionDefinitions = vf.setWriter();
 		implicitDeclarations = vf.setWriter();
 		newResolutions = vf.setWriter();
+		currentNode = null;
 	}
 
 	public IList parseFiles(IList files, IList stdLib, IList includeDirs, IMap standardMacros, IMap additionalMacros, IBool includeStdLib) {
@@ -304,11 +305,18 @@ public class Parser extends ASTVisitor {
 			}
 			ISourceLocation file = (ISourceLocation) v;
 			IASTTranslationUnit tu = parser.parseFileAsCpp(file);
-			IValue result = convertCdtToRascal(tu, false);
-			ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", file.getPath());
-			result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
-			asts.append(result);
+			try {
+				IValue result = convertCdtToRascal(tu, false);
+				ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", file.getPath());
+				result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
+				asts.append(result);
+			}
+			catch (NullPointerException e) {
+				throw new UnsupportedOperationException(
+					"Conversion to AST did not work for " + currentNode.getClass().getCanonicalName() + " at " + locs.forNode(currentNode), e);
+			}
 		}
+
 		Instant done = Instant.now();
 		out("Parsing and marshalling " + files.size() + " files took "
 				+ (Duration.between(begin, done).toMillis() * 1.0d) / 1000 + "seconds");
@@ -323,25 +331,27 @@ public class Parser extends ASTVisitor {
 		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
 		this.stdLib = stdLib;
 
-//		Instant begin = Instant.now();
-//		out("Beginning at " + begin.toString());
 		CDTParser parser = new CDTParser(vf, stdOut, stdErr, stdLib, includeDirs, standardMacros, additionalMacros,
 				includeStdLib.getValue());
 		IASTTranslationUnit tu = parser.parseFileAsC(file);
-//		Instant between = Instant.now();
-//		out("CDT took " + new Double(Duration.between(begin, between).toMillis()).doubleValue() / 1000 + "seconds");
-		IValue result = convertCdtToRascal(tu, false);
-		ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", file.getPath());
-		result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
-//		Instant done = Instant.now();
-//		out("Marshalling took " + new Double(Duration.between(between, done).toMillis()).doubleValue() / 1000
-//				+ "seconds");
-		reset();
-		if (result == null) {
-			throw RuntimeExceptionFactory.parseError(file, null, null);
-		}
-		return result;
 
+		try {
+			IValue result = convertCdtToRascal(tu, false);
+			ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", file.getPath());
+			result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
+
+			if (result == null) {
+				throw RuntimeExceptionFactory.parseError(file, null, null);
+			}
+			return result;
+		}
+		catch (NullPointerException e) {
+			throw new UnsupportedOperationException(
+				"Conversion to AST did not work for " + currentNode.getClass().getCanonicalName() + " at " + locs.forNode(currentNode), e);
+		}
+		finally {
+			reset();
+		}
 	}
 
 	public IValue parseCpp(ISourceLocation file, IList stdLib, IList includeDirs, IMap standardMacros, IMap additionalMacros,
@@ -356,17 +366,27 @@ public class Parser extends ASTVisitor {
 		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
 		Instant between = Instant.now();
 		out("CDT took " + (Duration.between(begin, between).toMillis() * 1.0d) / 1000 + "seconds");
-		IValue result = convertCdtToRascal(tu, false);
-		ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", file.getPath());
-		result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
-		Instant done = Instant.now();
-		out("Marshalling took " + (Duration.between(between, done).toMillis() * 1.0d) / 1000
-				+ "seconds");
-		reset();
-		if (result == null) {
-			throw RuntimeExceptionFactory.parseError(file, null, null);
+
+		try {
+			IValue result = convertCdtToRascal(tu, false);
+			ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", file.getPath());
+			result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
+			Instant done = Instant.now();
+			out("Marshalling took " + (Duration.between(between, done).toMillis() * 1.0d) / 1000
+					+ "seconds");
+			
+			if (result == null) {
+				throw RuntimeExceptionFactory.parseError(file, null, null);
+			}
+			return result;
 		}
-		return result;
+		catch (NullPointerException e) {
+			throw new UnsupportedOperationException(
+				"Conversion to AST did not work for " + currentNode.getClass().getCanonicalName() + " at " + locs.forNode(currentNode), e);
+		}
+		finally {
+			reset();
+		}
 	}
 
 	public ITuple parseCToM3AndAst(ISourceLocation file, IList stdLib, IList includeDirs, IMap standardMacros, IMap additionalMacros,
@@ -402,20 +422,29 @@ public class Parser extends ASTVisitor {
 		functionDefinitions = vf.setWriter();
 		implicitDeclarations = vf.setWriter();
 		newResolutions = vf.setWriter();
-		IValue result = convertCdtToRascal(tu, true);
 
-		// based on side-effects of the conversion
-		ISet methodOverrides = getMethodOverrides(tu, newResolutions.done());
-		m3 = m3.asWithKeywordParameters().setParameter("methodOverrides", methodOverrides);
+		try {
+			IValue result = convertCdtToRascal(tu, true);
 
-		result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
-		m3 = m3.asWithKeywordParameters().setParameter("declaredType", declaredType.done());
-		m3 = m3.asWithKeywordParameters().setParameter("functionDefinitions", functionDefinitions.done());
-		m3 = m3.asWithKeywordParameters().setParameter("containment", br.getContainmentRelation());
-		m3 = m3.asWithKeywordParameters().setParameter("implicitDeclarations", implicitDeclarations.done());
+			// based on side-effects of the conversion
+			ISet methodOverrides = getMethodOverrides(tu, newResolutions.done());
+			m3 = m3.asWithKeywordParameters().setParameter("methodOverrides", methodOverrides);
 
-		reset();
-		return vf.tuple(m3, result);
+			result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
+			m3 = m3.asWithKeywordParameters().setParameter("declaredType", declaredType.done());
+			m3 = m3.asWithKeywordParameters().setParameter("functionDefinitions", functionDefinitions.done());
+			m3 = m3.asWithKeywordParameters().setParameter("containment", br.getContainmentRelation());
+			m3 = m3.asWithKeywordParameters().setParameter("implicitDeclarations", implicitDeclarations.done());
+
+			return vf.tuple(m3, result);
+		}
+		catch (NullPointerException e) {
+			throw new UnsupportedOperationException(
+				"Conversion to AST did not work for " + currentNode.getClass().getCanonicalName() + " at " + locs.forNode(currentNode), e);
+		}
+		finally {
+			reset();
+		}
 	}
 
 	public ITuple parseCppToM3AndAst(ISourceLocation file, IList stdLib, IList includeDirs, IMap standardMacros, IMap additionalMacros,
@@ -442,20 +471,29 @@ public class Parser extends ASTVisitor {
 		declaredType = vf.setWriter();
 		functionDefinitions = vf.setWriter();
 		newResolutions = vf.setWriter();
-		IValue result = convertCdtToRascal(tu, true);
 
-		// based on side-effects from the conversion
-		ISet methodOverrides = getMethodOverrides(tu, newResolutions.done());
-		m3 = m3.asWithKeywordParameters().setParameter("methodOverrides", methodOverrides);
-		
-		result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
-		m3 = m3.asWithKeywordParameters().setParameter("declaredType", declaredType.done());
-		m3 = m3.asWithKeywordParameters().setParameter("functionDefinitions", functionDefinitions.done());
-		m3 = m3.asWithKeywordParameters().setParameter("containment", br.getContainmentRelation());
-		m3 = m3.asWithKeywordParameters().setParameter("implicitDeclarations", implicitDeclarations.done());
+		try {
+			IValue result = convertCdtToRascal(tu, true);
 
-		reset();
-		return vf.tuple(m3, result);
+			// based on side-effects from the conversion
+			ISet methodOverrides = getMethodOverrides(tu, newResolutions.done());
+			m3 = m3.asWithKeywordParameters().setParameter("methodOverrides", methodOverrides);
+			
+			result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
+			m3 = m3.asWithKeywordParameters().setParameter("declaredType", declaredType.done());
+			m3 = m3.asWithKeywordParameters().setParameter("functionDefinitions", functionDefinitions.done());
+			m3 = m3.asWithKeywordParameters().setParameter("containment", br.getContainmentRelation());
+			m3 = m3.asWithKeywordParameters().setParameter("implicitDeclarations", implicitDeclarations.done());
+
+			return vf.tuple(m3, result);
+		}
+		catch (NullPointerException e) {
+			throw new UnsupportedOperationException(
+				"Conversion to AST did not work for " + currentNode.getClass().getCanonicalName() + " at " + locs.forNode(currentNode), e);
+		}
+		finally {
+			reset();
+		}
 	}
 
 	public ISet getMethodOverrides(IASTTranslationUnit tu, ISet newResolutions) {
@@ -570,11 +608,19 @@ public class Parser extends ASTVisitor {
 		int options = ILanguage.OPTION_PARSE_INACTIVE_CODE;
 		IParserLogService log = new DefaultLogService();
 		IASTTranslationUnit tu = GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, null, options, log);
-		IValue result = convertCdtToRascal(tu, false);
-		ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", loc == null ? "" : loc.getPath());
-		result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
-		reset();
-		return result;
+
+		try {
+			IValue result = convertCdtToRascal(tu, false);
+			ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", loc == null ? "" : loc.getPath());
+			return ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
+		}
+		catch (NullPointerException e) {
+			throw new UnsupportedOperationException(
+				"Conversion to AST did not work for " + currentNode.getClass().getCanonicalName() + " at " + locs.forNode(currentNode), e);
+		}
+		finally {
+			reset();
+		}
 	}
 
 	public IValue convertCdtToRascal(IASTTranslationUnit translationUnit, boolean toM3) {
