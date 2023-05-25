@@ -250,6 +250,12 @@ public class Parser extends ASTVisitor {
 	private ISetWriter functionDefinitions;
 	private ISetWriter newResolutions;
 	private ISetWriter implicitDeclarations;
+	
+	private IASTNode currentNode;
+
+	private void at(IASTNode it) {
+		this.currentNode = it;
+	}
 
 	public Parser(IValueFactory vf, IRascalValueFactory rvf, PrintWriter stdOut, PrintWriter stdErr, 
 			IRascalMonitor monitor) {
@@ -308,6 +314,7 @@ public class Parser extends ASTVisitor {
 				+ (Duration.between(begin, done).toMillis() * 1.0d) / 1000 + "seconds");
 		reset();
 		monitor.jobEnd("ClaiR parseFiles", true);
+
 		return asts.done();
 	}
 
@@ -573,22 +580,26 @@ public class Parser extends ASTVisitor {
 	public IValue convertCdtToRascal(IASTTranslationUnit translationUnit, boolean toM3) {
 		this.toM3 = toM3;
 		translationUnit.accept(this);
-		if (stack.size() == 1)
+
+		if (stack.size() == 1) {
 			return stack.pop();
-		if (stack.size() == 0)
+		}
+
+		if (stack.size() == 0) {
 			throw new RuntimeException("Stack empty after converting, error");
+		}
+
 		IConstructor ast = stack.pop();
 		err("Superfluous nodes on the stack after converting:");
 		stack.iterator().forEachRemaining(it -> err(it.toString()));
+		
 		ISourceLocation file = locs.forNode(translationUnit);
 		ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", file.getPath());
 		return ast.asWithKeywordParameters().setParameter("decl", tuDecl);
-		// return ast;
 	}
 
 	private int prefix = 0;
 	
-
 	private String spaces() {
 		return StringUtils.repeat(" ", prefix);
 	}
@@ -751,6 +762,7 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(IASTTranslationUnit tu) {
+		at(tu);
 		ISourceLocation loc = locs.forNode(tu);
 		boolean isMacroExpansion = isMacroExpansion(tu);
 		IListWriter declarations = vf.listWriter();
@@ -791,6 +803,7 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(IASTName name) {
+		at(name);
 		try {
 			if (name instanceof IASTImplicitName) {
 				visit((IASTImplicitName) name);
@@ -815,12 +828,13 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(IASTImplicitName name) {
+	private int visit(IASTImplicitName name) {
 		err("IASTImplicitName " + name.getRawSignature());
 		throw new RuntimeException("NYI at " + locs.forNode(name));
 	}
 
-	public int visit(ICPPASTName name) throws URISyntaxException {
+	private int visit(ICPPASTName name) throws URISyntaxException {
+		at(name);
 		ISourceLocation loc = locs.forNode(name);
 		boolean isMacroExpansion = isMacroExpansion(name);
 		if (name instanceof ICPPASTConversionName)
@@ -837,7 +851,7 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICPPASTConversionName name) {
+	private int visit(ICPPASTConversionName name) {
 		ISourceLocation loc = locs.forNode(name);
 		boolean isMacroExpansion = isMacroExpansion(name);
 		IConstructor typ = tr.resolveType(name);
@@ -846,14 +860,16 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICPPASTOperatorName name) {
+	private int visit(ICPPASTOperatorName name) {
+		at(name);
 		ISourceLocation loc = locs.forNode(name);
 		boolean isMacroExpansion = isMacroExpansion(name);
 		stack.push(builder.Name_operatorName(name.toString(), loc, isMacroExpansion));
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICPPASTQualifiedName name) throws URISyntaxException {
+	private int visit(ICPPASTQualifiedName name) throws URISyntaxException {
+		at(name);
 		ISourceLocation loc = locs.forNode(name);
 		boolean isMacroExpansion = isMacroExpansion(name);
 		ISourceLocation decl = br.resolveBinding(name, loc);
@@ -874,7 +890,8 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICPPASTTemplateId name) throws URISyntaxException {
+	private int visit(ICPPASTTemplateId name) throws URISyntaxException {
+		at(name);
 		ISourceLocation loc = locs.forNode(name);
 		boolean isMacroExpansion = isMacroExpansion(name);
 		ISourceLocation decl = br.resolveBinding(name, loc);
@@ -894,6 +911,7 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(IASTDeclaration declaration) {
+		at(declaration);
 		if (declaration instanceof IASTASMDeclaration) {
 			visit((IASTASMDeclaration) declaration);
 		}
@@ -948,7 +966,8 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICPPASTAliasDeclaration declaration) {
+	private int visit(ICPPASTAliasDeclaration declaration) {
+		at(declaration);
 		ISourceLocation loc = locs.forNode(declaration);
 		boolean isMacroExpansion = isMacroExpansion(declaration);
 		ISourceLocation decl = br.resolveBinding(declaration, loc);
@@ -963,7 +982,8 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICPPASTExplicitTemplateInstantiation declaration) {
+	private int visit(ICPPASTExplicitTemplateInstantiation declaration) {
+		at(declaration);
 		ISourceLocation loc = locs.forNode(declaration);
 		boolean isMacroExpansion = isMacroExpansion(declaration);
 		declaration.getDeclaration().accept(this);
@@ -993,7 +1013,8 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICPPASTLinkageSpecification declaration) {
+	private int visit(ICPPASTLinkageSpecification declaration) {
+		at(declaration);
 		ISourceLocation loc = locs.forNode(declaration);
 		boolean isMacroExpansion = isMacroExpansion(declaration);
 
@@ -1007,7 +1028,8 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICPPASTNamespaceAlias declaration)  {
+	private int visit(ICPPASTNamespaceAlias declaration)  {
+		at(declaration);
 		ISourceLocation loc = locs.forNode(declaration);
 		boolean isMacroExpansion = isMacroExpansion(declaration);
 		ISourceLocation decl = br.resolveBinding(declaration, loc);
@@ -1020,7 +1042,8 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICPPASTStaticAssertDeclaration declaration) {
+	private int visit(ICPPASTStaticAssertDeclaration declaration) {
+		at(declaration);
 		ISourceLocation loc = locs.forNode(declaration);
 		boolean isMacroExpansion = isMacroExpansion(declaration);
 		declaration.getCondition().accept(this);
@@ -1030,7 +1053,8 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICPPASTTemplateDeclaration declaration) {
+	private int visit(ICPPASTTemplateDeclaration declaration) {
+		at(declaration);
 		ISourceLocation loc = locs.forNode(declaration);
 		boolean isMacroExpansion = isMacroExpansion(declaration);
 		IConstructor typ = tr.resolveType(declaration);
@@ -1045,7 +1069,8 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICPPASTTemplateSpecialization declaration) {
+	private int visit(ICPPASTTemplateSpecialization declaration) {
+		at(declaration);
 		ISourceLocation loc = locs.forNode(declaration);
 		boolean isMacroExpansion = isMacroExpansion(declaration);
 		declaration.getDeclaration().accept(this);
@@ -1053,7 +1078,8 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICPPASTUsingDeclaration declaration) {
+	private int visit(ICPPASTUsingDeclaration declaration) {
+		at(declaration);
 		ISourceLocation loc = locs.forNode(declaration);
 		boolean isMacroExpansion = isMacroExpansion(declaration);
 		ISourceLocation decl = br.resolveBinding(declaration, loc);
@@ -1065,7 +1091,8 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICPPASTUsingDirective declaration) {
+	private int visit(ICPPASTUsingDirective declaration) {
+		at(declaration);
 		ISourceLocation loc = locs.forNode(declaration);
 		boolean isMacroExpansion = isMacroExpansion(declaration);
 		ISourceLocation decl = br.resolveBinding(declaration, loc);
@@ -1076,7 +1103,8 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(ICPPASTVisibilityLabel declaration) {
+	private int visit(ICPPASTVisibilityLabel declaration) {
+		at(declaration);
 		ISourceLocation loc = locs.forNode(declaration);
 		boolean isMacroExpansion = isMacroExpansion(declaration);
 		switch (declaration.getVisibility()) {
@@ -1102,14 +1130,16 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(IASTASMDeclaration declaration) {
+	private int visit(IASTASMDeclaration declaration) {
+		at(declaration);
 		ISourceLocation loc = locs.forNode(declaration);
 		boolean isMacroExpansion = isMacroExpansion(declaration);
 		stack.push(builder.Declaration_asmDeclaration(declaration.getAssembly(), loc, isMacroExpansion));
 		return PROCESS_ABORT;
 	}
 
-	public int visit(IASTFunctionDefinition definition) {
+	private int visit(IASTFunctionDefinition definition) {
+		at(definition);
 		ISourceLocation loc = locs.forNode(definition);
 		boolean isMacroExpansion = isMacroExpansion(definition);
 		if (definition instanceof ICPPASTFunctionDefinition) {
@@ -1172,6 +1202,7 @@ public class Parser extends ASTVisitor {
 
 	@Override
 	public int visit(IASTParameterDeclaration parameterDeclaration) {
+		at(parameterDeclaration);
 		ISourceLocation loc = locs.forNode(parameterDeclaration);
 		boolean isMacroExpansion = isMacroExpansion(parameterDeclaration);
 		if (parameterDeclaration instanceof ICPPASTParameterDeclaration
@@ -1191,7 +1222,8 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	public int visit(IASTProblemDeclaration declaration) {
+	private int visit(IASTProblemDeclaration declaration) {
+		at(declaration);
 		ISourceLocation loc = locs.forNode(declaration);
 		boolean isMacroExpansion = isMacroExpansion(declaration);
 		IASTProblem problem = declaration.getProblem();
