@@ -643,6 +643,9 @@ public class BindingsResolver {
 			} else if (binding instanceof ICPPMethodSpecialization) {
 				scheme = "cpp+methodSpecialization";
 			}
+			else if (binding.getName().startsWith("~")) {
+				scheme = "cpp+destructor";
+			}
 			else {
 				scheme = "cpp+method";
 			}
@@ -660,8 +663,7 @@ public class BindingsResolver {
 		parameters.append(')');
 
 		ISourceLocation parentDecl = resolveOwner(binding, origin);
-		ISourceLocation decl = URIUtil.changeScheme(URIUtil.getChildLocation(parentDecl, binding.getName()),
-				scheme);
+		ISourceLocation decl = URIUtil.changeScheme(URIUtil.getChildLocation(parentDecl, binding.getName()), scheme);
 		decl = URIUtil.changePath(decl, decl.getPath() + parameters.toString());
 		containment.append(vf.tuple(parentDecl, decl));
 		return decl;

@@ -208,6 +208,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CASTName;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTParameterDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.core.runtime.CoreException;
 import org.rascalmpl.debug.IRascalMonitor;
 import org.rascalmpl.exceptions.RuntimeExceptionFactory;
@@ -247,6 +248,8 @@ public class Parser extends ASTVisitor {
 
 	private ISetWriter declaredType;
 	private ISetWriter functionDefinitions;
+	private ISetWriter newResolutions;
+	private ISetWriter implicitDeclarations;
 
 	public Parser(IValueFactory vf, IRascalValueFactory rvf, PrintWriter stdOut, PrintWriter stdErr, 
 			IRascalMonitor monitor) {
@@ -274,6 +277,8 @@ public class Parser extends ASTVisitor {
 		stdLib = vf.listWriter().done();
 		declaredType = vf.setWriter();
 		functionDefinitions = vf.setWriter();
+		implicitDeclarations = vf.setWriter();
+		newResolutions = vf.setWriter();
 	}
 
 	public IList parseFiles(IList files, IList stdLib, IList includeDirs, IMap standardMacros, IMap additionalMacros, IBool includeStdLib) {
@@ -379,21 +384,28 @@ public class Parser extends ASTVisitor {
 		IList comments = getCommentsFromTranslationUnit(tu);
 		ISet macroExpansions = getMacroExpansionsFromTranslationUnit(tu);
 		ISet macroDefinitions = getMacroDefinitionsFromTranslationUnit(tu);
-		ISet methodOverrides = getMethodOverrides(tu);
+		
 
 		m3 = m3.asWithKeywordParameters().setParameter("comments", comments);
 		m3 = m3.asWithKeywordParameters().setParameter("macroExpansions", macroExpansions);
 		m3 = m3.asWithKeywordParameters().setParameter("macroDefinitions", macroDefinitions);
-		m3 = m3.asWithKeywordParameters().setParameter("methodOverrides", methodOverrides);
 		m3 = setM3IncludeInformationFromTranslationUnit(tu, m3);
 
 		declaredType = vf.setWriter();
 		functionDefinitions = vf.setWriter();
+		implicitDeclarations = vf.setWriter();
+		newResolutions = vf.setWriter();
 		IValue result = convertCdtToRascal(tu, true);
+
+		// based on side-effects of the conversion
+		ISet methodOverrides = getMethodOverrides(tu, newResolutions.done());
+		m3 = m3.asWithKeywordParameters().setParameter("methodOverrides", methodOverrides);
+
 		result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
 		m3 = m3.asWithKeywordParameters().setParameter("declaredType", declaredType.done());
 		m3 = m3.asWithKeywordParameters().setParameter("functionDefinitions", functionDefinitions.done());
 		m3 = m3.asWithKeywordParameters().setParameter("containment", br.getContainmentRelation());
+		m3 = m3.asWithKeywordParameters().setParameter("implicitDeclarations", implicitDeclarations.done());
 
 		reset();
 		return vf.tuple(m3, result);
@@ -413,27 +425,33 @@ public class Parser extends ASTVisitor {
 		IList comments = getCommentsFromTranslationUnit(tu);
 		ISet macroExpansions = getMacroExpansionsFromTranslationUnit(tu);
 		ISet macroDefinitions = getMacroDefinitionsFromTranslationUnit(tu);
-		ISet methodOverrides = getMethodOverrides(tu);
+		
 
 		m3 = m3.asWithKeywordParameters().setParameter("comments", comments);
 		m3 = m3.asWithKeywordParameters().setParameter("macroExpansions", macroExpansions);
 		m3 = m3.asWithKeywordParameters().setParameter("macroDefinitions", macroDefinitions);
-		m3 = m3.asWithKeywordParameters().setParameter("methodOverrides", methodOverrides);
 		m3 = setM3IncludeInformationFromTranslationUnit(tu, m3);
 
 		declaredType = vf.setWriter();
 		functionDefinitions = vf.setWriter();
+		newResolutions = vf.setWriter();
 		IValue result = convertCdtToRascal(tu, true);
+
+		// based on side-effects from the conversion
+		ISet methodOverrides = getMethodOverrides(tu, newResolutions.done());
+		m3 = m3.asWithKeywordParameters().setParameter("methodOverrides", methodOverrides);
+		
 		result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
 		m3 = m3.asWithKeywordParameters().setParameter("declaredType", declaredType.done());
 		m3 = m3.asWithKeywordParameters().setParameter("functionDefinitions", functionDefinitions.done());
 		m3 = m3.asWithKeywordParameters().setParameter("containment", br.getContainmentRelation());
+		m3 = m3.asWithKeywordParameters().setParameter("implicitDeclarations", implicitDeclarations.done());
 
 		reset();
 		return vf.tuple(m3, result);
 	}
 
-	public ISet getMethodOverrides(IASTTranslationUnit tu) {
+	public ISet getMethodOverrides(IASTTranslationUnit tu, ISet newResolutions) {
 		NameCollector anc = new NameCollector();
 		tu.accept(anc);
 		Set<IBinding> bindings = new HashSet<>();
@@ -448,6 +466,8 @@ public class Parser extends ASTVisitor {
 				}
 			});
 		});
+
+		methodOverrides.appendAll(newResolutions);
 		return methodOverrides.done();
 	}
 
@@ -544,7 +564,7 @@ public class Parser extends ASTVisitor {
 		IParserLogService log = new DefaultLogService();
 		IASTTranslationUnit tu = GPPLanguage.getDefault().getASTTranslationUnit(fc, si, ifcp, null, options, log);
 		IValue result = convertCdtToRascal(tu, false);
-		ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", loc.getPath());
+		ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", loc == null ? "" : loc.getPath());
 		result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
 		reset();
 		return result;
@@ -2635,56 +2655,96 @@ public class Parser extends ASTVisitor {
 		}
 	}
 
+	private ISourceLocation changeScheme(ISourceLocation l, String newScheme) {
+		try {
+			return URIUtil.changeScheme(l, newScheme);
+		} catch (URISyntaxException e) {
+			// this never happens
+			assert false;
+			return l;
+		}
+	}
+
 	public int visit(ICPPASTNewExpression expression) {
 		ISourceLocation loc = locs.forNode(expression);
 		boolean isMacroExpansion = isMacroExpansion(expression);
 		IConstructor typ = tr.resolveType(expression);
-		// if (expression.isNewTypeId())
-		// err("WARNING: ICPPASTNewExpression \"" + expression.getRawSignature()
-		// + "\" has isNewTypeId=true");
-		// else
-		// err("WARNING: ICPPASTNewExpression \"" + expression.getRawSignature()
-		// + "\" has isNewTypeId=false");
-
+		
 		expression.getTypeId().accept(this);
 		IConstructor typeId = stack.pop();
+		IBinding constructor = CPPSemantics.findImplicitlyCalledConstructor(expression);
+		ISourceLocation decl = constructor != null ? br.resolveBinding(constructor, loc) : null;
+		ISourceLocation newDecl = decl != null 
+			? changeScheme(decl, "cpp+new") 
+			: URIUtil.correctLocation("cpp+new", "", 
+				"builtinAllocator" + ((typ != null) ? ("/" + typ.getName()) : ""));
+
+		if (decl != null && newDecl != null) {
+			newResolutions.append(vf.tuple(newDecl, decl));
+		}
+
+		// we always introduce an implicit `cpp+new` that is used in methodInvocations
+		// and because we annotate the tree with `decl` to this, they also end up in the uses
+		// relation of M3. Therefore we add them here so we can check completeness and accuracy
+		// of the decls, uses and containment relation even though these quasi-constructors have
+		// never been declared anywwhere.
+		implicitDeclarations.insert(newDecl);
+		
 
 		IASTInitializerClause[] _placementArguments = expression.getPlacementArguments();
 		IASTInitializer _initializer = expression.getInitializer();
+		final IListWriter placementArguments = vf.listWriter();
+		IConstructor initializer = null;
+
 		if (_placementArguments != null) {
-			IListWriter placementArguments = vf.listWriter();
 			Stream.of(_placementArguments).forEach(it -> {
 				it.accept(this);
 				placementArguments.append(stack.pop());
 			});
-			if (_initializer == null) {
-				if (expression.isGlobal())
-					stack.push(builder.Expression_globalNewWithArgs(placementArguments.done(), typeId, loc, typ,
-							isMacroExpansion));
-				else
-					stack.push(builder.Expression_newWithArgs(placementArguments.done(), typeId, loc, typ,
-							isMacroExpansion));
-			} else {
-				_initializer.accept(this);
-				if (expression.isGlobal())
-					stack.push(builder.Expression_globalNewWithArgs(placementArguments.done(), typeId, stack.pop(), loc,
-							typ, isMacroExpansion));
-				else
-					stack.push(builder.Expression_newWithArgs(placementArguments.done(), typeId, stack.pop(), loc, typ,
-							isMacroExpansion));
-			}
-		} else if (_initializer == null) {
-			if (expression.isGlobal())
-				stack.push(builder.Expression_globalNew(typeId, loc, typ, isMacroExpansion));
-			else
-				stack.push(builder.Expression_new(typeId, loc, typ, isMacroExpansion));
-		} else {
-			_initializer.accept(this);
-			if (expression.isGlobal())
-				stack.push(builder.Expression_globalNew(typeId, stack.pop(), loc, typ, isMacroExpansion));
-			else
-				stack.push(builder.Expression_new(typeId, stack.pop(), loc, typ, isMacroExpansion));
 		}
+
+		if (_initializer != null) {
+			_initializer.accept(this);
+			initializer = stack.pop();
+		}
+
+		if (_placementArguments != null) {
+			if (expression.isGlobal()) {
+				if (initializer == null) {
+					stack.push(builder.Expression_globalNewWithArgs(placementArguments.done(), typeId, loc, newDecl, typ, isMacroExpansion));
+				}
+				else {
+					stack.push(builder.Expression_globalNewWithArgs(placementArguments.done(), typeId, initializer, loc, newDecl, typ, isMacroExpansion));
+				}
+			}
+			else {
+				if (_initializer == null) {
+					stack.push(builder.Expression_newWithArgs(placementArguments.done(), typeId, loc, newDecl, typ, isMacroExpansion));
+				}
+				else {
+					stack.push(builder.Expression_newWithArgs(placementArguments.done(), typeId, initializer, loc, newDecl, typ, isMacroExpansion));
+				}
+			}
+		}
+		else {
+			if (expression.isGlobal()) {
+				if (_initializer == null) {
+					stack.push(builder.Expression_globalNew(typeId, loc, newDecl, typ, isMacroExpansion));
+				}
+				else {
+					stack.push(builder.Expression_globalNew(typeId, initializer, loc, newDecl, typ, isMacroExpansion));
+				}
+			}
+			else {
+				if (initializer == null) {
+					stack.push(builder.Expression_new(typeId, loc, newDecl, typ, isMacroExpansion));
+				}
+				else {
+					stack.push(builder.Expression_new(typeId, initializer, loc, newDecl, typ, isMacroExpansion));
+				}
+			}
+		}
+		
 		return PROCESS_ABORT;
 	}
 

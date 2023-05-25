@@ -153,7 +153,7 @@ str type2FactoryCall(Symbol t){
   bool hasDecl("Declaration", str cname)
     = cname in {"enumerator", "usingDirective", "sttClass", "sttTypename", "tttParameter", "tttParameterWithDefault", "baseSpecifier", "namespaceDefinition", "namespaceDefinitionInline", "usingDeclaration", "namespaceAlias", "alias", "pointerToMember"};
   bool hasDecl("Expression", str cname)
-    = cname in {"idExpression", "fieldReference", "fieldReferencePointerDeref", "templateId", "constructorChainInitializer", "capture", "captureByRef"};
+    = cname in {"new", "newWithArgs", "globalNew", "globalNewWithArgs", "idExpression", "fieldReference", "fieldReferencePointerDeref", "templateId", "constructorChainInitializer", "capture", "captureByRef"};
   bool hasDecl("Statement", str cname) = cname in {"label", "goto"};
   bool hasDecl("Name", "qualifiedName") = true;
   bool hasDecl("Name", "templateId") = true;
@@ -205,7 +205,7 @@ str type2FactoryCall(Symbol t){
                                       '  kwParams.put(\"attributes\", $attributes);
                                       '}":"")>
        '  <((typeName=="TypeSymbol"||typeName=="TypeModifier"||typeName=="M3")?"":"kwParams.put(\"src\", $loc);")>
-       '  <(hasDecl(typeName, cname)?"kwParams.put(\"decl\", $decl);":"")>
+       '  <(hasDecl(typeName, cname)?"if ($decl != null) { kwParams.put(\"decl\", $decl); }":"")>
        '  <(hasTyp(typeName, cname)?"kwParams.put(\"typ\", $typ);":"")>
        '  <(typeName in {"Attribute", "TypeSymbol", "TypeModifier", "M3"}?"":"if ($isMacroExpansion) kwParams.put(\"isMacroExpansion\", vf.bool(true));")>
        '  return vf.constructor(_<typeName>_<cname>_<size(args)> <callConsArgs(args)>).asWithKeywordParameters().setParameters(kwParams);

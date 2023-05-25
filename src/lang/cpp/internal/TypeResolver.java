@@ -512,9 +512,6 @@ public class TypeResolver {
 				else {
 					templateParameters.append(resolveType(arg.getNonTypeEvaluation().getType(), origin));
 				}
-			} else {
-				assert false;
-				throw new RuntimeException("unexpected null argument in resolveICPPClassSpecialization @ " + origin);
 			}
 		});
 		return builder.TypeSymbol_classSpecialization(decl, templateParameters.done());

@@ -228,14 +228,14 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved(), bool is
     
     | \fieldReference(Expression fieldOwner, Name name, loc decl = |unknown:///|)
     | \fieldReferencePointerDeref(Expression fieldOwner, Name name, loc decl = |unknown:///|)
-    | \new(Expression typeId)
-    | \new(Expression typeId, Expression initializer)
-    | \newWithArgs(list[Expression] arguments, Expression typeId)
-    | \newWithArgs(list[Expression] arguments, Expression typeId, Expression initializer)
-    | \globalNew(Expression typeId)
-    | \globalNew(Expression typeId, Expression initializer)
-    | \globalNewWithArgs(list[Expression] arguments, Expression typeId)
-    | \globalNewWithArgs(list[Expression] arguments, Expression typeId, Expression initializer)
+    | \new(Expression typeId, loc decl=|unknown:///|)
+    | \new(Expression typeId, Expression initializer, loc decl=|unknown:///|)
+    | \newWithArgs(list[Expression] arguments, Expression typeId, loc decl=|unknown:///|)
+    | \newWithArgs(list[Expression] arguments, Expression typeId, Expression initializer, loc decl=|unknown:///|)
+    | \globalNew(Expression typeId, loc decl=|unknown:///|)
+    | \globalNew(Expression typeId, Expression initializer, loc decl=|unknown:///|)
+    | \globalNewWithArgs(list[Expression] arguments, Expression typeId, loc decl=|unknown:///|)
+    | \globalNewWithArgs(list[Expression] arguments, Expression typeId, Expression initializer, loc decl=|unknown:///|)
     
     | \delete(Expression expression)
     | \vectoredDelete(Expression expression)
@@ -442,7 +442,8 @@ public map[str, list[loc]] classPaths = (
     |file:///C:/MinGW/lib/gcc/mingw32/5.3.0/include/c++|, |file:///C:/MinGW/lib/gcc/mingw32/5.3.0/include/c++/mingw32|],
   "mac": [|file:///usr/include|,
     |file:///usr/include/c++/4.2.1|,
-    |file:///usr/include/c++/4.2.1/tr1|],
+    |file:///usr/include/c++/4.2.1/tr1|,
+    |file:///usr/local/include/c++/12|],
   "mac-xcode": [|file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include/c++/4.2.1|,
                 |file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include/c++/4.2.1/tr1|,
                 |file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/usr/include|,

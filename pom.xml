@@ -3,7 +3,7 @@
 
 	<artifactId>clair</artifactId>
 	<groupId>org.rascalmpl</groupId>
-	<version>0.7.1-SNAPSHOT</version>
+	<version>0.8.3-RC4-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	
         <scm>
@@ -45,6 +45,7 @@
             </resources>
 
             <sourceDirectory>src</sourceDirectory>
+            <testSourceDirectory>src</testSourceDirectory>
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -120,11 +121,39 @@
                         <arguments>-Drascal.compile.skip -DskipTests -Drascal.tutor.skip</arguments>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.0.0-M3</version>
+                    <executions>
+                        <execution>
+                            <id>test</id>
+                            <phase>test</phase>
+                            <configuration>
+                                <argLine>
+                                    -ea
+                                    -Xmx2G
+                                    -Xss128m
+                                    -Dfile.encoding=UTF-8
+                                </argLine>
+                                <includes>
+                                    <include>**/*Tests.java</include>
+                                </includes>
+                                <testSourceDirectory>${basedir}/src/</testSourceDirectory>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </build>
 
 
     <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.1</version>
+        </dependency>
         <dependency>
             <groupId>org.rascalmpl</groupId>
             <artifactId>rascal</artifactId>

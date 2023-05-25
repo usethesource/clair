@@ -17,10 +17,16 @@ extend analysis::m3::Core;
 import IO;
 import Node;
 import String;
+import Set;
 import lang::cpp::AST;
 import lang::cpp::TypeSymbol;
 
-public data M3(
+import Relation;
+import analysis::graphs::Graph;
+import analysis::m3::Registry;
+
+data M3(
+  set[loc] implicitDeclarations = {},
   rel[loc base, loc derived] extends = {},
   rel[loc caller, loc callee] methodInvocations = {},
   rel[loc field, loc accesser] fieldAccess = {},
@@ -52,7 +58,7 @@ public data M3(
 M3 cppASTToM3(Declaration tu, M3 model = m3(tu.src.top)) {
   model.declarations 
     = {<declarator.decl, declarator.src> | /Declarator declarator := tu, declarator has name, !(declarator.name is abstractEmptyName)} 
-    + {<ds.decl, declaration.src> | /Declaration declaration := tu, declaration has declSpecifier, DeclSpecifier ds := declaration.declSpecifier, ds.decl?}
+    + { <declSpec.decl, declSpec.src> | /simpleDeclaration(DeclSpecifier declSpec, _) := tu, declSpec is class}
     + {<tu.decl, tu.src>}
     ;
   model.uses = { <physical,logical> | /Declaration d := tu, /node n := d, n.src?, loc physical := n.src, n.decl?, loc logical := n.decl};
@@ -61,11 +67,18 @@ M3 cppASTToM3(Declaration tu, M3 model = m3(tu.src.top)) {
                + {<d.decl,unset(modifier)> | /DeclSpecifier d := tu, d.baseSpecifiers?, bs <- d.baseSpecifiers, modifier <- bs.modifiers};
   model.extends = {<base.decl,derived.decl> | /DeclSpecifier derived := tu, derived.baseSpecifiers?, base <- derived.baseSpecifiers};
   model.methodInvocations
-    = {<declarator.decl, functionName.decl> | /functionDefinition(_, Declarator declarator, _, Statement body) := tu, /functionCall(Expression functionName,_) := body,
-      functionName.decl?}
-    + {<declarator.decl, functionName.expression.decl> | /functionDefinition(_, Declarator declarator, _, Statement body) := tu, /functionCall(Expression functionName,_) := body,
-      functionName is bracketed, functionName.expression.decl?}
-    ;
+    = { // direct function calls 
+        *{<declarator.decl, functionName.decl> | /functionCall(Expression functionName, _) := body, functionName.decl?},
+
+        // calls via brackets
+        *{<declarator.decl, functionName.expression.decl> | /functionCall(Expression functionName, _) := body, functionName is bracketed, functionName.expression.decl?},
+    
+        // constructor calls
+        *{<declarator.decl, e.decl> | /Expression e := body, e is new || e is newWithArgs || e is globalNew || e is globalNewWithArgs, e.decl?}
+      
+      | /functionDefinition(_, Declarator declarator, _, Statement body) := tu
+      }
+      ;
   model.memberAccessModifiers = deriveAccessModifiers(tu);
   model.declarationToDefinition = model.declarations<1,0> o model.functionDefinitions;
   model.cFunctionsToNoArgs = {<function, loseCArgs(function)> | function <- model.functionDefinitions<0>};
@@ -79,9 +92,11 @@ M3 cppASTToM3(Declaration tu, M3 model = m3(tu.src.top)) {
 }
 
 rel[loc caller, loc callee] extractCallGraph(Declaration ast) = extractCallGraph({ast});
+
+@synopsis{extracts dependencies between every declaration and every name that is used in it, that is not-not a "call"}
 rel[loc caller, loc callee] extractCallGraph(set[Declaration] asts)
   = { <caller.declarator.decl, c.decl> | ast <- asts, /Declaration caller := ast, caller has declarator, /Expression c := caller, c has decl,
-      c.decl.scheme notin {"cpp+class", "cpp+enumerator", "cpp+field", "cpp+parameter", "cpp+typedef", "cpp+variable", "c+variable"} };		//Over-approximation
+      c.decl.scheme notin {"cpp+class", "cpp+enumerator", "cpp+field", "cpp+parameter", "cpp+typedef", "cpp+variable", "c+variable", "unknown", "cpp+unknown"} };		//Over-approximation
 
 loc pretty(loc subject) = |<subject.scheme>://<pretty(subject.path)>|;
 str pretty(str path) = replaceAll(path, "\\", "/");
@@ -167,6 +182,7 @@ java tuple[M3, Declaration] parseCToM3AndAst(loc file, list[loc] stdLib = [], li
 M3 composeCppM3(loc id, set[M3] models) {
   M3 comp = composeM3(id, models); 
   
+  comp.implicitDeclarations = {*model.implicitDeclarations | model <- models};
   comp.extends = {*model.extends | model <- models};
   comp.methodInvocations = {*model.methodInvocations | model <- models};
   comp.fieldAccess = {*model.fieldAccess | model <- models};
@@ -189,6 +205,54 @@ M3 composeCppM3(loc id, set[M3] models) {
   comp.provides = {*model.provides | model <- models};
   comp.partOf = {*model.partOf | model <- models};
   comp.callGraph = {*model.callGraph | model <- models};
-  
+
   return comp;
+}
+
+@synopsis{fills out the call graph by adding the tuples for possible actual methods and constructors, and removing the corresponding calls to virtual methods and constructors.}
+rel[loc caller, loc callee] closeOverriddenVirtualCalls(M3 comp) {
+  return comp.callGraph 
+    += comp.callGraph o comp.methodOverrides // add the overridden definitions
+    - rangeR(comp.callGraph, comp.methodOverrides<0>); // remove the virtual intermediates
+}
+
+test bool modelConsistencyAddressBook() {
+    tm = createM3AndAstFromCppFile(|project://clair/src/test/phonebook.cpp|);
+    m = tm<0>;
+    t = tm<1>;
+    decls = m.declarations<name>;
+
+    // nothing that is contained here does not not have a declaration, except the outermost translationUnit
+    assert m.declarations<name> - m.containment<to> - top(m.containment) == {};
+   
+    // everything in the containment relation has been declared somewhere
+    assert carrier(m.containment) - decls == {};
+
+    // everything in the declarations relation is contained somewhere
+    assert decls - carrier(m.containment) == {};
+
+    // all uses point to actual declarations
+    assert m.uses<name> - m.declarations<name> - m.implicitDeclarations == {};
+
+    // in this example, all declarations are used at least once
+    assert m.declarations<name> - m.uses<name> == {};
+
+    // m.declarations is one-to-one
+    assert size(m.declarations<name>) == size(m.declarations);
+
+    // nothing in the AST that has a decl is not declared
+    assert all(/node n := t && n.decl? && n.decl in decls);
+
+    // all nodes have a .src attribute
+    assert all(/node n := t && loc _ := n.src?|unknown:///|);
+
+    // helper function for getting src location of a node
+    loc \loc(node n) = loc f := (n.src?|unknown:///|(0,0)) ? f : |unknown:///|(0,0);
+ 
+    // all sibling ast's are next to each other in the right order
+    for(/[*_,node a, node b, *_] := t) {
+        assert \loc(a).offset + \loc(a).length <= \loc(b).offset;
+    }
+
+   return true;
 }
