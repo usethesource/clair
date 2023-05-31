@@ -198,6 +198,8 @@ public class AST {
     = tf.constructor(typestore,_Declaration,"defaultedFunctionDefinition",_DeclSpecifier,"declSpecifier",tf.listType(_Expression),"memberInitializer",_Declarator,"declarator");
   private static final Type _Declaration_functionDefinition_4 
     = tf.constructor(typestore,_Declaration,"functionDefinition",_DeclSpecifier,"declSpecifier",_Declarator,"declarator",tf.listType(_Expression),"memberInitializer",_Statement,"body");
+  private static final Type _Declaration_staticAssert_1 
+    = tf.constructor(typestore,_Declaration,"staticAssert",_Expression,"condition");
   private static final Type _Declaration_baseSpecifier_1 
     = tf.constructor(typestore,_Declaration,"baseSpecifier",tf.listType(_Modifier),"modifiers");
   private static final Type _Declaration_parameter_1 
@@ -2533,6 +2535,21 @@ public class AST {
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Declaration_functionDefinition_4 , $declSpecifier, $declarator, $memberInitializer, $body).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Declaration_staticAssert(IConstructor $condition, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$condition.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $condition.getType() + " for $condition:" + $condition);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Declaration_staticAssert_1 , $condition).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Declaration_baseSpecifier(IList $modifiers, ISourceLocation $loc, ISourceLocation $decl, boolean $isMacroExpansion) {
