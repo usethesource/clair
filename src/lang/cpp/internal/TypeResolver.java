@@ -706,8 +706,7 @@ public class TypeResolver {
 					}
 				} 
 				else {
-					assert false;
-					throw new RuntimeException("unexpected null argument in resolveITypedef @ " + origin);
+					stdOut.println("WARNING: ignoring 'null' parameter in alias template instance at " + origin);
 				}
 			});
 
