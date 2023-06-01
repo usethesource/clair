@@ -116,6 +116,7 @@ data Declaration(list[Attribute] attributes = [], loc src=|unknown:///|, bool is
     | \alias(Name \alias, Expression mappingTypeId, loc decl = |unknown:///|)
     
     | \staticAssert(Expression condition, Expression message) //no attributes
+    | \staticAssert(Expression condition) //no attributes
     
     | \explicitTemplateInstantiation(Declaration declaration) //no attributes
     | \explicitTemplateInstantiation(Modifier modifier, Declaration declaration) //no attributes

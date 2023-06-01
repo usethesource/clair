@@ -1094,8 +1094,14 @@ public class Parser extends ASTVisitor {
 		boolean isMacroExpansion = isMacroExpansion(declaration);
 		declaration.getCondition().accept(this);
 		IConstructor condition = stack.pop();
-		declaration.getMessage().accept(this);
-		stack.push(builder.Declaration_staticAssert(condition, stack.pop(), loc, isMacroExpansion));
+		ICPPASTLiteralExpression msg = declaration.getMessage();
+		if (msg != null) {
+			msg.accept(this);
+			stack.push(builder.Declaration_staticAssert(condition, stack.pop(), loc, isMacroExpansion));
+		}
+		else {
+			stack.push(builder.Declaration_staticAssert(condition, loc, isMacroExpansion));
+		}
 		return PROCESS_ABORT;
 	}
 
