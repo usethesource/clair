@@ -98,7 +98,7 @@ rel[loc caller, loc callee] extractCallGraph(set[Declaration] asts)
   = { <caller.declarator.decl, c.decl> | ast <- asts, /Declaration caller := ast, caller has declarator, /Expression c := caller, c has decl,
       c.decl.scheme notin {"cpp+class", "cpp+enumerator", "cpp+field", "cpp+parameter", "cpp+typedef", "cpp+variable", "c+variable", "unknown", "cpp+unknown"} };		//Over-approximation
 
-loc pretty(loc subject) = |<subject.scheme>://<pretty(subject.path)>|;
+loc pretty(loc subject) = |<subject.scheme>:///| + pretty(subject.path);
 str pretty(str path) = replaceAll(path, "\\", "/");
 
 loc loseCArgs(loc subject) = subject.scheme=="c+function"?|c+function://<loseCArgs(subject.path)>|:subject;
