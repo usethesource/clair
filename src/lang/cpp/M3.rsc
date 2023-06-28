@@ -62,8 +62,7 @@ This function is used by:
 
 It enriches an initial M3 model with additional information by extracting facts 
 from the tu (translation unit) that is passed as a parameter. The resulting M3
-model is more complete, and ready to be comined with others using ((composeCppM3))
-and ((composeM3)).
+model is more complete, and ready to be comined with others using ((composeCppM3)).
 }
 M3 cppASTToM3(Declaration tu, M3 model = m3(tu.src.top)) {
   model.declarations 
