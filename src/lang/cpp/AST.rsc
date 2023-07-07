@@ -10,6 +10,7 @@ Redistribution and use in source and binary forms, with or without modification,
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
 }
+@synopsis{A definition of abstract syntax trees for C and C++}
 module lang::cpp::AST
 
 import lang::cpp::TypeSymbol;
@@ -425,6 +426,7 @@ data Attribute(loc src = |unknown:///|) //no attributes
     | \gccAttributeList(list[Attribute] attributes)
 	;
     
+@synopsis{Database of common include paths for certain OS/Arch/Compiler combinations.}
 public map[str, list[loc]] classPaths = (
   "vs12": [|file:///C:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2011.0/VC/include|,
     |file:///C:/Program%20Files%20(x86)/Microsoft%20Visual%20Studio%2011.0/VC/atlmfc/include|,
@@ -508,9 +510,29 @@ map[str, str] provideStandardMacros() = (
 );
 
 @javaClass{lang.cpp.internal.Parser}  
+@synopsis{Uses the CDT parsers to produce an accurate C AST.}
+@benefits{
+* This reuses the CDT parser which has great coverage of many C dialects.
+* This is accurately representing C syntax and static semantics
+}
+@pitfalls{
+* Accuracy of the AST and the M3 model depend greatly on the `stdLib` and `includeDirs` parameters.
+If those are not fitting the current project and its files, then this function will produce lots of
+`problems` and also possibly have the wrong resolutions for names and types.  
+}
 java Declaration parseC(loc file, list[loc] stdLib = [], list[loc] includeDirs = [], map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false);
 
 @javaClass{lang.cpp.internal.Parser}  
+@synopsis{Uses the CDT parsers to produce an accurate C++ AST.}
+@benefits{
+* This reuses the CDT parser which has great coverage of many C++ dialects.
+* This is accurately representing C++ syntax and static semantics
+}
+@pitfalls{
+* Accuracy of the AST and the M3 model depend greatly on the `stdLib` and `includeDirs` parameters.
+If those are not fitting the current project and its files, then this function will produce lots of
+`problems` and also possibly have the wrong resolutions for names and types.  
+}
 java Declaration parseCpp(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false);
 
 @javaClass{lang.cpp.internal.Parser}  

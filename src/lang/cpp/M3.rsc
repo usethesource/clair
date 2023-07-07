@@ -25,6 +25,7 @@ import Relation;
 import analysis::graphs::Graph;
 import analysis::m3::Registry;
 
+@synopsis{Language specific extensions to M3 for the C and C++ languages.}
 data M3(
   set[loc] implicitDeclarations = {},
   rel[loc base, loc derived] extends = {},
@@ -51,10 +52,18 @@ data M3(
   rel[loc caller, loc callee] callGraph = {}
 );
 
-/* methodInvocations: functionName is bracketed, !functionName.expression.decl?, !(getName(functionName.expression) in {"pmArrow","pmDot","star"}) : empty
- *                    functionName is functionCall: already in recursion
- * modifiers: probably incomplete
- */
+@synopsis{Enriches the initial M3 model with everything we can learn from the AST.}
+@description{
+This function is used by:
+* ((createM3AndAstFromCppFile))
+* ((createM3AndAstFromCFile))
+* ((createM3FromCppFile))
+* ((createM3FromCFile))
+
+It enriches an initial M3 model with additional information by extracting facts 
+from the tu (translation unit) that is passed as a parameter. The resulting M3
+model is more complete, and ready to be comined with others using ((composeCppM3)).
+}
 M3 cppASTToM3(Declaration tu, M3 model = m3(tu.src.top)) {
   model.declarations 
     = {<declarator.decl, declarator.src> | /Declarator declarator := tu, declarator has name, !(declarator.name is abstractEmptyName)} 
@@ -91,6 +100,7 @@ M3 cppASTToM3(Declaration tu, M3 model = m3(tu.src.top)) {
   return model;
 }
 
+@synopsis{extracts dependencies between every declaration and every name that is used in it, that is not-not a "call"}
 rel[loc caller, loc callee] extractCallGraph(Declaration ast) = extractCallGraph({ast});
 
 @synopsis{extracts dependencies between every declaration and every name that is used in it, that is not-not a "call"}
@@ -98,13 +108,13 @@ rel[loc caller, loc callee] extractCallGraph(set[Declaration] asts)
   = { <caller.declarator.decl, c.decl> | ast <- asts, /Declaration caller := ast, caller has declarator, /Expression c := caller, c has decl,
       c.decl.scheme notin {"cpp+class", "cpp+enumerator", "cpp+field", "cpp+parameter", "cpp+typedef", "cpp+variable", "c+variable", "unknown", "cpp+unknown"} };		//Over-approximation
 
-loc pretty(loc subject) = |<subject.scheme>:///| + pretty(subject.path);
-str pretty(str path) = replaceAll(path, "\\", "/");
+private loc pretty(loc subject) = |<subject.scheme>:///| + pretty(subject.path);
+private str pretty(str path) = replaceAll(path, "\\", "/");
 
-loc loseCArgs(loc subject) = subject.scheme=="c+function"?|c+function://<loseCArgs(subject.path)>|:subject;
-str loseCArgs(str path) = "<path[..findFirst(path,"(")]>()";
+private loc loseCArgs(loc subject) = subject.scheme=="c+function"?|c+function://<dropCArgs(subject.path)>|:subject;
+private str dropCArgs(str path) = "<path[..findFirst(path,"(")]>()";
 
-rel[loc, loc] deriveAccessModifiers(Declaration tu) {
+private rel[loc, loc] deriveAccessModifiers(Declaration tu) {
   result = {};
   for (/class(_, _, _, members) := tu) {
     result += deriveAccessModifiers(members, false);
@@ -120,7 +130,8 @@ rel[loc, loc] deriveAccessModifiers(Declaration tu) {
   }
   return result;
 }
-rel[loc, loc] deriveAccessModifiers(list[Declaration] declarations, bool isStruct) {
+
+private rel[loc, loc] deriveAccessModifiers(list[Declaration] declarations, bool isStruct) {
   result = {};
   current = isStruct? |public:///| : |private:///|;
   for (declaration <- declarations) {
@@ -139,7 +150,7 @@ rel[loc, loc] deriveAccessModifiers(list[Declaration] declarations, bool isStruc
   return result;
 }
 
-rel[loc, loc] makeEntry(Declaration declaration, loc current) {
+private rel[loc, loc] makeEntry(Declaration declaration, loc current) {
   if (declaration has declarators) {
     return {<declarator.decl, current> | declarator <- declaration.declarators};
   } else if (declaration has declarator) {
@@ -153,30 +164,102 @@ rel[loc, loc] makeEntry(Declaration declaration, loc current) {
   }
 }
 
+@synopsis{Parse C files and produce an pre-filled M3 modelConsistencyAddressBook.}
+@description{
+This starts from the output of ((parseCToM3AndAst)) and completes the M3 model with 
+a number of useful relations. 
+}
+@pitfalls{
+* this represents only the information for one file. For whole program analysis see ((composeCppM3)). 
+}
 M3 createM3FromCFile(loc file, list[loc] stdLib = [], list[loc] includeDirs = [], map[str,str] standardMacros = provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false) {
   tuple[M3,Declaration] m3AndAst = parseCToM3AndAst(file, stdLib = stdLib, includeDirs = includeDirs, standardMacros = standardMacros, additionalMacros = additionalMacros, includeStdLib = includeStdLib);
   return cppASTToM3(m3AndAst<1>, model = m3AndAst<0>);
 }
 
+@synopsis{Parse C++ files and produce an pre-filled M3 model.}
+@description{
+This starts from the output of ((parseCppToM3AndAst)) and completes the M3 model with 
+a number of useful relations.
+}
+@pitfalls{
+* this represents only the information for one file. For whole program analysis see ((composeCppM3)). 
+}
 M3 createM3FromCppFile(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] standardMacros = provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false) {
   tuple[M3,Declaration] m3AndAst = parseCppToM3AndAst(file, stdLib = stdLib, includeDirs = includeDirs, standardMacros = standardMacros, additionalMacros = additionalMacros, includeStdLib = includeStdLib);
   return cppASTToM3(m3AndAst<1>, model = m3AndAst<0>);
 }
 
+@synopsis{Parse C files and produce an pre-filled M3 model with a fully annotated AST.}
+@description{
+This starts from the output of ((parseCToM3AndAst)) and completes the M3 model with 
+a number of useful relations. 
+}
+@pitfalls{
+* this represents only the information for one file. For whole program analysis see ((composeCppM3)). 
+}
 tuple[M3, Declaration] createM3AndAstFromCFile(loc file, list[loc] stdLib = [], list[loc] includeDirs = [], map[str,str] standardMacros = provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false) {
   tuple[M3,Declaration] m3AndAst = parseCToM3AndAst(file, stdLib = stdLib, includeDirs = includeDirs, standardMacros = standardMacros, additionalMacros = additionalMacros, includeStdLib = includeStdLib);
   return <cppASTToM3(m3AndAst<1>, model = m3AndAst<0>),m3AndAst<1>>;
 }
 
+@synopsis{Parse C++ files and produce an pre-filled M3 model with a fully annotated AST.}
+@description{
+This starts from the output of ((parseCppToM3AndAst)) and completes the M3 model with 
+a number of useful relations. 
+}
+@pitfalls{
+* this represents only the information for one file. For whole program analysis see ((composeCppM3)). 
+}
 tuple[M3, Declaration] createM3AndAstFromCppFile(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] standardMacros = provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false) {
   tuple[M3,Declaration] m3AndAst = parseCppToM3AndAst(file, stdLib = stdLib, includeDirs = includeDirs, standardMacros = standardMacros, additionalMacros = additionalMacros, includeStdLib = includeStdLib);
   return <cppASTToM3(m3AndAst<1>, model = m3AndAst<0>),m3AndAst<1>>;
 }
 
 @javaClass{lang.cpp.internal.Parser}
+@synopsis{Parse C++ files and produce an initial M3 model with a fully annotated AST}
+@description{
+This is the main workhorse of Clair. For every C++ file an accurate syntax tree is produced.
+Next to this an **initial** M3 model is prepared, which contains information which could readily
+be collected during the construction of the syntax tree.
+
+See ((createM3AndAstFromCppFile)) for a more comprehensive (better filled) M3 model. That
+function uses the current one. 
+}
+@benefits{
+* This reuses the CDT parser which has great coverage of many C++ dialects.
+* This is accurately representing C++ syntax and static semantics
+}
+@pitfalls{
+* Accuracy of the AST and the M3 model depend greatly on the `stdLib` and `includeDirs` parameters.
+If those are not fitting the current project and its files, then this function will produce lots of
+`problems` and also possibly have the wrong resolutions for names and types.
+* These models are just for one file. For whole program analysis see ((composeCppM3)).
+* It's probably better to use ((createM3AndAstFromCppFile)), since that has a more complete M3 model.
+}
 java tuple[M3, Declaration] parseCppToM3AndAst(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] standardMacros = provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false);
 
 @javaClass{lang.cpp.internal.Parser}
+@synopsis{Parse C files and produce an initial M3 model with a fully annotated AST}
+@description{
+This is the main workhorse of Clair. For every C file an accurate syntax tree is produced.
+Next to this an **initial** M3 model is prepared, which contains information which could readily
+be collected during the construction of the syntax tree.
+
+See ((createM3AndAstFromCppFile)) for a more comprehensive (better filled) M3 model. That
+function uses the current one. 
+}
+@benefits{
+* This reuses the CDT parser which has great coverage of many C dialects.
+* This is accurately representing C syntax and static semantics
+}
+@pitfalls{
+* Accuracy of the AST and the M3 model depend greatly on the `stdLib` and `includeDirs` parameters.
+If those are not fitting the current project and its files, then this function will produce lots of
+`problems` and also possibly have the wrong resolutions for names and types.
+* These models are just for one file. For whole program analysis see ((composeCppM3)).
+* It's probably better to use ((createM3AndAstFromCFile)), since that has a more complete M3 model.
+}
 java tuple[M3, Declaration] parseCToM3AndAst(loc file, list[loc] stdLib = [], list[loc] includeDirs = [], map[str,str] standardMacros = provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false);
 
 M3 composeCppM3(loc id, set[M3] models) {
