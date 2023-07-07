@@ -212,7 +212,7 @@ M3 composeCppM3(loc id, set[M3] models) {
 @synopsis{fills out the call graph by adding the tuples for possible actual methods and constructors, and removing the corresponding calls to virtual methods and constructors.}
 rel[loc caller, loc callee] closeOverriddenVirtualCalls(M3 comp) {
   return comp.callGraph 
-    += comp.callGraph o comp.methodOverrides // add the overridden definitions
+    + comp.callGraph o comp.methodOverrides // add the overridden definitions
     - rangeR(comp.callGraph, comp.methodOverrides<0>); // remove the virtual intermediates
 }
 
