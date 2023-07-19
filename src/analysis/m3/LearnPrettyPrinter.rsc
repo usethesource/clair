@@ -69,7 +69,7 @@ str treesToPrettyPrinter(set[node] asts, type[node] grammar) {
 
 str formatFunction(str yield, node n)
     = "str format(<getName(n)>(" + "<for (i <- [0..arity(n)]) {><\type(n[i])> arg_<i+1>, <}>"[..-2] + ")) =
-      '\"<cutOut(yield, n)>\";";
+      '\"<for (p <- cutOut(yield, n)) {><print(p)><}>\";";
 
 private data Template 
     = hole(int n)
@@ -79,7 +79,7 @@ private data Template
     ;
 
 @synopsis{get a template out of an example node by replacing the children with holes}
-str cutOut(str yield, node n) {
+list[Template] cutOut(str yield, node n) {
     children  = getChildren(n);
     positions = position(\loc(n), children);
     ind       = index(children);
@@ -98,9 +98,7 @@ str cutOut(str yield, node n) {
         pattern += sep(yield);
     }
 
-    // println("PATTERN for <n.src>");
-    // iprintln(pattern);
-    return "<for (p <- reverse(pattern)) {><print(p)><}>";
+    return reverse(pattern);
 }
 
 @synopsis{Turns a child into a template element}
@@ -112,10 +110,10 @@ Template template(int _begin, [node a], int i, str yield)             = \list(""
 Template template(int  begin, [node a, node b, *_], int i, str yield) = \list(yield[-begin+\loc(a).offset+\loc(a).length..-begin+\loc(b).offset], i); // we learn a separator from the non-empty lists
     
 @synopsis{Prints a rascal code template part, including recursive calls.}    
-str print(hole(int i)) = "\<format(arg_<i>)\>";
-str print(sep(str chars)) = escape(chars);
+str print(hole(int i))              = "\<format(arg_<i>)\>";
+str print(sep(str chars))           = escape(chars);
 str print(const(str _chars, int i)) = "\<arg_<i>\>";
-str print(\list(str sep, int i)) = "\<\"\<for (value v \<- arg_<i>) {\>\<format(v)\><escape(sep)>\<}\>\"<if (sep != "") {>[..-<size(sep)>]<}>\>";
+str print(\list(str sep, int i))    = "\<\"\<for (value v \<- arg_<i>) {\>\<format(v)\><escape(sep)>\<}\>\"<if (sep != "") {>[..-<size(sep)>]<}>\>";
 
 @synopsis{Give every element a true location for later processing.}
 list[loc] position(loc span, list[value] l) = infer(span, [pos(span, x) | x <- l]);
@@ -139,7 +137,9 @@ default list[loc] infer(loc _span, list[loc] done)                              
 str \type(value n) = "<type(typeOf(n), ())>";
 
 @synopsis{Escape string elements for use in a Rascal template string}
-str escape(str s) = "<[s]>"[2..-2];
+str escape(str s) = visit("<[s]>"[2..-2]) {
+    case /\\n/ => "\n\'"
+};
 
 @synopsis{Waiting for `node.src` to be available in Rascal for good...}
 loc \loc(node n) = l when loc l := n.src;
