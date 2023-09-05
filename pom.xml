@@ -3,12 +3,12 @@
 
 	<artifactId>clair</artifactId>
 	<groupId>org.rascalmpl</groupId>
-	<version>0.9.3-RC2-SNAPSHOT</version>
+	<version>0.9.3</version>
 	<packaging>jar</packaging>
 	
         <scm>
             <developerConnection>scm:git:https://github.com/cwi-swat/clair.git</developerConnection>			
-            <tag>HEAD</tag>
+            <tag>v0.9.3</tag>
         </scm>
 
         <repositories>
@@ -58,7 +58,7 @@
                 </plugin>
                 <plugin>
                     <groupId>org.rascalmpl</groupId>
-                    <artifactId>ra0cal-maven-plugin</artifactId>
+                    <artifactId>rascal-maven-plugin</artifactId>
                     <version>0.21.0</version>
                     <configuration>
                         <errorsAsWarnings>false</errorsAsWarnings>
