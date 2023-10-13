@@ -579,13 +579,15 @@ public class Parser extends ASTVisitor {
 	}
 
 	private void addDeclaredType(ISourceLocation decl, IConstructor typ) {
-		if (toM3)
+		if (toM3) {
 			declaredType.insert(vf.tuple(decl, typ));
+		}	
 	}
 
 	private void addFunctionDefinition(ISourceLocation decl, ISourceLocation loc) {
-		if (toM3)
+		if (toM3) {
 			functionDefinitions.insert(vf.tuple(decl, loc));
+		}
 	}
 
 	public ISet parseForMacros(ISourceLocation file, IList includePath, IMap standardMacros, IMap additionalMacros) {
@@ -1247,6 +1249,7 @@ public class Parser extends ASTVisitor {
 			stack.push(builder.Declaration_functionDefinition(declSpecifier, declarator, vf.listWriter().done(),
 					stack.pop(), vf.listWriter().done(), loc, isMacroExpansion));
 		}
+		
 		addDeclaredType(br.resolveBinding(definition.getDeclarator(), locs.forNode(definition.getDeclarator())), tr.resolveType(definition.getDeclarator()));
 		addFunctionDefinition(br.resolveBinding(definition.getDeclarator(), loc), loc);
 		return PROCESS_ABORT;

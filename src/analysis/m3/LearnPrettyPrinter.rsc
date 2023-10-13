@@ -24,7 +24,7 @@ void generateFormatterForC() {
 
 @synopsis{Takes a corpus of example files and an (external) parser for the given language and produces a pretty printing function as Rascal code.}
 @description{
-If the external parser satisfies the specification in ((analysis::m3::AST)) then this function will learn a basic
+If the external parser satisfies the specification in `analysis::m3::AST` then this function will learn a basic
 `unparser` (a.k.a. pretty printer) from the corpus of files. 
 
 The code that is generated is Rascal code which can be expanded into a module that imports the right AST format, and nothing else.

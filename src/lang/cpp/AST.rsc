@@ -15,6 +15,9 @@ module lang::cpp::AST
 
 import lang::cpp::TypeSymbol;
 
+// TODO: this should not be used in AST positions, but it is.
+data TypeSymbol;
+
 data Declarator(list[Attribute] attributes = [], loc src = |unknown:///|, loc decl = |unknown:///|, bool isMacroExpansion = false)
     = \declarator(list[Declaration] pointerOperators, Name name)
     | \declarator(list[Declaration] pointerOperators, Name name, Expression initializer)
