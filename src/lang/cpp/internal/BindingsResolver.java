@@ -113,6 +113,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClass;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownMemberClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPFunctionSet;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.IPDOMCPPClassType;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.IPDOMCPPEnumType;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.IPDOMCPPTemplateParameter;
@@ -271,14 +272,7 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation resolveCPPFunctionSet(IASTNameOwner owner, CPPFunctionSet binding, ISourceLocation origin) throws URISyntaxException {
-		IBinding resolvedBinding = binding.resolveFinalBinding((CPPASTNameBase) owner);
-
-		if (resolvedBinding != null) {
-			return resolveBinding(owner, resolvedBinding, origin);
-		}
-		
 		// now we don't know which of the alternatives are going to be used.
-		// TODO: add the alternatives to the methodOverrides relation for the sake of completeness
 		return ownedBinding(binding, "cpp+functionSet", origin); 
 	}
 

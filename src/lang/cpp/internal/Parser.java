@@ -519,12 +519,12 @@ public class Parser extends ASTVisitor {
 
 		// then we add the template methods that may resolve to more specific methods after expansion
 		bindings.stream().filter(ICPPTwoPhaseBinding.class::isInstance)
-			.map(b -> (ICPPTwoPhaseBinding) b)
-			.filter(b -> b instanceof CPPFunctionSet)
-			.map(b -> (CPPFunctionSet) b)
+			.map(ICPPTwoPhaseBinding.class::cast)
+			.filter(CPPFunctionSet.class::isInstance)
+			.map(CPPFunctionSet.class::cast)
 			.forEach(binding -> {
 				// TODO: should it not be the origin of the declaring method AST?
-				ISourceLocation base = br.resolveBinding(null, binding, locs.forNode(tu));
+				ISourceLocation base = br.resolveBinding(null, binding, locs.forNode(tu) );
 
 				for (IBinding override : binding.getBindings()) {
 					// TODO: should it not be the origin of the declaring method AST?
