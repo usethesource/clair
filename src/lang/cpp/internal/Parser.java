@@ -518,8 +518,7 @@ public class Parser extends ASTVisitor {
 		});
 
 		// then we add the template methods that may resolve to more specific methods after expansion
-		bindings.stream().filter(ICPPTwoPhaseBinding.class::isInstance)
-			.map(ICPPTwoPhaseBinding.class::cast)
+		bindings.stream()
 			.filter(CPPFunctionSet.class::isInstance)
 			.map(CPPFunctionSet.class::cast)
 			.forEach(binding -> {
