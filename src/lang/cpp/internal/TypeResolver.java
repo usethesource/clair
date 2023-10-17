@@ -112,7 +112,7 @@ public class TypeResolver {
 	}
 	
 	private ISourceLocation getDecl(IBinding binding, ISourceLocation origin) {
-			return br.resolveBinding(binding, origin);
+			return br.resolveBinding(null, binding, origin);
 	}
 
 	private IList handleTemplateParameters(ICPPASTTemplateDeclaration declaration) {
@@ -623,7 +623,7 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveIEnumeration(IEnumeration type, ISourceLocation origin) {
-			ISourceLocation decl = br.resolveBinding(type, origin);
+			ISourceLocation decl = br.resolveBinding(null, type, origin);
 			return builder.TypeSymbol_enumeration(decl);
 	}
 
