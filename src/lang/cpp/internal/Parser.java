@@ -208,6 +208,8 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CASTName;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTParameterDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPTwoPhaseBinding;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPFunctionSet;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.core.runtime.CoreException;
 import org.rascalmpl.debug.IRascalMonitor;
@@ -502,23 +504,47 @@ public class Parser extends ASTVisitor {
 		Set<IBinding> bindings = new HashSet<>();
 		Stream.of(anc.getNames()).forEach(it -> bindings.add(it.resolveBinding()));
 		ISetWriter methodOverrides = vf.setWriter();
+
+		// first we add all methods in classes that override some other methods
 		bindings.stream().filter(ICPPMethod.class::isInstance).forEach(override -> {
 			Stream.of(ClassTypeHelper.findOverridden((ICPPMethod) override)).forEach(base -> {
 				try {
-					methodOverrides.insert(vf.tuple(br.resolveBinding(base, locs.forNode(tu)), br.resolveBinding(override, locs.forNode(tu))));
+					// TODO: should it not be the origin of the declaring method AST?
+					methodOverrides.insert(vf.tuple(br.resolveBinding(null, base, locs.forNode(tu)), br.resolveBinding(null, override, locs.forNode(tu))));
 				} catch (FactTypeUseException e) {
 					err("Got FactTypeUseException\n" + e.getMessage());
 				}
 			});
 		});
 
+		// then we add the template methods that may resolve to more specific methods after expansion
+		bindings.stream().filter(ICPPTwoPhaseBinding.class::isInstance)
+			.map(b -> (ICPPTwoPhaseBinding) b)
+			.filter(b -> b instanceof CPPFunctionSet)
+			.map(b -> (CPPFunctionSet) b)
+			.forEach(binding -> {
+				// TODO: should it not be the origin of the declaring method AST?
+				ISourceLocation base = br.resolveBinding(null, binding, locs.forNode(tu));
+
+				for (IBinding override : binding.getBindings()) {
+					// TODO: should it not be the origin of the declaring method AST?
+					methodOverrides.insert(
+						vf.tuple(
+							base, 
+							br.resolveBinding(null, override, locs.forNode(tu))
+						)
+					);
+				}
+			});
+
+		// finally we add a mapping from abstract constructor calls to their implementations
 		methodOverrides.appendAll(newResolutions);
 		return methodOverrides.done();
 	}
 
 	public ISet getMacroDefinitionsFromTranslationUnit(IASTTranslationUnit tu) {
 		return Stream.of(tu.getMacroDefinitions()).map(it -> {
-			return vf.tuple(br.resolveBinding(it.getName().resolveBinding(), locs.forNode(it)), locs.forNode(it));
+			return vf.tuple(br.resolveBinding(it, it.getName().resolveBinding(), locs.forNode(it)), locs.forNode(it));
 		}).collect(vf.setWriter());
 	}
 
@@ -572,7 +598,7 @@ public class Parser extends ASTVisitor {
 	public ISet getMacroExpansionsFromTranslationUnit(IASTTranslationUnit tu) {
 		ISetWriter macros = vf.setWriter();
 		Stream.of(tu.getMacroExpansions()).forEach(it -> {
-			ISourceLocation decl = br.resolveBinding(it.getMacroReference().resolveBinding(), locs.forNode(it));
+			ISourceLocation decl = br.resolveBinding(null, it.getMacroReference().resolveBinding(), locs.forNode(it));
 			macros.insert(vf.tuple(locs.forNode(it), decl));
 		});
 		return macros.done();
@@ -2865,7 +2891,7 @@ public class Parser extends ASTVisitor {
 		expression.getTypeId().accept(this);
 		IConstructor typeId = stack.pop();
 		IBinding constructor = CPPSemantics.findImplicitlyCalledConstructor(expression);
-		ISourceLocation decl = constructor != null ? br.resolveBinding(constructor, loc) : null;
+		ISourceLocation decl = constructor != null ? br.resolveBinding(null, constructor, loc) : null;
 		ISourceLocation newDecl = decl != null 
 			? changeScheme(decl, "cpp+new") 
 			: URIUtil.correctLocation("cpp+new", "", 
