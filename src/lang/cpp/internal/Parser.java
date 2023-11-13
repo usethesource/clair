@@ -952,31 +952,16 @@ public class Parser extends ASTVisitor {
 			qualifierWriter.append(stack.pop());
 		});
 
-		IConstructor declType = null;
-
 		IList qualifiers = qualifierWriter.done();
-		if (!qualifiers.isEmpty() && ((IConstructor) qualifiers.get(0)).getName() == "declType") {
-			// the qualifiers optionally start with a declType expression which can look up the
-			// type of an expression at compile-time. It's always the first of the qualifiers.
-			// if this optional field exists we produce a different constructor for qualifiedName below.
-			declType = (IConstructor) qualifiers.get(0);
-			qualifiers = qualifiers.delete(0);
-		}
 		
-
 		name.getLastName().accept(this);
 		IConstructor lastName = stack.pop();
 		// TODO: check fullyQualified
 		if (name.isFullyQualified())
 			;
-		// err("WARNING: ICPPASTQualifiedName has fullyQualified=true");
-		if (declType == null) {
-			stack.push(builder.Name_qualifiedName(qualifiers, lastName, loc, decl, isMacroExpansion));
-		}
-		else {
-			// this is WITH the optional declType expression
-			stack.push(builder.Name_qualifiedName(declType, qualifiers, lastName, loc, decl, isMacroExpansion));
-		}
+
+		stack.push(builder.Name_qualifiedName(qualifiers, lastName, loc, decl, isMacroExpansion));
+		
 		return PROCESS_ABORT;
 	}
 
@@ -2343,14 +2328,13 @@ public class Parser extends ASTVisitor {
 		case IASTSimpleDeclSpecifier.t_typeof:
 			declSpec.getDeclTypeExpression().accept(this);
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_typeof(getTokenSourceLocation(declSpec, "typeof"), isMacroExpansion), stack.pop(),
+					builder.Type_typeof(stack.pop(), getTokenSourceLocation(declSpec, "typeof"), isMacroExpansion),
 					attributes, loc, isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_decltype:
 			declSpec.getDeclTypeExpression().accept(this);
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_decltype(getTokenSourceLocation(declSpec, "decltype"), isMacroExpansion), stack.pop(),
-					attributes, loc, isMacroExpansion));
+					builder.Type_decltype(stack.pop(), getTokenSourceLocation(declSpec, "decltype"), isMacroExpansion), attributes, loc, isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_auto:
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
@@ -2463,13 +2447,13 @@ public class Parser extends ASTVisitor {
 		case IASTSimpleDeclSpecifier.t_typeof:
 			declSpec.getDeclTypeExpression().accept(this);
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_typeof(getTokenSourceLocation(declSpec, "typeof"), isMacroExpansion), stack.pop(),
+					builder.Type_typeof(stack.pop(), getTokenSourceLocation(declSpec, "typeof"), isMacroExpansion),
 					attributes, loc, isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_decltype:
 			declSpec.getDeclTypeExpression().accept(this);
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_decltype(getTokenSourceLocation(declSpec, "decltype"), isMacroExpansion), stack.pop(),
+					builder.Type_decltype(stack.pop(), getTokenSourceLocation(declSpec, "decltype"), isMacroExpansion),
 					attributes, loc, isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_auto:
@@ -4295,10 +4279,11 @@ public class Parser extends ASTVisitor {
 	@Override
 	public int visit(ICPPASTDecltypeSpecifier decltypeSpecifier) {
 		at(decltypeSpecifier);
-		decltypeSpecifier.getDecltypeExpression().accept(this);
 
-		stack.push(builder.DeclSpecifier_declType(stack.pop(), vf.list(), locs.forNode(decltypeSpecifier), null, isMacroExpansion(decltypeSpecifier)));
+		decltypeSpecifier.getDecltypeExpression().accept(this);
+		stack.push(builder.Name_decltypeName(stack.pop(), locs.forNode(decltypeSpecifier), isMacroExpansion(decltypeSpecifier)));
 		
+		err("decltypeName!!! " + stack.peek());
 		return PROCESS_ABORT;
 	}
 

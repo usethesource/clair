@@ -43,13 +43,11 @@ data Declarator(list[Attribute] attributes = [], loc src = |unknown:///|, loc de
     
 data DeclSpecifier(list[Attribute] attributes = [], loc src = |unknown:///|, bool isMacroExpansion = false)
     = \declSpecifier(list[Modifier] modifiers, Type \type)
-    | \declSpecifier(list[Modifier] modifiers, Type \type, Expression expression) //decltype and type_of
     | \etsEnum(list[Modifier] modifiers, Name name, loc decl = |unknown:///|) //no attributes
     | \etsStruct(list[Modifier] modifiers, Name name, loc decl = |unknown:///|) //ElaboratedTypeSpecifier //no attributes
     | \etsUnion(list[Modifier] modifiers, Name name, loc decl = |unknown:///|) //no attributes
     | \etsClass(list[Modifier] modifiers, Name name, loc decl = |unknown:///|) //no attributes
     | \namedTypeSpecifier(list[Modifier] modifiers, Name name, loc decl = |unknown:///|) //no attributes
-    | \declType(Expression exp)
     
     | \struct(list[Modifier] modifiers, Name name, list[Declaration] members, loc decl = |unknown:///|)  //c //no attributes
     | \union(list[Modifier] modifiers, Name name, list[Declaration] members, loc decl = |unknown:///|)   //c //no attributes
@@ -303,13 +301,12 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved(), bool is
 data Name(loc src = |unknown:///|, bool isMacroExpansion = false) //no attributes
     = \name(str \value)
     | \qualifiedName(list[Name] qualifiers, Name lastName, loc decl = |unknown:///|)
-    | \qualifiedName(DeclSpecifier specifier, list[Name] qualifiers, Name lastName, loc decl = |unknown:///|)
+    | \qualifiedName(Type decltype, list[Name] qualifiers, Name lastName, loc decl = |unknown:///|)
     | \operatorName(str \value)
     | \conversionName(str \value, Expression typeId)
-    
     | \templateId(Name name, list[Expression] argumentTypes, loc decl = |unknown:///|)
-
     | \abstractEmptyName()
+    | decltypeName(Expression expression)
     ;
  
 data Statement(list[Attribute] attributes = [], loc src = |unknown:///|, bool isMacroExpansion = false)
@@ -355,8 +352,8 @@ data Type(loc src = |unknown:///|, bool isMacroExpansion = false) //no attribute
     | \double()
     | \bool()
     | \wchar_t()
-    | \typeof()
-    | \decltype()
+    | \typeof(Expression expression)
+    | \decltype(Expression expression)
     | \auto()
     | \char16_t()
     | \char32_t()
