@@ -208,7 +208,6 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CASTName;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTParameterDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPTwoPhaseBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPFunctionSet;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.core.runtime.CoreException;
@@ -947,11 +946,23 @@ public class Parser extends ASTVisitor {
 		boolean isMacroExpansion = isMacroExpansion(name);
 		ISourceLocation decl = br.resolveBinding(name, loc);
 
-		IListWriter qualifier = vf.listWriter();
+		IListWriter qualifierWriter = vf.listWriter();
 		Stream.of(name.getQualifier()).forEach(it -> {
 			it.accept(this);
-			qualifier.append(stack.pop());
+			qualifierWriter.append(stack.pop());
 		});
+
+		IConstructor declType = null;
+
+		IList qualifiers = qualifierWriter.done();
+		if (!qualifiers.isEmpty() && ((IConstructor) qualifiers.get(0)).getName() == "declType") {
+			// the qualifiers optionally start with a declType expression which can look up the
+			// type of an expression at compile-time. It's always the first of the qualifiers.
+			// if this optional field exists we produce a different constructor for qualifiedName below.
+			declType = (IConstructor) qualifiers.get(0);
+			qualifiers = qualifiers.delete(0);
+		}
+		
 
 		name.getLastName().accept(this);
 		IConstructor lastName = stack.pop();
@@ -959,7 +970,13 @@ public class Parser extends ASTVisitor {
 		if (name.isFullyQualified())
 			;
 		// err("WARNING: ICPPASTQualifiedName has fullyQualified=true");
-		stack.push(builder.Name_qualifiedName(qualifier.done(), lastName, loc, decl, isMacroExpansion));
+		if (declType == null) {
+			stack.push(builder.Name_qualifiedName(qualifiers, lastName, loc, decl, isMacroExpansion));
+		}
+		else {
+			// this is WITH the optional declType expression
+			stack.push(builder.Name_qualifiedName(declType, qualifiers, lastName, loc, decl, isMacroExpansion));
+		}
 		return PROCESS_ABORT;
 	}
 
@@ -4278,9 +4295,11 @@ public class Parser extends ASTVisitor {
 	@Override
 	public int visit(ICPPASTDecltypeSpecifier decltypeSpecifier) {
 		at(decltypeSpecifier);
-		// has typ
-		err("DecltypeSpecifier: " + decltypeSpecifier.getRawSignature());
-		throw new RuntimeException("NYI at " + locs.forNode(decltypeSpecifier));
+		decltypeSpecifier.getDecltypeExpression().accept(this);
+
+		stack.push(builder.DeclSpecifier_declType(stack.pop(), vf.list(), locs.forNode(decltypeSpecifier), null, isMacroExpansion(decltypeSpecifier)));
+		
+		return PROCESS_ABORT;
 	}
 
 	@Override
