@@ -876,6 +876,7 @@ public class Parser extends ASTVisitor {
 	@Override
 	public int visit(IASTName name) {
 		at(name);
+		
 		try {
 			if (name instanceof IASTImplicitName) {
 				visit((IASTImplicitName) name);
@@ -4283,7 +4284,6 @@ public class Parser extends ASTVisitor {
 		decltypeSpecifier.getDecltypeExpression().accept(this);
 		stack.push(builder.Name_decltypeName(stack.pop(), locs.forNode(decltypeSpecifier), isMacroExpansion(decltypeSpecifier)));
 		
-		err("decltypeName!!! " + stack.peek());
 		return PROCESS_ABORT;
 	}
 
