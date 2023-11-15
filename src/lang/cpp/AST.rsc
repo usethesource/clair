@@ -14,6 +14,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 module lang::cpp::AST
 
 import lang::cpp::TypeSymbol;
+import List;
 
 // TODO: this should not be used in AST positions, but it is.
 data TypeSymbol;
@@ -301,7 +302,6 @@ data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved(), bool is
 data Name(loc src = |unknown:///|, bool isMacroExpansion = false) //no attributes
     = \name(str \value)
     | \qualifiedName(list[Name] qualifiers, Name lastName, loc decl = |unknown:///|)
-    | \qualifiedName(Type decltype, list[Name] qualifiers, Name lastName, loc decl = |unknown:///|)
     | \operatorName(str \value)
     | \conversionName(str \value, Expression typeId)
     | \templateId(Name name, list[Expression] argumentTypes, loc decl = |unknown:///|)
@@ -552,3 +552,17 @@ java list[loc] parseForComments(loc file, list[loc] includePaths = classPaths["v
 @javaClass{lang.cpp.internal.Parser}
 java rel[loc,loc] parseForMacros(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = ());
 
+
+/* below here we have some rudimentary regression testing */
+
+test bool declTypeFeature() {
+  t = parseCpp(|project://clair/src/test/declTypes.cpp|);
+
+  /* we expect at two qualified names with a computed type expression in it: */
+  computedNames = [q | /q:qualifiedName([decltypeName(Expression _), *_], _) := t];
+
+  /* and we expect three declarations where the type of the declared variable is computed */
+  computedTypes = [q | /q:declSpecifier(_, decltype(Expression _)) := t];
+  
+  return size(computedNames) == 2 && size(computedTypes) == 3;
+}
