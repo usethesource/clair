@@ -208,7 +208,6 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CASTName;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTParameterDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPTwoPhaseBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPFunctionSet;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.core.runtime.CoreException;
@@ -877,6 +876,7 @@ public class Parser extends ASTVisitor {
 	@Override
 	public int visit(IASTName name) {
 		at(name);
+		
 		try {
 			if (name instanceof IASTImplicitName) {
 				visit((IASTImplicitName) name);
@@ -947,19 +947,22 @@ public class Parser extends ASTVisitor {
 		boolean isMacroExpansion = isMacroExpansion(name);
 		ISourceLocation decl = br.resolveBinding(name, loc);
 
-		IListWriter qualifier = vf.listWriter();
+		IListWriter qualifierWriter = vf.listWriter();
 		Stream.of(name.getQualifier()).forEach(it -> {
 			it.accept(this);
-			qualifier.append(stack.pop());
+			qualifierWriter.append(stack.pop());
 		});
 
+		IList qualifiers = qualifierWriter.done();
+		
 		name.getLastName().accept(this);
 		IConstructor lastName = stack.pop();
 		// TODO: check fullyQualified
 		if (name.isFullyQualified())
 			;
-		// err("WARNING: ICPPASTQualifiedName has fullyQualified=true");
-		stack.push(builder.Name_qualifiedName(qualifier.done(), lastName, loc, decl, isMacroExpansion));
+
+		stack.push(builder.Name_qualifiedName(qualifiers, lastName, loc, decl, isMacroExpansion));
+		
 		return PROCESS_ABORT;
 	}
 
@@ -2326,14 +2329,13 @@ public class Parser extends ASTVisitor {
 		case IASTSimpleDeclSpecifier.t_typeof:
 			declSpec.getDeclTypeExpression().accept(this);
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_typeof(getTokenSourceLocation(declSpec, "typeof"), isMacroExpansion), stack.pop(),
+					builder.Type_typeof(stack.pop(), getTokenSourceLocation(declSpec, "typeof"), isMacroExpansion),
 					attributes, loc, isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_decltype:
 			declSpec.getDeclTypeExpression().accept(this);
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_decltype(getTokenSourceLocation(declSpec, "decltype"), isMacroExpansion), stack.pop(),
-					attributes, loc, isMacroExpansion));
+					builder.Type_decltype(stack.pop(), getTokenSourceLocation(declSpec, "decltype"), isMacroExpansion), attributes, loc, isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_auto:
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
@@ -2446,13 +2448,13 @@ public class Parser extends ASTVisitor {
 		case IASTSimpleDeclSpecifier.t_typeof:
 			declSpec.getDeclTypeExpression().accept(this);
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_typeof(getTokenSourceLocation(declSpec, "typeof"), isMacroExpansion), stack.pop(),
+					builder.Type_typeof(stack.pop(), getTokenSourceLocation(declSpec, "typeof"), isMacroExpansion),
 					attributes, loc, isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_decltype:
 			declSpec.getDeclTypeExpression().accept(this);
 			stack.push(builder.DeclSpecifier_declSpecifier(modifiers,
-					builder.Type_decltype(getTokenSourceLocation(declSpec, "decltype"), isMacroExpansion), stack.pop(),
+					builder.Type_decltype(stack.pop(), getTokenSourceLocation(declSpec, "decltype"), isMacroExpansion),
 					attributes, loc, isMacroExpansion));
 			break;
 		case IASTSimpleDeclSpecifier.t_auto:
@@ -4278,9 +4280,11 @@ public class Parser extends ASTVisitor {
 	@Override
 	public int visit(ICPPASTDecltypeSpecifier decltypeSpecifier) {
 		at(decltypeSpecifier);
-		// has typ
-		err("DecltypeSpecifier: " + decltypeSpecifier.getRawSignature());
-		throw new RuntimeException("NYI at " + locs.forNode(decltypeSpecifier));
+
+		decltypeSpecifier.getDecltypeExpression().accept(this);
+		stack.push(builder.Name_decltypeName(stack.pop(), locs.forNode(decltypeSpecifier), isMacroExpansion(decltypeSpecifier)));
+		
+		return PROCESS_ABORT;
 	}
 
 	@Override
