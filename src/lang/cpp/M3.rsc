@@ -171,8 +171,8 @@ a number of useful relations.
 @pitfalls{
 * this represents only the information for one file. For whole program analysis see ((composeCppM3)). 
 }
-M3 createM3FromCFile(loc file, list[loc] stdLib = [], list[loc] includeDirs = [], map[str,str] standardMacros = provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false) {
-  tuple[M3,Declaration] m3AndAst = parseCToM3AndAst(file, stdLib = stdLib, includeDirs = includeDirs, standardMacros = standardMacros, additionalMacros = additionalMacros, includeStdLib = includeStdLib);
+M3 createM3FromCFile(loc file, str charset=DEFAULT_CHARSET, bool inferCharset=!(charset?), list[loc] stdLib = [], list[loc] includeDirs = [], map[str,str] standardMacros = provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false) {
+  tuple[M3,Declaration] m3AndAst = parseCToM3AndAst(file, charset=charset, inferCharset=inferCharset, stdLib = stdLib, includeDirs = includeDirs, standardMacros = standardMacros, additionalMacros = additionalMacros, includeStdLib = includeStdLib);
   return cppASTToM3(m3AndAst<1>, model = m3AndAst<0>);
 }
 
@@ -184,8 +184,8 @@ a number of useful relations.
 @pitfalls{
 * this represents only the information for one file. For whole program analysis see ((composeCppM3)). 
 }
-M3 createM3FromCppFile(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] standardMacros = provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false) {
-  tuple[M3,Declaration] m3AndAst = parseCppToM3AndAst(file, stdLib = stdLib, includeDirs = includeDirs, standardMacros = standardMacros, additionalMacros = additionalMacros, includeStdLib = includeStdLib);
+M3 createM3FromCppFile(loc file, str charset=DEFAULT_CHARSET, bool inferCharset=!(charset?), list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] standardMacros = provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false) {
+  tuple[M3,Declaration] m3AndAst = parseCppToM3AndAst(file, charset=charset, inferCharset=inferCharset, stdLib = stdLib, includeDirs = includeDirs, standardMacros = standardMacros, additionalMacros = additionalMacros, includeStdLib = includeStdLib);
   return cppASTToM3(m3AndAst<1>, model = m3AndAst<0>);
 }
 
@@ -197,8 +197,8 @@ a number of useful relations.
 @pitfalls{
 * this represents only the information for one file. For whole program analysis see ((composeCppM3)). 
 }
-tuple[M3, Declaration] createM3AndAstFromCFile(loc file, list[loc] stdLib = [], list[loc] includeDirs = [], map[str,str] standardMacros = provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false) {
-  tuple[M3,Declaration] m3AndAst = parseCToM3AndAst(file, stdLib = stdLib, includeDirs = includeDirs, standardMacros = standardMacros, additionalMacros = additionalMacros, includeStdLib = includeStdLib);
+tuple[M3, Declaration] createM3AndAstFromCFile(loc file, str charset=DEFAULT_CHARSET, bool inferCharset=!(charset?), list[loc] stdLib = [], list[loc] includeDirs = [], map[str,str] standardMacros = provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false) {
+  tuple[M3,Declaration] m3AndAst = parseCToM3AndAst(file, charset=charset, inferCharset=inferCharset, stdLib = stdLib, includeDirs = includeDirs, standardMacros = standardMacros, additionalMacros = additionalMacros, includeStdLib = includeStdLib);
   return <cppASTToM3(m3AndAst<1>, model = m3AndAst<0>),m3AndAst<1>>;
 }
 
@@ -210,8 +210,8 @@ a number of useful relations.
 @pitfalls{
 * this represents only the information for one file. For whole program analysis see ((composeCppM3)). 
 }
-tuple[M3, Declaration] createM3AndAstFromCppFile(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] standardMacros = provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false) {
-  tuple[M3,Declaration] m3AndAst = parseCppToM3AndAst(file, stdLib = stdLib, includeDirs = includeDirs, standardMacros = standardMacros, additionalMacros = additionalMacros, includeStdLib = includeStdLib);
+tuple[M3, Declaration] createM3AndAstFromCppFile(loc file, str charset=DEFAULT_CHARSET, bool inferCharset=!(charset?), list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] standardMacros = provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false) {
+  tuple[M3,Declaration] m3AndAst = parseCppToM3AndAst(file, charset=charset, inferCharset=inferCharset, stdLib = stdLib, includeDirs = includeDirs, standardMacros = standardMacros, additionalMacros = additionalMacros, includeStdLib = includeStdLib);
   return <cppASTToM3(m3AndAst<1>, model = m3AndAst<0>),m3AndAst<1>>;
 }
 
@@ -236,7 +236,7 @@ If those are not fitting the current project and its files, then this function w
 * These models are just for one file. For whole program analysis see ((composeCppM3)).
 * It's probably better to use ((createM3AndAstFromCppFile)), since that has a more complete M3 model.
 }
-java tuple[M3, Declaration] parseCppToM3AndAst(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] standardMacros = provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false);
+java tuple[M3, Declaration] parseCppToM3AndAst(loc file, str charset=DEFAULT_CHARSET, bool inferCharset=!(charset?), list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] standardMacros = provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false);
 
 @javaClass{lang.cpp.internal.Parser}
 @synopsis{Parse C files and produce an initial M3 model with a fully annotated AST}
@@ -259,7 +259,7 @@ If those are not fitting the current project and its files, then this function w
 * These models are just for one file. For whole program analysis see ((composeCppM3)).
 * It's probably better to use ((createM3AndAstFromCFile)), since that has a more complete M3 model.
 }
-java tuple[M3, Declaration] parseCToM3AndAst(loc file, list[loc] stdLib = [], list[loc] includeDirs = [], map[str,str] standardMacros = provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false);
+java tuple[M3, Declaration] parseCToM3AndAst(loc file, str charset=DEFAULT_CHARSET, bool inferCharset=!(charset?), list[loc] stdLib = [], list[loc] includeDirs = [], map[str,str] standardMacros = provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false);
 
 M3 composeCppM3(loc id, set[M3] models) {
   M3 comp = composeM3(id, models); 
