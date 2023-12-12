@@ -552,4 +552,4 @@ java list[loc] parseForComments(loc file, str charset=DEFAULT_CHARSET, bool infe
 java rel[loc,loc] parseForMacros(loc file, str charset=DEFAULT_CHARSET, bool inferCharset=!(charset?), list[loc] includePaths = classPaths["vs12"], map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = ());
 
 @synopsis{All functions in this module that have a charset parameter use this as default.}
-str DEFAULT_CHARSET = "UTF-8";
+public str DEFAULT_CHARSET = "UTF-8";
