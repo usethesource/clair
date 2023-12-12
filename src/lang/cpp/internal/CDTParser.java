@@ -39,6 +39,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.rascalmpl.exceptions.RuntimeExceptionFactory;
 import org.rascalmpl.library.Prelude;
+
+import io.usethesource.vallang.IBool;
 import io.usethesource.vallang.IList;
 import io.usethesource.vallang.IMap;
 import io.usethesource.vallang.ISourceLocation;
@@ -119,10 +121,9 @@ public class CDTParser {
 		};
 	}
 
-	public IASTTranslationUnit parseFileAsC(ISourceLocation file) {
+	public IASTTranslationUnit parseFileAsC(ISourceLocation file, IString charset, IBool inferCharset) {
 		FileContent fc = FileContent.create(file.toString(),
-				// TODO: parametrize charset
-				((IString) Prelude.readFile(vf, false, file, "UTF8", false)).getValue().toCharArray());
+				((IString) Prelude.readFile(vf, false, file, charset.getValue(), inferCharset.getValue())).getValue().toCharArray());
 
 		try {
 			return GCCLanguage.getDefault().getASTTranslationUnit(fc, scannerInfo, ifcp, idx, options, log);
@@ -131,10 +132,9 @@ public class CDTParser {
 		}
 	}
 
-	public IASTTranslationUnit parseFileAsCpp(ISourceLocation file) {
+	public IASTTranslationUnit parseFileAsCpp(ISourceLocation file, IString charset, IBool inferCharset) {
 		FileContent fc = FileContent.create(file.toString(),
-				// TODO: parametrize charset
-				((IString) Prelude.readFile(vf, false, file, "UTF8", false)).getValue().toCharArray());
+				((IString) Prelude.readFile(vf, false, file, charset.getValue(), inferCharset.getValue())).getValue().toCharArray());
 
 		try {
 			return GPPLanguage.getDefault().getASTTranslationUnit(fc, scannerInfo, ifcp, idx, options, log);

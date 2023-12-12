@@ -289,7 +289,7 @@ public class Parser extends ASTVisitor {
 		currentNode = null;
 	}
 
-	public IList parseFiles(IList files, IList stdLib, IList includeDirs, IMap standardMacros, IMap additionalMacros, IBool includeStdLib) {
+	public IList parseFiles(IList files, IString charset, IBool inferCharset, IList stdLib, IList includeDirs, IMap standardMacros, IMap additionalMacros, IBool includeStdLib) {
 		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
 		this.stdLib = stdLib;
 
@@ -305,7 +305,7 @@ public class Parser extends ASTVisitor {
 				break;
 			}
 			ISourceLocation file = (ISourceLocation) v;
-			IASTTranslationUnit tu = parser.parseFileAsCpp(file);
+			IASTTranslationUnit tu = parser.parseFileAsCpp(file, charset, inferCharset);
 			try {
 				IValue result = convertCdtToRascal(tu, false);
 				ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", file.getPath());
@@ -327,14 +327,14 @@ public class Parser extends ASTVisitor {
 		return asts.done();
 	}
 
-	public IValue parseC(ISourceLocation file, IList stdLib, IList includeDirs, IMap standardMacros, IMap additionalMacros,
+	public IValue parseC(ISourceLocation file, IString charset, IBool inferCharset, IList stdLib, IList includeDirs, IMap standardMacros, IMap additionalMacros,
 			IBool includeStdLib) {
 		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
 		this.stdLib = stdLib;
 
 		CDTParser parser = new CDTParser(vf, stdOut, stdErr, stdLib, includeDirs, standardMacros, additionalMacros,
 				includeStdLib.getValue());
-		IASTTranslationUnit tu = parser.parseFileAsC(file);
+		IASTTranslationUnit tu = parser.parseFileAsC(file, charset, inferCharset);
 
 		try {
 			IValue result = convertCdtToRascal(tu, false);
@@ -355,7 +355,7 @@ public class Parser extends ASTVisitor {
 		}
 	}
 
-	public IValue parseCpp(ISourceLocation file, IList stdLib, IList includeDirs, IMap standardMacros, IMap additionalMacros,
+	public IValue parseCpp(ISourceLocation file, IString charset, IBool inferCharset, IList stdLib, IList includeDirs, IMap standardMacros, IMap additionalMacros,
 			IBool includeStdLib) {
 		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
 		this.stdLib = stdLib;
@@ -364,7 +364,7 @@ public class Parser extends ASTVisitor {
 		out("Beginning at " + begin.toString());
 		CDTParser parser = new CDTParser(vf, stdOut, stdErr, stdLib, includeDirs, standardMacros, additionalMacros,
 				includeStdLib.getValue());
-		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
+		IASTTranslationUnit tu = parser.parseFileAsCpp(file, charset, inferCharset);
 		Instant between = Instant.now();
 		out("CDT took " + (Duration.between(begin, between).toMillis() * 1.0d) / 1000 + "seconds");
 
@@ -390,7 +390,7 @@ public class Parser extends ASTVisitor {
 		}
 	}
 
-	public ITuple parseCToM3AndAst(ISourceLocation file, IList stdLib, IList includeDirs, IMap standardMacros, IMap additionalMacros,
+	public ITuple parseCToM3AndAst(ISourceLocation file, IString charset, IBool inferCharset, IList stdLib, IList includeDirs, IMap standardMacros, IMap additionalMacros,
 			IBool includeStdLib) {
 		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
 		this.stdLib = stdLib;
@@ -402,7 +402,7 @@ public class Parser extends ASTVisitor {
 				includeStdLib.getValue());
 		IASTTranslationUnit tu = null;
 		try {
-			tu = parser.parseFileAsC(file);
+			tu = parser.parseFileAsC(file, charset, inferCharset);
 		} catch (ClassCastException e) {
 			// Encountered this in UNIX C files
 			IListWriter error = vf.listWriter();
@@ -448,7 +448,7 @@ public class Parser extends ASTVisitor {
 		}
 	}
 
-	public ITuple parseCppToM3AndAst(ISourceLocation file, IList stdLib, IList includeDirs, IMap standardMacros, IMap additionalMacros,
+	public ITuple parseCppToM3AndAst(ISourceLocation file, IString charset, IBool inferCharset, IList stdLib, IList includeDirs, IMap standardMacros, IMap additionalMacros,
 			IBool includeStdLib) {
 		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
 		this.stdLib = stdLib;
@@ -458,7 +458,7 @@ public class Parser extends ASTVisitor {
 		br.setTranslationUnit(tuDecl);
 		CDTParser parser = new CDTParser(vf, stdOut, stdErr, stdLib, includeDirs, standardMacros, additionalMacros,
 				includeStdLib.getValue());
-		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
+		IASTTranslationUnit tu = parser.parseFileAsCpp(file, charset, inferCharset);
 		IList comments = getCommentsFromTranslationUnit(tu);
 		ISet macroExpansions = getMacroExpansionsFromTranslationUnit(tu);
 		ISet macroDefinitions = getMacroDefinitionsFromTranslationUnit(tu);
@@ -550,10 +550,10 @@ public class Parser extends ASTVisitor {
 		return Stream.of(tu.getComments()).map(locs::forNode).collect(vf.listWriter());
 	}
 
-	public IList parseForComments(ISourceLocation file, IList includePath, IMap standardMacros, IMap additionalMacros) {
+	public IList parseForComments(ISourceLocation file, IString charset, IBool inferCharset, IList includePath, IMap standardMacros, IMap additionalMacros) {
 		CDTParser parser = new CDTParser(vf, stdOut, stdErr, vf.listWriter().done(), includePath,
 				standardMacros, additionalMacros, true);
-		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
+		IASTTranslationUnit tu = parser.parseFileAsCpp(file, charset, inferCharset);
 		reset();
 		return getCommentsFromTranslationUnit(tu);
 	}
@@ -614,10 +614,10 @@ public class Parser extends ASTVisitor {
 		}
 	}
 
-	public ISet parseForMacros(ISourceLocation file, IList includePath, IMap standardMacros, IMap additionalMacros) {
+	public ISet parseForMacros(ISourceLocation file, IString charset, IBool inferCharset, IList includePath, IMap standardMacros, IMap additionalMacros) {
 		CDTParser parser = new CDTParser(vf, stdOut, stdErr, vf.listWriter().done(), includePath,
 				standardMacros, additionalMacros, true);
-		IASTTranslationUnit tu = parser.parseFileAsCpp(file);
+		IASTTranslationUnit tu = parser.parseFileAsCpp(file, charset, inferCharset);
 		reset();
 		return getMacroExpansionsFromTranslationUnit(tu);
 	}

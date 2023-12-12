@@ -521,7 +521,7 @@ map[str, str] provideStandardMacros() = (
 If those are not fitting the current project and its files, then this function will produce lots of
 `problems` and also possibly have the wrong resolutions for names and types.  
 }
-java Declaration parseC(loc file, list[loc] stdLib = [], list[loc] includeDirs = [], map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false);
+java Declaration parseC(loc file, str charset=DEFAULT_CHARSET, bool inferCharset=!(charset?), list[loc] stdLib = [], list[loc] includeDirs = [], map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false);
 
 @javaClass{lang.cpp.internal.Parser}  
 @synopsis{Uses the CDT parsers to produce an accurate C++ AST.}
@@ -534,10 +534,10 @@ java Declaration parseC(loc file, list[loc] stdLib = [], list[loc] includeDirs =
 If those are not fitting the current project and its files, then this function will produce lots of
 `problems` and also possibly have the wrong resolutions for names and types.  
 }
-java Declaration parseCpp(loc file, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false);
+java Declaration parseCpp(loc file, str charset=DEFAULT_CHARSET, bool inferCharset=!(charset?), list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [], map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false);
 
 @javaClass{lang.cpp.internal.Parser}  
-java list[Declaration] parseFiles(list[loc] files, list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [],  map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false);
+java list[Declaration] parseFiles(list[loc] files, str charset=DEFAULT_CHARSET, bool inferCharset=!(charset?), list[loc] stdLib = classPaths["vs12"], list[loc] includeDirs = [],  map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = (), bool includeStdLib = false);
 
 @javaClass{lang.cpp.internal.Parser}  
 java Declaration parseString(str code);
@@ -546,8 +546,10 @@ java Declaration parseString(str code);
 java Declaration parseString(str code, loc l);
 
 @javaClass{lang.cpp.internal.Parser}
-java list[loc] parseForComments(loc file, list[loc] includePaths = classPaths["vs12"],  map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = ());
+java list[loc] parseForComments(loc file, str charset=DEFAULT_CHARSET, bool inferCharset=!(charset?), list[loc] includePaths = classPaths["vs12"],  map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = ());
 
 @javaClass{lang.cpp.internal.Parser}
-java rel[loc,loc] parseForMacros(loc file, list[loc] includePaths = classPaths["vs12"], map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = ());
+java rel[loc,loc] parseForMacros(loc file, str charset=DEFAULT_CHARSET, bool inferCharset=!(charset?), list[loc] includePaths = classPaths["vs12"], map[str,str] standardMacros=provideStandardMacros(), map[str,str] additionalMacros = ());
 
+@synopsis{All functions in this module that have a charset parameter use this as default.}
+private str DEFAULT_CHARSET = "UTF-8";
