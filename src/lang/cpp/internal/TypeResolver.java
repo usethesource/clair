@@ -484,7 +484,7 @@ public class TypeResolver {
 			return resolveICPPUnknownMemberClass((ICPPUnknownMemberClass) type, origin);
 		}
 		if (type instanceof IPDOMCPPClassType) {
-			throw new RuntimeException("NYI: resolveICompositeType " + type + " @ " + origin);	
+			return resolveICPPClassType((ICPPClassType) type, origin);
 		}
 		if (type instanceof ICPPClassType) {
 			return resolveICPPClassType((ICPPClassType) type, origin);
