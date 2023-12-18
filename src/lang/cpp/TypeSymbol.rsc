@@ -75,7 +75,7 @@ data TypeSymbol
   | \functionTemplate(loc decl, list[loc] templateParameters)
   | \variableTemplate(loc decl, list[loc] templateParameters)
   
-  | \aliasTemplate(loc decl, list[loc] templateParameters)
+  | \aliasTemplate(loc decl, list[TypeSymbol] templateArguments, TypeSymbol \type)
   
   | \functionSetType(loc decl, list[TypeSymbol] templateArguments)
   | \functionSetTypePointer(loc decl, list[TypeSymbol] templateArguments)

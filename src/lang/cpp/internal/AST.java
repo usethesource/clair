@@ -774,10 +774,10 @@ public class AST {
     = tf.constructor(typestore,_TypeSymbol,"struct",tf.sourceLocationType(),"decl");
   private static final Type _TypeSymbol_array_2 
     = tf.constructor(typestore,_TypeSymbol,"array",_TypeSymbol,"baseType",tf.integerType(),"size");
-  private static final Type _TypeSymbol_aliasTemplate_2 
-    = tf.constructor(typestore,_TypeSymbol,"aliasTemplate",tf.sourceLocationType(),"decl",tf.listType(tf.sourceLocationType()),"templateParameters");
   private static final Type _TypeSymbol_nullPtr_0 
     = tf.constructor(typestore,_TypeSymbol,"nullPtr");
+  private static final Type _TypeSymbol_aliasTemplate_3 
+    = tf.constructor(typestore,_TypeSymbol,"aliasTemplate",tf.sourceLocationType(),"decl",tf.listType(_TypeSymbol),"templateArguments",_TypeSymbol,"type");
   private static final Type _TypeSymbol_decimal128_0 
     = tf.constructor(typestore,_TypeSymbol,"decimal128");
   private static final Type _TypeSymbol_basicType_2 
@@ -6993,25 +6993,6 @@ public class AST {
     return vf.constructor(_TypeSymbol_array_2 , $baseType, $size).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor TypeSymbol_aliasTemplate(ISourceLocation $decl, IList $templateParameters) {
-      
-    if (!$decl.getType().isSubtypeOf(tf.sourceLocationType())) {
-      throw new IllegalArgumentException("Expected " + tf.sourceLocationType() + " but got " + $decl.getType() + " for $decl:" + $decl);
-    }
-      
-    if (!$templateParameters.getType().isSubtypeOf(tf.listType(tf.sourceLocationType()))) {
-      throw new IllegalArgumentException("Expected " + tf.listType(tf.sourceLocationType()) + " but got " + $templateParameters.getType() + " for $templateParameters:" + $templateParameters);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    
-    
-    
-    
-    return vf.constructor(_TypeSymbol_aliasTemplate_2 , $decl, $templateParameters).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
   public IConstructor TypeSymbol_nullPtr() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
@@ -7021,6 +7002,29 @@ public class AST {
     
     
     return vf.constructor(_TypeSymbol_nullPtr_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeSymbol_aliasTemplate(ISourceLocation $decl, IList $templateArguments, IConstructor $type) {
+      
+    if (!$decl.getType().isSubtypeOf(tf.sourceLocationType())) {
+      throw new IllegalArgumentException("Expected " + tf.sourceLocationType() + " but got " + $decl.getType() + " for $decl:" + $decl);
+    }
+      
+    if (!$templateArguments.getType().isSubtypeOf(tf.listType(_TypeSymbol))) {
+      throw new IllegalArgumentException("Expected " + tf.listType(_TypeSymbol) + " but got " + $templateArguments.getType() + " for $templateArguments:" + $templateArguments);
+    }
+      
+    if (!$type.getType().isSubtypeOf(_TypeSymbol)) {
+      throw new IllegalArgumentException("Expected " + _TypeSymbol + " but got " + $type.getType() + " for $type:" + $type);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    
+    
+    return vf.constructor(_TypeSymbol_aliasTemplate_3 , $decl, $templateArguments, $type).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeSymbol_decimal128() {

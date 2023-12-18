@@ -840,6 +840,16 @@ public class BindingsResolver {
 		return failedBinding("unknown");
 	}
 
+	public ISourceLocation resolveBinding(ICPPBinding binding, ISourceLocation origin) {
+		try {
+			return resolveICPPBinding(binding, origin);
+		} catch (URISyntaxException e) {
+			err(e.getMessage());
+		}
+
+		return failedBinding("unknown");
+	}
+
 	private ISourceLocation resolveUsingDeclaration(ICPPASTUsingDeclaration node) throws URISyntaxException {
 		return resolveBinding(node, node.getName().resolveBinding(), getSourceLocation(node));
 	}
