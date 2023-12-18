@@ -515,20 +515,10 @@ public class TypeResolver {
 
 	private IConstructor resolveICPPClassSpecialization(ICPPClassSpecialization type, ISourceLocation origin) {
 		ISourceLocation decl = getDecl(type.getSpecializedBinding(), origin);
-		IListWriter templateParameters = vf.listWriter();
 		ICPPTemplateParameterMap parameterMap = type.getTemplateParameterMap();
-		Stream.of(parameterMap.getAllParameterPositions()).forEach(it -> {
-			ICPPTemplateArgument arg = parameterMap.getArgument(it);
-			if (arg != null) {
-				if (arg.isTypeValue()) {
-					templateParameters.append(resolveType(arg.getTypeValue(), origin));
-				}
-				else {
-					templateParameters.append(resolveType(arg.getNonTypeEvaluation().getType(), origin));
-				}
-			}
-		});
-		return builder.TypeSymbol_classSpecialization(decl, templateParameters.done());
+		IList templateParameters = resolveArguments(streamArguments(parameterMap), origin).collect(vf.listWriter());
+		
+		return builder.TypeSymbol_classSpecialization(decl, templateParameters);
 	}
 
 	private IConstructor resolveICPPClassTemplate(ICPPClassTemplate type, ISourceLocation origin) {
@@ -708,28 +698,31 @@ public class TypeResolver {
 		return builder.TypeSymbol_typeContainer(resolveType(type.getType(), origin));
 	}
 
+	private Stream<IConstructor> resolveArguments(Stream<ICPPTemplateArgument> stream, ISourceLocation origin) {
+		return stream
+			.filter(arg -> arg != null) 
+			.map(arg -> {
+				if (arg.isTypeValue()) {
+					return resolveType(arg.getTypeValue(), origin);
+				}
+				else {
+					return resolveType(arg.getNonTypeEvaluation().getType(), origin);
+				}
+			});
+	}
+
+	private Stream<ICPPTemplateArgument> streamArguments(ICPPTemplateParameterMap parameterMap) {
+		return Stream.of(parameterMap.getAllParameterPositions()).map(it -> parameterMap.getArgument(it));
+	}
+
 	private IConstructor resolveITypedef(ITypedef type, ISourceLocation origin) {
 		if (type instanceof ICPPAliasTemplateInstance) {
 			ICPPAliasTemplateInstance ati = (ICPPAliasTemplateInstance) type;
-			IListWriter templateParameters = vf.listWriter();
+			IList templateParameters = 
+				resolveArguments(streamArguments(ati.getTemplateParameterMap()), origin)
+					.collect(vf.listWriter());
 			
-			ICPPTemplateParameterMap parameterMap = ati.getTemplateParameterMap();
-			Stream.of(parameterMap.getAllParameterPositions()).forEach(it -> {
-				ICPPTemplateArgument arg = parameterMap.getArgument(it);
-				if (arg != null) {
-					if (arg.isTypeValue()) {
-						templateParameters.append(resolveType(arg.getTypeValue(), origin));
-					}
-					else {
-						templateParameters.append(resolveType(arg.getNonTypeEvaluation().getType(), origin));
-					}
-				} 
-				else {
-					stdOut.println("WARNING: ignoring 'null' parameter in alias template instance at " + origin);
-				}
-			});
-
-			return builder.TypeSymbol_aliasTemplateInstance(getDecl(ati.getSpecializedBinding(), origin), templateParameters.done());
+			return builder.TypeSymbol_aliasTemplateInstance(getDecl(ati.getSpecializedBinding(), origin), templateParameters);
 		}
 		
 		return builder.TypeSymbol_typedef(resolveType(type.getType(), origin));
