@@ -376,7 +376,7 @@ public class BindingsResolver {
 		throw new RuntimeException("NYI" + binding.getClass().getSimpleName() + ": " + binding + " @ " + origin);
 	}
 
-	private ISourceLocation resolveICPPBinding(ICPPBinding binding, ISourceLocation origin) throws URISyntaxException {
+	public ISourceLocation resolveICPPBinding(ICPPBinding binding, ISourceLocation origin) throws URISyntaxException {
 		if (binding instanceof ICPPAliasTemplateInstance) {
 			return resolveICPPAliasTemplateInstance((ICPPAliasTemplateInstance) binding, origin);
 		}

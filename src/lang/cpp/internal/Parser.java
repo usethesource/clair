@@ -54,7 +54,6 @@ import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
-import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
@@ -142,7 +141,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionWithTryBlock;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTIfStatement;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLambdaExpression.CaptureDefault;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
@@ -1459,29 +1457,6 @@ public class Parser extends ASTVisitor {
 		return PROCESS_ABORT;
 	}
 
-	// InitializerClauses
-	private int visit(IASTInitializerClause initializerClause) {
-		at(initializerClause);
-		if (initializerClause instanceof IASTExpression)
-			visit((IASTExpression) initializerClause);
-		else if (initializerClause instanceof IASTInitializerList)
-			visit((IASTInitializerList) initializerClause);
-		else if (initializerClause instanceof ICASTDesignatedInitializer)
-			visit((ICASTDesignatedInitializer) initializerClause);
-		else if (initializerClause instanceof ICPPASTInitializerClause)
-			visit((ICPPASTInitializerClause) initializerClause);
-		else
-			throw new RuntimeException(
-					"Unknown IASTInitializerClause subclass " + initializerClause.getClass().getName() + " at "
-							+ locs.forNode(initializerClause) + ". Exiting");
-		return PROCESS_ABORT;
-	}
-
-	private int visit(ICPPASTInitializerClause initializer) {
-		err("ICPPASTInitializerClause: " + initializer.getRawSignature());
-		throw new RuntimeException("NYI at " + locs.forNode(initializer));
-	}
-
 	// Declarators
 
 	@Override
@@ -1555,12 +1530,6 @@ public class Parser extends ASTVisitor {
 		}
 
 		return PROCESS_ABORT;
-	}
-
-	private int visit(IASTFieldDeclarator declarator) {
-		at(declarator);
-		err("FieldDeclarator: " + declarator.getRawSignature());
-		throw new RuntimeException("NYI at " + locs.forNode(declarator));
 	}
 
 	private int visit(IASTFunctionDeclarator declarator) {
