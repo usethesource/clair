@@ -13,6 +13,7 @@
 package lang.cpp.internal;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +40,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.rascalmpl.exceptions.RuntimeExceptionFactory;
 import org.rascalmpl.library.Prelude;
+import org.rascalmpl.uri.URIResolverRegistry;
 
 import io.usethesource.vallang.IBool;
 import io.usethesource.vallang.IList;
@@ -144,6 +146,12 @@ public class CDTParser {
 	}
 
 	private String locToPath(ISourceLocation loc) {
+		try {
+			loc = URIResolverRegistry.getInstance().logicalToPhysical(loc);
+		} catch (IOException e) {
+			// do nothing
+		}
+
 		if (!loc.getScheme().equals("file"))
 			throw new IllegalArgumentException("Will not convert non-file loc");
 		return loc.getAuthority() + loc.getPath();
