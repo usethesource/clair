@@ -595,22 +595,9 @@ public class TypeResolver {
 	private IConstructor resolveICPPEnumerationSpecialization(ICPPEnumerationSpecialization type, ISourceLocation origin) {
 		ISourceLocation specializedBinding = getDecl(type.getSpecializedBinding(), origin);
 		ICPPTemplateParameterMap templateParameterMap = type.getTemplateParameterMap();
-		IListWriter templateArguments = vf.listWriter();
-		Stream.of(templateParameterMap.getAllParameterPositions()).forEach(it -> {
-			ICPPTemplateArgument arg = templateParameterMap.getArgument(it);
-			if (arg.isNonTypeValue()) {
-				// TODO
-				throw new RuntimeException("NonTypeValue argument in template parameters NYI @ " + origin);
-			}
-			// IType typeValue = arg.getTypeValue();
-			// err("TemplateArgument " + typeValue.getClass().getSimpleName());
-			// err("typeValue " + type);
-
-			// templateArguments
-			// .append(builder.TypeSymbol_templateArgument(it,
-			// getDecl(templateParameterMap.getArgument(it))));
-		});
-		return builder.TypeSymbol_enumerationSpecialization(specializedBinding, templateArguments.done());
+		IList templateArguments = resolveArguments(streamArguments(templateParameterMap), origin).collect(vf.listWriter());
+		
+		return builder.TypeSymbol_enumerationSpecialization(specializedBinding, templateArguments);
 	}
 
 	private IConstructor resolveICPPUnaryTypeTransformation(ICPPUnaryTypeTransformation type, ISourceLocation origin) {
