@@ -67,6 +67,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNaryTypeIdExpression.Operator;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.c.CStructure;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitTemplateTypeParameter;
@@ -600,10 +601,11 @@ public class TypeResolver {
 		return builder.TypeSymbol_enumerationSpecialization(specializedBinding, templateArguments);
 	}
 
-	private IConstructor resolveICPPUnaryTypeTransformation(ICPPUnaryTypeTransformation type, ISourceLocation origin) {
-		// Operator operator = type.getOperator();
-		// IType operand = type.getOperand();
-		throw new RuntimeException("NYI: resolveICPPUnaryTypeTransformation @ " + origin);
+	private IConstructor resolveICPPUnaryTypeTransformation(ICPPUnaryTypeTransformation type, ISourceLocation origin) {	
+		String op = type.getOperator().name();
+		IConstructor operand = resolveType(type.getOperand(), origin);
+		
+		return builder.TypeSymbol_unaryTypeTransformation(op, operand);
 	}
 
 	private IConstructor resolveICPPUnknownType(ICPPUnknownType type, ISourceLocation origin) {

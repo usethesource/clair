@@ -676,8 +676,6 @@ public class AST {
     = tf.constructor(typestore,_TypeSymbol,"unspecified");
   private static final Type _TypeSymbol_eUnionTemplate_2 
     = tf.constructor(typestore,_TypeSymbol,"eUnionTemplate",tf.sourceLocationType(),"decl",tf.listType(tf.sourceLocationType()),"templateParameters");
-  private static final Type _TypeSymbol_class_1 
-    = tf.constructor(typestore,_TypeSymbol,"class",tf.sourceLocationType(),"decl");
   private static final Type _TypeSymbol___nullType_0 
     = tf.constructor(typestore,_TypeSymbol,"__nullType");
   private static final Type _TypeSymbol_eClassTemplate_2 
@@ -746,6 +744,10 @@ public class AST {
     = tf.constructor(typestore,_TypeSymbol,"cUnionTemplate",tf.sourceLocationType(),"decl",tf.listType(tf.sourceLocationType()),"templateParameters");
   private static final Type _TypeSymbol_functionSetType_2 
     = tf.constructor(typestore,_TypeSymbol,"functionSetType",tf.sourceLocationType(),"decl",tf.listType(_TypeSymbol),"templateArguments");
+  private static final Type _TypeSymbol_unaryTypeTransformation_2 
+    = tf.constructor(typestore,_TypeSymbol,"unaryTypeTransformation",tf.stringType(),"operator",_TypeSymbol,"operand");
+  private static final Type _TypeSymbol_class_1 
+    = tf.constructor(typestore,_TypeSymbol,"class",tf.sourceLocationType(),"decl");
   private static final Type _TypeSymbol_typeOfDependentExpression_1 
     = tf.constructor(typestore,_TypeSymbol,"typeOfDependentExpression",tf.stringType(),"name");
   private static final Type _TypeSymbol_implicitTemplateTypeParameter_2 
@@ -6234,21 +6236,6 @@ public class AST {
     return vf.constructor(_TypeSymbol_eUnionTemplate_2 , $decl, $templateParameters).asWithKeywordParameters().setParameters(kwParams);
   }
   
-  public IConstructor TypeSymbol_class(ISourceLocation $decl) {
-      
-    if (!$decl.getType().isSubtypeOf(tf.sourceLocationType())) {
-      throw new IllegalArgumentException("Expected " + tf.sourceLocationType() + " but got " + $decl.getType() + " for $decl:" + $decl);
-    }
-    
-    Map<String, IValue> kwParams = new HashMap<String, IValue>();
-    
-    
-    
-    
-    
-    return vf.constructor(_TypeSymbol_class_1 , $decl).asWithKeywordParameters().setParameters(kwParams);
-  }
-  
   public IConstructor TypeSymbol___nullType() {
     
     Map<String, IValue> kwParams = new HashMap<String, IValue>();
@@ -6769,6 +6756,40 @@ public class AST {
     
     
     return vf.constructor(_TypeSymbol_functionSetType_2 , $decl, $templateArguments).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeSymbol_unaryTypeTransformation(String $operator, IConstructor $operand) {
+      
+    if (!vf.string($operator).getType().isSubtypeOf(tf.stringType())) {
+      throw new IllegalArgumentException("Expected " + tf.stringType() + " but got " + vf.string($operator).getType() + " for vf.string($operator):" + vf.string($operator));
+    }
+      
+    if (!$operand.getType().isSubtypeOf(_TypeSymbol)) {
+      throw new IllegalArgumentException("Expected " + _TypeSymbol + " but got " + $operand.getType() + " for $operand:" + $operand);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    
+    
+    return vf.constructor(_TypeSymbol_unaryTypeTransformation_2 , vf.string($operator), $operand).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeSymbol_class(ISourceLocation $decl) {
+      
+    if (!$decl.getType().isSubtypeOf(tf.sourceLocationType())) {
+      throw new IllegalArgumentException("Expected " + tf.sourceLocationType() + " but got " + $decl.getType() + " for $decl:" + $decl);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    
+    
+    return vf.constructor(_TypeSymbol_class_1 , $decl).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeSymbol_typeOfDependentExpression(String $name) {

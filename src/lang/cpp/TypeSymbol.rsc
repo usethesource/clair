@@ -80,6 +80,7 @@ data TypeSymbol
   | \functionSetType(loc decl, list[TypeSymbol] templateArguments)
   | \functionSetTypePointer(loc decl, list[TypeSymbol] templateArguments)
   
+  | \unaryTypeTransformation(str operator, TypeSymbol operand)
   | \unresolved()
   | \any()
   
