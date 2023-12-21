@@ -181,13 +181,13 @@ public class BindingsResolver {
 
 		if ("cpp+translationUnit".equals(ownerLocation.getScheme())) {
 			location = URIUtil.correctLocation(scheme, "", binding.getName());
-			containment.append(vf.tuple(translationUnit, location));
+			ownerLocation = translationUnit;
 		}
 		else {
 			location = URIUtil.changeScheme(URIUtil.getChildLocation(ownerLocation, binding.getName()), scheme);
-			containment.append(vf.tuple(ownerLocation, location));
 		}
 		
+		containment.append(vf.tuple(ownerLocation, location));
 		return location;
 	}
 	
@@ -628,7 +628,7 @@ public class BindingsResolver {
 		ISourceLocation decl = URIUtil.changeScheme(URIUtil.getChildLocation(owner, binding.getName()), scheme);
 		decl = URIUtil.changePath(decl, decl.getPath() + parameters.toString());
 
-		containment.append(vf.tuple(owner, decl));
+		containment.append(vf.tuple(owner.getScheme().equals("cpp+translationUnit") ? translationUnit : owner, decl));
 		return decl;
 	}
 
