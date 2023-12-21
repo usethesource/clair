@@ -376,7 +376,7 @@ public class BindingsResolver {
 		throw new RuntimeException("NYI" + binding.getClass().getSimpleName() + ": " + binding + " @ " + origin);
 	}
 
-	private ISourceLocation resolveICPPBinding(ICPPBinding binding, ISourceLocation origin) throws URISyntaxException {
+	public ISourceLocation resolveICPPBinding(ICPPBinding binding, ISourceLocation origin) throws URISyntaxException {
 		if (binding instanceof ICPPAliasTemplateInstance) {
 			return resolveICPPAliasTemplateInstance((ICPPAliasTemplateInstance) binding, origin);
 		}
@@ -833,6 +833,16 @@ public class BindingsResolver {
 			}
 			// if (node instanceof IGNUASTGotoStatement)
 			// return resolveGnuGotoStatement((IGNUASTGotoStatement) node);
+		} catch (URISyntaxException e) {
+			err(e.getMessage());
+		}
+
+		return failedBinding("unknown");
+	}
+
+	public ISourceLocation resolveBinding(ICPPBinding binding, ISourceLocation origin) {
+		try {
+			return resolveICPPBinding(binding, origin);
 		} catch (URISyntaxException e) {
 			err(e.getMessage());
 		}

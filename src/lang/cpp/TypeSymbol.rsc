@@ -75,11 +75,12 @@ data TypeSymbol
   | \functionTemplate(loc decl, list[loc] templateParameters)
   | \variableTemplate(loc decl, list[loc] templateParameters)
   
-  | \aliasTemplate(loc decl, list[loc] templateParameters)
+  | \aliasTemplate(loc decl, list[loc] templateParameters, TypeSymbol \type)
   
   | \functionSetType(loc decl, list[TypeSymbol] templateArguments)
   | \functionSetTypePointer(loc decl, list[TypeSymbol] templateArguments)
   
+  | \transformToUnderlyingType(TypeSymbol operand)
   | \unresolved()
   | \any()
   

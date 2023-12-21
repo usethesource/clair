@@ -334,6 +334,7 @@ data Statement(list[Attribute] attributes = [], loc src = |unknown:///|, bool is
     | \nullStatement()
     | \label(Name name, Statement nestedStatement, loc decl = |unknown:///|)
     | \goto(Name name, loc decl = |unknown:///|)
+    | \computedGoto(Expression labelName) //note: this is a GNU extension
     
     | \tryBlock(Statement tryBody, list[Statement] catchHandlers)
     | \catch(Declaration declaration, Statement body)
@@ -553,3 +554,4 @@ java rel[loc,loc] parseForMacros(loc file, str charset=DEFAULT_CHARSET, bool inf
 
 @synopsis{All functions in this module that have a charset parameter use this as default.}
 public str DEFAULT_CHARSET = "UTF-8";
+
