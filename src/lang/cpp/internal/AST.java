@@ -674,6 +674,8 @@ public class AST {
     = tf.constructor(typestore,_TypeSymbol,"union",tf.sourceLocationType(),"decl");
   private static final Type _TypeSymbol_float_0 
     = tf.constructor(typestore,_TypeSymbol,"float");
+  private static final Type _TypeSymbol_transformToUnderlyingType_1 
+    = tf.constructor(typestore,_TypeSymbol,"transformToUnderlyingType",_TypeSymbol,"operand");
   private static final Type _TypeSymbol_unspecified_0 
     = tf.constructor(typestore,_TypeSymbol,"unspecified");
   private static final Type _TypeSymbol_eUnionTemplate_2 
@@ -6223,6 +6225,21 @@ public class AST {
     
     
     return vf.constructor(_TypeSymbol_float_0 ).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor TypeSymbol_transformToUnderlyingType(IConstructor $operand) {
+      
+    if (!$operand.getType().isSubtypeOf(_TypeSymbol)) {
+      throw new IllegalArgumentException("Expected " + _TypeSymbol + " but got " + $operand.getType() + " for $operand:" + $operand);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    
+    
+    
+    
+    
+    return vf.constructor(_TypeSymbol_transformToUnderlyingType_1 , $operand).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor TypeSymbol_unspecified() {

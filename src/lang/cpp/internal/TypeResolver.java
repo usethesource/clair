@@ -602,10 +602,11 @@ public class TypeResolver {
 	}
 
 	private IConstructor resolveICPPUnaryTypeTransformation(ICPPUnaryTypeTransformation type, ISourceLocation origin) {	
-		String op = type.getOperator().name();
+		assert type.getOperator().equals(org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation.Operator.underlying_type);
+		
 		IConstructor operand = resolveType(type.getOperand(), origin);
 		
-		return builder.TypeSymbol_unaryTypeTransformation(op, operand);
+		return builder.TypeSymbol_transformToUnderlyingType(operand);
 	}
 
 	private IConstructor resolveICPPUnknownType(ICPPUnknownType type, ISourceLocation origin) {
