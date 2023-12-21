@@ -135,6 +135,7 @@ public class BindingsResolver {
 	public ISetWriter containment;
 
 	private ISourceLocation translationUnit;
+	private ISourceLocation translationUnitRoot = URIUtil.rootLocation("cpp+translationUnit");
 
 	private void out(String msg) {
 //		stdOut.println(spaces() + msg.replace("\n", "\n" + spaces()));
@@ -180,17 +181,19 @@ public class BindingsResolver {
 
 		if ("cpp+translationUnit".equals(ownerLocation.getScheme())) {
 			location = URIUtil.correctLocation(scheme, "", binding.getName());
+			containment.append(vf.tuple(translationUnit, location));
 		}
 		else {
 			location = URIUtil.changeScheme(URIUtil.getChildLocation(ownerLocation, binding.getName()), scheme);
+			containment.append(vf.tuple(ownerLocation, location));
 		}
-		containment.append(vf.tuple(ownerLocation, location));
+		
 		return location;
 	}
 	
 	private ISourceLocation resolveOwner(IBinding binding, ISourceLocation origin) throws URISyntaxException {
 		if (binding == null) {
-			return translationUnit;
+			return translationUnitRoot;
 		}
 
 		IBinding owner = binding.getOwner();
@@ -198,7 +201,7 @@ public class BindingsResolver {
 			return URIUtil.correctLocation("circular", "", UUID.randomUUID().toString());
 		}
 		if (owner == null) {
-			return translationUnit;
+			return translationUnitRoot;
 		}
 		else {
 			return resolveBinding(null, owner, origin);
