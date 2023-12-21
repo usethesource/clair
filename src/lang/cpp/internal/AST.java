@@ -546,6 +546,8 @@ public class AST {
     = tf.constructor(typestore,_Statement,"forWithDecl",_Statement,"sInitializer",_Declaration,"conditionDeclaration",_Expression,"iteration",_Statement,"body");
   private static final Type _Statement_expressionStatement_1 
     = tf.constructor(typestore,_Statement,"expressionStatement",_Expression,"expression");
+  private static final Type _Statement_computedGoto_1 
+    = tf.constructor(typestore,_Statement,"computedGoto",_Expression,"labelName");
   private static final Type _Statement_for_4 
     = tf.constructor(typestore,_Statement,"for",_Statement,"sInitializer",_Expression,"condition",_Expression,"iteration",_Statement,"body");
   private static final Type _Statement_return_0 
@@ -5315,6 +5317,23 @@ public class AST {
     
     if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
     return vf.constructor(_Statement_expressionStatement_1 , $expression).asWithKeywordParameters().setParameters(kwParams);
+  }
+  
+  public IConstructor Statement_computedGoto(IConstructor $labelName, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {
+      
+    if (!$labelName.getType().isSubtypeOf(_Expression)) {
+      throw new IllegalArgumentException("Expected " + _Expression + " but got " + $labelName.getType() + " for $labelName:" + $labelName);
+    }
+    
+    Map<String, IValue> kwParams = new HashMap<String, IValue>();
+    if (!$attributes.isEmpty()) {
+      kwParams.put("attributes", $attributes);
+    }
+    kwParams.put("src", $loc);
+    
+    
+    if ($isMacroExpansion) kwParams.put("isMacroExpansion", vf.bool(true));
+    return vf.constructor(_Statement_computedGoto_1 , $labelName).asWithKeywordParameters().setParameters(kwParams);
   }
   
   public IConstructor Statement_for(IConstructor $sInitializer, IConstructor $condition, IConstructor $iteration, IConstructor $body, IList $attributes, ISourceLocation $loc, boolean $isMacroExpansion) {

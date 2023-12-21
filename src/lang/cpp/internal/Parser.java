@@ -3590,9 +3590,13 @@ public class Parser extends ASTVisitor {
 
 	private int visit(IGNUASTGotoStatement statement) {
 		at(statement);
-		// requires decl keyword parameter
-		err("IGNUAstGotoStatement: " + statement.getRawSignature());
-		throw new RuntimeException("NYI at " + locs.forNode(statement));
+		visit(statement.getLabelNameExpression());
+		IList attributes = getAttributes(statement);
+		ISourceLocation loc = locs.forNode(statement);
+		boolean isMacroExpansion = isMacroExpansion(statement);
+		
+		stack.push(builder.Statement_computedGoto(stack.pop(), attributes, loc, isMacroExpansion));
+		return PROCESS_ABORT;
 	}
 
 	private int visit(ICPPASTCatchHandler statement) {
