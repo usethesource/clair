@@ -2073,7 +2073,7 @@ public class Parser extends ASTVisitor {
 	private int visit(IASTEnumerationSpecifier declSpec) {
 		at(declSpec);
 
-		if (declSpec instanceof ICPPASTEnumerationSpecifier)
+		if (declSpec instanceof ICPPASTEnumerationSpecifier) 
 			visit((ICPPASTEnumerationSpecifier) declSpec);
 		else if (declSpec instanceof ICASTEnumerationSpecifier)
 			visit((ICASTEnumerationSpecifier) declSpec);

@@ -135,6 +135,7 @@ public class BindingsResolver {
 	public ISetWriter containment;
 
 	private ISourceLocation translationUnit;
+	private ISourceLocation translationUnitRoot = URIUtil.rootLocation("cpp+translationUnit");
 
 	private void out(String msg) {
 //		stdOut.println(spaces() + msg.replace("\n", "\n" + spaces()));
@@ -175,22 +176,50 @@ public class BindingsResolver {
 	}
 	
 	private ISourceLocation ownedBinding(IBinding binding, String scheme, ISourceLocation origin) throws URISyntaxException {
+		return ownedBinding(binding, scheme, "", origin, false);
+	}
+
+	private ISourceLocation ownedBinding(IBinding binding, String scheme, String postfix, ISourceLocation origin, boolean isStatic) throws URISyntaxException {
+		String name = binding.getName() + postfix;
 		ISourceLocation ownerLocation = resolveOwner(binding, origin);
 		ISourceLocation location = null;
+		boolean isAtRoot = "cpp+translationUnit".equals(ownerLocation.getScheme());
 
-		if ("cpp+translationUnit".equals(ownerLocation.getScheme())) {
-			location = URIUtil.correctLocation(scheme, "", binding.getName());
+		// * When we are at the root, we want a different parent from |cpp+translationUnit:///| as containment parent; name it should contain the file name from `translationUnit`
+		// * Also when we are the root, `static` variables and functions need to be prefixed with the file name because they are local to the current translationUnit
+
+		if (isStatic) {
+			if (isAtRoot) {
+				// add prefix
+				location = URIUtil.changeScheme(URIUtil.getChildLocation(translationUnit, name), scheme);
+				// set long containment parent
+				ownerLocation = translationUnit;
+			}
+			else {
+				// the owner is the prefix; because we are inside some nested declaration
+				location = URIUtil.changeScheme(URIUtil.getChildLocation(ownerLocation, name), scheme);	
+			}
 		}
 		else {
-			location = URIUtil.changeScheme(URIUtil.getChildLocation(ownerLocation, binding.getName()), scheme);
+			if (isAtRoot) {
+				// do not add the prefix, because of global C[++] namespace while linking
+				location = URIUtil.correctLocation(scheme, "", name);		
+				// set long containment parent
+				ownerLocation = translationUnit;
+			}
+			else {
+				// the owner is the prefix; because we are inside some nested declaration
+				location = URIUtil.changeScheme(URIUtil.getChildLocation(ownerLocation, name), scheme);	
+			}
 		}
+		
 		containment.append(vf.tuple(ownerLocation, location));
 		return location;
 	}
 	
 	private ISourceLocation resolveOwner(IBinding binding, ISourceLocation origin) throws URISyntaxException {
 		if (binding == null) {
-			return translationUnit;
+			return translationUnitRoot;
 		}
 
 		IBinding owner = binding.getOwner();
@@ -198,7 +227,7 @@ public class BindingsResolver {
 			return URIUtil.correctLocation("circular", "", UUID.randomUUID().toString());
 		}
 		if (owner == null) {
-			return translationUnit;
+			return translationUnitRoot;
 		}
 		else {
 			return resolveBinding(null, owner, origin);
@@ -441,7 +470,7 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation resolveCVariable(CVariable binding, ISourceLocation origin) throws URISyntaxException {
-		return ownedBinding(binding, "c+variable", origin);
+		return ownedBinding(binding, "c+variable", "", origin, binding.isStatic());
 	}
 
 	private ISourceLocation resolveICPPVariable(ICPPVariable binding, ISourceLocation origin) throws URISyntaxException {
@@ -476,7 +505,7 @@ public class BindingsResolver {
 			scheme = "cpp+variable";
 		}
 
-		return ownedBinding(binding, scheme, origin);
+		return ownedBinding(binding, scheme, "", origin, binding.isStatic());
 	}
 
 	private ISourceLocation resolveICPPUsingDeclaration(ICPPUsingDeclaration binding, ISourceLocation origin) throws URISyntaxException {
@@ -610,8 +639,9 @@ public class BindingsResolver {
 		StringBuilder parameters = new StringBuilder("(");
 		try {
 			for (IParameter parameter : binding.getParameters()) {// getParameters can throw ClassCastException
-				if (parameters.length() > 1)
+				if (parameters.length() > 1) {
 					parameters.append(',');
+				}
 				parameters.append(printType(parameter.getType()));
 			}
 			parameters.append(')');
@@ -621,12 +651,7 @@ public class BindingsResolver {
 			parameters = new StringBuilder("($$internalError)");
 		}
 
-		ISourceLocation owner = resolveOwner(binding, origin);
-		ISourceLocation decl = URIUtil.changeScheme(URIUtil.getChildLocation(owner, binding.getName()), scheme);
-		decl = URIUtil.changePath(decl, decl.getPath() + parameters.toString());
-
-		containment.append(vf.tuple(owner, decl));
-		return decl;
+		return ownedBinding(binding, scheme, parameters.toString(), origin, binding.isStatic());
 	}
 
 	private ISourceLocation resolveICPPFunction(ICPPFunction binding, ISourceLocation origin) throws URISyntaxException {
@@ -672,11 +697,7 @@ public class BindingsResolver {
 		}
 		parameters.append(')');
 
-		ISourceLocation parentDecl = resolveOwner(binding, origin);
-		ISourceLocation decl = URIUtil.changeScheme(URIUtil.getChildLocation(parentDecl, binding.getName()), scheme);
-		decl = URIUtil.changePath(decl, decl.getPath() + parameters.toString());
-		containment.append(vf.tuple(parentDecl, decl));
-		return decl;
+		return ownedBinding(binding, scheme, parameters.toString(), origin, binding.isStatic());
 	}
 
 	private ISourceLocation resolveCEnumeration(CEnumeration binding, ISourceLocation origin) throws URISyntaxException {
