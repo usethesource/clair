@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -42,6 +43,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
@@ -69,6 +71,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTypeSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNaryTypeIdExpression.Operator;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.c.CASTFunctionDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.c.CStructure;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitTemplateTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPTemplateNonTypeArgument;
@@ -156,6 +159,21 @@ public class TypeResolver {
 			return resolveICPPASTTemplateId((ICPPASTTemplateId) node);
 		if (node instanceof ICPPASTDeclarator)
 			return resolveICPPASTDeclarator((ICPPASTDeclarator) node);
+		if (node instanceof IASTStandardFunctionDeclarator) {
+			return resolveIASTStandardFunctionDeclarator((IASTStandardFunctionDeclarator) node);
+		}
+		
+		return builder.TypeSymbol_any();
+	}
+
+	private IConstructor resolveIASTStandardFunctionDeclarator(IASTStandardFunctionDeclarator node) {
+		IBinding binding = node.getName().resolveBinding();
+		ISourceLocation origin = locs.forNode(node.getName());
+		
+		if (binding instanceof IFunction) {
+			return resolveType(((IFunction) binding).getType(), origin);
+		}
+
 		return builder.TypeSymbol_any();
 	}
 
