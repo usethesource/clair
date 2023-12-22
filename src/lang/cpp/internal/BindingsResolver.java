@@ -183,13 +183,34 @@ public class BindingsResolver {
 		String name = binding.getName() + postfix;
 		ISourceLocation ownerLocation = resolveOwner(binding, origin);
 		ISourceLocation location = null;
-		
-		if (!isStatic && "cpp+translationUnit".equals(ownerLocation.getScheme())) {
-			location = URIUtil.correctLocation(scheme, "", name);
-			ownerLocation = translationUnit;
+		boolean isAtRoot = "cpp+translationUnit".equals(ownerLocation.getScheme());
+
+		// * When we are at the root, we want a different parent from |cpp+translationUnit:///| as containment parent; name it should contain the file name from `translationUnit`
+		// * Also when we are the root, `static` variables and functions need to be prefixed with the file name because they are local to the current translationUnit
+
+		if (isStatic) {
+			if (isAtRoot) {
+				// add prefix
+				location = URIUtil.changeScheme(URIUtil.getChildLocation(translationUnit, name), scheme);
+				// set long containment parent
+				ownerLocation = translationUnit;
+			}
+			else {
+				// the owner is the prefix; because we are inside some nested declaration
+				location = URIUtil.changeScheme(URIUtil.getChildLocation(ownerLocation, name), scheme);	
+			}
 		}
 		else {
-			location = URIUtil.changeScheme(URIUtil.getChildLocation(ownerLocation, name), scheme);
+			if (isAtRoot) {
+				// do not add the prefix, because of global C[++] namespace while linking
+				location = URIUtil.correctLocation(scheme, "", name);		
+				// set long containment parent
+				ownerLocation = translationUnit;
+			}
+			else {
+				// the owner is the prefix; because we are inside some nested declaration
+				location = URIUtil.changeScheme(URIUtil.getChildLocation(ownerLocation, name), scheme);	
+			}
 		}
 		
 		containment.append(vf.tuple(ownerLocation, location));
@@ -618,8 +639,9 @@ public class BindingsResolver {
 		StringBuilder parameters = new StringBuilder("(");
 		try {
 			for (IParameter parameter : binding.getParameters()) {// getParameters can throw ClassCastException
-				if (parameters.length() > 1)
+				if (parameters.length() > 1) {
 					parameters.append(',');
+				}
 				parameters.append(printType(parameter.getType()));
 			}
 			parameters.append(')');
