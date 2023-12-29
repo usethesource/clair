@@ -294,8 +294,6 @@ public class Parser extends ASTVisitor {
 		CDTParser parser = new CDTParser(vf, stdOut, stdErr, stdLib, includeDirs, standardMacros, additionalMacros,
 				includeStdLib.getValue());
 		monitor.jobStart("ClaiR parseFiles");
-		Instant begin = Instant.now();
-		out("Beginning at " + begin.toString());
 		IListWriter asts = vf.listWriter();
 		for (IValue v : files) {
 			if (monitor.jobIsCanceled("ClaiR parseFiles")) {
@@ -316,9 +314,6 @@ public class Parser extends ASTVisitor {
 			}
 		}
 
-		Instant done = Instant.now();
-		out("Parsing and marshalling " + files.size() + " files took "
-				+ (Duration.between(begin, done).toMillis() * 1.0d) / 1000 + "seconds");
 		reset();
 		monitor.jobEnd("ClaiR parseFiles", true);
 
@@ -358,22 +353,14 @@ public class Parser extends ASTVisitor {
 		this.includeStdLib = includeStdLib.getValue() || stdLib.isEmpty();
 		this.stdLib = stdLib;
 
-		Instant begin = Instant.now();
-		out("Beginning at " + begin.toString());
 		CDTParser parser = new CDTParser(vf, stdOut, stdErr, stdLib, includeDirs, standardMacros, additionalMacros,
 				includeStdLib.getValue());
 		IASTTranslationUnit tu = parser.parseFileAsCpp(file, charset, inferCharset);
-		Instant between = Instant.now();
-		out("CDT took " + (Duration.between(begin, between).toMillis() * 1.0d) / 1000 + "seconds");
 
 		try {
 			IValue result = convertCdtToRascal(tu, false);
 			ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", file.getPath());
 			result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
-			Instant done = Instant.now();
-			out("Marshalling took " + (Duration.between(between, done).toMillis() * 1.0d) / 1000
-					+ "seconds");
-			
 			if (result == null) {
 				throw RuntimeExceptionFactory.parseError(file, null, null);
 			}
