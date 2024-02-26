@@ -180,7 +180,7 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation ownedBinding(IBinding binding, String scheme, String postfix, ISourceLocation origin, boolean isStatic) throws URISyntaxException {
-		String name = binding.getName() + postfix;
+		String name = renameOperators(binding.getName(), scheme) + postfix;
 		ISourceLocation ownerLocation = resolveOwner(binding, origin);
 		ISourceLocation location = null;
 		boolean isAtRoot = "cpp+translationUnit".equals(ownerLocation.getScheme());
@@ -217,6 +217,15 @@ public class BindingsResolver {
 		return location;
 	}
 	
+	private String renameOperators(String name, String scheme) {
+		if ("cpp+operatorMethod".equals(scheme)) {
+			// remove the additional spaces to avoid accidental synonyms
+			name = name.replaceAll(" ", "");
+		}
+
+		return name;
+	}
+
 	private ISourceLocation resolveOwner(IBinding binding, ISourceLocation origin) throws URISyntaxException {
 		if (binding == null) {
 			return translationUnitRoot;
@@ -680,6 +689,9 @@ public class BindingsResolver {
 			}
 			else if (binding.getName().startsWith("~")) {
 				scheme = "cpp+destructor";
+			}
+			else if (binding.getName().startsWith("operator") && binding.getName().contains("[<>\\-+*/=%!&\\|\\^\\?\\.]")) {
+				scheme = "cpp+operatorMethod";
 			}
 			else {
 				scheme = "cpp+method";
