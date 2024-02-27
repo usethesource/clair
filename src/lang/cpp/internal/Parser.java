@@ -1225,16 +1225,22 @@ public class Parser extends ASTVisitor {
 				memberInitializers.append(stack.pop());
 			});
 
-			if (isDefaulted && isDeleted)
+			if (isDefaulted && isDeleted) {
 				err("WARNING: IASTFunctionDefinition both deleted and defaulted");
-			if ((isDefaulted || isDeleted) && definition instanceof ICPPASTFunctionWithTryBlock)
+			}
+
+			if ((isDefaulted || isDeleted) && definition instanceof ICPPASTFunctionWithTryBlock) {
 				throw new RuntimeException("IASTFunctionDefinition defaulted/deleted and with try? at " + loc);
-			if (isDefaulted)
+			}
+
+			if (isDefaulted) {
 				stack.push(builder.Declaration_defaultedFunctionDefinition(declSpecifier, memberInitializers.done(),
 						declarator, attributes, loc, isMacroExpansion));
-			else if (isDeleted)
+			}
+			else if (isDeleted) {
 				stack.push(builder.Declaration_deletedFunctionDefinition(declSpecifier, memberInitializers.done(),
 						declarator, attributes, loc, isMacroExpansion));
+			}
 			else if (definition instanceof ICPPASTFunctionWithTryBlock) {
 				IListWriter catchHandlers = vf.listWriter();
 				Stream.of(((ICPPASTFunctionWithTryBlock) definition).getCatchHandlers()).forEach(it -> {
@@ -1245,12 +1251,14 @@ public class Parser extends ASTVisitor {
 				stack.push(builder.Declaration_functionWithTryBlockDefinition(declSpecifier, declarator,
 						memberInitializers.done(), stack.pop(), catchHandlers.done(), attributes, loc,
 						isMacroExpansion));
-			} else {
+			} 
+			else {
 				definition.getBody().accept(this);
 				stack.push(builder.Declaration_functionDefinition(declSpecifier, declarator, memberInitializers.done(),
 						stack.pop(), attributes, loc, isMacroExpansion));
 			}
-		} else { // C Function definition
+		} 
+		else { // C Function definition
 			// TODO: add separate AST entry and remove fixed empty memberinitializers and
 			// attributes
 			definition.getDeclSpecifier().accept(this);

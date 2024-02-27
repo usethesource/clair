@@ -180,7 +180,7 @@ public class BindingsResolver {
 	}
 
 	private ISourceLocation ownedBinding(IBinding binding, String scheme, String postfix, ISourceLocation origin, boolean isStatic) throws URISyntaxException {
-		String name = renameOperators(binding.getName(), scheme) + postfix;
+		String name = renameOperators(binding.getName()) + postfix;
 		ISourceLocation ownerLocation = resolveOwner(binding, origin);
 		ISourceLocation location = null;
 		boolean isAtRoot = "cpp+translationUnit".equals(ownerLocation.getScheme());
@@ -217,10 +217,12 @@ public class BindingsResolver {
 		return location;
 	}
 	
-	private String renameOperators(String name, String scheme) {
-		if ("cpp+operatorMethod".equals(scheme)) {
+	private String renameOperators(String name) {
+		if (isOperatorName(name)) {
 			// remove the additional spaces to avoid accidental synonyms
 			name = name.replaceAll(" ", "");
+			// wrap the operator in braces to disambiguate from possible methods with names like "operatordelete"
+			name = "operator(" + name.substring("operator".length()) + ")";
 		}
 
 		return name;
@@ -690,9 +692,6 @@ public class BindingsResolver {
 			else if (binding.getName().startsWith("~")) {
 				scheme = "cpp+destructor";
 			}
-			else if (binding.getName().startsWith("operator") && binding.getName().contains("[<>\\-+*/=%!&\\|\\^\\?\\.]")) {
-				scheme = "cpp+operatorMethod";
-			}
 			else {
 				scheme = "cpp+method";
 			}
@@ -710,6 +709,20 @@ public class BindingsResolver {
 		parameters.append(')');
 
 		return ownedBinding(binding, scheme, parameters.toString(), origin, binding.isStatic());
+	}
+
+	private boolean isOperatorName(String name) {
+		if (name.startsWith("operator")) {
+			if (name.contains("[<>\\-+*/=%!&\\|\\^\\?\\.\\[\\]]")) {
+				return true;
+			}
+
+			if (name.endsWith(" delete") || name.endsWith(" new")) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private ISourceLocation resolveCEnumeration(CEnumeration binding, ISourceLocation origin) throws URISyntaxException {
