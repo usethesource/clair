@@ -605,7 +605,10 @@ public class BindingsResolver {
 		// ICPPBasicType, CPPPointerType, ICPPReferenceType, CPPQualifierType
 		// TODO: fix typedefs
 		if (type instanceof ICPPBinding) { // ITypedef
-			return ASTTypeUtil.getQualifiedName((ICPPBinding) type);
+			// nevermind that the %2F will be escaped _again_ when we build a location, we 
+			// must get rid of nested slashes to avoid breaking the URI path here. The CDT will produce fully qualified references
+			// to typedefs from others files here, which will include slashes in many cases.
+			return ASTTypeUtil.getQualifiedName((ICPPBinding) type).replaceAll("/", "%2F");
 		}
 		
 		if (type instanceof IProblemType
