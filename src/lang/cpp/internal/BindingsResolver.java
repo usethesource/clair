@@ -716,7 +716,7 @@ public class BindingsResolver {
 
 	private boolean isOperatorName(String name) {
 		if (name.startsWith("operator")) {
-			if (name.contains("[<>\\-+*/=%!&\\|\\^\\?\\.\\[\\]]")) {
+			if (name.matches("[<>\\-+*/=%!&\\|\\^\\?\\.\\[\\]]")) {
 				return true;
 			}
 

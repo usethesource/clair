@@ -131,7 +131,7 @@ data Declaration(list[Attribute] attributes = [], loc src=|unknown:///|, bool is
     ;
 
 
-data Expression(loc src = |unknown:///|, TypeSymbol typ = \unresolved(), bool isMacroExpansion = false) //no attributes
+data Expression(loc src = |unknown:///|, loc decl=|not-overloaded:///|, TypeSymbol typ = \unresolved(), bool isMacroExpansion = false) //no attributes
     = \multiply(Expression lhs, Expression rhs)
     | \divide(Expression lhs, Expression rhs)
     | \modulo(Expression lhs, Expression rhs)

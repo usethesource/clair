@@ -78,12 +78,12 @@ M3 cppASTToM3(Declaration tu, M3 model = m3(tu.src.top)) {
     = { // direct function calls 
         *{<declarator.decl, functionName.decl> | /functionCall(Expression functionName, _) := body, functionName.decl?},
 
-        // calls via brackets
+        // calls via brackets (TODO: missing case for `operator ()` overloads)
         *{<declarator.decl, functionName.expression.decl> | /functionCall(Expression functionName, _) := body, functionName is bracketed, functionName.expression.decl?},
     
-        // constructor calls
-        *{<declarator.decl, e.decl> | /Expression e := body, e is new || e is newWithArgs || e is globalNew || e is globalNewWithArgs, e.decl?}
-      
+        // constructor calls and operator invocations
+        *{<declarator.decl, e.decl> | /Expression e := body, e is new || e is newWithArgs || e is globalNew || e is globalNewWithArgs || str _(_,_) := e || str _(_) := e, e.decl?}
+
       | /functionDefinition(_, Declarator declarator, _, Statement body) := tu
       }
       ;
@@ -105,7 +105,7 @@ rel[loc caller, loc callee] extractCallGraph(Declaration ast) = extractCallGraph
 @synopsis{extracts dependencies between every declaration and every name that is used in it, that is not-not a "call"}
 rel[loc caller, loc callee] extractCallGraph(set[Declaration] asts)
   = { <caller.declarator.decl, c.decl> | ast <- asts, /Declaration caller := ast, caller has declarator, /Expression c := caller, c has decl,
-      c.decl.scheme notin {"cpp+class", "cpp+enumerator", "cpp+field", "cpp+parameter", "cpp+typedef", "cpp+variable", "c+variable", "unknown", "cpp+unknown"} };		//Over-approximation
+      c.decl.scheme notin {"not-overloaded", "cpp+class", "cpp+enumerator", "cpp+field", "cpp+parameter", "cpp+typedef", "cpp+variable", "c+variable", "unknown", "cpp+unknown"} };		//Over-approximation
 
 private loc pretty(loc subject) = |<subject.scheme>:///| + pretty(subject.path);
 private str pretty(str path) = replaceAll(path, "\\", "/");

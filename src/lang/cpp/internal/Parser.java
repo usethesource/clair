@@ -14,8 +14,6 @@ package lang.cpp.internal;
 
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
@@ -178,6 +176,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.gnu.IGCCASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTGotoStatement;
@@ -2680,7 +2679,7 @@ public class Parser extends ASTVisitor {
 		expression.getArgument().accept(this);
 		IConstructor argument = stack.pop();
 
-		stack.push(builder.Expression_arraySubscriptExpression(arrayExpression, argument, loc, typ, isMacroExpansion));
+		stack.push(builder.Expression_arraySubscriptExpression(arrayExpression, argument, loc, null, typ, isMacroExpansion));
 		return PROCESS_ABORT;
 	}
 
@@ -2696,7 +2695,7 @@ public class Parser extends ASTVisitor {
 		expression.getArgument().accept(this);
 		IConstructor argument = stack.pop();
 
-		stack.push(builder.Expression_arraySubscriptExpression(arrayExpression, argument, loc, typ, isMacroExpansion));
+		stack.push(builder.Expression_arraySubscriptExpression(arrayExpression, argument, loc, null, typ, isMacroExpansion));
 		return PROCESS_ABORT;
 	}
 
@@ -2720,17 +2719,18 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = locs.forNode(expression);
 		boolean isMacroExpansion = isMacroExpansion(expression);
 		IConstructor typ = tr.resolveType(expression);
+	
 		expression.getOperand().accept(this);
 		if (expression.isGlobal()) {
 			if (expression.isVectored())
-				stack.push(builder.Expression_globalVectoredDelete(stack.pop(), loc, typ, isMacroExpansion));
+				stack.push(builder.Expression_globalVectoredDelete(stack.pop(), loc, null, typ, isMacroExpansion));
 			else
-				stack.push(builder.Expression_globalDelete(stack.pop(), loc, typ, isMacroExpansion));
+				stack.push(builder.Expression_globalDelete(stack.pop(), loc, null, typ, isMacroExpansion));
 		} else {
 			if (expression.isVectored())
-				stack.push(builder.Expression_vectoredDelete(stack.pop(), loc, typ, isMacroExpansion));
+				stack.push(builder.Expression_vectoredDelete(stack.pop(), loc, null, typ, isMacroExpansion));
 			else
-				stack.push(builder.Expression_delete(stack.pop(), loc, typ, isMacroExpansion));
+				stack.push(builder.Expression_delete(stack.pop(), loc, null, typ, isMacroExpansion));
 		}
 		return PROCESS_ABORT;
 	}
@@ -2788,17 +2788,17 @@ public class Parser extends ASTVisitor {
 		case BY_COPY:
 			stack.push(builder.Expression_lambda(
 					builder.Modifier_captDefByCopy(getTokenSourceLocation(expression, "="), isMacroExpansion),
-					captures.done(), declarator, body, loc, typ, isMacroExpansion));
+					captures.done(), declarator, body, loc, null, typ, isMacroExpansion));
 			break;
 		case BY_REFERENCE:
 			stack.push(builder.Expression_lambda(
 					builder.Modifier_captDefByReference(getTokenSourceLocation(expression, "&"), isMacroExpansion),
-					captures.done(), declarator, body, loc, typ, isMacroExpansion));
+					captures.done(), declarator, body, loc, null, typ, isMacroExpansion));
 			break;
 		case UNSPECIFIED:
 			stack.push(builder.Expression_lambda(
 					builder.Modifier_captDefUnspecified(vf.sourceLocation(loc, loc.getOffset(), 0), isMacroExpansion),
-					captures.done(), declarator, body, loc, typ, isMacroExpansion));
+					captures.done(), declarator, body, loc, null, typ, isMacroExpansion));
 			break;
 		default:
 			throw new RuntimeException("Unknown default capture type " + captureDefault + " encountered at "
@@ -2827,10 +2827,10 @@ public class Parser extends ASTVisitor {
 		});
 		switch (expression.getOperator()) {
 		case __is_constructible:
-			stack.push(builder.Expression_isConstructable(args.done(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_isConstructable(args.done(), loc, null, typ, isMacroExpansion));
 			return PROCESS_ABORT;
 		case __is_trivially_constructible:
-			stack.push(builder.Expression_isTriviallyConstructable(args.done(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_isTriviallyConstructable(args.done(), loc, null, typ, isMacroExpansion));
 			return PROCESS_ABORT;
 		default:
 			throw new RuntimeException("Operator " + expression.getOperator() + " unknown at " + loc + ", exiting");
@@ -2937,7 +2937,7 @@ public class Parser extends ASTVisitor {
 		boolean isMacroExpansion = isMacroExpansion(expression);
 		IConstructor typ = tr.resolveType(expression);
 		expression.getPattern().accept(this);
-		stack.push(builder.Expression_packExpansion(stack.pop(), loc, typ, isMacroExpansion));
+		stack.push(builder.Expression_packExpansion(stack.pop(), loc, null, typ, isMacroExpansion));
 		return PROCESS_ABORT;
 	}
 
@@ -2952,7 +2952,7 @@ public class Parser extends ASTVisitor {
 		expression.getInitializer().accept(this);
 		IConstructor initializer = stack.pop();
 
-		stack.push(builder.Expression_simpleTypeConstructor(declSpecifier, initializer, loc, typ, isMacroExpansion));
+		stack.push(builder.Expression_simpleTypeConstructor(declSpecifier, initializer, loc, null, typ, isMacroExpansion));
 		return PROCESS_ABORT;
 	}
 
@@ -2983,7 +2983,7 @@ public class Parser extends ASTVisitor {
 			typ = builder.TypeSymbol_any();
 		}
 		expression.getCompoundStatement().accept(this);
-		stack.push(builder.Expression_compoundStatementExpression(stack.pop(), loc, typ, isMacroExpansion));
+		stack.push(builder.Expression_compoundStatementExpression(stack.pop(), loc, null, typ, isMacroExpansion));
 		return PROCESS_ABORT;
 	}
 
@@ -3000,7 +3000,7 @@ public class Parser extends ASTVisitor {
 			typ = builder.TypeSymbol_any();
 		}
 		expression.getCompoundStatement().accept(this);
-		stack.push(builder.Expression_compoundStatementExpression(stack.pop(), loc, typ, isMacroExpansion));
+		stack.push(builder.Expression_compoundStatementExpression(stack.pop(), loc, null, typ, isMacroExpansion));
 		return PROCESS_ABORT;
 	}
 
@@ -3026,108 +3026,120 @@ public class Parser extends ASTVisitor {
 		expression.getInitOperand2().accept(this);
 		IConstructor rhs = stack.pop();
 
+		ISourceLocation decl = null;
+
+		if (expression instanceof ICPPASTBinaryExpression) {
+			// C++ operators can be overloaded, we want to know which ones we are using
+			ICPPASTBinaryExpression cppe = (ICPPASTBinaryExpression) expression;
+			ICPPFunction overload = cppe.getOverload();
+
+			if (overload != null) {
+				decl = br.resolveBinding(overload, loc);
+			}
+		}
+
 		switch (expression.getOperator()) {
 		case IASTBinaryExpression.op_multiply:
-			stack.push(builder.Expression_multiply(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_multiply(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_divide:
-			stack.push(builder.Expression_divide(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_divide(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_modulo:
-			stack.push(builder.Expression_modulo(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_modulo(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_plus:
-			stack.push(builder.Expression_plus(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_plus(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_minus:
-			stack.push(builder.Expression_minus(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_minus(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_shiftLeft:
-			stack.push(builder.Expression_shiftLeft(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_shiftLeft(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_shiftRight:
-			stack.push(builder.Expression_shiftRight(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_shiftRight(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_lessThan:
-			stack.push(builder.Expression_lessThan(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_lessThan(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_greaterThan:
-			stack.push(builder.Expression_greaterThan(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_greaterThan(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_lessEqual:
-			stack.push(builder.Expression_lessEqual(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_lessEqual(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_greaterEqual:
-			stack.push(builder.Expression_greaterEqual(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_greaterEqual(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_binaryAnd:
-			stack.push(builder.Expression_binaryAnd(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_binaryAnd(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_binaryXor:
-			stack.push(builder.Expression_binaryXor(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_binaryXor(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_binaryOr:
-			stack.push(builder.Expression_binaryOr(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_binaryOr(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_logicalAnd:
-			stack.push(builder.Expression_logicalAnd(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_logicalAnd(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_logicalOr:
-			stack.push(builder.Expression_logicalOr(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_logicalOr(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_assign:
-			stack.push(builder.Expression_assign(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_assign(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_multiplyAssign:
-			stack.push(builder.Expression_multiplyAssign(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_multiplyAssign(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_divideAssign:
-			stack.push(builder.Expression_divideAssign(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_divideAssign(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_moduloAssign:
-			stack.push(builder.Expression_moduloAssign(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_moduloAssign(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_plusAssign:
-			stack.push(builder.Expression_plusAssign(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_plusAssign(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_minusAssign:
-			stack.push(builder.Expression_minusAssign(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_minusAssign(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_shiftLeftAssign:
-			stack.push(builder.Expression_shiftLeftAssign(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_shiftLeftAssign(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_shiftRightAssign:
-			stack.push(builder.Expression_shiftRightAssign(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_shiftRightAssign(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_binaryAndAssign:
-			stack.push(builder.Expression_binaryAndAssign(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_binaryAndAssign(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_binaryXorAssign:
-			stack.push(builder.Expression_binaryXorAssign(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_binaryXorAssign(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_binaryOrAssign:
-			stack.push(builder.Expression_binaryOrAssign(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_binaryOrAssign(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_equals:
-			stack.push(builder.Expression_equals(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_equals(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_notequals:
-			stack.push(builder.Expression_notEquals(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_notEquals(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_pmdot:
-			stack.push(builder.Expression_pmDot(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_pmDot(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_pmarrow:
-			stack.push(builder.Expression_pmArrow(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_pmArrow(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_max:
-			stack.push(builder.Expression_max(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_max(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_min:
-			stack.push(builder.Expression_min(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_min(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTBinaryExpression.op_ellipses:
-			stack.push(builder.Expression_ellipses(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_ellipses(lhs, rhs, loc, decl, typ, isMacroExpansion));
 			break;
 		default:
 			throw new RuntimeException("Operator " + expression.getOperator() + " unknown at " + loc + ", exiting");
@@ -3149,10 +3161,10 @@ public class Parser extends ASTVisitor {
 
 		switch (expression.getOperator()) {
 		case __is_base_of:
-			stack.push(builder.Expression_isBaseOf(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_isBaseOf(lhs, rhs, loc, null, typ, isMacroExpansion));
 			break;
 		case __is_trivially_assignable:
-			stack.push(builder.Expression_isTriviallyAssignable(lhs, rhs, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_isTriviallyAssignable(lhs, rhs, loc, null, typ, isMacroExpansion));
 			break;
 		default:
 			throw new RuntimeException(
@@ -3175,19 +3187,19 @@ public class Parser extends ASTVisitor {
 
 		switch (expression.getOperator()) {
 		case ICPPASTCastExpression.op_cast:
-			stack.push(builder.Expression_cast(type, operand, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_cast(type, operand, loc, null, typ, isMacroExpansion));
 			break;
 		case ICPPASTCastExpression.op_dynamic_cast:
-			stack.push(builder.Expression_dynamicCast(type, operand, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_dynamicCast(type, operand, loc, null, typ, isMacroExpansion));
 			break;
 		case ICPPASTCastExpression.op_static_cast:
-			stack.push(builder.Expression_staticCast(type, operand, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_staticCast(type, operand, loc, null, typ, isMacroExpansion));
 			break;
 		case ICPPASTCastExpression.op_reinterpret_cast:
-			stack.push(builder.Expression_reinterpretCast(type, operand, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_reinterpretCast(type, operand, loc, null, typ, isMacroExpansion));
 			break;
 		case ICPPASTCastExpression.op_const_cast:
-			stack.push(builder.Expression_constCast(type, operand, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_constCast(type, operand, loc, null, typ, isMacroExpansion));
 			break;
 		default:
 			throw new RuntimeException("Unknown cast type " + expression.getOperator() + " at " + loc);
@@ -3210,10 +3222,10 @@ public class Parser extends ASTVisitor {
 		if (positiveResultExpression != null) {
 			positiveResultExpression.accept(this);
 			IConstructor positive = stack.pop();
-			stack.push(builder.Expression_conditional(condition, positive, negative, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_conditional(condition, positive, negative, loc, null, typ, isMacroExpansion));
 
 		} else {// GNU extension: `?:`
-			stack.push(builder.Expression_conditional(condition, negative, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_conditional(condition, negative, loc, null, typ, isMacroExpansion));
 		}
 
 		return PROCESS_ABORT;
@@ -3229,7 +3241,7 @@ public class Parser extends ASTVisitor {
 			it.accept(this);
 			expressions.append(stack.pop());
 		});
-		stack.push(builder.Expression_expressionList(expressions.done(), loc, typ, isMacroExpansion));
+		stack.push(builder.Expression_expressionList(expressions.done(), loc, null, typ, isMacroExpansion));
 		return PROCESS_ABORT;
 	}
 
@@ -3273,6 +3285,17 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = locs.forNode(expression);
 		boolean isMacroExpansion = isMacroExpansion(expression);
 		IConstructor typ = tr.resolveType(expression);
+		ISourceLocation decl = null;
+
+		// call syntax can be overloaded, register where we are resolving to here
+		if (expression instanceof ICPPASTFunctionCallExpression) {
+			ICPPASTFunctionCallExpression cppe = (ICPPASTFunctionCallExpression) expression;
+			ICPPFunction overload = cppe.getOverload();
+
+			if (overload != null) {
+				decl = br.resolveBinding(overload, loc);
+			}
+		}
 
 		expression.getFunctionNameExpression().accept(this);
 		IConstructor functionName = stack.pop();
@@ -3282,7 +3305,7 @@ public class Parser extends ASTVisitor {
 			it.accept(this);
 			arguments.append(stack.pop());
 		});
-		stack.push(builder.Expression_functionCall(functionName, arguments.done(), loc, typ, isMacroExpansion));
+		stack.push(builder.Expression_functionCall(functionName, arguments.done(), loc, decl, typ, isMacroExpansion));
 		return PROCESS_ABORT;
 	}
 
@@ -3302,32 +3325,33 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = locs.forNode(expression);
 		boolean isMacroExpansion = isMacroExpansion(expression);
 		IConstructor typ = tr.resolveType(expression);
+		ISourceLocation decl = null; // TODO: could literal syntax be overloaded?
 
 		String value = new String(expression.getValue());
 		switch (expression.getKind()) {
 		case IASTLiteralExpression.lk_integer_constant:
-			stack.push(builder.Expression_integerConstant(value, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_integerConstant(value, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTLiteralExpression.lk_float_constant:
-			stack.push(builder.Expression_floatConstant(value, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_floatConstant(value, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTLiteralExpression.lk_char_constant:
-			stack.push(builder.Expression_charConstant(value, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_charConstant(value, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTLiteralExpression.lk_string_literal:
-			stack.push(builder.Expression_stringLiteral(value, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_stringLiteral(value, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTLiteralExpression.lk_this:
-			stack.push(builder.Expression_this(loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_this(loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTLiteralExpression.lk_true:
-			stack.push(builder.Expression_true(loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_true(loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTLiteralExpression.lk_false:
-			stack.push(builder.Expression_false(loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_false(loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTLiteralExpression.lk_nullptr:
-			stack.push(builder.Expression_nullptr(loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_nullptr(loc, decl, typ, isMacroExpansion));
 			break;
 		default:
 			throw new RuntimeException(
@@ -3355,7 +3379,7 @@ public class Parser extends ASTVisitor {
 		expression.getTypeId().accept(this);
 		IConstructor typeId = stack.pop();
 		expression.getInitializer().accept(this);
-		stack.push(builder.Expression_typeIdInitializerExpression(typeId, stack.pop(), loc, typ, isMacroExpansion));
+		stack.push(builder.Expression_typeIdInitializerExpression(typeId, stack.pop(), loc, null, typ, isMacroExpansion));
 		return PROCESS_ABORT;
 	}
 
@@ -3368,79 +3392,79 @@ public class Parser extends ASTVisitor {
 		expression.getTypeId().accept(this);
 		switch (expression.getOperator()) {
 		case IASTTypeIdExpression.op_sizeof:
-			stack.push(builder.Expression_sizeof(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_sizeof(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_typeid:
-			stack.push(builder.Expression_typeid(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_typeid(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_alignof: // gnu-only?
-			stack.push(builder.Expression_alignOf(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_alignOf(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_typeof:
-			stack.push(builder.Expression_typeof(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_typeof(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_has_nothrow_assign:
-			stack.push(builder.Expression_hasNothrowAssign(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_hasNothrowAssign(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_has_nothrow_copy:
-			stack.push(builder.Expression_hasNothrowCopy(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_hasNothrowCopy(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_has_nothrow_constructor:
-			stack.push(builder.Expression_hasNothrowConstructor(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_hasNothrowConstructor(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_has_trivial_assign:
-			stack.push(builder.Expression_hasTrivialAssign(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_hasTrivialAssign(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_has_trivial_constructor:
-			stack.push(builder.Expression_hasTrivialConstructor(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_hasTrivialConstructor(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_has_trivial_copy:
-			stack.push(builder.Expression_hasTrivialCopy(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_hasTrivialCopy(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_has_trivial_destructor:
-			stack.push(builder.Expression_hasTrivialDestructor(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_hasTrivialDestructor(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_has_virtual_destructor:
-			stack.push(builder.Expression_hasVirtualDestructor(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_hasVirtualDestructor(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_is_abstract:
-			stack.push(builder.Expression_isAbstract(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_isAbstract(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_is_class:
-			stack.push(builder.Expression_isClass(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_isClass(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_is_empty:
-			stack.push(builder.Expression_isEmpty(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_isEmpty(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_is_enum:
-			stack.push(builder.Expression_isEnum(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_isEnum(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_is_pod:
-			stack.push(builder.Expression_isPod(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_isPod(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_is_polymorphic:
-			stack.push(builder.Expression_isPolymorphic(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_isPolymorphic(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_is_union:
-			stack.push(builder.Expression_isUnion(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_isUnion(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_is_literal_type:
-			stack.push(builder.Expression_isLiteralType(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_isLiteralType(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_is_standard_layout:
-			stack.push(builder.Expression_isStandardLayout(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_isStandardLayout(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_is_trivial:
-			stack.push(builder.Expression_isTrivial(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_isTrivial(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_sizeofParameterPack:
-			stack.push(builder.Expression_sizeofParameterPack(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_sizeofParameterPack(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_is_final:
-			stack.push(builder.Expression_isFinal(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_isFinal(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		case IASTTypeIdExpression.op_is_trivially_copyable:
-			stack.push(builder.Expression_isTriviallyCopyable(stack.pop(), loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_isTriviallyCopyable(stack.pop(), loc, null, typ, isMacroExpansion));
 			break;
 		default:
 			throw new RuntimeException("ERROR: IASTTypeIdExpression called with unimplemented/unknown operator "
@@ -3454,6 +3478,7 @@ public class Parser extends ASTVisitor {
 		ISourceLocation loc = locs.forNode(expression);
 		boolean isMacroExpansion = isMacroExpansion(expression);
 		IConstructor typ = tr.resolveType(expression);
+		ISourceLocation decl = null;
 
 		IConstructor operand = null;
 		if (expression.getOperand() != null) {
@@ -3461,64 +3486,73 @@ public class Parser extends ASTVisitor {
 			operand = stack.pop();
 		}
 
+		if (expression instanceof ICPPASTUnaryExpression) {
+			ICPPASTUnaryExpression cppe = (ICPPASTUnaryExpression) expression;
+			ICPPFunction overload = cppe.getOverload();
+
+			if (overload != null) {
+				decl = br.resolveBinding(overload, loc);
+			}
+		}
+		
 		switch (expression.getOperator()) {
 		case IASTUnaryExpression.op_prefixIncr:
-			stack.push(builder.Expression_prefixIncr(operand, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_prefixIncr(operand, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTUnaryExpression.op_prefixDecr:
-			stack.push(builder.Expression_prefixDecr(operand, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_prefixDecr(operand, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTUnaryExpression.op_plus:
-			stack.push(builder.Expression_plus(operand, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_plus(operand, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTUnaryExpression.op_minus:
-			stack.push(builder.Expression_minus(operand, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_minus(operand, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTUnaryExpression.op_star:
-			stack.push(builder.Expression_star(operand, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_star(operand, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTUnaryExpression.op_amper:
-			stack.push(builder.Expression_amper(operand, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_amper(operand, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTUnaryExpression.op_tilde:
-			stack.push(builder.Expression_tilde(operand, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_tilde(operand, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTUnaryExpression.op_not:
-			stack.push(builder.Expression_not(operand, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_not(operand, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTUnaryExpression.op_sizeof:
-			stack.push(builder.Expression_sizeof(operand, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_sizeof(operand, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTUnaryExpression.op_postFixIncr:
-			stack.push(builder.Expression_postfixIncr(operand, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_postfixIncr(operand, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTUnaryExpression.op_postFixDecr:
-			stack.push(builder.Expression_postfixDecr(operand, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_postfixDecr(operand, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTUnaryExpression.op_bracketedPrimary:
-			stack.push(builder.Expression_bracketed(operand, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_bracketed(operand, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTUnaryExpression.op_throw:
 			if (operand == null)
-				stack.push(builder.Expression_throw(loc, typ, isMacroExpansion));
+				stack.push(builder.Expression_throw(loc, decl, typ, isMacroExpansion));
 			else
-				stack.push(builder.Expression_throw(operand, loc, typ, isMacroExpansion));
+				stack.push(builder.Expression_throw(operand, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTUnaryExpression.op_typeid:
-			stack.push(builder.Expression_typeid(operand, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_typeid(operand, loc, decl, typ, isMacroExpansion));
 			break;
 		// case IASTUnaryExpression.op_typeof: (14) typeOf is deprecated
 		case IASTUnaryExpression.op_alignOf:
-			stack.push(builder.Expression_alignOf(operand, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_alignOf(operand, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTUnaryExpression.op_sizeofParameterPack:
-			stack.push(builder.Expression_sizeofParameterPack(operand, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_sizeofParameterPack(operand, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTUnaryExpression.op_noexcept:
-			stack.push(builder.Expression_noexcept(operand, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_noexcept(operand, loc, decl, typ, isMacroExpansion));
 			break;
 		case IASTUnaryExpression.op_labelReference:
-			stack.push(builder.Expression_labelReference(operand, loc, typ, isMacroExpansion));
+			stack.push(builder.Expression_labelReference(operand, loc, decl, typ, isMacroExpansion));
 			break;
 		default:
 			throw new RuntimeException(
