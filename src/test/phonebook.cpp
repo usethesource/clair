@@ -5,6 +5,8 @@
  * > Could you generate that?
  * 
  * It does not necessarily work but it does exercise a number of c++ name and type analysis features.
+ * 
+ * Later we added code to test operator overloading.
  */
 
 void strncpy(char* dst, const char* src, int len) { return; /* dummy */}
@@ -41,9 +43,20 @@ public:
         }
         delete[] contacts;
     }
+
+    Phonebook operator <<(const Contact& fresh) {
+        addContact(fresh);
+        return *this;
+    }
+
+    Phonebook operator ()(const Contact& fresh) {
+        return *this << fresh;
+    }
+
     void addContact(const Contact& contact) {
         contacts[numContacts++] = new Contact(contact.getName(), contact.getPhoneNumber());
     }
+
     Contact** searchByName(const char* name, int* numMatches) const {
         Contact** matchingContacts = new Contact*[MAX_CONTACTS];
         *numMatches = 0;
@@ -54,6 +67,7 @@ public:
         }
         return matchingContacts;
     }
+
     Contact** searchByPhoneNumber(const char* phoneNumber, int* numMatches) const {
         Contact** matchingContacts = new Contact*[MAX_CONTACTS];
         *numMatches = 0;
@@ -64,9 +78,23 @@ public:
         }
         return matchingContacts;
     }
+    
 private:
     static const int MAX_CONTACTS = 1000;
     Contact** contacts;
     int numContacts;
 };
 
+
+int main(int argc, char* argv[]) {
+    Phonebook* book = new Phonebook();
+    Contact* c = new Contact("Jurgen", "075-6354020");
+    Contact* d = new Contact("Paul", "035-6354020");
+    Contact* e = new Contact("Rodin", "+31-756158557");
+    
+    // let's play with some overloaded operators
+    book = &(*book << *c << *d);
+
+    // here we use the overloaded function call operator
+    (*book)(*new Contact("Bla", "1"));
+}
