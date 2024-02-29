@@ -219,10 +219,8 @@ public class BindingsResolver {
 	
 	private String renameOperators(String name) {
 		if (isOperatorName(name)) {
-			// remove the additional spaces to avoid accidental synonyms
-			name = name.replaceAll(" ", "");
 			// wrap the operator in braces to disambiguate from possible methods with names like "operatordelete"
-			name = "operator(" + name.substring("operator".length()) + ")";
+			name = "operator(" + name.substring("operator ".length()) + ")";
 		}
 
 		return name;
@@ -715,17 +713,7 @@ public class BindingsResolver {
 	}
 
 	private boolean isOperatorName(String name) {
-		if (name.startsWith("operator")) {
-			if (name.matches("[<>\\-+*/=%!&\\|\\^\\?\\.\\[\\]]")) {
-				return true;
-			}
-
-			if (name.endsWith(" delete") || name.endsWith(" new")) {
-				return true;
-			}
-		}
-
-		return false;
+		return name.startsWith("operator ");
 	}
 
 	private ISourceLocation resolveCEnumeration(CEnumeration binding, ISourceLocation origin) throws URISyntaxException {
