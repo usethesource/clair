@@ -23,7 +23,7 @@ You need Rascal, and either Eclipse or VScode or the standalone Rascal jar:
 <dependency>
     <groupId>org.rascalmpl</groupId>
     <artifactId>clair</artifactId>
-    <version>0.6.2/version>
+    <version>0.6.2</version>
 </dependency>
 ```
 * In `META-INF/RASCAL.MF` add:
