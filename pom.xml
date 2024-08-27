@@ -163,12 +163,6 @@
         </dependency>
         <dependency>
             <groupId>org.rascalmpl</groupId>
-            <artifactId>rascal</artifactId>
-            <version>0.40.7</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.rascalmpl</groupId>
             <artifactId>rascal-cdt-repackaged</artifactId>
             <version>0.2.0</version>
             <scope>compile</scope>
