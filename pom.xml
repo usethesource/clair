@@ -93,7 +93,6 @@
                                 <bin>${project.build.outputDirectory}</bin>
                                 <sources>|http://github.com/usethesource/clair/blob/main|</sources>
                                 <issues>|http://github.com/usethesource/clair/issues|</issues>
-                                <license>${project.basedir}/LICENSE</license>
                                 <funding>${project.basedir}/FUNDING.md</funding>
                                 <srcs>
                                     <src>${project.basedir}/src</src>
