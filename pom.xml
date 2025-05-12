@@ -3,12 +3,12 @@
 
 	<artifactId>clair</artifactId>
 	<groupId>org.rascalmpl</groupId>
-	<version>0.13.2-RC2</version>
+	<version>0.13.2-RC3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	
         <scm>
             <developerConnection>scm:git:https://github.com/cwi-swat/clair.git</developerConnection>			
-            <tag>v0.13.2-RC2</tag>
+            <tag>HEAD</tag>
         </scm>
 
         <repositories>
