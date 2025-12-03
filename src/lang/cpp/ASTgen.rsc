@@ -111,7 +111,6 @@ str type2FactoryCall(Symbol t){
       case Symbol::\map(label(l1,ti),label(l2, ti2)) : return "tf.mapType(<type2FactoryCall(ti)>,\"<l1>\", <type2FactoryCall(ti2)>, \"<l2>\")";
       case Symbol::\map(ti,ti2) : return "tf.mapType(<type2FactoryCall(ti)>,<type2FactoryCall(ti2)>)";
       case Symbol::\tuple(tis) : return "tf.tupleType(<typeList2FactoryVarArgs(tis)>)";
-      case Symbol::\rel(tis) : return "tf.relType(<typeList2FactoryVarArgs(tis)>)";
       case Symbol::\adt(str name, _) : return "_<name>";
       default: 
         throw "Do not now how to construct <t>";  
@@ -260,7 +259,6 @@ str type2FactoryCall(Symbol t){
       case \bool() : return "IBool";
       case \list(_) : return "IList";
       case \map(_,_) : return "IMap";
-      case \rel(_) : return "IRelation";
       case \set(_) : return "ISet";
       case \loc() : return "ISourceLocation";
       case \str() :  return "IString";
