@@ -42,7 +42,7 @@ str filesToPrettyPrinter(set[loc] files, type[node] grammar, node (loc) parser)
     = treesToPrettyPrinter({parser(f) | f <- files}, grammar);
 
 @synopsis{Takes a corpus of syntax trees (for the same language!) and produces Rascal code that can generate code back from ASTs.}
-str treesToPrettyPrinter(set[node] asts, type[node] grammar) {
+str treesToPrettyPrinter(set[node] asts, type[node] _grammar) {
     // First we collect some general information for quick and easy reference later
     // This the string contents of each file 
     rel[loc, str] files  = {<l.top, readFile(l.top)> | n <- asts, loc l := n.src};
