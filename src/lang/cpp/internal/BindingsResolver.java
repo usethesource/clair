@@ -135,7 +135,7 @@ public class BindingsResolver {
 	public ISetWriter containment;
 
 	private ISourceLocation translationUnit;
-	private ISourceLocation translationUnitRoot = URIUtil.rootLocation("cpp+translationUnit");
+	private ISourceLocation translationUnitRoot = URIUtil.rootLocation("cpp+translationunit");
 
 	private void out(String msg) {
 //		stdOut.println(spaces() + msg.replace("\n", "\n" + spaces()));
@@ -170,7 +170,7 @@ public class BindingsResolver {
 		this.vf = vf;
 		this.stdErr = stdErr;
 		this.containment = vf.setWriter();
-		this.translationUnit = URIUtil.rootLocation("cpp+translationUnit");
+		this.translationUnit = URIUtil.rootLocation("cpp+translationunit");
 		this.NYI = makeBinding("NYI", null, null);
 		this.FIXME = makeBinding("FIXME", null, null);
 	}
@@ -183,9 +183,9 @@ public class BindingsResolver {
 		String name = renameOperators(binding.getName()) + postfix;
 		ISourceLocation ownerLocation = resolveOwner(binding, origin);
 		ISourceLocation location = null;
-		boolean isAtRoot = "cpp+translationUnit".equals(ownerLocation.getScheme());
+		boolean isAtRoot = "cpp+translationunit".equals(ownerLocation.getScheme());
 
-		// * When we are at the root, we want a different parent from |cpp+translationUnit:///| as containment parent; name it should contain the file name from `translationUnit`
+		// * When we are at the root, we want a different parent from |cpp+translationunit:///| as containment parent; name it should contain the file name from `translationUnit`
 		// * Also when we are the root, `static` variables and functions need to be prefixed with the file name because they are local to the current translationUnit
 
 		if (isStatic) {
