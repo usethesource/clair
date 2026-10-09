@@ -209,6 +209,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPFunctionSet;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.core.runtime.CoreException;
 import org.rascalmpl.debug.IRascalMonitor;
+import org.rascalmpl.ast.AbstractAST;
 import org.rascalmpl.exceptions.RuntimeExceptionFactory;
 import org.rascalmpl.interpreter.Evaluator;
 import org.rascalmpl.uri.URIUtil;
@@ -334,7 +335,7 @@ public class Parser extends ASTVisitor {
 			result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
 
 			if (result == null) {
-				throw RuntimeExceptionFactory.parseError(file, null, null);
+				throw RuntimeExceptionFactory.parseError(file, (AbstractAST) null, null);
 			}
 			return result;
 		}
@@ -361,7 +362,7 @@ public class Parser extends ASTVisitor {
 			ISourceLocation tuDecl = URIUtil.correctLocation("cpp+translationUnit", "", file.getPath());
 			result = ((IConstructor) result).asWithKeywordParameters().setParameter("decl", tuDecl);
 			if (result == null) {
-				throw RuntimeExceptionFactory.parseError(file, null, null);
+				throw RuntimeExceptionFactory.parseError(file, (AbstractAST) null, null);
 			}
 			return result;
 		}

@@ -59,7 +59,7 @@
                 <plugin>
                     <groupId>org.rascalmpl</groupId>
                     <artifactId>rascal-maven-plugin</artifactId>
-                    <version>0.30.3</version>
+                    <version>0.32.0-RC7</version>
                     <configuration>
                         <errorsAsWarnings>false</errorsAsWarnings>
                         <bin>${project.build.outputDirectory}</bin>
@@ -82,13 +82,19 @@
                             </goals>
                         </execution>
                         <execution>
+                            <id>it-test</id>
+                            <phase>test</phase>
+                            <goals>
+                                <goal>test</goal>
+                            </goals>
+                        </execution>
+                        <execution>
                             <id>default-cli</id>
                             <phase>compile</phase>
                             <goals>
                                 <goal>tutor</goal>
                             </goals>
                             <configuration>
-                                <enableStandardLibrary>true</enableStandardLibrary>
                                 <errorsAsWarnings>false</errorsAsWarnings>
                                 <bin>${project.build.outputDirectory}</bin>
                                 <sources>|http://github.com/usethesource/clair/blob/main|</sources>
@@ -119,43 +125,15 @@
                         <arguments>-Drascal.compile.skip -DskipTests -Drascal.tutor.skip</arguments>
                     </configuration>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M3</version>
-                    <executions>
-                        <execution>
-                            <id>test</id>
-                            <phase>test</phase>
-                            <configuration>
-                                <argLine>
-                                    -ea
-                                    -Xmx2G
-                                    -Xss128m
-                                    -Dfile.encoding=UTF-8
-                                </argLine>
-                                <includes>
-                                    <include>**/*Tests.java</include>
-                                </includes>
-                                <testSourceDirectory>${basedir}/src/</testSourceDirectory>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
             </plugins>
         </build>
 
 
     <dependencies>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.1</version>
-        </dependency>
-        <dependency>
             <groupId>org.rascalmpl</groupId>
             <artifactId>rascal</artifactId>
-            <version>0.43.0-RC1</version>
+            <version>0.43.0-RC17</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
