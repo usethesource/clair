@@ -26,6 +26,22 @@ jobs:
       - name: Test with Maven
         run: mvn -B --update-snapshots compile test
 
+      - name: Publish Test Reports
+        if: ${{ !cancelled() }}
+        uses: ctrf-io/github-test-reporter@v1
+        with:
+          report-path: 'target/rascal-test-reports/*.json'
+          github-report: true
+          file-report: true
+          pull-request-report: true
+          summary-delta-report: true
+          insights-report: true
+          fail-rate-report: true
+          slowest-report: true
+          upload-artifact: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Attach artifact
         id: build-artifact
         uses: SWAT-engineering/maven-full-artifacts-action@v1
