@@ -1,2 +1,5 @@
+# Clair release notes
 
-To be written
+## Release 0.13.5
+
+Now using Rascal 0.43.0
