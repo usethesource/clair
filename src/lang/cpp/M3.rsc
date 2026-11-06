@@ -291,10 +291,16 @@ M3 composeCppM3(loc id, set[M3] models) {
   return comp;
 }
 
-@synopsis{fills out the call graph by adding the tuples for possible actual methods and constructors, and removing the corresponding calls to virtual methods and constructors.}
+@synopsis{Fills out the call graph by adding the tuples for possible actual methods and constructors.}
+@pitfalls{
+A previous version of this function would remove the virtual method calls from the call graph.
+Virtual methods in C++ can, however, have an implementation (if they do not, they are called pure virtual functions).
+As a consequence, they can also be called and must remain in the call graph.
+
+At the moment, we overapproximate and remove no scheme, even though some might be able to be removed.
+}
 rel[loc caller, loc callee] closeOverriddenVirtualCalls(M3 comp) {
-  return comp.callGraph 
-    + comp.callGraph o comp.methodOverrides // add the overridden definitions
-    - rangeR(comp.callGraph, comp.methodOverrides<0>); // remove the virtual intermediates
+  return comp.callGraph
+    + comp.callGraph o comp.methodOverrides; // add the overridden definitions
 }
 
