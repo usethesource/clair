@@ -69,7 +69,7 @@ str treesToPrettyPrinter(set[node] asts, type[node] _grammar) {
 
 str formatFunction(str yield, node n)
     = "str format(<getName(n)>(" + "<for (i <- [0..arity(n)]) {><\type(n[i])> arg_<i+1>, <}>"[..-2] + ")) =
-      '\"<for (p <- cutOut(yield, n)) {><print(p)><}>\";";
+      '\"<for (p <- cutOut(yield, n)) {><repr(p)><}>\";";
 
 private data Template 
     = hole(int n)
@@ -110,10 +110,10 @@ Template template(int _begin, [node a], int i, str yield)             = \list(""
 Template template(int  begin, [node a, node b, *_], int i, str yield) = \list(yield[-begin+\loc(a).offset+\loc(a).length..-begin+\loc(b).offset], i); // we learn a separator from the non-empty lists
     
 @synopsis{Prints a rascal code template part, including recursive calls.}    
-str print(hole(int i))              = "\<format(arg_<i>)\>";
-str print(sep(str chars))           = escape(chars);
-str print(const(str _chars, int i)) = "\<arg_<i>\>";
-str print(\list(str sep, int i))    = "\<\"\<for (value v \<- arg_<i>) {\>\<format(v)\><escape(sep)>\<}\>\"<if (sep != "") {>[..-<size(sep)>]<}>\>";
+str repr(hole(int i))              = "\<format(arg_<i>)\>";
+str repr(sep(str chars))           = escape(chars);
+str repr(const(str _chars, int i)) = "\<arg_<i>\>";
+str repr(\list(str sep, int i))    = "\<\"\<for (value v \<- arg_<i>) {\>\<format(v)\><escape(sep)>\<}\>\"<if (sep != "") {>[..-<size(sep)>]<}>\>";
 
 @synopsis{Give every element a true location for later processing.}
 list[loc] position(loc span, list[value] l) = infer(span, [pos(span, x) | x <- l]);
