@@ -109,7 +109,7 @@ Template template(int _begin, [], int i, str _yield)                  = sep("");
 Template template(int _begin, [node a], int i, str yield)             = \list("", i); // singletons do not have separators
 Template template(int  begin, [node a, node b, *_], int i, str yield) = \list(yield[-begin+\loc(a).offset+\loc(a).length..-begin+\loc(b).offset], i); // we learn a separator from the non-empty lists
     
-@synopsis{Prints a rascal code template part, including recursive calls.}    
+@synopsis{Return a str representation of a rascal code template part, including recursive calls.}    
 str repr(hole(int i))              = "\<format(arg_<i>)\>";
 str repr(sep(str chars))           = escape(chars);
 str repr(const(str _chars, int i)) = "\<arg_<i>\>";
