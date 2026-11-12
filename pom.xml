@@ -122,7 +122,7 @@
                     <version>3.1.0</version>
                     <configuration>
                         <tagNameFormat>v@{project.version}</tagNameFormat>
-                        <arguments>-Drascal.compile.skip -DskipTests -Drascal.tutor.skip</arguments>
+                        <arguments>-Drascal.compile.skip -Drascal.test.skip -DskipTests -Drascal.tutor.skip</arguments>
                     </configuration>
                 </plugin>
             </plugins>
